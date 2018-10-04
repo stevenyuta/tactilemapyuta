@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<title>触地図自作アプリ</title>
+<title>触地図自作支援Webアプリ</title>
 
 </head>
 <body>
@@ -433,8 +433,6 @@
 
     image.onload = function(){
       ctx.drawImage(image, 0, 0);
-      // Optional: 自動でダウンロードさせる場合
-
       var dataurl = canvas.toDataURL("image/png");
       var bin = atob(dataurl.split(',')[1]);
       // 空の Uint8Array ビューを作る

@@ -36,7 +36,7 @@ function edit(){
 **********************************************/
 function edit_mousedown_up(mode){
   draw.off('mousedown').off('mouseup');
-  if(mode!=="off"){
+  if(mode!=="off" && $('input[name="Stamp"]:checked').val() === 'Edit'){
     if(draw.select('.edit_select').first()===undefined){ //選択状態の要素が何もない場合
       var select_rect = draw.rect().addClass('select_rect');
       select_rect.attr({  //範囲指定用四角形
@@ -100,7 +100,7 @@ function edit_mousedown_up(mode){
 function edit_hover(mode){
   draw.select('.SVG_Element').off('mouseover').off('mouseout');
   SVG.get('handle_group').off('mouseover').off('mouseout');
-  if(mode!=="off"){
+  if(mode!=="off" && $('input[name="Stamp"]:checked').val() === 'Edit'){
     draw.select('.SVG_Element').mouseover(function() {
       edit_mousedown_up("off");
       if(!this.hasClass('edit_select')){

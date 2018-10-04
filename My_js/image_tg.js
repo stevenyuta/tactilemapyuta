@@ -77,12 +77,12 @@ function import_image(image_url){
 function edit_image(){
   draw.select('.image').off('mouseover').mouseover(function() {
     this.attr({'cursor' : 'pointer'});
-    this.off('click').click(function(){
+    this.off('mousedown').mousedown(function(){
       draw.select('.edit_select').removeClass('edit_select');
       this.addClass('edit_select');
       edit_keydown();
       edit_keyup();
-      resize_group();
+      upload_handle();
     })
   })
   draw.select('.image').off('mouseout').mouseout(function() {

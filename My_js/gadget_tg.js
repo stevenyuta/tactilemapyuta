@@ -18,7 +18,7 @@ function set_contextMenu(flag){
           paste_select();
           break;
         case 'delete':
-          if($('input[name="Stamp"]:checked').val()==="Edit")delete_select();
+          if($('input[name="Stamp"]:checked').val()==="Edit" || $('input[name="Stamp"]:checked').val()==="Moveimage")delete_select();
           if($('input[name="Stamp"]:checked').val()==="EditPath")delete_editpath();
           break;
         case 'draw_end':
@@ -202,16 +202,12 @@ function draw_guiderect(){
   }
 }
 
-
-
 /******************************************************
 /チェックボックスを設定する関数
 ******************************************************/
 function checkbox_set(){
-
   $("#check_ink").prop('checked', true).change();//初期状態はチェックを入れておく
   $("#check_bra").prop('checked', true).change();//初期状態はチェックを入れておく
-
   /**************************************************
   //SVG要素の表示非表示機能をチェックボックスと連結
   ***************************************************/
@@ -358,7 +354,7 @@ function checkBox_change(){
   }
 
   //ガイドの四角形がA4かB4か
-  var radioval = $( 'input[name="guiderect"]:radio' ).val()
+  var radioval = $( 'input[name="guiderect"]:checked' ).val();
   if(radioval === 'guiderect_A4'){
     draw.select('.A4').show()
     draw.select('.B4').hide()
@@ -368,7 +364,7 @@ function checkBox_change(){
   }
 
   //ガイドの四角形が横か縦か
-  var radioval = $( 'input[name="direction_guide"]:radio' ).val()
+  var radioval = $( 'input[name="direction_guide"]:checked' ).val()
   if(radioval === 'horizontal_guide'){
     draw.select('.A4').transform({rotation:0})
     draw.select('.B4').transform({rotation:0})

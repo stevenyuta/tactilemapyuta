@@ -22,8 +22,6 @@ function undo(e) { //操作を１つ戻る関数
     cash_array.shift();
 
     $(current_mode).prop('checked', true).trigger('change'); //モードを設定
-    //if(SVG.select('.start').members.length!==0)SVG.select('.start').members[0].removeClass('start');  //startクラスを削除
-    //$('#draw_area').off('contextmenu').on('contextmenu',function(e){ return false; });//draw_areaの右クリックメニュー禁止
     checkBox_change();
     js_sleep(100); //100ms待機
   }else{ //cash_arrayにデータがない場合
@@ -52,9 +50,9 @@ function download_setSVG(original_draw) { //ダウンロード時に出力svgフ
   dummy_delete();
   edit_image(false);
   edit_clear();
-  //toConnected();
+  toConnected();
   select_rect_delete(); //select_rectの全削除
-  //circle_delete(); //edit_circleの全削除
+  circle_delete(); //edit_circleの全削除
   //不要なグループの削除
   SVG.get('gridline_group').remove();
   SVG.get('handle_group').remove();
@@ -149,7 +147,6 @@ function continue_setSVG(input_draw,vx,vy,vwidth,vheight){ //svgデータを読�
   $('#draw_area').remove();
   var draw_area = $('<div id="draw_area"></div>');
   $("#draw_include").append(draw_area);
-  //$('#draw_area').off('contextmenu').on('contextmenu',function(e){ return false; });//draw_areaの右クリックメニュー禁止
   //drawの内容を再設定
   draw = SVG('draw_area').size(DRAW_AREA_WIDTH,DRAW_AREA_HEIGHT).attr('id','svg_draw_area')
   draw.viewbox(vx, vy, vwidth, vheight)
@@ -160,6 +157,7 @@ function continue_setSVG(input_draw,vx,vy,vwidth,vheight){ //svgデータを読�
   draw_gridline(3000,3000,50,50)//グリッド線の描画
   draw_guiderect() //ガイドの描画
   if(SVG.get('image_group')!==null)SVG.get('image_group').back() //image_groupをレイヤで一番後ろに
+  checkBox_change();
   //現在のモードを記憶
   var current_mode =  $('input[name="Stamp"]:checked');
   $(current_mode).prop('checked', true).trigger('change'); //モードを設定
