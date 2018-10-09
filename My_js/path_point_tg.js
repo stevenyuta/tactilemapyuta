@@ -52,7 +52,7 @@ function distance_check(){
   draw.select('.path').each(function(i , children){
     if(this.visible()){
       var p4oint = get_p4oint(this);
-      var self_id = this.attr('id'); //比較にするpathのid
+      var self = this; //比較にするpathのid
       for(var j=0; j< p4oint.length; j++){
         var four_point = new Array();
         for(var k=0; k<4; k++){
@@ -98,28 +98,32 @@ function distance_check(){
             if(distance1 < THRE_DISTANCE){
               if(b1x < relativeXY.max_x && b1x > relativeXY.min_x && b1y < relativeXY.max_y && b1y > relativeXY.min_y){
                 this.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+                if(self.hasClass('symbol'))self.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
               }
             }
             if(distance2 < THRE_DISTANCE){
               if(b2x < relativeXY.max_x && b2x > relativeXY.min_x && b2y < relativeXY.max_y && b2y > relativeXY.min_y){
                 this.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+                if(self.hasClass('symbol'))self.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
               }
             }
             if(distance3 < THRE_DISTANCE){
               if(b3x < relativeXY.max_x && b3x > relativeXY.min_x && b3y < relativeXY.max_y && b3y > relativeXY.min_y){
                 this.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+                if(self.hasClass('symbol'))self.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
               }
             }
             if(distance4 < THRE_DISTANCE){
               if(b4x < relativeXY.max_x && b4x > relativeXY.min_x && b4y < relativeXY.max_y && b4y > relativeXY.min_y){
                 this.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+                if(self.hasClass('symbol'))self.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
               }
             }
           })
 
           //記号との距離を計算し、近すぎないか判定
           draw.select('.symbol').each(function(i , children){
-            if(self_id !== this.attr('id') && this.visible()){
+            if(self.attr('id') !== this.attr('id') && this.visible()){
               var symbol_p4oint = get_p4oint(this);
               for(var l=0; l< symbol_p4oint.length; l++){
                 var b1x = Number(symbol_p4oint[l].x0) , b1y = Number(symbol_p4oint[l].y0);
@@ -137,21 +141,25 @@ function distance_check(){
                 if(distance1 < THRE_DISTANCE){
                   if(b1x < relativeXY.max_x && b1x > relativeXY.min_x && b1y < relativeXY.max_y && b1y > relativeXY.min_y){
                     this.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+                    if(self.hasClass('symbol'))self.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
                   }
                 }
                 if(distance2 < THRE_DISTANCE){
                   if(b2x < relativeXY.max_x && b2x > relativeXY.min_x && b2y < relativeXY.max_y && b2y > relativeXY.min_y){
                     this.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+                    if(self.hasClass('symbol'))self.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
                   }
                 }
                 if(distance3 < THRE_DISTANCE){
                   if(b3x < relativeXY.max_x && b3x > relativeXY.min_x && b3y < relativeXY.max_y && b3y > relativeXY.min_y){
                     this.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+                    if(self.hasClass('symbol'))self.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
                   }
                 }
                 if(distance4 < THRE_DISTANCE){
                   if(b4x < relativeXY.max_x && b4x > relativeXY.min_x && b4y < relativeXY.max_y && b4y > relativeXY.min_y){
                     this.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+                    if(self.hasClass('symbol'))self.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
                   }
                 }
               }
@@ -178,10 +186,17 @@ function distance_check(){
             if(distance1 < THRE_DISTANCE){
               if(b1x < relativeXY.max_x && b1x > relativeXY.min_x && b1y < relativeXY.max_y && b1y > relativeXY.min_y){
                 this.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+                if(self.hasClass('symbol'))self.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
               }
             }
-            if(distance2 < THRE_DISTANCE) this.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
-            if(distance3 < THRE_DISTANCE) this.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+            if(distance2 < THRE_DISTANCE){
+              this.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+              if(self.hasClass('symbol'))self.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+            }
+            if(distance3 < THRE_DISTANCE){
+              this.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+              if(self.hasClass('symbol'))self.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+            }
           })
         }
       }
@@ -191,7 +206,7 @@ function distance_check(){
   draw.select('.braille').each(function(i , children){
     if(this.visible()){
       var braille_p4oint = get_p4oint(this);
-      var self_id = this.attr('id'); //比較にする点字のid
+      var self = this; //比較にする点字のid
       var four_point = new Array();
       for(var k=0; k<4; k++){
         four_point[k] = new Array();
@@ -214,7 +229,7 @@ function distance_check(){
 
         //点字との距離を計算し、近すぎないか判定
         draw.select('.braille').each(function(l , children){
-          if(self_id !== this.attr('id') && this.visible()){
+          if(self.attr('id') !== this.attr('id') && this.visible()){
             var distance_flg = false; //true時：距離が近すぎる
             var braille_p4oint = get_p4oint(this);
 
@@ -233,21 +248,25 @@ function distance_check(){
             if(distance1 < THRE_DISTANCE){
               if(b1x < relativeXY.max_x && b1x > relativeXY.min_x && b1y < relativeXY.max_y && b1y > relativeXY.min_y){
                 this.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+                self.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
               }
             }
             if(distance2 < THRE_DISTANCE){
               if(b2x < relativeXY.max_x && b2x > relativeXY.min_x && b2y < relativeXY.max_y && b2y > relativeXY.min_y){
                 this.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+                self.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
               }
             }
             if(distance3 < THRE_DISTANCE){
               if(b3x < relativeXY.max_x && b3x > relativeXY.min_x && b3y < relativeXY.max_y && b3y > relativeXY.min_y){
                 this.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+                self.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
               }
             }
             if(distance4 < THRE_DISTANCE){
               if(b4x < relativeXY.max_x && b4x > relativeXY.min_x && b4y < relativeXY.max_y && b4y > relativeXY.min_y){
                 this.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+                self.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
               }
             }
           }
@@ -274,10 +293,17 @@ function distance_check(){
           if(distance1 < THRE_DISTANCE){
             if(b1x < relativeXY.max_x && b1x > relativeXY.min_x && b1y < relativeXY.max_y && b1y > relativeXY.min_y){
               this.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+              self.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
             }
           }
-          if(distance2 < THRE_DISTANCE) this.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
-          if(distance3 < THRE_DISTANCE) this.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+          if(distance2 < THRE_DISTANCE){
+            this.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+            self.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+          }
+          if(distance3 < THRE_DISTANCE){
+            this.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+            self.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+          }
         })
       }
     }

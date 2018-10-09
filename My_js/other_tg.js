@@ -152,6 +152,7 @@ function layer_change(e){
   }
   SVG.get('guiderect_group').front();
   SVG.get('gridline_group').front();
+  SVG.get('handle_group').front();
   draw.select('.image').back();
 }
 
@@ -224,6 +225,9 @@ function layer_change(e){
   ***********************************/
   function circle_delete(){
     draw.select('.edit_circle').each(function(i,children){
+        this.remove();
+    })
+    draw.select('.fragmented_CircleGroup').each(function(i,children){
         this.remove();
     })
   }

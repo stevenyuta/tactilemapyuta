@@ -50,9 +50,9 @@ function download_setSVG(original_draw) { //ダウンロード時に出力svgフ
   dummy_delete();
   edit_image(false);
   edit_clear();
-  toConnected();
+  //toConnected();
   select_rect_delete(); //select_rectの全削除
-  circle_delete(); //edit_circleの全削除
+  //circle_delete(); //edit_circleの全削除
   //不要なグループの削除
   SVG.get('gridline_group').remove();
   SVG.get('handle_group').remove();

@@ -77,6 +77,13 @@ function import_image(image_url){
 function edit_image(){
   draw.select('.image').off('mouseover').mouseover(function() {
     this.attr({'cursor' : 'pointer'});
+    draw.rect(this.width() , this.height()).attr({
+      'fill' : 'none',
+      'stroke' : '#f00',
+      'stroke-width' : SELECT_RECT_STROKEWIDTH * 1.5,
+      'stroke-dasharray': SELECT_RECT_STROKEDOTT, //点線に
+      'transform' : this.transform('matrix')
+    }).addClass('image_FrameRect');
     this.off('mousedown').mousedown(function(){
       draw.select('.edit_select').removeClass('edit_select');
       this.addClass('edit_select');
@@ -87,7 +94,8 @@ function edit_image(){
   })
   draw.select('.image').off('mouseout').mouseout(function() {
     this.attr({'cursor' : 'default'});
-    this.off('click');
+    this.off('mousedown');
+    select_rect_delete();
   })
   $(document).on('mouseup' , function() {
     if(event.button===0){

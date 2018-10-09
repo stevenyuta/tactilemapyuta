@@ -163,6 +163,7 @@ function draw_end_function(){
     if(current_path.clear().array().settle().length===1)  current_path.remove();
   }
   circle_delete(); //circleの全削除
+  dummy_delete();
   now_drawing_path_ID = "";
 }
 
