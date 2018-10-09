@@ -248,8 +248,9 @@ function add_text(){
           return;
         }
       }
+      console.log(real_Bra_text.text())
       if(real_Bra_text){
-        if(real_Bra_text.text().match(/[^あ-んー濁小大斜数拗１２３４５６７８９1-9＿\s]/)){
+        if(real_Bra_text.text().match(/[^あ-んー濁小大半斜数拗１２３４５６７８９1-9＿\s]/)){
           alert("点字に使用できない文字が含まれています。");
           dummy_delete();
           return;

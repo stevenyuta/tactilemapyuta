@@ -9,7 +9,6 @@ function fileapi_svg(){
   function fileChange(ev) { //ファイル選択ボタンを押下時
     var file = ev.target.files[0];
     var type = file.type;
-    console.log(type)
 
     if (!type.match('image.*')) {
       alert('選択できるファイルはSVGファイルだけです。');
