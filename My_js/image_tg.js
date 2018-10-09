@@ -22,7 +22,7 @@ function fileapi_svg(){
     var svg_text = reader.result;
     svg_text = svg_text.replace(/<svg.+>/g, '')
     svg_text = svg_text.replace( /<\/svg>/g , "" );
-    continue_setSVG(svg_text,-DA_WIDTH/2, -DA_HEIGHT/2, DA_WIDTH, DA_HEIGHT);
+    continue_setSVG(svg_text,-DRAW_AREA_WIDTH, -DRAW_AREA_HEIGHT, DRAW_AREA_WIDTH * 2, DRAW_AREA_HEIGHT * 2);
   }
   function fileClear() {
     this.value = null;
