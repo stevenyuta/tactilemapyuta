@@ -25,9 +25,9 @@ function add_stair(){
 
   draw.mousedown(function(e){
     if(e.button===0){
-      cash_svg(); //svgデータのcash
       let real_stair = SVG.get('#' + symbol_id).removeClass('dummy');
       if(real_stair)real_stair.addClass('stair').addClass('symbol').addClass('SVG_Element').addClass('path');
+      cash_svg(); //svgデータのcash
     }
   })
 }
@@ -60,9 +60,9 @@ function add_escalator(){
   })
   draw.mousedown(function(e){
     if(e.button===0){
-      cash_svg(); //svgデータのcash
       let real_escalator = SVG.get('#' + symbol_id).removeClass('dummy');
       if(real_escalator)real_escalator.addClass('escalator').addClass('symbol').addClass('SVG_Element').addClass('path');
+      cash_svg(); //svgデータのcash
     }
   })
 }
@@ -93,9 +93,9 @@ function add_arrow(){
 
   draw.mousedown(function(e){
     if(e.button===0){
-      cash_svg(); //svgデータのcash
       let real_arrow = SVG.get('#' + symbol_id).removeClass('dummy');
       if(real_arrow)real_arrow.addClass('arrow').addClass('symbol').addClass('SVG_Element').addClass('path');
+      cash_svg(); //svgデータのcash
     }
   })
 }
@@ -163,31 +163,35 @@ function draw_circle(){
   let lx = 0 , ly = 0;
   let make_circle;
   draw.off('mousedown').on('mousedown', function(e){
-    cash_svg(); //svgデータのcash
-    sx = getmousepoint('normal',e).x , sy = getmousepoint('normal',e).y; //描画領域上でのマウスポイント計算
-    let back_num = getPathCirclePos();
-    make_circle = draw.circle(0).attr({
-      'cx' : sx,
-      'cy' : sy,
-      'fill' : 'none',
-      'stroke-width' : PATH_STROKE_WIDTH * $('#StrokeWidth_TextBox').val(),
-      'stroke' : '#000000'
-    })
-    make_circle.addClass('SVG_Element').addClass('circle').addClass('make_circle').back();
-    for(let i=0; i< back_num; i++){
-      make_circle.forward();
+    if(e.button===0){
+      sx = getmousepoint('normal',e).x , sy = getmousepoint('normal',e).y; //描画領域上でのマウスポイント計算
+      let back_num = getPathCirclePos();
+      make_circle = draw.circle(0).attr({
+        'cx' : sx,
+        'cy' : sy,
+        'fill' : 'none',
+        'stroke-width' : PATH_STROKE_WIDTH * $('#StrokeWidth_TextBox').val(),
+        'stroke' : '#000000'
+      })
+      make_circle.addClass('SVG_Element').addClass('circle').addClass('make_circle').back();
+      for(let i=0; i< back_num; i++){
+        make_circle.forward();
+      }
+
+      draw.off('mousemove').on('mousemove', function(e){
+        lx = getmousepoint('normal',e).x , ly = getmousepoint('normal',e).y //描画領域上でのマウスポイント計算
+        let radius = Math.sqrt((sx-lx)*(sx-lx) + (sy-ly)*(sy-ly));
+        make_circle.attr({ 'r' : radius });
+      })
+
+      draw.off('mouseup').on('mouseup', function(e){
+        if(e.button===0){
+          make_circle.removeClass('make_circle');
+          draw.off('mousemove');
+          cash_svg(); //svgデータのcash
+        }
+      })
     }
-
-    draw.off('mousemove').on('mousemove', function(e){
-      lx = getmousepoint('normal',e).x , ly = getmousepoint('normal',e).y //描画領域上でのマウスポイント計算
-      let radius = Math.sqrt((sx-lx)*(sx-lx) + (sy-ly)*(sy-ly));
-      make_circle.attr({ 'r' : radius });
-    })
-
-    draw.off('mouseup').on('mouseup', function(e){
-      make_circle.removeClass('make_circle');
-      draw.off('mousemove');
-    })
   })
 }
 
@@ -260,9 +264,9 @@ function add_text(){
           return;
         }
       }
-      if(real_Ink_text || real_Bra_text) cash_svg();
       if(real_Ink_text)real_Ink_text.removeClass('dummy').addClass('ink').addClass('SVG_Element');
       if(real_Bra_text)real_Bra_text.removeClass('dummy').addClass('braille').addClass('SVG_Element');
+      if(real_Ink_text || real_Bra_text) cash_svg();
 
 
       if($('#check_bra').prop('checked')){
@@ -278,23 +282,25 @@ function add_text(){
 
 /******************************************************
 /墨字の追加すべきレイヤー順番を示す番号を返す関数
+１、画像よりも上
+２、点字よりも下
+３、path、円記号、墨字よりも下
+の優先順位で配置する
 ******************************************************/
 function getInkPos(){
-  let most_back = 'NULL'; //一番低い位置にある要素のpositon番号を格納
-  draw.select(".path").each(function(i , children){
-    if(most_back > this.position() || most_back === 'NULL') most_back = this.position();
+  let position; //一番低い位置にある要素のpositon番号を格納
+  draw.select(".path , .circle , .braille").each(function(i , children){
+    if(position > this.position() || position === undefined) position = this.position();
   })
-  draw.select(".braille").each(function(i , children){
-    if(most_back > this.position() || most_back === 'NULL') most_back = this.position();
-  })
-  draw.select(".circle").each(function(i , children){
-    if(most_back > this.position() || most_back === 'NULL') most_back = this.position();
-  })
+  let lastImage = draw.select('.image').last();
+  if(lastImage){
+    if(position < lastImage.position() || position === undefined) position = Number(lastImage.position()) + 1;
+  }
 
-  if(most_back === 'NULL'){
+  if(position === undefined){
     return 0;
   }else{
-    return most_back;
+    return position;
   }
 }
 
@@ -357,18 +363,17 @@ path（線、触知記号）、または円はレイヤー順で
 の優先順位で配置する
 ******************************************************/
 function getPathCirclePos(){
-  let most_back = 'NULL'; //一番低い位置にある要素のpositon番号を格納
-  draw.select(".image").each(function(i , children){ //点字で一番下のレイヤーにあるものの順番を取得
-    if(most_back < this.position() || most_back === 'NULL') most_back = this.position();
-    if(most_back===0) most_back++;
-  })
+  let position; //一番低い位置にある要素のpositon番号を格納
   draw.select(".braille").each(function(i , children){ //点字で一番下のレイヤーにあるものの順番を取得
-    if(most_back > this.position() || most_back === 'NULL') most_back = this.position();
+    if(position > this.position() || position === undefined) position = this.position();
   })
-
-  if(most_back === 'NULL'){
+  let lastImage = draw.select('.image').last();
+  if(lastImage){
+    if(position < lastImage.position() || position === undefined) position = Number(lastImage.position()) + 1;
+  }
+  if(position === undefined){
     return 0;
   }else{
-    return most_back;
+    return position;
   }
 }

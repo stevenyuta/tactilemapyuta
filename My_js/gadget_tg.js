@@ -11,6 +11,9 @@ function set_contextMenu(flag){
         case 'undo':
           undo();
           break;
+        case 'redo':
+          redo();
+          break;
         case 'copy':
           copy_select();
           break;
@@ -18,7 +21,7 @@ function set_contextMenu(flag){
           paste_select();
           break;
         case 'delete':
-          if($('input[name="Stamp"]:checked').val()==="Edit" || $('input[name="Stamp"]:checked').val()==="Moveimage")delete_select();
+          if($('input[name="Stamp"]:checked').val()==="Edit" || $('input[name="Stamp"]:checked').val()==="EditImage")delete_select();
           if($('input[name="Stamp"]:checked').val()==="EditPath")delete_editpath();
           break;
         case 'draw_end':
@@ -36,12 +39,23 @@ function set_contextMenu(flag){
     items: {
       "undo":{
         name: "元に戻す",
-        icon: "undo",
+        icon: "fa-undo",
         disabled: function(){
-          if(cash_array.length===0){
-            return true;
-          }else{
+          if(cash_array.length > cash_pointer + 1){
             return false;
+          }else{
+            return true;
+          }
+        }
+      },
+      "redo":{
+        name: "やり直す",
+        icon: "fa-repeat",
+        disabled: function(){
+          if(cash_pointer > 0){
+            return false;
+          }else{
+            return true;
           }
         }
       },
@@ -69,7 +83,7 @@ function set_contextMenu(flag){
       },
       "delete":{
         name: '削除',
-        icon: 'delete',
+        icon: 'fa-times',
         disabled: function(){
           if(!(draw.select('.edit_select').first() || draw.select('.editing_target').first())){
             return true;
@@ -81,7 +95,7 @@ function set_contextMenu(flag){
       "sep1": "---------",
       "draw_end":{
         name: '線の描画終了',
-        icon: '',
+        icon: 'fa-pencil',
         disabled: function(){
           if(draw.select('.drawing_path').first()){
             return false;
@@ -92,7 +106,7 @@ function set_contextMenu(flag){
       },
       "node_connect":{
         name: '端点のノードを結合',
-        icon: '',
+        icon: 'fa-compress',
         disabled: function(){
           let connectCircle = get_node_connectCircle();
           if(connectCircle.circle1 && connectCircle.circle2){
@@ -104,7 +118,7 @@ function set_contextMenu(flag){
       },
       "verhor":{
         name: '線の垂直・水平化',
-        icon: '',
+        icon: 'fa-wrench',
         disabled: function(){
           let editing_target_flag = true;
           draw.select('.editing_target').each(function(i,children){
@@ -553,4 +567,11 @@ function gadget_set(e){
       $('#resizeBraille_TextBox').val(ui.value);
     }
   });
+  //墨字・点字のテキストボックスをフォーカスした時には文字入力モードへと自動的に変更する
+  $('#InkChar').off('focusin').on('focusin' ,function() {
+    $('input[name="Stamp"][value="Text"]').prop('checked', true).trigger('change');
+  })
+  $('#Braille').off('focusin').on('focusin' ,function() {
+    $('input[name="Stamp"][value="Text"]').prop('checked', true).trigger('change');
+  })
 }

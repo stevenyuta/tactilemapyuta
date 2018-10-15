@@ -126,8 +126,7 @@ function getmousepoint(mode,mouseevent,param1,param2,param3,param4){
 //layerを操作する関数
 ******************************************************/
 function layer_change(e){
-   if(draw.select('.edit_select').first()) cash_svg(); //svgデータのcash
-   switch(this.id){
+ switch(this.id){
      case 'front_button': // ← key
        draw.select('.edit_select').each(function(i , children){
          this.front();
@@ -154,6 +153,10 @@ function layer_change(e){
   SVG.get('gridline_group').front();
   SVG.get('handle_group').front();
   draw.select('.image').back();
+  draw.select('.image').each(function(i , children){
+    this.back();
+  })
+  if(draw.select('.edit_select').first()) cash_svg();
 }
 
 
@@ -176,7 +179,6 @@ function layer_change(e){
           var dpoint = this.clear().array().settle() //pathのdpoint配列を取得
           for(var j=0;j<dpoint.length;j++){
             if(dpoint[j][0]==="Z"){
-              cash_svg(); //svgデータのcash
               switch(button_id){
                 case 'fillnone_button': // ← key
                   this.fill('none')
@@ -204,6 +206,7 @@ function layer_change(e){
 
                 default:
               }
+              cash_svg();
             }
           }
         }
@@ -237,9 +240,6 @@ function layer_change(e){
   ***********************************/
   function select_rect_delete(){
     draw.select('.select_rect').each(function(i,children){
-        this.remove();
-    })
-    draw.select('.image_FrameRect').each(function(i,children){
         this.remove();
     })
   }

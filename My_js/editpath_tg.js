@@ -15,12 +15,12 @@ function editpath(){
   }
   editpath_mousemove('connect');
   editpath_hover(true);
-  editpath_keydown();
-  editpath_keyup();
   $('#node_connect').off('click').click(node_connect_function);
 
-  $(document).off('mouseup').on('mouseup',function(event){ //mouseup終了時の処理
+  $(document).off('mouseup').on('mouseup',function(){ //mouseup終了時の処理
     while(arrIntervalCnt.length !== 0) {  clearInterval(arrIntervalCnt.shift())  }
+    if(now_movingFlag) cash_svg();
+    now_movingFlag = false;
     editpath_hover(true);
   })
   set_contextMenu();
@@ -109,86 +109,6 @@ function editpath_mousedown(){
   edit_circle_EventSet();
   editpath_hover(true); //hoverイベントの再更新
   this.remove(); //クリックしたpath要素は削除
-}
-
-/********************************
-//キーを押したときに起動する関数
-*********************************/
-function editpath_keydown(){
-  $(document).keydown(function(e){
-    if(e.ctrlKey){ //ctrlキー押下時
-       if(!input_key_buffer[e.keyCode]){
-        editpath_mousemove('90degree', mx, my);
-        input_key_buffer[e.keyCode] = true;
-      }
-    }
-    switch(e.keyCode){
-      case 37: // ← //カーソルキーによる微小移動処理
-      case 38: // ↑
-      case 39: // →
-      case 40: // ↓
-        e.preventDefault();
-        draw.select('.editing_target').each(function(i, children){
-          if(this.hasClass('edit_circle')){
-            let orig_cx = this.attr('cx') ,orig_cy =  this.attr('cy');
-            let cx = 0 , cy = 0;
-            if(e.keyCode===37) cx = orig_cx - CURSOR_KEY_MOVE , cy = orig_cy;
-            if(e.keyCode===38) cy = orig_cy - CURSOR_KEY_MOVE , cx = orig_cx;
-            if(e.keyCode===39) cx = orig_cx + CURSOR_KEY_MOVE , cy = orig_cy;
-            if(e.keyCode===40) cy = orig_cy + CURSOR_KEY_MOVE , cx = orig_cx;
-            this.attr({'cx':cx}) , this.attr({'cy':cy}); //円の位置を格納
-            let nears = getSimultaneouslyEdit_element(this);
-            if(nears.afterPath){
-              let dpoint = nears.afterPath.clear().array().settle(); //pathのdpoint配列を取得
-              nears.afterPath.attr({'d':''}).M({x: cx, y: cy}).L({x: dpoint[1][1], y: dpoint[1][2]});
-            }
-            if(nears.beforePath){
-              let dpoint = nears.beforePath.clear().array().settle() //pathのdpoint配列を取得
-              nears.beforePath.attr({'d':''}).M({x: dpoint[0][1], y: dpoint[0][2]}).L({x: cx, y: cy});
-            }
-          }else{
-            let dpoint = this.clear().array().settle(); //pathのdpoint配列を取得
-            let x1 = 0 , y1 = 0 , x2 = 0 , y2 = 0;
-            if(e.keyCode===37) x1 = dpoint[0][1] - CURSOR_KEY_MOVE , y1 = dpoint[0][2] , x2 = dpoint[1][1] - CURSOR_KEY_MOVE , y2 = dpoint[1][2];
-            if(e.keyCode===38) x1 = dpoint[0][1] , y1 = dpoint[0][2] - CURSOR_KEY_MOVE , x2 = dpoint[1][1] , y2 = dpoint[1][2] - CURSOR_KEY_MOVE;
-            if(e.keyCode===39) x1 = dpoint[0][1] + CURSOR_KEY_MOVE , y1 = dpoint[0][2] , x2 = dpoint[1][1] + CURSOR_KEY_MOVE , y2 = dpoint[1][2];
-            if(e.keyCode===40) x1 = dpoint[0][1] , y1 = dpoint[0][2] + CURSOR_KEY_MOVE , x2 = dpoint[1][1] , y2 = dpoint[1][2] + CURSOR_KEY_MOVE;
-            this.attr({'d':''}).M({x: x1, y: y1}).L({x: x2, y: y2});
-            let nears = getSimultaneouslyEdit_element(this);
-            if(nears.beforeCircle) nears.beforeCircle.attr({'cx':x1,'cy':y1});
-            if(nears.afterCircle) nears.afterCircle.attr({'cx':x2,'cy':y2});
-            if(nears.beforePath){
-              let dpoint = nears.beforePath.clear().array().settle(); //pathのdpoint配列を取得
-              nears.beforePath.attr({'d':''}).M({x: dpoint[0][1], y: dpoint[0][2]}).L({x: x1, y: y1});
-            }
-            if(nears.afterPath){
-              let dpoint = nears.afterPath.clear().array().settle() //pathのdpoint配列を取得
-              nears.afterPath.attr({'d':''}).M({x: x2, y: y2}).L({x: dpoint[1][1], y: dpoint[1][2]});
-            }
-          }
-        })
-        break;
-      case 46: // delete key
-        delete_editpath();
-        break;
-      case 16: //shift key
-        input_key_buffer[e.keyCode] = true;
-        break;
-    }
-  })
-}
-
-/*********************************************
-//キーを離したときに起動する関数
-**********************************************/
-function editpath_keyup(){
-  $(document).off('keyup').keyup(function(e){
-    input_key_buffer[e.keyCode] = false;
-    if(!e.ctrlKey){ //ctrlキー押下時
-      editpath_mousemove('connect');
-      if(draw.select('.editing_path').first()) editpath_mousemove('normal');
-    }
-  })
 }
 
 //くっつき状態のpathをバラバラ状態にする関数
@@ -385,9 +305,9 @@ function edit_circle_EventSet(){
 //fragmentedPath、edit_circleの移動関数
 *****************************************/
 function move_editing(){
-  cash_svg(); //svgデータのcash
   let init_x = mx, init_y = my; //クリックを行った点
   if(input_key_buffer[17]) editpath_mousemove('90degree',init_x,init_y);
+  now_movingFlag = true;
   arrIntervalCnt.push($interval_move = setInterval(function(e){
         draw.select('.editing_target').each(function(i,children){
           if(this.hasClass('edit_circle')){
@@ -510,7 +430,6 @@ function node_connect_function(){
   let connectCircle = get_node_connectCircle();
   let circle1 = connectCircle.circle1 , circle2 = connectCircle.circle2;
   if(circle1 && circle2){
-    cash_svg(); //svgデータのcash
     let fragmented_PathGroup1 = SVG.get('#fragmented_PathGroup_' + circle1.parent().attr('fragmented_Group_Number'));
     let fragmented_PathGroup2 = SVG.get('#fragmented_PathGroup_' + circle2.parent().attr('fragmented_Group_Number'));
     let fragmented_CircleGroup1 = circle1.parent();
@@ -602,9 +521,10 @@ function node_connect_function(){
     update_editElement();
     edit_circle_EventSet();
     fragmentedPath_EventSet();
-    editpath_hover(true); //hoverイベントの再更新
     get_node_connectCircle();
     reset_editing_target();
+    editpath_hover(true); //hoverイベントの再更新
+    cash_svg();
   }
 }
 
@@ -705,7 +625,6 @@ function getSimultaneouslyEdit_element(element , dbclick){
 //垂直化
 *****************************************/
 function verhor_fragmentedPath(){
-  cash_svg(); //svgデータのcash
   draw.select('.editing_target').each(function(i,children){
     if(!this.hasClass('edit_circle')){
       var dpoint = this.clear().array().settle();
@@ -732,6 +651,7 @@ function verhor_fragmentedPath(){
       update_ghostPath();
     }
   })
+  if(draw.select('.editing_target:not(.edit_circle)').first())cash_svg();
   reset_editing_target();
 }
 

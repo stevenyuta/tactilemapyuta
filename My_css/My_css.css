@@ -137,14 +137,14 @@ input[type=checkbox]:checked + .sample_label:before {
 }
 
 /*
- undo button
+ undo redo button
 */
 #toolbar1 button{
-  width:120px;
+  width:50px;
   height:40px;
   font-size: 100%;
   background-color: #E2EDF9;
-  margin-left : 30px;
+  margin-left : 15px;
   border: 2px solid #FFA500;/* ボックスの境界線を実線で指定する */
   border-radius : 20px;
   cursor : pointer;

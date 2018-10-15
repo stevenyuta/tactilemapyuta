@@ -410,7 +410,6 @@ function reset_dcheck_element(){
 ***************************************/
 
 function fig_trans(){
-  cash_svg(); //svgデータのcash
   var current_mode =  $('input[name="Stamp"]:checked');
   $(current_mode).prop('checked', true).trigger('change'); //モードを設定
 
@@ -539,8 +538,9 @@ function fig_trans(){
   })
 
 
-  fig_straight()
-  fig_connect()
+  fig_straight();
+  fig_connect();
+  cash_svg();
 }
 
 function fig_straight(){

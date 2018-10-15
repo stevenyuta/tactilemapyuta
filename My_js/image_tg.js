@@ -62,45 +62,16 @@ function fileapi_image(){
 //画像をインポートする関数
 ******************************************************/
 function import_image(image_url){
-  cash_svg();
   var image = draw.image(image_url).loaded(function(loader) {
     this.size(loader.width, loader.height)
     this.addClass('image');
-    this.back()
-  })
-}
-
-/******************************************************
-//画像のリサイズ用関数
-******************************************************/
-function edit_image(){
-  draw.select('.image').off('mouseover').mouseover(function() {
-    this.attr({'cursor' : 'pointer'});
-    draw.rect(this.width() , this.height()).attr({
-      'fill' : 'none',
-      'stroke' : '#f00',
-      'stroke-width' : SELECT_RECT_STROKEWIDTH * 1.5,
-      'stroke-dasharray': SELECT_RECT_STROKEDOTT, //点線に
-      'transform' : this.transform('matrix')
-    }).addClass('image_FrameRect');
-    this.off('mousedown').mousedown(function(){
-      draw.select('.edit_select').removeClass('edit_select');
-      this.addClass('edit_select');
-      edit_keydown();
-      edit_keyup();
-      upload_handle();
+    draw.select('.image').back();
+    draw.select('.image').each(function(i , children){
+      this.back();
     })
-  })
-  draw.select('.image').off('mouseout').mouseout(function() {
-    this.attr({'cursor' : 'default'});
-    this.off('mousedown');
-    select_rect_delete();
-  })
-  $(document).on('mouseup' , function() {
-    if(event.button===0){
-      $(document).off("mousemove");
-      upload_handle();
-    }
+    cash_svg();
+    let current_mode =  $('input[name="Stamp"]:checked');
+    $(current_mode).prop('checked', true).trigger('change'); //モードを設定
   })
 }
 
@@ -128,7 +99,9 @@ function trim_start() {
   })
   draw.select('.image').mouseout(function() {
     this.attr({'cursor' : 'default'});
-    select_rect_delete();
+    draw.select('.image_FrameRect').each(function(i,children){
+      this.remove();
+    })
     this.off('click');
   })
 
@@ -146,7 +119,6 @@ function trim_start() {
     });
     draw.off('mouseup').on('mouseup', function(event){  //mouseup時：終点指定
       if(event.button===0){
-        cash_svg();
         select_rect.draw(event);
         var rx = Number(select_rect.attr('x')) , ry = Number(select_rect.attr('y'));
         var rWidth = Number(select_rect.attr('width')) , rHeight = Number(select_rect.attr('height'));
@@ -160,6 +132,9 @@ function trim_start() {
   }
 
   function trim_base64(target_image , xOffset , yOffset , width , height , matrix){
+    draw.select('.image_FrameRect').each(function(i,children){
+      this.remove();
+    })
     if(target_image.attr('href')){
       var base64image = target_image.attr('href');
     }else{
@@ -184,6 +159,7 @@ function trim_start() {
         'transform' : ''
       })
       target_image.translate(-xOffset , -yOffset);
+      cash_svg();
     };
     image.src = base64image;
   }

@@ -2,28 +2,44 @@
 //要素の移動を行う機能
 ******************************************************/
 function edit(){
-  var editselect_array_tmp = new Array();
+  let editselect_array_tmp = new Array();
   let gX , gY , gWidth , gHeight;
   let change_gX , change_gY , change_gWidth , change_gHeight;
-  for(var i=0; i<editselect_array.length; i++){
-    var select_element = SVG.get("#" + editselect_array[i]);
+  let current_mode = $('input[name="Stamp"]:checked').val();
+  for(let i=0; i<editselect_array.length; i++){
+    let select_element = SVG.get("#" + editselect_array[i]);
     if(select_element){
-      select_element.attr({'stroke': PATH_SELECT_COLOR }).addClass('edit_select');
-      editselect_array_tmp.push(select_element.attr('id'));
-      if(select_element.hasClass('path')){
-        if(select_element.clear().array().settle().length < 2) select_element.remove();
+      if(current_mode === 'Edit'){
+        if(!select_element.hasClass('image')){
+          select_element.attr({'stroke': PATH_SELECT_COLOR }).addClass('edit_select');
+          editselect_array_tmp.push(select_element.attr('id'));
+          if(select_element.hasClass('path')){
+            if(select_element.clear().array().settle().length < 2) select_element.remove();
+          }
+        }
+      }else{
+        if(select_element.hasClass('image')){
+          draw.rect(select_element.width() , select_element.height()).attr({
+            'fill' : 'none',
+            'stroke' : '#f00',
+            'stroke-width' : SELECT_RECT_STROKEWIDTH * 1.5,
+            'stroke-dasharray': SELECT_RECT_STROKEDOTT, //点線に
+            'transform' : select_element.transform('matrix')
+          }).addClass('image_FrameRect');
+          editselect_array_tmp.push(select_element.attr('id'));
+        }
       }
     }
   }
   editselect_array = editselect_array_tmp;
   edit_mousedown_up();
   edit_hover();
-  edit_keydown();
-  edit_keyup();
   upload_handle();
 
   $(document).on('mouseup' , function() {
     if(event.button===0){
+      if(now_movingFlag) cash_svg();
+      now_movingFlag = false;
       $(document).off("mousemove");
       upload_handle();
     }
@@ -38,7 +54,7 @@ function edit_mousedown_up(mode){
   draw.off('mousedown').off('mouseup');
   if(mode!=="off"){
     if(draw.select('.edit_select').first()===undefined){ //選択状態の要素が何もない場合
-      var select_rect = draw.rect().addClass('select_rect');
+      let select_rect = draw.rect().addClass('select_rect');
       select_rect.attr({  //範囲指定用四角形
         'fill' : 'none',
         'stroke': SELECT_RECT_COLOR,
@@ -48,7 +64,7 @@ function edit_mousedown_up(mode){
       draw.on('mousedown', function(event){ //mousedown時：始点指定
         if(event.button===0){
           select_rect.draw(event);
-          edit_hover("off")
+          edit_hover("off");
         }
       });
       draw.on('mouseup', function(event){  //mouseup時：終点指定
@@ -56,8 +72,10 @@ function edit_mousedown_up(mode){
           select_rect.draw(event);
           var sr_min_x =  Number(select_rect.attr('x')) , sr_min_y =  Number(select_rect.attr('y'));
           var sr_max_x =  sr_min_x + Number(select_rect.attr('width')) , sr_max_y =  sr_min_y + Number(select_rect.attr('height'));
+          let current_mode = $('input[name="Stamp"]:checked').val();
+          let selector = ( current_mode == "Edit" ) ? '.SVG_Element' : '.image';
 
-          draw.select('.SVG_Element').each(function(i, children) {
+          draw.select(selector).each(function(i, children) {
             if(this.visible()){
               var InArea = true;  //範囲内に入っているかの判定
               var bbox = get_bbox(this);
@@ -69,17 +87,17 @@ function edit_mousedown_up(mode){
               if(pmax_x < sr_min_x || pmax_x > sr_max_x) InArea = false;
               if(pmax_y < sr_min_y || pmax_y > sr_max_y) InArea = false;
               if(InArea){
-                this.attr({'stroke': PATH_SELECT_COLOR }).addClass('edit_select')
+                if(!this.hasClass('image')) this.attr({'stroke': PATH_SELECT_COLOR });
+                this.addClass('edit_select');
                 editselect_array.push(this.attr('id'));
               }
             }
           })
-          upload_handle();
           set_textsize();
           set_strokewidth();
-          select_rect.remove();
           edit_hover();
           edit_mousedown_up();
+          select_rect.remove();
         }
       });
     }else{ //選択状態の要素が１つ以上ある場合
@@ -98,16 +116,32 @@ function edit_mousedown_up(mode){
 //マウスをhoverしたときに起動する関数
 ******************************************************/
 function edit_hover(mode){
-  draw.select('.SVG_Element').off('mouseover').off('mouseout');
+  let current_mode = $('input[name="Stamp"]:checked').val();
+  let selector = ( current_mode == "Edit" ) ? '.SVG_Element' : '.image';
+  draw.select(selector).off('mouseover').off('mouseout');
   SVG.get('handle_group').off('mouseover').off('mouseout');
   if(mode!=="off"){
-    draw.select('.SVG_Element').mouseover(function() {
+    draw.select(selector).mouseover(function() {
       edit_mousedown_up("off");
       if(!this.hasClass('edit_select')){
-        this.attr({ stroke: PATH_SELECT_COLOR});
+        if(this.hasClass('image')){
+          draw.rect(this.width() , this.height()).attr({
+            'fill' : 'none',
+            'stroke' : '#f00',
+            'stroke-width' : SELECT_RECT_STROKEWIDTH * 1.5,
+            'stroke-dasharray': SELECT_RECT_STROKEDOTT, //点線に
+            'transform' : this.transform('matrix')
+          }).addClass('image_FrameRect');
+        }else{
+          this.attr({ stroke: PATH_SELECT_COLOR});
+        }
         this.off('mousedown').mousedown(function(){
+          draw.select('.image_FrameRect').each(function(i,children){
+            this.remove();
+          })
           if(!input_key_buffer[16]) edit_clear();
-          this.attr({ stroke: PATH_SELECT_COLOR}).addClass('edit_select');
+          //this.attr({ stroke: PATH_SELECT_COLOR})
+          this.addClass('edit_select');
           editselect_array.push(this.attr('id'));
           upload_handle();
           set_textsize();
@@ -121,10 +155,14 @@ function edit_hover(mode){
     SVG.get('handle_group').mouseover(function() {
       edit_mousedown_up("off");
     })
-    draw.select('.SVG_Element').mouseout(function() {
+    draw.select(selector).mouseout(function() {
       edit_mousedown_up();
       if(!this.hasClass('edit_select')){
-        if(this.hasClass('ink')){  //text要素の場合
+        if(this.hasClass('image')){
+          draw.select('.image_FrameRect').each(function(i,children){
+            this.remove();
+          })
+        }else if(this.hasClass('ink')){  //text要素の場合
           this.attr({'stroke' : 'none'});
         }else if(this.hasClass('braille')){  //text要素の場合
           this.attr({'stroke' : '#000000'});
@@ -141,95 +179,11 @@ function edit_hover(mode){
   }
 }
 
-/**************************************
-//キーを押したときにに起動する関数
-***************************************/
-function edit_keydown(){
-  $(document).off('keydown').on('keydown',function(e){
-    if($(':focus').length === 0){
-      if(event.ctrlKey){ //ctrl + z でのundoイベント
-        if(e.keyCode === 90) undo();
-      }
-      switch(e.keyCode){
-        case 37: // ← key
-        case 38: // ↑ key
-        case 39: // → key
-        case 40: // ↓ key
-          e.preventDefault();
-          draw.select('.edit_select').each(function(i, children){
-            if(this.hasClass('ink') || this.hasClass('braille') || this.hasClass('image')){  //text、image要素の場合
-              var px = Number(this.attr('x')),py = Number(this.attr('y')); //テキストの座標位置
-              if(e.keyCode===37)this.attr('x',px-CURSOR_KEY_MOVE);
-              if(e.keyCode===38)this.attr('y',py-CURSOR_KEY_MOVE);
-              if(e.keyCode===39)this.attr('x',px+CURSOR_KEY_MOVE);
-              if(e.keyCode===40)this.attr('y',py+CURSOR_KEY_MOVE);
-            }else{
-              if(e.keyCode===37)this.dx(-CURSOR_KEY_MOVE);
-              if(e.keyCode===38)this.dy(-CURSOR_KEY_MOVE);
-              if(e.keyCode===39)this.dx(CURSOR_KEY_MOVE);
-              if(e.keyCode===40)this.dy(CURSOR_KEY_MOVE);
-            }
-          })
-          SVG.get('handle_group').each(function(i,children){
-            if(e.keyCode===37)this.dx(-CURSOR_KEY_MOVE);
-            if(e.keyCode===38)this.dy(-CURSOR_KEY_MOVE);
-            if(e.keyCode===39)this.dx(CURSOR_KEY_MOVE);
-            if(e.keyCode===40)this.dy(CURSOR_KEY_MOVE);
-          })
-          break;
-        case 46: // delete key
-          delete_select();
-          break;
-
-        case 16: //shift key
-          input_key_buffer[e.keyCode] = true
-          break;
-
-        case 17: //ctrl key
-          input_key_buffer[e.keyCode] = true
-          break;
-
-        default:
-      }
-
-      if(event.ctrlKey){
-        if(e.keyCode === 67){ //Cキー
-          copy_select();
-        }else if(e.keyCode === 86){ //Vキー
-          paste_select();
-        }
-      }
-    }else{
-      if(e.keyCode === 13){
-        if($('#rb_width').is(':focus')) update_widthBox();
-        if($('#rb_height').is(':focus')) update_heightBox();
-      }
-    }
-  })
-}
-
-/**************************************
-//キーを離したときに起動する関数
-***************************************/
-function edit_keyup(){
-  $(document).keyup(function(e){
-    switch(e.keyCode){
-      case 16: //shift key
-        input_key_buffer[e.keyCode] = false;
-        break;
-      case 17: //ctrl key
-        input_key_buffer[e.keyCode] = false;
-        break;
-      default:
-    }
-  })
-}
-
 /******************************************************
 //edit_selectを解除する関数
 ******************************************************/
 function edit_clear(clear_flag){
-  SVG.get('handle_group').hide()
+  SVG.get('handle_group').hide();
   draw.select('.edit_select').each(function(i, children) {
     if(this.hasClass('ink')){  //text要素の場合
       this.attr({'stroke': 'none'});
@@ -360,7 +314,7 @@ function upload_handle(){
       if(e.button===0){
         $(document).off('mousemove').mousemove(drag);
         anchorX = getmousepoint('normal',e).x , anchorY = getmousepoint('normal',e).y;
-        cash_svg(); //svgデータのcash
+        now_movingFlag = true;
       }
     });
     function drag(e) {
@@ -384,9 +338,8 @@ function upload_handle(){
     t_resize.off('mousedown').mousedown(function(e){
       if(e.button===0){
         $(document).off('mousemove').mousemove(top);
-        anchorX = getmousepoint('normal',e).x;
-        anchorY = getmousepoint('normal',e).y;
-        cash_svg(); //svgデータのcash
+        anchorX = getmousepoint('normal',e).x , anchorY = getmousepoint('normal',e).y;
+        now_movingFlag = true;
       }
     });
     function top(e) {
@@ -410,7 +363,7 @@ function upload_handle(){
       if(e.button===0){
         $(document).off('mousemove').mousemove(left);
         anchorX = getmousepoint('normal',e).x , anchorY = getmousepoint('normal',e).y;
-        cash_svg(); //svgデータのcash
+        now_movingFlag = true;
       }
     });
     function left(e) {
@@ -435,7 +388,7 @@ function upload_handle(){
       if(e.button===0){
         $(document).off('mousemove').mousemove(bottom);
         anchorX = getmousepoint('normal',e).x , anchorY = getmousepoint('normal',e).y;
-        cash_svg(); //svgデータのcash
+        now_movingFlag = true;
       }
     });
     function bottom(e) {
@@ -459,7 +412,7 @@ function upload_handle(){
       if(e.button===0){
         $(document).off('mousemove').mousemove(right);
         anchorX = getmousepoint('normal',e).x , anchorY = getmousepoint('normal',e).y;
-        cash_svg(); //svgデータのcash
+        now_movingFlag = true;
       }
     });
     function right(e) {
@@ -484,7 +437,7 @@ function upload_handle(){
       if(e.button===0){
         $(document).off('mousemove').mousemove(left_top);
         anchorX = getmousepoint('normal',e).x , anchorY = getmousepoint('normal',e).y;
-        cash_svg(); //svgデータのcash
+        now_movingFlag = true;
       }
     });
     function left_top(e) {
@@ -496,8 +449,8 @@ function upload_handle(){
       dTx = getmousepoint('normal',e).x - anchorX; //描画領域上でのマウスポイント計算
       dTy = getmousepoint('normal',e).y - anchorY;
 
-      //if(gWidth + dTx <= 0) dTx = -gWidth + 10; //10という数字に大きな意味はなし
-      //if(gHeight <= dTy) dTy = gHeight - 10; //10という数字に大きな意味はなし
+      if(gWidth <= dTx) dTx = gWidth - 10; //10という数字に大きな意味はなし
+      if(gHeight <= dTy) dTy = gHeight - 10; //10という数字に大きな意味はなし
 
       if(Math.abs(dTx) > Math.abs(dTy)){
         dTx = dTy*gWidth/gHeight;
@@ -519,7 +472,7 @@ function upload_handle(){
       if(e.button===0){
         $(document).off('mousemove').mousemove(right_top);
         anchorX = getmousepoint('normal',e).x , anchorY = getmousepoint('normal',e).y;
-        cash_svg(); //svgデータのcash
+        now_movingFlag = true;
       }
     });
     function right_top(e) {
@@ -530,14 +483,14 @@ function upload_handle(){
       dTx = getmousepoint('normal',e).x - anchorX; //描画領域上でのマウスポイント計算
       dTy = getmousepoint('normal',e).y - anchorY;
 
+      if(gWidth + dTx <= 0) dTx = -gWidth + 10; //10という数字に大きな意味はなし
+      if(gHeight <= dTy) dTy = gHeight - 10; //10という数字に大きな意味はなし
+
       if(Math.abs(dTx) > Math.abs(dTy)){
         dTx = -dTy*gWidth/gHeight;
       }else{
         dTy = -dTx*gHeight/gWidth;
       }
-
-      if(gWidth + dTx <= 0) dTx = -gWidth + 10; //10という数字に大きな意味はなし
-      if(gHeight <= dTy) dTy = gHeight - 10; //10という数字に大きな意味はなし
 
       //変換後の3座標の入力
       point2[0]=[gX , gX + gWidth + dTx, gX];
@@ -553,7 +506,7 @@ function upload_handle(){
       if(e.button===0){
         $(document).off('mousemove').mousemove(left_bottom);
         anchorX = getmousepoint('normal',e).x , anchorY = getmousepoint('normal',e).y;
-        cash_svg(); //svgデータのcash
+        now_movingFlag = true;
       }
     });
     function left_bottom(e) {
@@ -563,14 +516,15 @@ function upload_handle(){
 
       dTx = getmousepoint('normal',e).x - anchorX; //描画領域上でのマウスポイント計算
       dTy = getmousepoint('normal',e).y - anchorY;
+
+      if(gWidth <= dTx) dTx = gWidth - 10; //10という数字に大きな意味はなし
+      if(gHeight + dTy <= 0) dTy = -gHeight + 10; //10という数字に大きな意味はなし
+
       if(Math.abs(dTx) > Math.abs(dTy)){
         dTx = -dTy*gWidth/gHeight;
       }else{
         dTy = -dTx*gHeight/gWidth;
       }
-
-      if(gWidth <= dTx) dTx = gWidth - 10; //10という数字に大きな意味はなし
-      if(gHeight + dTy <= 0) dTy = -gHeight + 10; //10という数字に大きな意味はなし
 
       //変換後の3座標の入力
       point2[0]=[gX + dTx , gX + gWidth, gX + dTx];
@@ -586,7 +540,7 @@ function upload_handle(){
       if(e.button===0){
         $(document).off('mousemove').mousemove(right_bottom);
         anchorX = getmousepoint('normal',e).x , anchorY = getmousepoint('normal',e).y;
-        cash_svg(); //svgデータのcash
+        now_movingFlag = true;
       }
     });
     function right_bottom(e) {
@@ -621,7 +575,7 @@ function upload_handle(){
         $(document).off('mousemove').mousemove(rot);
         cx = Number($('#box_resize').attr("x")) + Number($('#box_resize').attr("width"))/2;
         cy = Number($('#box_resize').attr("y")) + Number($('#box_resize').attr("height"))/2;
-        cash_svg(); //svgデータのcash
+        now_movingFlag = true;
       }
     });
     function rot(e) {
@@ -894,10 +848,7 @@ function copy_select(){
 }
 
 function paste_select(){
-  if(copy_elements.length > 0){
-    cash_svg();
-    edit_clear();
-  }
+  if(copy_elements.length > 0) edit_clear();
   for(let i=0;i < copy_elements.length; i++){
     let clone = copy_elements[i].clone().addClass('edit_select');
     clone.dmove(100);
@@ -906,21 +857,26 @@ function paste_select(){
       clone.off('mousedown');
     }
   }
-  copy_select();
-  if($('input[name="Stamp"]:checked').val()==='Edit'){
-    upload_handle();
-    set_textsize();
-    set_strokewidth();
-  }else{
-    draw.select('.edit_select').removeClass('edit_select');
+  if(copy_elements.length > 0){
+    copy_select();
+    if($('input[name="Stamp"]:checked').val()==='Edit'){
+      upload_handle();
+      set_textsize();
+      set_strokewidth();
+    }else{
+      draw.select('.edit_select').removeClass('edit_select');
+    }
+    cash_svg();
   }
 }
 
 function delete_select(){
-  if(draw.select('.edit_select').first()) cash_svg(); //svgデータのcash
+  let delete_flag = false;
   draw.select('.edit_select').each(function(i, children){
     this.remove();
+    delete_flag = true;
   })
+  if(delete_flag) cash_svg();
   edit_clear();
   edit_hover();
   edit_mousedown_up();

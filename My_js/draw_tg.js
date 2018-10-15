@@ -7,8 +7,6 @@ function draw_line(){
   let drawing_path;
   draw_mousemove();
   draw_mousedown();
-  draw_keydown();
-  draw_keyup();
   if(draw.select('.drawing_path').first()){
     if(draw.select('.drawing_path').first().id() === now_drawing_path_ID){
       drawing_path = draw.select('.drawing_path').first();
@@ -25,25 +23,16 @@ function draw_line(){
   //マウスを動かしたときに起動する関数
   ***********************************/
   function draw_mousemove(){
-    draw.off('mousemove');
-    draw.mousemove(function(e){
-      /******************************
-      //modeごとのマウス座標の取得
-      *******************************/
-      if(input_key_buffer[17]){
-        mx = getmousepoint('15degree',e,current_x,current_y).x; //描画領域上でのマウスポイント計算
-        my = getmousepoint('15degree',e,current_x,current_y).y;
+    draw.off('mousemove').mousemove(function(e){
+      if(input_key_buffer[17]){ //press ctrl key
+        mx = getmousepoint('15degree',e,current_x,current_y).x , my = getmousepoint('15degree',e,current_x,current_y).y;
       }else{
-        mx = getmousepoint('connect',e).x; //描画領域上でのマウスポイント計算
-        my = getmousepoint('connect',e).y;
+        mx = getmousepoint('connect',e).x , my = getmousepoint('connect',e).y;
       }
-      /************************
-      //ダミーの線の表示
-      ************************/
       dummy_delete();
       var back_num = getPathCirclePos();
-      if(SVG.select('.drawing_path').first()){//始点クリックでない場合：drawing_pathクラスをもつ要素がある
-        var dummy_path = draw.path().M({x: current_x, y: current_y}).L({x: mx, y: my});
+      if(SVG.select('.drawing_path').first()){
+        let dummy_path = draw.path().M({x: current_x, y: current_y}).L({x: mx, y: my});
         dummy_path.attr({
           'fill': 'none',
           'stroke' : PATH_STROKE_COLOR,
@@ -73,7 +62,6 @@ function draw_line(){
         if($('#StrokeWidth_TextBox').val()==='' || $('#StrokeWidth_TextBox').val()==='0') $('#resetStrokeWidth_Button').click() //StrokeWidth_TextBoxの値が何もない場合はリセットボタンを発火させる
         dummy_delete(); //dummy線を全削除
         var back_num = getPathCirclePos();
-        cash_svg(); //svgデータのcash
         if(!draw.select('.drawing_path').first()){  //書き始めの場合：drawing_pathクラスをもつ要素がない
           drawing_path = draw.path().M({x: mx, y: my}) //pathの描画
           now_drawing_path_ID = drawing_path.id();
@@ -108,6 +96,7 @@ function draw_line(){
             current_x = mx , current_y = my;
           }
         }
+        cash_svg();
       }
     })
   }
@@ -137,23 +126,6 @@ function draw_line(){
     })
   }
 
-  /*********************************************
-  //キーを押したときにに起動する関数（モード制御）
-  **********************************************/
-  function draw_keydown(){
-    $(document).keydown(function(e){
-      if(e.ctrlKey) input_key_buffer[17] = true;//ctrlキー押下時
-      if(e.keyCode === 13)  draw_end_function();
-    })
-  }
-  /*********************************************
-  //キーを押したときにに起動する関数（モード制御）
-  **********************************************/
-  function draw_keyup(){
-    $(document).keyup(function(e){
-      if(!e.ctrlKey) input_key_buffer[17] = false;//ctrlキー離した時
-    })
-  }
 }
 
 function draw_end_function(){
