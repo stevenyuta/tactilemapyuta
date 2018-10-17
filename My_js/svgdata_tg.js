@@ -168,19 +168,19 @@ function download_setPNG(original_draw) { //ダウンロード時に出力pngフ
   if(draw.select('.A4').first().style('display')!=='none'){
     var rotation = draw.select('.A4').first().transform('rotation')
     if(Math.abs(rotation) === 90){
-      draw.viewbox(-367.5 - GUIDE_STROKE_WIDTH/2  , -519.75 - GUIDE_STROKE_WIDTH/2, 735 , 1039.5 )
+      draw.viewbox(-367.5 , -519.75 , 735 , 1039.5 )
       draw.attr('width' , '2205').attr('height' , '3118.5')
     }else{
-      draw.viewbox(-519.75 - GUIDE_STROKE_WIDTH/2 , -367.5 - GUIDE_STROKE_WIDTH/2 ,1039.5 , 735)
+      draw.viewbox(-519.75 , -367.5 ,1039.5 , 735)
       draw.attr('width' , '3118.5').attr('height' , '2205')
     }
   }else{
     var rotation = draw.select('.B4').first().transform('rotation')
     if(Math.abs(rotation) === 90){
-      draw.viewbox( -899/2 - GUIDE_STROKE_WIDTH/2, -1274/2 - GUIDE_STROKE_WIDTH/2 , 899 ,1274 )
+      draw.viewbox( -899/2, -1274/2 , 899 ,1274 )
       draw.attr('width' , '2697').attr('height' , '3822')
     }else{
-      draw.viewbox(-1274/2 - GUIDE_STROKE_WIDTH/2, -899/2 - GUIDE_STROKE_WIDTH/2 ,1274 , 899)
+      draw.viewbox(-1274/2, -899/2 ,1274 , 899)
       draw.attr('width' , '3822').attr('height' , '2697')
     }
   }

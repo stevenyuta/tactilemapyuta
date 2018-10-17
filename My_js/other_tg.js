@@ -189,7 +189,7 @@ function layer_change(e){
                   break;
 
                 case 'gray_button': // ← key
-                  this.fill('gray')
+                  this.fill('#333')
                   break
 
                 case 'diagonal_button': // ← key
