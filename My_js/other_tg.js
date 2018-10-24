@@ -227,7 +227,7 @@ function layer_change(e){
   //circleを一掃削除する関数
   ***********************************/
   function circle_delete(){
-    draw.select('.edit_circle').each(function(i,children){
+    draw.select('.edit_circle , .draw_init_rect , .draw_last_rect , .draw_close_circle').each(function(i,children){
         this.remove();
     })
     draw.select('.fragmented_CircleGroup').each(function(i,children){

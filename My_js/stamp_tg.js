@@ -1,10 +1,33 @@
+function set_Stampmode(){
+  let stamp_checked = $('input[name="tactileSymbol"]:checked').val();
+  switch(stamp_checked){
+    case 'Stair':
+      add_stair();
+      break;
+    case 'Escalator':
+      add_escalator();
+      break;
+    case 'Arrow':
+      add_arrow();
+      break;
+    case 'Tiket_gate':
+      add_Tiket_gate();
+      break;
+    case 'Reducescale':
+      add_reducescale();
+      break;
+    default:
+      break;
+  }
+}
+
 /******************************************************
 //階段記号を追加すする関数
 ******************************************************/
 function add_stair(){
   let back_num = getPathCirclePos();
   let symbol_id;
-  draw.mousemove(function(e){
+  draw.off('mousemove').mousemove(function(e){
     dummy_delete();
     mx = getmousepoint('normal',e).x , my = getmousepoint('normal',e).y;//描画領域上でのマウスポイント計算
     let dummy_stair = draw.path().M({x: mx-STAIRS_BX, y: my-STAIRS_BY})
@@ -23,7 +46,7 @@ function add_stair(){
     })
   })
 
-  draw.mousedown(function(e){
+  draw.off('mousedown').mousedown(function(e){
     if(e.button===0){
       let real_stair = SVG.get('#' + symbol_id).removeClass('dummy');
       if(real_stair)real_stair.addClass('stair').addClass('symbol').addClass('SVG_Element').addClass('path');
@@ -38,7 +61,7 @@ function add_stair(){
 function add_escalator(){
   let back_num = getPathCirclePos();
   let symbol_id;
-  draw.mousemove(function(e){
+  draw.off('mousemove').mousemove(function(e){
     dummy_delete();
     let mx = getmousepoint('normal',e).x , my = getmousepoint('normal',e).y; //描画領域上でのマウスポイント計算
     let back_num = getPathCirclePos();
@@ -58,7 +81,7 @@ function add_escalator(){
       'stroke-linejoin' : 'round'
     })
   })
-  draw.mousedown(function(e){
+  draw.off('mousedown').mousedown(function(e){
     if(e.button===0){
       let real_escalator = SVG.get('#' + symbol_id).removeClass('dummy');
       if(real_escalator)real_escalator.addClass('escalator').addClass('symbol').addClass('SVG_Element').addClass('path');
@@ -73,7 +96,7 @@ function add_escalator(){
 function add_arrow(){
   let back_num = getPathCirclePos();
   let symbol_id;
-  draw.mousemove(function(e){
+  draw.off('mousemove').mousemove(function(e){
     dummy_delete();
     let mx = getmousepoint('normal',e).x , my = getmousepoint('normal',e).y; //描画領域上でのマウスポイント計算
     let back_num = getPathCirclePos();
@@ -91,10 +114,56 @@ function add_arrow(){
     })
   })
 
-  draw.mousedown(function(e){
+  draw.off('mousedown').mousedown(function(e){
     if(e.button===0){
       let real_arrow = SVG.get('#' + symbol_id).removeClass('dummy');
       if(real_arrow)real_arrow.addClass('arrow').addClass('symbol').addClass('SVG_Element').addClass('path');
+      cash_svg(); //svgデータのcash
+    }
+  })
+}
+
+/******************************************************
+//改札記号を追加する関数
+******************************************************/
+function add_Tiket_gate(){
+  let back_num = getPathCirclePos();
+  let symbol_id = new Array();
+  draw.off('mousemove').mousemove(function(e){
+    dummy_delete();
+    let mx = getmousepoint('normal',e).x , my = getmousepoint('normal',e).y; //描画領域上でのマウスポイント計算
+    let back_num = getPathCirclePos();
+    let dummy_tiket_gate1 = draw.path().M({x: mx-30, y: my}).L({x: mx-10,y:my}).addClass('dummy').back();
+    let dummy_tiket_gate2 = draw.path().M({x: mx-10, y: my-10}).L({x: mx-10,y:my+10}).addClass('dummy').back();
+    let dummy_tiket_gate3 = draw.path().M({x: mx, y: my-10}).L({x: mx,y:my+10}).addClass('dummy').back();
+    let dummy_tiket_gate4 = draw.path().M({x: mx+10, y: my-10}).L({x: mx+10,y:my+10}).addClass('dummy').back();
+    let dummy_tiket_gate5 = draw.path().M({x: mx+10, y: my}).L({x: mx+30,y:my}).addClass('dummy').back();
+    symbol_id[0] = dummy_tiket_gate1.attr('id');
+    symbol_id[1] = dummy_tiket_gate2.attr('id');
+    symbol_id[2] = dummy_tiket_gate3.attr('id');
+    symbol_id[3] = dummy_tiket_gate4.attr('id');
+    symbol_id[4] = dummy_tiket_gate5.attr('id');
+    for(let i=0; i< back_num; i++){
+      dummy_tiket_gate1.forward();
+      dummy_tiket_gate2.forward();
+      dummy_tiket_gate3.forward();
+      dummy_tiket_gate4.forward();
+      dummy_tiket_gate5.forward();
+    }
+    draw.select('.dummy').attr({
+      'fill': 'none',
+      'stroke': PATH_STROKE_COLOR,
+      'stroke-width': PATH_STROKE_WIDTH,
+      'stroke-linejoin' : 'round'
+    })
+  })
+
+  draw.off('mousedown').mousedown(function(e){
+    if(e.button===0){
+      for(let i=0; i < symbol_id.length; i++){
+        let real_tiket_gate = SVG.get('#' + symbol_id[i]).removeClass('dummy');
+        if(real_tiket_gate)real_tiket_gate.addClass('connected').addClass('SVG_Element').addClass('path');
+      }
       cash_svg(); //svgデータのcash
     }
   })
@@ -106,20 +175,33 @@ function add_arrow(){
 
 function add_reducescale(){
   let back_num = getPathCirclePos();
-  let mx = 450 , my = 320;
-  let add_scale = draw.path().M({x: mx-45, y: my}).L({x: mx-45,y:my-15}).L({x: mx-45, y: my+15}).L({x: mx-45,y:my})
-                             .L({x: mx+45, y: my}).L({x: mx+45,y:my-15}).L({x: mx+45, y: my+15}).L({x: mx+45,y:my})
-  add_scale.back();
-  for(let i=0; i< back_num; i++){
-    add_scale.forward();
-  }
-  add_scale.attr({
-    'fill': 'none',
-    'stroke': PATH_STROKE_COLOR,
-    'stroke-width': PATH_STROKE_WIDTH,
-    'stroke-linejoin' : 'round'
+  let symbol_id = new Array();
+  draw.off('mousemove').mousemove(function(e){
+    dummy_delete();
+    let mx = getmousepoint('normal',e).x , my = getmousepoint('normal',e).y; //描画領域上でのマウスポイント計算
+    let back_num = getPathCirclePos();
+    let dummy_scale = draw.path().M({x: mx-45, y: my}).L({x: mx-45,y:my-15}).L({x: mx-45, y: my+15}).L({x: mx-45,y:my})
+                                 .L({x: mx+45, y: my}).L({x: mx+45,y:my-15}).L({x: mx+45, y: my+15}).L({x: mx+45,y:my});
+    symbol_id = dummy_scale.attr('id');
+    dummy_scale.addClass('dummy').back();
+    for(let i=0; i< back_num; i++){
+      dummy_scale.forward();
+    }
+    dummy_scale.attr({
+      'fill': 'none',
+      'stroke': PATH_STROKE_COLOR,
+      'stroke-width': PATH_STROKE_WIDTH,
+      'stroke-linejoin' : 'round'
+    })
   })
-  add_scale.addClass('scale').addClass('symbol').addClass('SVG_Element').addClass('path');
+
+  draw.off('mousedown').mousedown(function(e){
+    if(e.button===0){
+      let real_scale = SVG.get('#' + symbol_id).removeClass('dummy');
+      if(real_scale)real_scale.addClass('scale').addClass('symbol').addClass('SVG_Element').addClass('path');
+      cash_svg(); //svgデータのcash
+    }
+  })
 }
 
 /******************************************************
@@ -229,11 +311,13 @@ function add_text(){
     }
     if($('#check_bra').prop('checked')){
       let dummy_Bra_text = draw.plain(tactileGraphic().convertText($("#Braille").val()));//文字を点字表現に変換
+      let font_family = ($('input[name="braillefont"]:checked').val()==='IBfont') ? 'Ikarashi Braille' : '点字線なし';
+      let font_stroke = ($('input[name="braillefont"]:checked').val()==='IBfont') ? String(PATH_STROKE_WIDTH * 0.25) : '';
       dummy_Bra_text.attr({
         'x': mx
         ,'y': my + 30
-        ,'stroke-width' :  PATH_STROKE_WIDTH * 0.25,
-        'font-family': 'Ikarashi Braille',
+        ,'stroke-width' :  font_stroke,
+        'font-family': font_family,
         'font-size': $('#resizeBraille_TextBox').val() * TEXT_CORRECTION,
         'cursor':'default'
       })

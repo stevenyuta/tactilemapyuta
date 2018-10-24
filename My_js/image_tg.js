@@ -22,6 +22,7 @@ function fileapi_svg(){
     svg_text = svg_text.replace(/<svg.+>/g, '')
     svg_text = svg_text.replace( /<\/svg>/g , "" );
     continue_setSVG(svg_text,-DRAW_AREA_WIDTH, -DRAW_AREA_HEIGHT, DRAW_AREA_WIDTH * 2, DRAW_AREA_HEIGHT * 2);
+    cash_svg();
   }
   function fileClear() {
     this.value = null;
@@ -97,7 +98,7 @@ function trim_start() {
       trimming_AreaSelect(this);
     })
   })
-  draw.select('.image').mouseout(function() {
+  draw.select('.image').off('mouseout').mouseout(function() {
     this.attr({'cursor' : 'default'});
     draw.select('.image_FrameRect').each(function(i,children){
       this.remove();
@@ -126,7 +127,7 @@ function trim_start() {
         var width = rWidth , height = rHeight;
         trim_base64(svg_image , xOffset , yOffset , width , height , matrix);
         select_rect.remove();
-        $('input[name="Stamp"][value="TrimBase64"]').prop('checked', true).trigger('change'); //画像トリミングモードに再設定
+        RadioEvent_set();
       }
     })
   }

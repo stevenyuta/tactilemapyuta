@@ -50,7 +50,8 @@ function toConnected(editpath_flag){
 
 function distance_check(){
   draw.select('.path').each(function(i , children){
-    if(this.visible()){
+    let stroke_width = this.attr('stroke-width');
+    if(this.visible() && stroke_width !== 0){
       var p4oint = get_p4oint(this);
       var self = this; //比較にするpathのid
       for(var j=0; j< p4oint.length; j++){
@@ -123,7 +124,8 @@ function distance_check(){
 
           //記号との距離を計算し、近すぎないか判定
           draw.select('.symbol').each(function(i , children){
-            if(self.attr('id') !== this.attr('id') && this.visible()){
+            let stroke_width = this.attr('stroke-width');
+            if(self.attr('id') !== this.attr('id') && this.visible() && stroke_width !== 0){
               var symbol_p4oint = get_p4oint(this);
               for(var l=0; l< symbol_p4oint.length; l++){
                 var b1x = Number(symbol_p4oint[l].x0) , b1y = Number(symbol_p4oint[l].y0);
@@ -167,35 +169,38 @@ function distance_check(){
           })
           //円記号との距離を計算し、近すぎないか判定
           draw.select('.circle').each(function(i , children){
-            var cx = Number(this.attr('cx')) , cy = Number(this.attr('cy')); //円の中心座標
-            var cr = Number(this.attr('r')); //円の半径
+            let stroke_width = this.attr('stroke-width');
+            if(this.visible() && stroke_width !== 0){
+              var cx = Number(this.attr('cx')) , cy = Number(this.attr('cy')); //円の中心座標
+              var cr = Number(this.attr('r')); //円の半径
 
-            var Unit_a = lp.a/Math.sqrt(lp.a * lp.a + lp.b * lp.b); //単位方向ベクトル
-            var Unit_b = lp.b/Math.sqrt(lp.a * lp.a + lp.b * lp.b);
-            var b1x = cx + Unit_a * cr , b1y = cy + Unit_b * cr;
+              var Unit_a = lp.a/Math.sqrt(lp.a * lp.a + lp.b * lp.b); //単位方向ベクトル
+              var Unit_b = lp.b/Math.sqrt(lp.a * lp.a + lp.b * lp.b);
+              var b1x = cx + Unit_a * cr , b1y = cy + Unit_b * cr;
 
-            var dif_0x = fp0x - cx , dif_0y = fp0y - cy;
-            var dif_1x = fp1x - cx , dif_1y = fp1y - cy;
+              var dif_0x = fp0x - cx , dif_0y = fp0y - cy;
+              var dif_1x = fp1x - cx , dif_1y = fp1y - cy;
 
-            var distance1 = Math.abs(lp.a * b1x + lp.b * b1y + lp.c)/Math.sqrt(lp.a * lp.a + lp.b * lp.b);
-            var distance2 = Math.sqrt(dif_0x * dif_0x + dif_0y * dif_0y) - cr;
-            var distance3 = Math.sqrt(dif_1x * dif_1x + dif_1y * dif_1y) - cr;
+              var distance1 = Math.abs(lp.a * b1x + lp.b * b1y + lp.c)/Math.sqrt(lp.a * lp.a + lp.b * lp.b);
+              var distance2 = Math.sqrt(dif_0x * dif_0x + dif_0y * dif_0y) - cr;
+              var distance3 = Math.sqrt(dif_1x * dif_1x + dif_1y * dif_1y) - cr;
 
-            var relativeXY = get_relativeXY(fp0x ,fp0y, fp1x , fp1y , THRE_DISTANCE); //直線の領域のx,y座標
+              var relativeXY = get_relativeXY(fp0x ,fp0y, fp1x , fp1y , THRE_DISTANCE); //直線の領域のx,y座標
 
-            if(distance1 < THRE_DISTANCE){
-              if(b1x < relativeXY.max_x && b1x > relativeXY.min_x && b1y < relativeXY.max_y && b1y > relativeXY.min_y){
+              if(distance1 < THRE_DISTANCE){
+                if(b1x < relativeXY.max_x && b1x > relativeXY.min_x && b1y < relativeXY.max_y && b1y > relativeXY.min_y){
+                  this.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+                  if(self.hasClass('symbol'))self.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+                }
+              }
+              if(distance2 < THRE_DISTANCE){
                 this.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
                 if(self.hasClass('symbol'))self.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
               }
-            }
-            if(distance2 < THRE_DISTANCE){
-              this.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
-              if(self.hasClass('symbol'))self.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
-            }
-            if(distance3 < THRE_DISTANCE){
-              this.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
-              if(self.hasClass('symbol'))self.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+              if(distance3 < THRE_DISTANCE){
+                this.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+                if(self.hasClass('symbol'))self.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+              }
             }
           })
         }
@@ -274,35 +279,38 @@ function distance_check(){
 
         //円記号との距離を計算し、近すぎないか判定
         draw.select('.circle').each(function(i , children){
-          var cx = Number(this.attr('cx')) , cy = Number(this.attr('cy')); //円の中心座標
-          var cr = Number(this.attr('r')); //円の半径
+          let stroke_width = this.attr('stroke-width');
+          if(this.visible() && stroke_width !== 0){
+            var cx = Number(this.attr('cx')) , cy = Number(this.attr('cy')); //円の中心座標
+            var cr = Number(this.attr('r')); //円の半径
 
-          var Unit_a = lp.a/Math.sqrt(lp.a * lp.a + lp.b * lp.b); //単位方向ベクトル
-          var Unit_b = lp.b/Math.sqrt(lp.a * lp.a + lp.b * lp.b);
-          var b1x = cx + Unit_a * cr , b1y = cy + Unit_b * cr;
+            var Unit_a = lp.a/Math.sqrt(lp.a * lp.a + lp.b * lp.b); //単位方向ベクトル
+            var Unit_b = lp.b/Math.sqrt(lp.a * lp.a + lp.b * lp.b);
+            var b1x = cx + Unit_a * cr , b1y = cy + Unit_b * cr;
 
-          var dif_0x = fp0x - cx , dif_0y = fp0y - cy;
-          var dif_1x = fp1x - cx , dif_1y = fp1y - cy;
+            var dif_0x = fp0x - cx , dif_0y = fp0y - cy;
+            var dif_1x = fp1x - cx , dif_1y = fp1y - cy;
 
-          var distance1 = Math.abs(lp.a * b1x + lp.b * b1y + lp.c)/Math.sqrt(lp.a * lp.a + lp.b * lp.b);
-          var distance2 = Math.sqrt(dif_0x * dif_0x + dif_0y * dif_0y) - cr;
-          var distance3 = Math.sqrt(dif_1x * dif_1x + dif_1y * dif_1y) - cr;
+            var distance1 = Math.abs(lp.a * b1x + lp.b * b1y + lp.c)/Math.sqrt(lp.a * lp.a + lp.b * lp.b);
+            var distance2 = Math.sqrt(dif_0x * dif_0x + dif_0y * dif_0y) - cr;
+            var distance3 = Math.sqrt(dif_1x * dif_1x + dif_1y * dif_1y) - cr;
 
-          var relativeXY = get_relativeXY(fp0x ,fp0y, fp1x , fp1y , THRE_DISTANCE); //直線の領域のx,y座標
+            var relativeXY = get_relativeXY(fp0x ,fp0y, fp1x , fp1y , THRE_DISTANCE); //直線の領域のx,y座標
 
-          if(distance1 < THRE_DISTANCE){
-            if(b1x < relativeXY.max_x && b1x > relativeXY.min_x && b1y < relativeXY.max_y && b1y > relativeXY.min_y){
+            if(distance1 < THRE_DISTANCE){
+              if(b1x < relativeXY.max_x && b1x > relativeXY.min_x && b1y < relativeXY.max_y && b1y > relativeXY.min_y){
+                this.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+                self.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+              }
+            }
+            if(distance2 < THRE_DISTANCE){
               this.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
               self.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
             }
-          }
-          if(distance2 < THRE_DISTANCE){
-            this.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
-            self.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
-          }
-          if(distance3 < THRE_DISTANCE){
-            this.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
-            self.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+            if(distance3 < THRE_DISTANCE){
+              this.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+              self.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+            }
           }
         })
       }
@@ -398,7 +406,17 @@ function get_p4oint(element){ //element : 対象の要素
 
 function reset_dcheck_element(){
   draw.select('.distance_check').each(function(i , children){
-    this.removeClass('distance_check').attr({'stroke': '#000000' });
+    this.removeClass('distance_check');
+    let font_strokewidth = ($('input[name="braillefont"]:checked').val()==='IBfont') ? String(PATH_STROKE_WIDTH * 0.25) : '';
+    let font_strokecolor = ($('input[name="braillefont"]:checked').val()==='IBfont') ? '#000000' : 'none';
+    if(this.hasClass('braille')){
+      this.attr({
+        'stroke': font_strokecolor,
+        'stroke-width': font_strokewidth
+      })
+    }else{
+      this.attr({'stroke': '#000000' });
+    }
   })
   draw.select('.distance_rect').each(function(i , children){
     this.remove();
@@ -410,7 +428,7 @@ function reset_dcheck_element(){
 ***************************************/
 
 function fig_trans(){
-  var current_mode =  $('input[name="Stamp"]:checked');
+  var current_mode =  $('input[name="tg_mode"]:checked');
   $(current_mode).prop('checked', true).trigger('change'); //モードを設定
 
   fig_connect();

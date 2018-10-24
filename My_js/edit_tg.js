@@ -5,7 +5,7 @@ function edit(){
   let editselect_array_tmp = new Array();
   let gX , gY , gWidth , gHeight;
   let change_gX , change_gY , change_gWidth , change_gHeight;
-  let current_mode = $('input[name="Stamp"]:checked').val();
+  let current_mode = $('input[name="tg_mode"]:checked').val();
   for(let i=0; i<editselect_array.length; i++){
     let select_element = SVG.get("#" + editselect_array[i]);
     if(select_element){
@@ -72,7 +72,7 @@ function edit_mousedown_up(mode){
           select_rect.draw(event);
           var sr_min_x =  Number(select_rect.attr('x')) , sr_min_y =  Number(select_rect.attr('y'));
           var sr_max_x =  sr_min_x + Number(select_rect.attr('width')) , sr_max_y =  sr_min_y + Number(select_rect.attr('height'));
-          let current_mode = $('input[name="Stamp"]:checked').val();
+          let current_mode = $('input[name="tg_mode"]:checked').val();
           let selector = ( current_mode == "Edit" ) ? '.SVG_Element' : '.image';
 
           draw.select(selector).each(function(i, children) {
@@ -116,7 +116,7 @@ function edit_mousedown_up(mode){
 //マウスをhoverしたときに起動する関数
 ******************************************************/
 function edit_hover(mode){
-  let current_mode = $('input[name="Stamp"]:checked').val();
+  let current_mode = $('input[name="tg_mode"]:checked').val();
   let selector = ( current_mode == "Edit" ) ? '.SVG_Element' : '.image';
   draw.select(selector).off('mouseover').off('mouseout');
   SVG.get('handle_group').off('mouseover').off('mouseout');
@@ -155,7 +155,9 @@ function edit_hover(mode){
     SVG.get('handle_group').mouseover(function() {
       edit_mousedown_up("off");
     })
-    draw.select(selector).mouseout(function() {
+    draw.select(selector).mouseout(function(){
+      let font_strokewidth = ($('input[name="braillefont"]:checked').val()==='IBfont') ? String(PATH_STROKE_WIDTH * 0.25) : '';
+      let font_strokecolor = ($('input[name="braillefont"]:checked').val()==='IBfont') ? '#000000' : 'none';
       edit_mousedown_up();
       if(!this.hasClass('edit_select')){
         if(this.hasClass('image')){
@@ -165,7 +167,10 @@ function edit_hover(mode){
         }else if(this.hasClass('ink')){  //text要素の場合
           this.attr({'stroke' : 'none'});
         }else if(this.hasClass('braille')){  //text要素の場合
-          this.attr({'stroke' : '#000000'});
+          this.attr({
+            'stroke': font_strokecolor,
+            'stroke-width': font_strokewidth
+          });
         }else{
           this.attr({'stroke': PATH_STROKE_COLOR});
         }
@@ -852,14 +857,14 @@ function paste_select(){
   for(let i=0;i < copy_elements.length; i++){
     let clone = copy_elements[i].clone().addClass('edit_select');
     clone.dmove(100);
-    if($('input[name="Stamp"]:checked').val()==='Edit'){
+    if($('input[name="tg_mode"]:checked').val()==='Edit'){
       clone.attr({ 'stroke' : PATH_SELECT_COLOR });
       clone.off('mousedown');
     }
   }
   if(copy_elements.length > 0){
     copy_select();
-    if($('input[name="Stamp"]:checked').val()==='Edit'){
+    if($('input[name="tg_mode"]:checked').val()==='Edit'){
       upload_handle();
       set_textsize();
       set_strokewidth();

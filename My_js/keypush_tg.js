@@ -1,7 +1,11 @@
 function set_key_down_up(){
   $(document).off('keydown').on('keydown' , function(e){
-    let current_mode = $('input[name="Stamp"]:checked').val();
-    if($(':focus').length === 0){
+    let current_mode = $('input[name="tg_mode"]:checked').val();
+    let focus_flag = true;
+    if($(':focus').length !== 0){
+      if($(':focus').first().attr('type') === 'text') focus_flag = false;
+    }
+    if(focus_flag){
       if(e.ctrlKey){ //ctrlキー
         if(!input_key_buffer[e.keyCode] && current_mode === 'EditPath') editpath_mousemove('90degree', mx, my);
         if(e.keyCode === 90) undo(); //90 : Zキー
@@ -99,7 +103,7 @@ function set_key_down_up(){
   })
   $(document).off('keyup').on('keyup' , function(e){
     if($(':focus').length === 0){
-      let current_mode = $('input[name="Stamp"]:checked').val();
+      let current_mode = $('input[name="tg_mode"]:checked').val();
       if(!e.ctrlKey && current_mode === 'EditPath'){ //ctrlキー押下時
         editpath_mousemove('connect');
         if(draw.select('.editing_target:not(.edit_circle)').first()) editpath_mousemove('normal');

@@ -62,19 +62,14 @@
 
     <div id="main_content" style="width:2000px;">
       <div id="toolbar1">
-        <input  type="radio" name="Stamp" value="Stair" id="Stair">
-        <label for="Stair" class="radio_label">階段</label>
 
-        <input  type="radio" name="Stamp" value="Escalator" id="Escalator">
-        <label for="Escalator" class="radio_label">エスカレータ</label>
+        <input  type="radio" name="tg_mode" value="Stamp" id="Stamp">
+        <label for="Stamp" class="radio_label">触知記号</label>
 
-        <input  type="radio" name="Stamp" value="Arrow" id="Arrow">
-        <label for="Arrow" class="radio_label">矢印</label>
-
-        <input  type="radio" name="Stamp" value="DrawCircle" id="DrawCircle">
+        <input  type="radio" name="tg_mode" value="DrawCircle" id="DrawCircle">
         <label for="DrawCircle" class="radio_label" >円記号</label>
 
-        <input  type="radio" name="Stamp" value="Text" id="Text">
+        <input  type="radio" name="tg_mode" value="Text" id="Text">
         <label for="Text" class="radio_label">文字</label>
 
         <input type="checkbox" id="check_ink" name="checkers" value="check_ink" class="checkbox01-input"/>
@@ -92,23 +87,23 @@
       <div id="toolbar2">
         <div id="toolbar2_radio">
           <div>
-            <input  type="radio" name="Stamp" value="Draw" id="Draw">
+            <input  type="radio" name="tg_mode" value="Draw" id="Draw">
             <label for="Draw"  class="toolbar_radio">ペン</label>
           </div>
           <div>
-            <input  type="radio" name="Stamp" value="Edit" id="Edit">
-            <label for="Edit" class="toolbar_radio">要素操作</label>
+            <input  type="radio" name="tg_mode" value="Edit" id="Edit">
+            <label for="Edit" class="toolbar_radio">選択</label>
           </div>
           <div>
-            <input  type="radio" name="Stamp" value="EditPath" id="EditPath">
+            <input  type="radio" name="tg_mode" value="EditPath" id="EditPath">
             <label for="EditPath" class="toolbar_radio">線の詳細編集</label>
           </div>
           <div>
-            <input  type="radio" name="Stamp" value="EditImage" id="EditImage">
-            <label for="EditImage" class="toolbar_radio">画像操作</label>
+            <input  type="radio" name="tg_mode" value="EditImage" id="EditImage">
+            <label for="EditImage" class="toolbar_radio">画像選択</label>
           </div>
           <div>
-            <input  type="radio" name="Stamp" value="TrimBase64" id="TrimBase64">
+            <input  type="radio" name="tg_mode" value="TrimBase64" id="TrimBase64">
             <label for="TrimBase64" class="toolbar_radio" >画像トリミング</label>
           </div>
           <div>
@@ -118,7 +113,7 @@
             <input type="button" id="distance_check_button" value="距離間チェック">
           </div>
           <div>
-              <input type="button" id="trans" value="平面図変換">
+              <input type="button" style = "display:none;" id="trans" value="平面図変換">
           </div>
         </div>
 
@@ -131,13 +126,9 @@
               <input type="checkbox" id="image" name="checkers" value="image"/>
               <label for="image" class="sample_label">画像</label>
             </div>
-            <div>
+            <div style="display:none;">
               <input type="checkbox" id="graduation_frame" name="checkers" value="graduation_frame" />
               <label for="graduation_frame" class="sample_label">目盛付き枠</label>
-            </div>
-            <div>
-              <input type="checkbox" id="ReducedScale" name="checkers" value="ReducedScale" />
-              <label for="ReducedScale" class="sample_label">縮尺</label>
             </div>
             <div>
               <input type="checkbox" id="gridline" name="checkers" value="gridline" />
@@ -154,29 +145,22 @@
       <div  id="height_slider" ></div>
 
       <div id="right_content">
-        <div id="resizeBox_textbox">
-          <div>
-            幅：<input type="text" id="rb_width" value="" oncopy="return false" onpaste="return false" oncontextmenu="return false" maxlength="6">mm
-          </div>
-          <div>
-            高さ：<input type="text" id="rb_height" style = "" value="" oncopy="return false" onpaste="return false" oncontextmenu="return false" maxlength="6">mm
-          </div>
-      </div>
 
-        <table id="layer_select">
+        <table id="select_braillefont">
           <tr>
-            <td><button id="front_button"></button></td>
-            <td><button id="forward_button"></button></td>
-          </tr>
-          <tr>
-            <td><button id="backward_button"></button></td>
-            <td><button id="back_button"></button></td>
+            <td>
+              <input type="radio" id="IBfont" name="braillefont" value="IBfont"/>
+              <label for="IBfont">いからし</label>
+            </td>
+            <td>
+              <input type="radio" id="lighthouse" name="braillefont" value="lighthouse"/>
+              <label for="lighthouse">ライトハウス</label>
+            </td>
           </tr>
         </table>
 
         <!-- 線種変更ラジオボタン -->
-        <table style="margin: 30px 0px;" id="stroke_style">
-          <caption>線種</caption>
+        <table id="stroke_style">
           <tr>
             <td>
               <input type="radio" id="solid_line" name="stroke" value="solid_line"/>
@@ -207,6 +191,52 @@
           </li>
         </ul>
 
+        <table id="stamp_table">
+          <tr>
+            <td>
+              <input  type="radio" name="tactileSymbol" value="Stair" id="Stair" checked="checked">
+              <label for="Stair" class="radio_label">階段</label>
+          </td>
+          </tr>
+          <tr>
+            <td>
+              <input  type="radio" name="tactileSymbol" value="Escalator" id="Escalator">
+              <label for="Escalator" class="radio_label">エスカレータ</label>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <input  type="radio" name="tactileSymbol" value="Arrow" id="Arrow">
+              <label for="Arrow" class="radio_label">矢印</label>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <input  type="radio" name="tactileSymbol" value="Tiket_gate" id="Tiket_gate">
+              <label for="Tiket_gate" class="radio_label">改札</label>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <input  type="radio" name="tactileSymbol" value="Reducescale" id="Reducescale">
+              <label for="Reducescale" class="radio_label">縮尺</label>
+            </td>
+          </tr>
+        </table>
+
+        <table id="layer_select">
+          <tr>
+            <td><button id="front_button"></button></td>
+            <td><button id="forward_button"></button></td>
+          </tr>
+          <tr>
+            <td><button id="backward_button"></button></td>
+            <td><button id="back_button"></button></td>
+          </tr>
+        </table>
+
+
+
         <table id="fill_change" border="1">
           <caption>塗りつぶし</caption>
           <tr>
@@ -222,6 +252,16 @@
             <td><button id="polkadot_water_button"></button></td>
           </tr>
         </table>
+
+        <div id="resizeBox_textbox">
+          <div>
+            幅：<input type="text" id="rb_width" value="" oncopy="return false" onpaste="return false" oncontextmenu="return false" maxlength="6">mm
+          </div>
+          <div>
+            高さ：<input type="text" id="rb_height" style = "" value="" oncopy="return false" onpaste="return false" oncontextmenu="return false" maxlength="6">mm
+          </div>
+        </div>
+
        </div>
        <div style="clear:both;" id="width_slider" ></div>
     </div>
@@ -276,12 +316,15 @@
         const STAIRS_BX = 15;
         const STAIRS_BY = STAIRS_BX - 2;
 
-        //線の詳細編集などに使用するクリック用サークル関係
+        //線の詳細編集などに使用するクリック用サークル、レクト関係
         const CIRCLE_RADIUS = 8;
         const HANDLE_CIRCLE_RADIUS = 10;
         const CIRCLE_COLOR = '#0f0';
         const CIRCLE_HOVER_COLOR = '#f00'; //ホバー時（red）
         const CIRCLE_EDIT_COLOR = '#00f'; //エディットホバー時(blue)
+
+        const RECT_WIDTH = 13;
+        const RECT_HEIGHT = 13;
 
         //カーソルキーによる移動量
         const CURSOR_KEY_MOVE = 0.1
@@ -301,6 +344,7 @@
         var viewbox_x = -DRAW_AREA_WIDTH/2 , viewbox_y = -DRAW_AREA_HEIGHT/2; //現在のviewboxのx,yの値
         let now_drawing_path_ID;
         let now_movingFlag = false;
+        let nowchecked;
 
       $(window).on('load',function () { //window読み込み後
         //描画領域の初期設定
@@ -309,6 +353,7 @@
         gadget_set(); //スクロールスライダー、墨字点字、線幅変更用ガジェットの設定
         checkbox_set(); //html上のチェックボックスの設定
         stroke_radio_set(); //線種変更用のラジオボタンの設定
+        braillefont_set();
 
         set_fillbutton(); //塗りつぶしボタンの設定
         fileapi_svg(); //続きからボタンの設定
@@ -326,74 +371,96 @@
         $('#back_button').click(layer_change);
 
         //各機能のラジオボタンの設定
-        $('input[name="Stamp"]:radio').off('change').on('change',RadioEvent_set);
-        $('input[name="Stamp"][value="Draw"]').prop('checked', true).trigger('change'); //OFFに戻す
-        cash_svg();
-
-        function RadioEvent_set(){
-          /*************************************
-          //モードを変更したときに必ず行う処理
-          *************************************/
-          $(document).off(); //ページ上のイベントの削
-          draw.off(); //drawのイベント解除
-          draw.select('.SVG_Element , .image').off(); //SVG_Elementのイベント解除
-          $('#rb_width , #rb_height').off();
-          set_key_down_up();
-          set_contextMenu();
-          reset_dcheck_element();
-          toConnected();  //バラバラ状態のpathをくっつき状態に
-          set_zoom(); //zoomイベントの開始
-          edit_clear(true); //edit_groupの解散
-          dummy_delete(); //dummyの全削除
-          circle_delete(); //circleの全削除
-          select_rect_delete(); //select_rectの全削除
-          get_node_connectCircle();
-
-          /*************************************
-          //各モードごとの処理
-          *************************************/
-          switch($(this).val()){
-            case 'Draw':
-              draw_line(); //線の描画モード
-              break;
-            case 'Edit':
-              editselect_array = editselect_array.concat(editpath_array);
-              edit();//線の詳細編集モード
-              break;
-            case 'EditPath':
-              editpath_array = editpath_array.concat(editselect_array);
-              editpath();//線の詳細編集モード
-              break;
-            case 'EditImage':
-              edit();//原図の移動モード
-              break;
-            case 'TrimBase64':
-              trim_start();
-              break;
-            case 'Stair':
-              add_stair(); //階段記号追加モード
-              break;
-            case 'Escalator':
-              add_escalator();//エスカレータ記号追加モード
-              break;
-            case 'Arrow':
-              add_arrow(); //矢印記号追加モード
-              break;
-            case 'DrawCircle':
-              draw_circle(); //サークル生成モード
-              break;
-            case 'Text':
-              add_text(); //点字、墨字追加モード
-              break;
-            default:
-              console.log('mode_error');
-              break;
+        nowchecked = $('input[name="tg_mode"]:checked').val();
+        $('input[name="tg_mode"]:radio').off('click').on('click',function(){
+          if($(this).val() == nowchecked){
+            $(this).prop('checked', false);
+            nowchecked = false;
+          }else{
+            nowchecked = $(this).val();
           }
-          if($(this).val()!=="Draw") draw.select('.drawing_path').removeClass('drawing_path');
-          if($(this).val()!=="Edit" || $(this).val()!=="EditImage") editselect_array.length = 0;
-          if($(this).val()!=="EditPath") editpath_array.length = 0;
-        }
+          RadioEvent_set();
+        });
+        RadioEvent_set();
+        $('input[name="tactileSymbol"]:radio').off('change').on('change',set_Stampmode);
+        cash_svg();
       }) //window.onload終了
+
+
+      function RadioEvent_set(){
+        nowchecked = $('input[name="tg_mode"]:checked').val();
+        /*************************************
+        //モードを変更したときに必ず行う処理
+        *************************************/
+        $(document).off(); //ページ上のイベントの削
+        draw.off(); //drawのイベント解除
+        draw.select('.SVG_Element , .image').off(); //SVG_Elementのイベント解除
+        $('#rb_width , #rb_height').off();
+        draw.select('.connected').each(function(i,children){
+          if(this.clear().array().settle().length < 2) this.remove();
+        })
+        set_key_down_up();
+        set_contextMenu();
+        reset_dcheck_element();
+        toConnected();  //バラバラ状態のpathをくっつき状態に
+        set_zoom(); //zoomイベントの開始
+        edit_clear(true); //edit_groupの解散
+        dummy_delete(); //dummyの全削除
+        circle_delete(); //circleの全削除
+        select_rect_delete(); //select_rectの全削除
+        get_node_connectCircle();
+
+        /*************************************
+        //各モードごとの処理
+        *************************************/
+        switch(nowchecked){
+          case 'Draw':
+            draw_line(); //線の描画モード
+            break;
+          case 'Edit':
+            editselect_array = editselect_array.concat(editpath_array);
+            edit();//線の詳細編集モード
+            break;
+          case 'EditPath':
+            editpath_array = editpath_array.concat(editselect_array);
+            editpath();//線の詳細編集モード
+            break;
+          case 'EditImage':
+            edit();//原図の移動モード
+            break;
+          case 'TrimBase64':
+            trim_start();
+            break;
+          case 'DrawCircle':
+            draw_circle(); //サークル生成モード
+            break;
+          case 'Text':
+            add_text(); //点字、墨字追加モード
+            break;
+          case 'Stamp':
+            set_Stampmode();
+            break;
+          default:
+            break;
+        }
+        if(nowchecked!=="Draw") draw.select('.drawing_path').removeClass('drawing_path');
+        if(nowchecked==="Edit" || nowchecked==="EditImage"){
+          $('#layer_select').show();
+          $('#fill_change').show();
+          $('#resizeBox_textbox').show();
+        }else{
+          editselect_array.length = 0;
+          $('#layer_select').hide();
+          $('#fill_change').hide();
+          $('#resizeBox_textbox').hide();
+        }
+        if(nowchecked!=="EditPath") editpath_array.length = 0;
+        if(nowchecked === "Stamp"){
+          $('#stamp_table').show();
+        }else{
+          $('#stamp_table').hide();
+        }
+      }
 
 
       //ダウンロードリンク

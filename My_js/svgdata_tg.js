@@ -3,7 +3,7 @@
 ******************************************************/
 function undo() { //操作を１つ戻る関数
   if(cash_array.length > cash_pointer + 1){  //cash_arrayにデータがある場合
-    var current_mode =  $('input[name="Stamp"]:checked'); //現在のモードを記憶
+    var current_mode =  $('input[name="tg_mode"]:checked'); //現在のモードを記憶
     var vx = draw.viewbox().x , vy = draw.viewbox().y;
     var vwidth = draw.viewbox().width , vheight = draw.viewbox().height;
 
@@ -18,7 +18,7 @@ function undo() { //操作を１つ戻る関数
     draw_gridline(3000,3000,50,50); //グリッド線の描画
     defs_set();
 
-    $(current_mode).prop('checked', true).trigger('change'); //モードを設定
+    RadioEvent_set();
     checkBox_change();
     js_sleep(100); //100ms待機
   }
@@ -30,7 +30,7 @@ function undo() { //操作を１つ戻る関数
 ******************************************************/
 function redo(e) { //操作を１つ戻る関数
   if(cash_pointer > 0){  //cash_arrayにデータがある場合
-    var current_mode =  $('input[name="Stamp"]:checked'); //現在のモードを記憶
+    var current_mode =  $('input[name="tg_mode"]:checked'); //現在のモードを記憶
     //現在のviewBox情報を取得
     var vx = draw.viewbox().x , vy = draw.viewbox().y;
     var vwidth = draw.viewbox().width , vheight = draw.viewbox().height;
@@ -48,7 +48,7 @@ function redo(e) { //操作を１つ戻る関数
     draw_gridline(3000,3000,50,50); //グリッド線の描画
     defs_set();
 
-    $(current_mode).prop('checked', true).trigger('change'); //モードを設定
+    RadioEvent_set();
     checkBox_change();
     js_sleep(100); //100ms待機
   }
@@ -128,7 +128,7 @@ function download_setSVG(original_draw) { //ダウンロード時に出力svgフ
   draw.select('.image_FrameRect').each(function(i,children){
     this.remove();
   })
-  circle_delete(); //edit_circleの全削除
+  //circle_delete(); //edit_circleの全削除
   //不要なグループの削除
   SVG.get('gridline_group').remove();
   SVG.get('handle_group').remove();
@@ -230,5 +230,5 @@ function continue_setSVG(input_draw,vx,vy,vwidth,vheight){ //svgデータを読�
   draw_gridline(3000,3000,50,50); //グリッド線の描画
   draw_guiderect(); //ガイドの描画
   checkBox_change();
-  $('input[name="Stamp"]:checked').prop('checked', true).trigger('change'); //モードを設定
+  $('input[name="tg_mode"]:checked').prop('checked', true).trigger('change'); //モードを設定
 }

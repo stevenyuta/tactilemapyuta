@@ -21,8 +21,8 @@ function set_contextMenu(flag){
           paste_select();
           break;
         case 'delete':
-          if($('input[name="Stamp"]:checked').val()==="Edit" || $('input[name="Stamp"]:checked').val()==="EditImage")delete_select();
-          if($('input[name="Stamp"]:checked').val()==="EditPath")delete_editpath();
+          if($('input[name="tg_mode"]:checked').val()==="Edit" || $('input[name="tg_mode"]:checked').val()==="EditImage")delete_select();
+          if($('input[name="tg_mode"]:checked').val()==="EditPath")delete_editpath();
           break;
         case 'draw_end':
           draw_end_function();
@@ -131,6 +131,26 @@ function set_contextMenu(flag){
   });
 }
 
+
+/******************************************************
+/点字フォントラジオボタンの初期設定関数
+******************************************************/
+function braillefont_set(){
+  $('input[name="braillefont"]:radio').off('change').on('change',function(){ //ラジオボタン変更時の処理
+    let font_family = ($('input[name="braillefont"]:checked').val()==='IBfont') ? 'Ikarashi Braille' : '点字線なし';
+    let font_strokewidth = ($('input[name="braillefont"]:checked').val()==='IBfont') ? String(PATH_STROKE_WIDTH * 0.25) : '';
+    let font_strokecolor = ($('input[name="braillefont"]:checked').val()==='IBfont') ? '#000000' : 'none';
+    draw.select('.braille').each(function(i,children){
+      this.attr({
+        'font-family': font_family,
+        'stroke': font_strokecolor,
+        'stroke-width': font_strokewidth
+      });
+    })
+  })
+  $("#IBfont").prop('checked', true).change();//初期状態はいからし点字にチェックを入れておく
+}
+
 /******************************************************
 /線種変更ラジオボタンの初期設定関数
 ******************************************************/
@@ -152,6 +172,8 @@ function stroke_radio_set(){
   })
   $("#solid_line").prop('checked', true).change();//初期状態は実線にチェックを入れておく
 }
+
+
 
 
 /******************************************************
@@ -263,10 +285,11 @@ function checkbox_set(){
   //点字の日本語変換機能をチェックボックスと連結
   ***************************************************/
   $('#2Braille').off('change').change( function() {
+    let font_family = ($('input[name="braillefont"]:checked').val()==='IBfont') ? 'Ikarashi Braille' : '点字線なし';
     if($('#2Braille').prop('checked')){
       draw.select('.braille').attr({'font-family':'メイリオ'});
     }else{
-      draw.select('.braille').attr({'font-family':'Ikarashi Braille'});
+      draw.select('.braille').attr({'font-family':font_family});
     }
   })
   $("#2Braille").prop('checked', false).change();//初期状態はチェックを入れないでおく
@@ -286,22 +309,8 @@ function checkbox_set(){
   $("#graduation_frame").prop('checked', false).change();//初期状態はチェックを入れないでおく
 
   /**************************************************
-  //縮尺の表示、非表示
-  ***************************************************/
-  $('#ReducedScale').off('change').change( function() {
-    if(!draw.select('.scale').first()) add_reducescale();
-    if($('#ReducedScale').prop('checked')){
-      draw.select('.scale').show();
-    }else{
-      draw.select('.scale').hide();
-    }
-  })
-  $("#ReducedScale").prop('checked', false).change();//初期状態はチェックを入れないでおく
-
-  /**************************************************
   //ガイドの表示非表示チェックボックス
   ***************************************************/
-
   $( 'input[name="guiderect"]:radio' ).change( function() {
     var radioval = $(this).val()
     if(radioval === 'guiderect_A4'){
@@ -357,13 +366,14 @@ function checkBox_change(){
     SVG.get('gridline_group').attr({'display':'none'})
   }
   //点訳
+  let font_family = ($('input[name="braillefont"]:checked').val()==='IBfont') ? 'Ikarashi Braille' : '点字線なし';
   if($('#2Braille').prop('checked')){
     draw.select('.braille').each(function(i,children){
       this.attr({'font-family':'メイリオ'})
     })
   }else{
     draw.select('.braille').each(function(i,children){
-      this.attr({'font-family':'Ikarashi Braille'})
+      this.attr({'font-family':font_family})
     })
   }
 
@@ -394,11 +404,11 @@ function checkBox_change(){
 function set_zoom(){
   draw.panZoom({ //zoomの導入
     doPanning: false,
-    zoomFactor: 0.04,
+    zoomFactor: 0.07,
     zoomMin: 0.1,
     zoomMax: 4
   })
-  draw.on('zoom', function(ev) {
+  draw.off('zoom').on('zoom', function(ev) {
     viewbox_x = draw.viewbox().x , viewbox_y = draw.viewbox().y
     $("#width_slider").slider({ //描画領域の左右移動用スライダー
         max: 8000-draw.viewbox().x-draw.viewbox().width,
@@ -409,7 +419,6 @@ function set_zoom(){
         max: 8000+draw.viewbox().y,
         min: -8000+draw.viewbox().y+draw.viewbox().height,
         value: 0, //初期値
-
     })
     var gY = 0;
     SVG.get('handle_group').each(function(i , children){
@@ -421,8 +430,16 @@ function set_zoom(){
     draw.select('.svg_select_points').attr({'r':HANDLE_CIRCLE_RADIUS/(2*draw.viewbox().zoom)});
     draw.select('.svg_select_points_rot').attr({ 'r':HANDLE_CIRCLE_RADIUS/(2*draw.viewbox().zoom) });
 
-    SVG.select('.edit_circle').each(function(i , children){
+    SVG.select('.edit_circle , .draw_close_circle').each(function(i , children){
       this.radius(CIRCLE_RADIUS/(2*draw.viewbox().zoom))
+    })
+    SVG.select('.draw_init_rect , .draw_last_rect').each(function(i , children){
+      let origi_cx = this.x() + this.width()/2;
+      let origi_cy = this.y() + this.height()/2;
+      this.width(RECT_WIDTH/(2*draw.viewbox().zoom));
+      this.height(RECT_HEIGHT/(2*draw.viewbox().zoom));
+      this.x(origi_cx - this.width()/2);
+      this.y(origi_cy - this.height()/2);
     })
   })
 }
@@ -569,9 +586,9 @@ function gadget_set(e){
   });
   //墨字・点字のテキストボックスをフォーカスした時には文字入力モードへと自動的に変更する
   $('#InkChar').off('focusin').on('focusin' ,function() {
-    $('input[name="Stamp"][value="Text"]').prop('checked', true).trigger('change');
+    $('input[name="tg_mode"][value="Text"]').prop('checked', true).trigger('change');
   })
   $('#Braille').off('focusin').on('focusin' ,function() {
-    $('input[name="Stamp"][value="Text"]').prop('checked', true).trigger('change');
+    $('input[name="tg_mode"][value="Text"]').prop('checked', true).trigger('change');
   })
 }

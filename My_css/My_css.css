@@ -1,4 +1,11 @@
-
+@font-face {
+	font-family: 'Ikarashi Braille';
+	src: url(.././いからし点字.ttf);
+}
+@font-face {
+	font-family: '点字線なし';
+	src: url(.././BNLbrail.ttf);
+}
 
 #main_content{
   user-select: none; /* CSS3 */
@@ -32,10 +39,44 @@ header
 	background-color: #E2EDF9; 	/* マウスオーバー時の背景色を指定する */
 }
 
-
 /**
-線種変更ラジオボタン
+点字フォント変更ラジオボタン
 **/
+
+/*
+線種変更ラジオボタン
+*/
+#select_braillefont input[type="radio"]{
+  display : none;
+}
+#select_braillefont {
+  margin-top: 10px;
+}
+
+#select_braillefont  label{
+  padding-left: 25px;	/* ボックス内左側の余白を指定する */
+  padding-right: 25px;
+  border: 2px solid #006DD9;/* ボックスの境界線を実線で指定する */
+}
+
+#select_braillefont input[type="radio"]:checked + label {
+	background: #31A9EE;/* マウス選択時の背景色を指定する */
+	color: #ffffff; 	/* マウス選択時のフォント色を指定する */
+}
+
+#select_braillefont label:hover {
+	background-color: #E2EDF9; 	/* マウスオーバー時の背景色を指定する */
+}
+
+/*
+線種変更ラジオボタン
+*/
+#stroke_style input[type="radio"]{
+  display : none;
+}
+#stroke_style {
+  margin-top: 10px;
+}
 
 #stroke_style  label{
   padding-left: 25px;	/* ボックス内左側の余白を指定する */
@@ -127,7 +168,7 @@ input[type=checkbox]:checked + .sample_label:before {
 }
 
 #toolbar1 input[type=text] {
-	width: 150px;
+	width: 200px;
   height: 30px;
   font-size: 100%;
 }
@@ -144,10 +185,14 @@ input[type=checkbox]:checked + .sample_label:before {
   height:40px;
   font-size: 100%;
   background-color: #E2EDF9;
-  margin-left : 15px;
   border: 2px solid #FFA500;/* ボックスの境界線を実線で指定する */
   border-radius : 20px;
   cursor : pointer;
+}
+
+#undo{
+  margin-left:  80px;
+  margin-right:  30px;
 }
 
 #toolbar1 button:hover{
@@ -200,7 +245,8 @@ toolbar2 radio button
 }
 
 #toolbar2_radio #node_connect{
-  background-color: #C0C0C0;
+	margin-top: 30px;
+	background-color: #C0C0C0;
   border: solid 2px #696969;
   border-radius : 20px;
   padding : 3px;
@@ -233,12 +279,12 @@ toolbar2 checkbox
 }
 
 #toolbar2_checkbox{
-  margin-top : 50px;
+  margin-top : 90px;
   margin-left : -10px;
 }
 
 #toolbar2_checkbox div{
-  margin-bottom: 15px;
+  margin-bottom: 30px;
   font-size : 18px;
 }
 
@@ -277,12 +323,36 @@ toolbar2 checkbox
   width:80px;
   height:20px;
   text-align: center;
-  margin-bottom:20px;
+  margin-top:20px;
   margin-right : 5px;
 }
 
 #rb_width{
   margin-left : 15px;
+}
+
+/*
+触知記号スタンプ
+*/
+#stamp_table{
+  margin-top : 60px;
+  margin-left : 30px;
+  border-collapse: separate;
+  border-spacing: 0px 30px;
+}
+
+#stamp_table input[type=radio] {
+	display: none; 	/* ラジオボタンを非表示にする */
+}
+
+#stamp_table input[type="radio"] + label{
+  padding: 5px 15px; 	/* ボックス内左側の余白を指定する */
+  border: 2px solid #003300;/* ボックスの境界線を実線で指定する */
+}
+
+#stamp_table input[type="radio"]:checked + label {
+	background: #009933;/* マウス選択時の背景色を指定する */
+	color: #ffffff; 	/* マウス選択時のフォント色を指定する */
 }
 
 /*
@@ -317,12 +387,6 @@ toolbar2 checkbox
   background-image: url('../images/back.png');
 }
 
-/*
-線種変更ラジオボタン
-*/
-#stroke_style input[type="radio"]{
-  display : none;
-}
 
 /*
 線幅、墨字、点字サイズ変更ガジェット
@@ -353,17 +417,20 @@ toolbar2 checkbox
 塗りつぶしボタン
 *************************/
 
+#fill_change{
+  margin:15px 0px;
+}
+
 #fill_change button:hover{
   border-color: #006DD9;/* ボックスの境界線を実線で指定する */
 }
 
 #fill_change button{
-   width:80px;
-   height:30px;
-   background-color: #ffffff;
-   background-position:center center; /*背景画像の位置*/
-   background-repeat:no-repeat; /*背景画像の繰り返し*/
-
+  width:80px;
+  height:30px;
+  background-color: #ffffff;
+  background-position:center center; /*背景画像の位置*/
+  background-repeat:no-repeat; /*背景画像の繰り返し*/
 }
 
 #fill_change td{
