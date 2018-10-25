@@ -1,2 +1,2 @@
 # TactileMapYuta  
-URL : https://stevenyuta.github.io/TactileMapYuta/
+URL : https://stevenyuta.github.io/tactilemapyuta
