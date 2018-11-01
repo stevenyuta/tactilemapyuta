@@ -294,10 +294,13 @@ right toolbar
 	margin: 0px 0px 30px 10px;
 }
 
+#layer_select td{
+	padding: 3px;
+}
+
 #layer_select button{
-	margin: 3px;
-	width:90px;
-  height:32px;
+	width:80px;
+  height:30px;
   background-color : #ffffff;
   background-position:center center; /*背景画像の位置*/
   background-repeat:no-repeat; /*背景画像の繰り返し*/
@@ -345,7 +348,7 @@ right toolbar
 }
 
 #fill_change td{
-  padding: 7px 8px;
+  padding: 3px;
 }
 
 #fill_change #diagonal_button{

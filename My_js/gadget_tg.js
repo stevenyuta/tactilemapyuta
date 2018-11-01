@@ -586,10 +586,12 @@ function gadget_set(e){
   });
   //墨字・点字のテキストボックスをフォーカスした時には文字入力モードへと自動的に変更する
   $('#InkChar').off('focusin').on('focusin' ,function() {
-    $('input[name="tg_mode"][value="Text"]').prop('checked', true).trigger('change');
+    $('input[name="tg_mode"][value="Text"]').prop('checked', true);
+    RadioEvent_set();
   })
   $('#Braille').off('focusin').on('focusin' ,function() {
-    $('input[name="tg_mode"][value="Text"]').prop('checked', true).trigger('change');
+    $('input[name="tg_mode"][value="Text"]').prop('checked', true);
+    RadioEvent_set();
   })
 
   /**************************************************************
