@@ -255,6 +255,9 @@ function draw_circle(){
         'stroke-width' : PATH_STROKE_WIDTH * $('#StrokeWidth_TextBox').val(),
         'stroke' : '#000000'
       })
+      if($('input[name="stroke"]:checked').val()==='dotted_line'){
+        make_circle.attr({ 'stroke-dasharray': PATH_STROKE_WIDTH*$('#StrokeWidth_TextBox').val() })
+      }
       make_circle.addClass('SVG_Element').addClass('circle').addClass('make_circle').back();
       for(let i=0; i< back_num; i++){
         make_circle.forward();
