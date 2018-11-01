@@ -32,238 +32,266 @@
     <script type="text/javascript" src="./My_js/keypush_tg.js"></script> <!--ペン機能関係-->
     <script type="text/javascript" src="./My_js/other_tg.js"></script> <!--そのほかの関数-->
 
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
     <!-- css導入 -->
     <link type="text/css" rel="stylesheet" href="./My_css/jquery-ui.min.css" />
     <link type="text/css" rel="stylesheet" href="./My_css/rangeslider.css" />
     <link rel="stylesheet" href="./My_css/My_css.css" type="text/css"/>
     <link rel="stylesheet" href="./My_css/jquery.contextMenu.min.css" type="text/css"/>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous"/>
 
-    <div id="header">
-      <input type="file" id = "file_svg" style="display:none">
-      <input type="button" value="続きから開始" onClick="$('#file_svg').click();" style="margin: 0px 10px; font-size:16px;">
-      <input type="file" id = "file_img" style = "display:none">
-      <input type="button" value="画像ファイル選択" onClick="$('#file_img').click();" style="margin: 0px 20px; font-size:16px;">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-1"></div>
+        <div class="col-10">
+          <div id="top_contents">
+            <span>
+              <input type="file" id = "file_svg">
+              <input type="button" value="続きから開始" onClick="$('#file_svg').click();" >
+              <input type="file" id = "file_img">
+              <input type="button" value="画像ファイル選択" onClick="$('#file_img').click();" >
+            </span>
 
-      <input type="radio" id="guiderect_A4" name="guiderect" value="guiderect_A4" />
-      <label for="guiderect_A4">A4</label>
-      <input type="radio" id="guiderect_B4" name="guiderect" value="guiderect_B4" />
-      <label for="guiderect_B4" style="margin-right:40px;">B4</label>
-      <input type="radio" id="horizontal_guide" name="direction_guide" value="horizontal_guide" />
-      <label for="horizontal_guide">横</label>
-      <input type="radio" id="vertical_guide" name="direction_guide" value="vertical_guide" />
-      <label for="vertical_guide">縦</label>
+            <span>
+              <input type="radio" id="guiderect_A4" name="guiderect" value="guiderect_A4"/>
+              <label for="guiderect_A4">A4</label>
+              <input type="radio" id="guiderect_B4" name="guiderect" value="guiderect_B4" />
+              <label for="guiderect_B4">B4</label>
+            </span>
 
-      <a id="svg_download" style = "font-size:18px; margin-left:50px;" href="#" download="SVG_output.svg" onclick="svgDownload()">SVG</a>
-      <a id="png_download" href="#" onclick="pngDownload()" style = "font-size:18px; margin-left:20px;">PNG</a>
-      <a id="legend_download" style = "font-size:18px; margin-left:20px;" href="#" download="凡例.txt" onclick="legendDownload()">凡例</a>
-      <a href="manual2nd.pdf" target="_blank" style="font-size:18px; margin-left:70px;">取扱説明書</a>
-    </div>
+            <span>
+              <input type="radio" id="horizontal_guide" name="direction_guide" value="horizontal_guide" />
+              <label for="horizontal_guide">横</label>
+              <input type="radio" id="vertical_guide" name="direction_guide" value="vertical_guide" />
+              <label for="vertical_guide">縦</label>
+            </span>
 
-    <div id="main_content" style="width:2000px;">
-      <div id="toolbar1">
-
-        <input  type="radio" name="tg_mode" value="Stamp" id="Stamp">
-        <label for="Stamp" class="radio_label">触知記号</label>
-
-        <input  type="radio" name="tg_mode" value="DrawCircle" id="DrawCircle">
-        <label for="DrawCircle" class="radio_label" >円記号</label>
-
-        <input  type="radio" name="tg_mode" value="Text" id="Text">
-        <label for="Text" class="radio_label">文字</label>
-
-        <input type="checkbox" id="check_ink" name="checkers" value="check_ink" class="checkbox01-input"/>
-        <label for="check_ink" class="sample_label"></label>
-        <input type="text" id="InkChar" value="墨字" oncopy="return false" onpaste="return false" oncontextmenu="return false">
-
-        <input type="checkbox" id="check_bra" name="checkers" value="check_bra" class="checkbox01-input"/>
-        <label for="check_bra" class="sample_label"></label>
-        <input type="text" id="Braille" value="てんじ" oncopy="return false" onpaste="return false" oncontextmenu="return false">
-
-        <button id="undo"><i class="fa fa-undo"></i></button>
-        <button id="redo"><i class="fa fa-repeat"></i></button>
-      </div>
-
-      <div id="toolbar2">
-        <div id="toolbar2_radio">
-          <div>
-            <input  type="radio" name="tg_mode" value="Draw" id="Draw">
-            <label for="Draw"  class="toolbar_radio">ペン</label>
-          </div>
-          <div>
-            <input  type="radio" name="tg_mode" value="Edit" id="Edit">
-            <label for="Edit" class="toolbar_radio">選択</label>
-          </div>
-          <div>
-            <input  type="radio" name="tg_mode" value="EditPath" id="EditPath">
-            <label for="EditPath" class="toolbar_radio">線の詳細編集</label>
-          </div>
-          <div>
-            <input  type="radio" name="tg_mode" value="EditImage" id="EditImage">
-            <label for="EditImage" class="toolbar_radio">画像選択</label>
-          </div>
-          <div>
-            <input  type="radio" name="tg_mode" value="TrimBase64" id="TrimBase64">
-            <label for="TrimBase64" class="toolbar_radio" >画像トリミング</label>
-          </div>
-          <div>
-            <input type="button" id="node_connect" value="端点のノードを結合" disabled>
-          </div>
-          <div>
-            <input type="button" id="distance_check_button" value="距離間チェック">
-          </div>
-          <div>
-              <input type="button" style = "display:none;" id="trans" value="平面図変換">
-          </div>
-        </div>
-
-        <div id="toolbar2_checkbox">
-            <div>
-              <input type="checkbox" id="draw_svg" name="checkers" value="draw_svg"/>
-              <label for="draw_svg" class="sample_label">描画要素</label>
-            </div>
-            <div>
-              <input type="checkbox" id="image" name="checkers" value="image"/>
-              <label for="image" class="sample_label">画像</label>
-            </div>
-            <div style="display:none;">
-              <input type="checkbox" id="graduation_frame" name="checkers" value="graduation_frame" />
-              <label for="graduation_frame" class="sample_label">目盛付き枠</label>
-            </div>
-            <div>
-              <input type="checkbox" id="gridline" name="checkers" value="gridline" />
-              <label for="gridline" class="sample_label">グリッド線</label>
-            </div>
-            <div>
-              <input type="checkbox" id="2Braille" name="checkers" value="2Braille" />
-              <label for="2Braille" class="sample_label">点訳</label>
-            </div>
-        </div>
-      </div>
-
-      <span id="draw_include" unselectable=on><div id="draw_area"></div></span>
-      <div  id="height_slider" ></div>
-
-      <div id="right_content">
-
-        <table id="select_braillefont">
-          <tr>
-            <td>
+            <span>
               <input type="radio" id="IBfont" name="braillefont" value="IBfont"/>
-              <label for="IBfont">いからし</label>
-            </td>
-            <td>
+              <label for="IBfont" >いからし点字</label>
               <input type="radio" id="lighthouse" name="braillefont" value="lighthouse"/>
-              <label for="lighthouse">ライトハウス</label>
-            </td>
-          </tr>
-        </table>
+              <label for="lighthouse">ライトハウス点字</label>
+            </span>
 
-        <!-- 線種変更ラジオボタン -->
-        <table id="stroke_style">
-          <tr>
-            <td>
-              <input type="radio" id="solid_line" name="stroke" value="solid_line"/>
-              <label for="solid_line">実線</label>
-            </td>
-            <td>
-              <input type="radio" id="dotted_line" name="stroke" value="dotted_line"/>
-              <label for="dotted_line">点線</label>
-            </td>
-          </tr>
-        </table>
-
-        <ul id = "right_ul">
-          <li>
-            線幅<input type="text" id="StrokeWidth_TextBox" oncopy="return false" onpaste="return false" oncontextmenu="return false">mm
-            <button id="resetStrokeWidth_Button">初期値</button>
-            <div class="slider" id="StrokeWidth_Slider" ></div>
-          </li>
-          <li>
-            墨字<input type="text" id="resizeInk_TextBox" oncopy="return false" onpaste="return false" oncontextmenu="return false">pt
-            <button id="resetInk_Button">初期値</button>
-            <div class="slider" id="resizeInk_Slider" ></div>
-          </li>
-          <li>
-            点字<input type="text" id="resizeBraille_TextBox" oncopy="return false" onpaste="return false" oncontextmenu="return false">pt
-            <button id="brasize_resetbutton">初期値</button>
-            <div class="slider" id="resizeBraille_Slider" ></div>
-          </li>
-        </ul>
-
-        <table id="stamp_table">
-          <tr>
-            <td>
-              <input  type="radio" name="tactileSymbol" value="Stair" id="Stair" checked="checked">
-              <label for="Stair" class="radio_label">階段</label>
-          </td>
-          </tr>
-          <tr>
-            <td>
-              <input  type="radio" name="tactileSymbol" value="Escalator" id="Escalator">
-              <label for="Escalator" class="radio_label">エスカレータ</label>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <input  type="radio" name="tactileSymbol" value="Arrow" id="Arrow">
-              <label for="Arrow" class="radio_label">矢印</label>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <input  type="radio" name="tactileSymbol" value="Tiket_gate" id="Tiket_gate">
-              <label for="Tiket_gate" class="radio_label">改札</label>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <input  type="radio" name="tactileSymbol" value="Reducescale" id="Reducescale">
-              <label for="Reducescale" class="radio_label">縮尺</label>
-            </td>
-          </tr>
-        </table>
-
-        <table id="layer_select">
-          <tr>
-            <td><button id="front_button"></button></td>
-            <td><button id="forward_button"></button></td>
-          </tr>
-          <tr>
-            <td><button id="backward_button"></button></td>
-            <td><button id="back_button"></button></td>
-          </tr>
-        </table>
-
-
-
-        <table id="fill_change" border="1">
-          <caption>塗りつぶし</caption>
-          <tr>
-            <td><button id="fillnone_button">なし</button></td>
-            <td><button id="diagonal_button"></button></td>
-          </tr>
-          <tr>
-            <td><button id="white_button"></button></td>
-            <td><button id="gray_button"></button></td>
-          </tr>
-          <tr>
-            <td><button id="polkadot_button" ></button></td>
-            <td><button id="polkadot_water_button"></button></td>
-          </tr>
-        </table>
-
-        <div id="resizeBox_textbox">
-          <div>
-            幅：<input type="text" id="rb_width" value="" oncopy="return false" onpaste="return false" oncontextmenu="return false" maxlength="6">mm
+            <span id="downloader">
+              <a id="svg_download" href="#" download="SVG_output.svg" onclick="svgDownload()">SVG</a>
+              <a id="png_download" href="#" onclick="pngDownload()">PNG</a>
+              <a id="legend_download"  href="#" download="凡例.txt" onclick="legendDownload()">凡例</a>
+              <a href="manual2nd.pdf" target="_blank">取扱説明書</a>
+            </span>
           </div>
-          <div>
-            高さ：<input type="text" id="rb_height" style = "" value="" oncopy="return false" onpaste="return false" oncontextmenu="return false" maxlength="6">mm
+
+          <div id="main_content" style="width:2000px;">
+            <div id="top_toolbar">
+              <input  type="radio" name="tg_mode" value="Stamp" id="Stamp">
+              <label for="Stamp">触知記号</label>
+
+              <input  type="radio" name="tg_mode" value="DrawCircle" id="DrawCircle">
+              <label for="DrawCircle">円記号</label>
+
+              <input  type="radio" name="tg_mode" value="Text" id="Text">
+              <label for="Text">文字</label>
+
+              <input type="checkbox" id="check_ink" name="checkers" value="check_ink" class="checkbox01-input"/>
+              <label for="check_ink" class="custom_check_label"></label>
+              <input type="text" id="InkChar" value="墨字" oncopy="return false" onpaste="return false" oncontextmenu="return false">
+
+              <input type="checkbox" id="check_bra" name="checkers" value="check_bra" class="checkbox01-input"/>
+              <label for="check_bra" class="custom_check_label"></label>
+              <input type="text" id="Braille" value="てんじ" oncopy="return false" onpaste="return false" oncontextmenu="return false">
+
+              <button id="undo"><i class="fa fa-undo"></i></button>
+              <button id="redo"><i class="fa fa-repeat"></i></button>
+            </div>
+
+            <div id="left_toolbar">
+              <div id="toolbar2_radio">
+                <div>
+                  <input  type="radio" name="tg_mode" value="Draw" id="Draw">
+                  <label for="Draw">ペン</label>
+                </div>
+                <div>
+                  <input  type="radio" name="tg_mode" value="Edit" id="Edit">
+                  <label for="Edit">選択</label>
+                </div>
+                <div>
+                  <input  type="radio" name="tg_mode" value="EditPath" id="EditPath">
+                  <label for="EditPath">線の詳細編集</label>
+                </div>
+                <div id = "EditImage_div">
+                  <input  type="radio" name="tg_mode" value="EditImage" id="EditImage">
+                  <label for="EditImage">画像選択</label>
+                </div>
+                <div id = "TrimBase64_div">
+                  <input  type="radio" name="tg_mode" value="TrimBase64" id="TrimBase64">
+                  <label for="TrimBase64">画像切り取り</label>
+                </div>
+              </div>
+
+              <div id="left_toolbar_button">
+                <div>
+                  <input type="button" id="node_connect" value="端点のノードを結合" disabled>
+                </div>
+                <div>
+                  <input type="button" id="distance_check_button" value="距離間チェック">
+                </div>
+                <div>
+                    <input type="button" style = "display:none;" id="trans" value="平面図変換">
+                </div>
+              </div>
+
+              <div id="left_toolbar_checkbox">
+                  <div>
+                    <input type="checkbox" id="draw_svg" name="checkers" value="draw_svg"/>
+                    <label for="draw_svg" class="custom_check_label">描画要素</label>
+                  </div>
+                  <div>
+                    <input type="checkbox" id="image" name="checkers" value="image"/>
+                    <label for="image" class="custom_check_label">画像</label>
+                  </div>
+                  <div style="display:none;">
+                    <input type="checkbox" id="graduation_frame" name="checkers" value="graduation_frame" />
+                    <label for="graduation_frame" class="custom_check_label">目盛付き枠</label>
+                  </div>
+                  <div>
+                    <input type="checkbox" id="gridline" name="checkers" value="gridline" />
+                    <label for="gridline" class="custom_check_label">グリッド線</label>
+                  </div>
+                  <div>
+                    <input type="checkbox" id="2Braille" name="checkers" value="2Braille" />
+                    <label for="2Braille" class="custom_check_label">点訳</label>
+                  </div>
+              </div>
+            </div>
+
+            <span id="draw_include" unselectable=on><div id="draw_area"></div></span>
+            <div  id="height_slider" ></div>
+
+            <div id="right_toolbar">
+
+              <!-- 線種変更ラジオボタン -->
+              <table id="stroke_style">
+                <tr>
+                  <td>
+                    <input type="radio" id="solid_line" name="stroke" value="solid_line"/>
+                    <label for="solid_line">実線</label>
+                  </td>
+                  <td>
+                    <input type="radio" id="dotted_line" name="stroke" value="dotted_line"/>
+                    <label for="dotted_line">点線</label>
+                  </td>
+                </tr>
+              </table>
+
+              <table id = "rightUI_table">
+                <tr>
+                  <td>線幅</td>
+                  <td><input type="text" id="StrokeWidth_TextBox" oncopy="return false" onpaste="return false" oncontextmenu="return false"></td>
+                  <td>mm</td>
+                  <td><button id="resetStrokeWidth_Button">初期値</button></td>
+                </tr>
+                <tr><td colspan="4">
+                  <div class="slider" id="StrokeWidth_Slider" ></div>
+                </td></tr>
+                <tr>
+                  <td>墨字</td>
+                  <td><input type="text" id="resizeInk_TextBox" oncopy="return false" onpaste="return false" oncontextmenu="return false"></td>
+                  <td>pt</td>
+                  <td><button id="resetInk_Button">初期値</button></td>
+                </tr>
+                <tr><td colspan="4">
+                  <div class="slider" id="resizeInk_Slider"></div>
+                </td></tr>
+                <tr>
+                  <td>点字</td>
+                  <td><input type="text" id="resizeBraille_TextBox" oncopy="return false" onpaste="return false" oncontextmenu="return false"></td>
+                  <td>pt</td>
+                  <td><button id="brasize_resetbutton">初期値</button></td>
+                </td></tr>
+                <tr><td colspan="4">
+                  <div class="slider" id="resizeBraille_Slider"></div>
+                </td></tr>
+                <tr class="gadget_imageOpacity">
+                  <td>画像透過度</td>
+                  <td><input type="text" id="ImageOpacity_TextBox" oncopy="return false" onpaste="return false" oncontextmenu="return false"></td>
+                  <td>%</td>
+                  <td><button id="ImageOpacity_resetbutton">100%</button></td>
+                </tr>
+                <tr class="gadget_imageOpacity"><td colspan="4">
+                  <div class="slider" id="ImageOpacity_Slider"></div>
+                </td></tr>
+              </table>
+
+              <table id="stamp_table">
+                <tr><td>
+                  <input  type="radio" name="tactileSymbol" value="Stair" id="Stair" checked="checked">
+                  <label for="Stair">階段</label>
+                </td></tr>
+                <tr><td>
+                  <input  type="radio" name="tactileSymbol" value="Escalator" id="Escalator">
+                  <label for="Escalator">エスカレータ</label>
+                </td></tr>
+                <tr><td>
+                  <input  type="radio" name="tactileSymbol" value="Arrow" id="Arrow">
+                  <label for="Arrow">矢印</label>
+                </td></tr>
+                <tr><td>
+                  <input  type="radio" name="tactileSymbol" value="Tiket_gate" id="Tiket_gate">
+                  <label for="Tiket_gate">改札</label>
+                </td></tr>
+                <tr><td>
+                  <input  type="radio" name="tactileSymbol" value="Reducescale" id="Reducescale">
+                  <label for="Reducescale">縮尺</label>
+                </td></tr>
+              </table>
+
+              <table id="layer_select">
+                <tr>
+                  <td><button id="front_button"></button></td>
+                  <td><button id="forward_button"></button></td>
+                </tr>
+                <tr>
+                  <td><button id="backward_button"></button></td>
+                  <td><button id="back_button"></button></td>
+                </tr>
+              </table>
+
+              <table id="fill_change" border="1">
+                <tr>
+                  <td><button id="fillnone_button">なし</button></td>
+                  <td><button id="diagonal_button"></button></td>
+                </tr>
+                <tr>
+                  <td><button id="white_button"></button></td>
+                  <td><button id="gray_button"></button></td>
+                </tr>
+                <tr>
+                  <td><button id="polkadot_button" ></button></td>
+                  <td><button id="polkadot_water_button"></button></td>
+                </tr>
+              </table>
+
+              <table id="resizeBox_textbox">
+                <tr>
+                  <td>幅</td>
+                  <td>：<input type="text" id="rb_width" value="" oncopy="return false" onpaste="return false" oncontextmenu="return false" maxlength="6"></td>
+                  <td>mm</td>
+                </tr>
+                <tr>
+                  <td>高さ</td>
+                  <td>：<input type="text" id="rb_height" value="" oncopy="return false" onpaste="return false" oncontextmenu="return false" maxlength="6"></td>
+                  <td>mm</td>
+                </tr>
+              </table>
+
+             </div>
+             <div style="clear:both;" id="width_slider" ></div>
           </div>
         </div>
-
-       </div>
-       <div style="clear:both;" id="width_slider" ></div>
+        <div class="col-1"></div>
+      </div>
     </div>
 
     <script>
@@ -389,12 +417,16 @@
 
       function RadioEvent_set(){
         nowchecked = $('input[name="tg_mode"]:checked').val();
+        let Image_radio = $('#EditImage_div , #TrimBase64_div');
+        (draw.select('.image').first()) ? Image_radio.show() : Image_radio.hide();
+        (draw.select('.image').first()) ? $('.gadget_imageOpacity').show() : $('.gadget_imageOpacity').hide();
         /*************************************
         //モードを変更したときに必ず行う処理
         *************************************/
         $(document).off(); //ページ上のイベントの削
         draw.off(); //drawのイベント解除
         draw.select('.SVG_Element , .image').off(); //SVG_Elementのイベント解除
+        draw.select('.SVG_Element , .image').attr({'cursor':'default'});
         $('#rb_width , #rb_height').off();
         draw.select('.connected').each(function(i,children){
           if(this.clear().array().settle().length < 2) this.remove();
@@ -443,7 +475,10 @@
           default:
             break;
         }
-        if(nowchecked!=="Draw") draw.select('.drawing_path').removeClass('drawing_path');
+        if(nowchecked!=="Draw"){
+          draw.select('.drawing_path').removeClass('drawing_path');
+          now_drawing_path_ID = "";
+        }
         if(nowchecked==="Edit" || nowchecked==="EditImage"){
           $('#layer_select').show();
           $('#fill_change').show();

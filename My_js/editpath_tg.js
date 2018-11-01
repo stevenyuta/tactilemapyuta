@@ -129,8 +129,8 @@ function toFragmented(connectedPath){
     'fragmented_Group_Number' : String(max_frag_num + 1)
   })
   if(dpoint[dpoint.length-1][0]==="Z"){
-    fragmented_PathGroup.addClass('close');
-    fragmented_CircleGroup.addClass('close');
+    fragmented_PathGroup.addClass('closed_path');
+    fragmented_CircleGroup.addClass('closed_path');
   }
   connectedPath.after(fragmented_PathGroup);
   for(let j = 0; j < dpoint.length - 1; j++){
@@ -145,7 +145,7 @@ function toFragmented(connectedPath){
     })
     if(fragmentedPath.attr('stroke-width') === 0){ //線幅が0の場合
       fragmentedPath.attr({
-        'stroke-width': '2' ,
+        'stroke-width': PATH_STROKE_WIDTH,
         'stroke-dasharray' : '3 3 10 3'
       })
     }
@@ -175,7 +175,7 @@ function toFragmented(connectedPath){
       }
     }
   }
-  if(fragmented_PathGroup.hasClass('close')){
+  if(fragmented_PathGroup.hasClass('closed_path')){
     let ghost_path = draw.path().attr({
       'id' : 'ghost_path_' + String(max_frag_num + 1),
       'fill' : connectedPath.attr('fill'),
@@ -195,7 +195,7 @@ function update_editElement(){
     if(this.children().length === 0){
       let fragmented_Group_Number = this.attr('fragmented_Group_Number');
       SVG.get('#fragmented_CircleGroup_' + String(fragmented_Group_Number)).remove();
-      if(this.parent().hasClass('close')) SVG.get('#ghost_path_' + String(fragmented_Group_Number)).remove();
+      if(this.parent().hasClass('closed_path')) SVG.get('#ghost_path_' + String(fragmented_Group_Number)).remove();
       this.remove();
     }
   })
@@ -240,11 +240,11 @@ function fragmentedPath_EventSet(){
     this.attr({ 'stroke' : PATH_EDIT_COLOR}).addClass('editing_target');
     if(e.button===0){ //左クリック時
       // シングルクリックの場合
-      if( !clickCount ) {
+      if( !clickCount) {
         move_editing();
-        ++clickCount ;
+        ++clickCount;
         setTimeout( function() {
-          clickCount = 0 ;
+          clickCount = 0;
         }, 350 ) ;
       // ダブルクリックの場合
       }else{
@@ -280,6 +280,7 @@ function fragmentedPath_EventSet(){
         fragmentedPath_EventSet();
         edit_circle_EventSet();
         editpath_hover(true);
+        cash_svg();
         clickCount = 0;
       }
     }
@@ -290,13 +291,31 @@ function fragmentedPath_EventSet(){
 //circleのイベント登録
 *****************************************/
 function edit_circle_EventSet(){
+  let clickCount = 0;
   draw.select('.edit_circle').off('mousedown').on('mousedown',function(e){ //mousedownイベントの登録
     editpath_hover(false);
     if(!input_key_buffer[16] && !this.hasClass('editing_target') && event.button===0)  reset_editing_target();
-    this.attr({ 'fill' : CIRCLE_EDIT_COLOR}).addClass('editing_target');
     if(e.button===0){
-      move_editing();
-      get_node_connectCircle();
+      this.attr({ 'fill' : CIRCLE_EDIT_COLOR}).addClass('editing_target');
+      // シングルクリックの場合
+      if( !clickCount ) {
+        move_editing();
+        get_node_connectCircle();
+        ++clickCount ;
+        setTimeout( function() {
+          clickCount = 0;
+        }, 350 ) ;
+      // ダブルクリックの場合
+      }else{
+        console.log('db')
+        delete_editpath_circle(this);
+        update_editElement();
+        fragmentedPath_EventSet();
+        edit_circle_EventSet();
+        update_ghostPath();
+        editpath_hover(true); //hoverイベントの再更新
+        clickCount = 0;
+      }
     }
   })
 }
@@ -351,76 +370,87 @@ function move_editing(){
 }
 
 function delete_editpath(){
+  let delete_flag = false;
   while(draw.select('.editing_target').first()){
     let editing_target = draw.select('.editing_target').first();
     if(editing_target.hasClass('edit_circle')){
-      let nears = getSimultaneouslyEdit_element(editing_target); //circleの近傍要素を取得
-      let new_fragmentedPath;
-      if(nears.afterPath)afterPath_dpoint =  nears.afterPath.clear().array().settle(); //afterPathのdpoint配列を取得
-      if(nears.beforePath)beforePath_dpoint =  nears.beforePath.clear().array().settle(); //beforePathのdpoint配列を取得
-      if(nears.afterPath && nears.beforePath){
-        new_fragmentedPath = draw.path().M({x: beforePath_dpoint[0][1], y: beforePath_dpoint[0][2]}).L({x: afterPath_dpoint[1][1], y: afterPath_dpoint[1][2]});
-        new_fragmentedPath.addClass('fragmented').addClass('SVG_Element').addClass('path');
-        new_fragmentedPath.attr({
-          'fill' : 'none',
-          'stroke' : PATH_SELECT_COLOR,
-          'stroke-linejoin' : 'round',
-          'stroke-width': nears.beforePath.attr('stroke-width'),
-          'stroke-dasharray': nears.beforePath.attr('stroke-dasharray'),
-        })
-        nears.beforePath.after(new_fragmentedPath);
-      }
-      if(nears.beforePath!==null)nears.beforePath.remove(); //beforePathの削除
-      if(nears.afterPath!==null)nears.afterPath.remove();  //afterPathの削除
-      let fragmented_PathGroup = SVG.get('fragmented_PathGroup_' + String(editing_target.parent().attr('fragmented_Group_Number')));
-      if(fragmented_PathGroup.hasClass('close') && fragmented_PathGroup.children().length < 3){ //線が閉じていて、グループ内に線が2本以下の場合
-        fragmented_PathGroup.removeClass('close');
-        editing_target.parent().removeClass('close');
-        SVG.get('#ghost_path_' + String(editing_target.parent().attr('fragmented_Group_Number'))).remove();
-        new_fragmentedPath.remove();
-      }
-      editing_target.remove(); //editing_circleの削除
+      delete_editpath_circle(editing_target);
     }else{
-      if(!editing_target.parent().hasClass('close')){
-        var max_fragmented_Group_Number = getMax_fragmented_Group_Number();
-        let new_fragmented_PathGroup = draw.group().addClass('fragmented_PathGroup');
-        let new_fragmented_CircleGroup = draw.group().addClass('fragmented_CircleGroup');
-        let current_fragmented_Group_Number = editing_target.parent().attr('fragmented_Group_Number');
-        new_fragmented_PathGroup.attr({
-          'id' : 'fragmented_PathGroup_' + String(max_fragmented_Group_Number + 1),
-          'fragmented_Group_Number' : String(max_fragmented_Group_Number + 1),
-          'connected_id' : editing_target.parent().attr('connected_id'),
-          'fill_tmp': editing_target.parent().attr('fill_tmp')
-        })
-        new_fragmented_CircleGroup.attr({
-          'id' : 'fragmented_CircleGroup_' + String(max_fragmented_Group_Number + 1),
-          'fragmented_Group_Number' : String(max_fragmented_Group_Number + 1),
-        })
-        editing_target.parent().before(new_fragmented_PathGroup);
-        for(var j=0 ; j < Number(editing_target.attr('assignment_Number')) + 1; j++){
-          new_fragmented_PathGroup.add(SVG.get('path_'+ String(current_fragmented_Group_Number) + '_'  + String(j)));
-          new_fragmented_CircleGroup.add(SVG.get('circle_'+ String(current_fragmented_Group_Number) + '_' + String(j)));
-        }
-      }else{
-        let current_fragmented_Group_Number = editing_target.parent().attr('fragmented_Group_Number');
-        for(var j=0 ; j < Number(editing_target.attr('assignment_Number')) + 1; j++){
-          SVG.get('path_'+ String(current_fragmented_Group_Number) + '_'  + String(j)).front();
-          SVG.get('circle_'+ String(current_fragmented_Group_Number) + '_'  + String(j)).front();
-        }
-        editing_target.parent().removeClass('close');
-        let ghost_path = SVG.get('#ghost_path_' + String(current_fragmented_Group_Number));
-        let fragmented_CircleGroup = SVG.get('fragmented_CircleGroup_'+ String(current_fragmented_Group_Number));
-        if(fragmented_CircleGroup) fragmented_CircleGroup.removeClass('close');
-        if(ghost_path) ghost_path.remove();
-      }
-      editing_target.remove(); //editing_pathの削除
+      delete_editpath_fragmentedPath(editing_target);
     }
     update_editElement();
+    delete_flag = true;
   }
   fragmentedPath_EventSet();
   edit_circle_EventSet();
   update_ghostPath();
   editpath_hover(true); //hoverイベントの再更新
+  if(delete_flag) cash_svg();
+}
+
+function delete_editpath_circle(editing_target){
+  let nears = getSimultaneouslyEdit_element(editing_target); //circleの近傍要素を取得
+  let new_fragmentedPath;
+  if(nears.afterPath)afterPath_dpoint =  nears.afterPath.clear().array().settle(); //afterPathのdpoint配列を取得
+  if(nears.beforePath)beforePath_dpoint =  nears.beforePath.clear().array().settle(); //beforePathのdpoint配列を取得
+  if(nears.afterPath && nears.beforePath){
+    new_fragmentedPath = draw.path().M({x: beforePath_dpoint[0][1], y: beforePath_dpoint[0][2]}).L({x: afterPath_dpoint[1][1], y: afterPath_dpoint[1][2]});
+    new_fragmentedPath.addClass('fragmented').addClass('SVG_Element').addClass('path');
+    new_fragmentedPath.attr({
+      'fill' : 'none',
+      'stroke' : PATH_SELECT_COLOR,
+      'stroke-linejoin' : 'round',
+      'stroke-width': nears.beforePath.attr('stroke-width'),
+      'stroke-dasharray': nears.beforePath.attr('stroke-dasharray'),
+    })
+    nears.beforePath.after(new_fragmentedPath);
+  }
+  if(nears.beforePath!==null)nears.beforePath.remove(); //beforePathの削除
+  if(nears.afterPath!==null)nears.afterPath.remove();  //afterPathの削除
+  let fragmented_PathGroup = SVG.get('fragmented_PathGroup_' + String(editing_target.parent().attr('fragmented_Group_Number')));
+  if(fragmented_PathGroup.hasClass('closed_path') && fragmented_PathGroup.children().length < 3){ //線が閉じていて、グループ内に線が2本以下の場合
+    fragmented_PathGroup.removeClass('closed_path');
+    editing_target.parent().removeClass('closed_path');
+    SVG.get('#ghost_path_' + String(editing_target.parent().attr('fragmented_Group_Number'))).remove();
+    new_fragmentedPath.remove();
+  }
+  editing_target.remove(); //editing_circleの削除
+}
+
+function delete_editpath_fragmentedPath(editing_target){
+  if(!editing_target.parent().hasClass('closed_path')){
+    var max_fragmented_Group_Number = getMax_fragmented_Group_Number();
+    let new_fragmented_PathGroup = draw.group().addClass('fragmented_PathGroup');
+    let new_fragmented_CircleGroup = draw.group().addClass('fragmented_CircleGroup');
+    let current_fragmented_Group_Number = editing_target.parent().attr('fragmented_Group_Number');
+    new_fragmented_PathGroup.attr({
+      'id' : 'fragmented_PathGroup_' + String(max_fragmented_Group_Number + 1),
+      'fragmented_Group_Number' : String(max_fragmented_Group_Number + 1),
+      'connected_id' : editing_target.parent().attr('connected_id'),
+      'fill_tmp': editing_target.parent().attr('fill_tmp')
+    })
+    new_fragmented_CircleGroup.attr({
+      'id' : 'fragmented_CircleGroup_' + String(max_fragmented_Group_Number + 1),
+      'fragmented_Group_Number' : String(max_fragmented_Group_Number + 1),
+    })
+    editing_target.parent().before(new_fragmented_PathGroup);
+    for(var j=0 ; j < Number(editing_target.attr('assignment_Number')) + 1; j++){
+      new_fragmented_PathGroup.add(SVG.get('path_'+ String(current_fragmented_Group_Number) + '_'  + String(j)));
+      new_fragmented_CircleGroup.add(SVG.get('circle_'+ String(current_fragmented_Group_Number) + '_' + String(j)));
+    }
+  }else{
+    let current_fragmented_Group_Number = editing_target.parent().attr('fragmented_Group_Number');
+    for(var j=0 ; j < Number(editing_target.attr('assignment_Number')) + 1; j++){
+      SVG.get('path_'+ String(current_fragmented_Group_Number) + '_'  + String(j)).front();
+      SVG.get('circle_'+ String(current_fragmented_Group_Number) + '_'  + String(j)).front();
+    }
+    editing_target.parent().removeClass('closed_path');
+    let ghost_path = SVG.get('#ghost_path_' + String(current_fragmented_Group_Number));
+    let fragmented_CircleGroup = SVG.get('fragmented_CircleGroup_'+ String(current_fragmented_Group_Number));
+    if(fragmented_CircleGroup) fragmented_CircleGroup.removeClass('closed_path');
+    if(ghost_path) ghost_path.remove();
+  }
+  editing_target.remove(); //editing_pathの削除
 }
 
 /****************************************
@@ -461,8 +491,8 @@ function node_connect_function(){
       }
       fragmented_PathGroup1.add(new_path);
       new_path.front();
-      fragmented_PathGroup1.addClass('close');
-      fragmented_CircleGroup1.addClass('close');
+      fragmented_PathGroup1.addClass('closed_path');
+      fragmented_CircleGroup1.addClass('closed_path');
     }else{
       if(connect_flag1 === 'first' && connect_flag2 === 'first'){ //先端同士の場合
         new_path.M({x: circle1.cx(), y: circle1.cy()}).L({x: circle2.cx(), y: circle2.cy()});
@@ -533,7 +563,7 @@ function get_node_connectCircle(){
   let ob = new Object();
   draw.select('.editing_target').each(function(i , children){
     if(this.hasClass('first_circle') || this.hasClass('last_circle')){
-      if(!this.parent().hasClass('close')){
+      if(!this.parent().hasClass('closed_path')){
         if(edge_circle_num === 0){
           ob.circle1 = this;
           edge_circle_num++;
@@ -583,7 +613,7 @@ function getSimultaneouslyEdit_element(element , dbclick){
     ob.beforePath = SVG.get('path_' + String(fragmented_Group_Number) + '_' + String(assignment_Number - 1)); //進行方向でpathの前にある円
     ob.afterPath = SVG.get('path_' + String(fragmented_Group_Number) + '_' + String(assignment_Number)); //進行方向でpathの後にある円
 
-    if(element.parent().hasClass('close') && element.hasClass('first_circle')){
+    if(element.parent().hasClass('closed_path') && element.hasClass('first_circle')){
       SVG.get('#fragmented_PathGroup_' + String(fragmented_Group_Number)).each(function(i,children){
         if(this.hasClass('last_fragmentedPath') && !this.hasClass('first_fragmentedPath'))ob.beforePath = this;
       })
@@ -593,7 +623,7 @@ function getSimultaneouslyEdit_element(element , dbclick){
     ob.afterCircle = SVG.get('circle_' + String(fragmented_Group_Number) + '_' + String(assignment_Number + 1)); //進行方向でpathの後にある円
     ob.beforePath = SVG.get('path_' + String(fragmented_Group_Number) + '_' + String(assignment_Number - 1)); //進行方向でpathの前にある円
     ob.afterPath = SVG.get('path_' + String(fragmented_Group_Number) + '_' + String(assignment_Number + 1)); //進行方向でpathの後にある円
-    if(element.parent().hasClass('close')){
+    if(element.parent().hasClass('closed_path')){
       if(element.hasClass('last_fragmentedPath')){
         ob.afterCircle = SVG.get('circle_' + String(fragmented_Group_Number) + '_' + String(0)); //進行方向で円の後にある円
         ob.afterPath = SVG.get('path_' + String(fragmented_Group_Number) + '_' + String(0));
@@ -664,7 +694,7 @@ function update_ghostPath(){
     ghost_path.attr({'d' : ''});
     let fragmented_Group_Number = ghost_path.attr('fragmented_Group_Number');
     let fragmented_PathGroup = SVG.get('#fragmented_PathGroup_' + fragmented_Group_Number);
-    if(fragmented_PathGroup.hasClass('close')){
+    if(fragmented_PathGroup.hasClass('closed_path')){
       fragmented_PathGroup.each(function(i , children){
         let dpoint = this.clear().array().settle() //pathのdpoint配列を取得
         if(i===0){

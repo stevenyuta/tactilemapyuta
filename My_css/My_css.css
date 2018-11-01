@@ -14,174 +14,114 @@
   -khtml-user-select: none; <!-- KHTML browsers (e.g. Konqueror) -->
   -webkit-user-select: none; <!-- Chrome, Safari, and Opera -->
   -webkit-touch-callout: none; <!-- Disable Android and iOS callouts -->
+
 }
 
-
-/**
-header
-**/
-
-#header input[type=radio] {
-	display: none; 	/* ラジオボタンを非表示にする */
+.container-fluid{
+	margin-top : 10px;
 }
-
-#header input[type="radio"] + label{
-  padding: 1px 10px; 	/* ボックス内左側の余白を指定する */
-  border: 2px solid #D2691E;/* ボックスの境界線を実線で指定する */
-}
-
-#header input[type="radio"]:checked + label {
-	background: #FF8C00;/* マウス選択時の背景色を指定する */
-	color: #ffffff; 	/* マウス選択時のフォント色を指定する */
-}
-
-#header label:hover{
-	background-color: #E2EDF9; 	/* マウスオーバー時の背景色を指定する */
-}
-
-/**
-点字フォント変更ラジオボタン
-**/
-
-/*
-線種変更ラジオボタン
-*/
-#select_braillefont input[type="radio"]{
-  display : none;
-}
-#select_braillefont {
-  margin-top: 10px;
-}
-
-#select_braillefont  label{
-  padding-left: 25px;	/* ボックス内左側の余白を指定する */
-  padding-right: 25px;
-  border: 2px solid #006DD9;/* ボックスの境界線を実線で指定する */
-}
-
-#select_braillefont input[type="radio"]:checked + label {
-	background: #31A9EE;/* マウス選択時の背景色を指定する */
-	color: #ffffff; 	/* マウス選択時のフォント色を指定する */
-}
-
-#select_braillefont label:hover {
-	background-color: #E2EDF9; 	/* マウスオーバー時の背景色を指定する */
-}
-
-/*
-線種変更ラジオボタン
-*/
-#stroke_style input[type="radio"]{
-  display : none;
-}
-#stroke_style {
-  margin-top: 10px;
-}
-
-#stroke_style  label{
-  padding-left: 25px;	/* ボックス内左側の余白を指定する */
-  padding-right: 25px;
-  border: 2px solid #006DD9;/* ボックスの境界線を実線で指定する */
-}
-
-#stroke_style input[type="radio"]:checked + label {
-	background: #31A9EE;/* マウス選択時の背景色を指定する */
-	color: #ffffff; 	/* マウス選択時のフォント色を指定する */
-}
-
-#stroke_style label:hover {
-	background-color: #E2EDF9; 	/* マウスオーバー時の背景色を指定する */
-}
-
-/**
-レイヤー移動ボタン
-**/
-#layer_select  button{
-}
-
-/**************************
- toolbar1のcss
-***************************/
-#toolbar1{
-  margin : 10px 175px;
-}
-
-#toolbar1 input[type=radio] {
-	display: none; 	/* ラジオボタンを非表示にする */
-}
-
-#toolbar1 input[type="radio"] + label{
-  padding: 5px 15px; 	/* ボックス内左側の余白を指定する */
-  border: 2px solid #006DD9;/* ボックスの境界線を実線で指定する */
-}
-
-#toolbar1 input[type="radio"]:checked + label {
-	background: #31A9EE;/* マウス選択時の背景色を指定する */
-	color: #ffffff; 	/* マウス選択時のフォント色を指定する */
-}
-
-.radio_label:hover {
-	background-color: #E2EDF9; 	/* マウスオーバー時の背景色を指定する */
-}
-
-/*
- text ink & braille checkbox or textbox
-*/
-
-#toolbar1 input[type="checkbox"]{
+.container-fluid input[type=radio],
+.container-fluid input[type=file],
+.container-fluid input[type="checkbox"]{
   display: none;
 }
 
-.sample_label {
+.container-fluid input[type="radio"] + label:hover{
+	background-color: #E2EDF9; 	/* マウスオーバー時の背景色を指定する */
+}
+
+.container-fluid input[type=text]:hover {
+  border-color: #0171bd;	/* ボックスの境界線を実線で指定する */
+}
+
+/*
+ カスタムチェックボックス
+*/
+
+.custom_check_label {
 	position: relative;		/* ボックスの位置を指定する */
 	padding: 0 0 0 42px;	/* ボックス内側の余白を指定する */
 }
-.sample_label:hover:after {
+.custom_check_label:hover:after {
 	border-color: #0171bd;	/* ボックスの境界線を実線で指定する */
 }
-.sample_label:after,  .sample_label:before{
+.custom_check_label:after,  .custom_check_label:before{
 	position: absolute;	/* ボックスの位置を指定する */
 	content: "";		/* ボックスのコンテンツ */
 	display: block;		/* ブロックレベル要素化する */
 	top: 50%;			/* 上部から配置の基準位置を決める */
 }
-.sample_label:after {
+.custom_check_label:after {
 	left: 15px;			/* 左から配置の基準位置を決める */
-	margin-top: -10px;	/* チェック枠の位置 */
-	width: 15px;		/* ボックスの横幅を指定する */
-	height: 15px;		/* ボックスの高さを指定する */
+	margin-top: -9px;	/* チェック枠の位置 */
+	width: 20px;		/* ボックスの横幅を指定する */
+	height: 20px;		/* ボックスの高さを指定する */
 	border: 2px solid #ccc;	/* ボックスの境界線を実線で指定する */
 	border-radius: 6px;		/* ボックスの角丸を指定する */
 }
-.sample_label:before {
-	left: 21px;			/* 左から配置の基準位置を決める */
-	margin-top: -7px;	/* チェックマークの位置 */
-	width: 5px;			/* ボックスの横幅を指定する */
-	height: 9px;		/* ボックスの高さを指定する */
+.custom_check_label:before {
+	left: 22px;			/* 左から配置の基準位置を決める */
+	margin-top: -5px;	/* チェックマークの位置 */
+	width: 7px;			/* ボックスの横幅を指定する */
+	height: 13px;		/* ボックスの高さを指定する */
 	border-right: 3px solid #0171bd;	/* 境界線（右）のスタイルを指定する */
 	border-bottom: 3px solid #0171bd;	/* 境界線（下）のスタイルを指定する */
 	transform: rotate(45deg);	/* 要素を回転させる */
 	opacity: 0;			/* 要素を透過指定する */
 }
-input[type=checkbox]:checked + .sample_label:before {
+input[type=checkbox]:checked + .custom_check_label:before {
 	opacity: 1;		/* 要素を表示する */
 }
 
-#toolbar1 input[type=text] {
+/**************
+top_contents
+***************/
+#top_contents span{
+	margin : 0px 30px 0px 0px;
+}
+
+#downloader a{
+	margin : 0px 30px 0px 0px;
+}
+
+#top_contents input[type="radio"] + label{
+  padding: 1px 10px; 	/* ボックス内左側の余白を指定する */
+  border: 2px solid #D2691E;/* ボックスの境界線を実線で指定する */
+}
+
+#top_contents input[type="radio"]:checked + label {
+	background: #FF8C00;/* マウス選択時の背景色を指定する */
+	color: #ffffff; 	/* マウス選択時のフォント色を指定する */
+}
+
+/******************
+ top_toolbar
+******************/
+#top_toolbar{
+  margin : 10px 0px 10px 170px;
+}
+
+#top_toolbar input[type="radio"] + label{
+	margin: 0px 20px 0px 0px;
+	padding: 5px 15px; 	/* ボックス内左側の余白を指定する */
+  border: 2px solid #006DD9;/* ボックスの境界線を実線で指定する */
+}
+
+#top_toolbar input[type="radio"]:checked + label {
+	background: #31A9EE;/* マウス選択時の背景色を指定する */
+	color: #ffffff; 	/* マウス選択時のフォント色を指定する */
+}
+
+#top_toolbar input[type=text] {
+	margin: 0px 20px 0px 0px;
 	width: 200px;
   height: 30px;
   font-size: 100%;
 }
 
-#toolbar1 input[type=text]:hover {
-  border-color: #0171bd;	/* ボックスの境界線を実線で指定する */
-}
-
-/*
- undo redo button
-*/
-#toolbar1 button{
-  width:50px;
+#top_toolbar button{
+	margin: 0px 20px 0px 15px;
+	width:50px;
   height:40px;
   font-size: 100%;
   background-color: #E2EDF9;
@@ -190,62 +130,38 @@ input[type=checkbox]:checked + .sample_label:before {
   cursor : pointer;
 }
 
-#undo{
-  margin-left:  80px;
-  margin-right:  30px;
-}
-
-#toolbar1 button:hover{
+#top_toolbar button:hover{
   background: #31A9EE;/* マウス選択時の背景色を指定する */
 }
 
-#toolbar1 label:not(:first-child){
-  margin-left:10px;
-}
-
-
 /**************************
- �c�[���o�[2
+ left_toolbar
 ***************************/
-#toolbar2{
+#left_toolbar{
   float : left;
-  margin : 10px 0px;
+	margin : 0px 20px 0px 0px;
 }
 
-#toolbar2 ul {
-  list-style: none;
-  margin-left: -40px;
-}
-
-/*
-toolbar2 radio button
-*/
-
-#toolbar2_radio div {
-  margin-bottom: 30px;
-}
-
-#toolbar2_radio input[type=radio] {
-	display: none; 	/* ラジオボタンを非表示にする */
-}
-
-#toolbar2_radio input[type="radio"] + label{
-  padding: 5px 15px; 	/* ボックス内左側の余白を指定する */
+#left_toolbar input[type="radio"] + label{
+	margin: 0px 0px 20px 0px;
+	padding: 5px 15px; 	/* ボックス内左側の余白を指定する */
   border: 2px solid #006DD9;/* ボックスの境界線を実線で指定する */
-  margin-right : 40px;
 }
 
-#toolbar2_radio input[type="radio"]:checked + label {
+#left_toolbar input[type="radio"]:checked + label {
 	background: #31A9EE;/* マウス選択時の背景色を指定する */
 	color: #ffffff; 	/* マウス選択時のフォント色を指定する */
 }
 
-#toolbar2_radio label:hover{
-	background-color: #E2EDF9; 	/* マウスオーバー時の背景色を指定する */
+#left_toolbar input[type="button"]{
+	margin: 0px 0px 20px 0px;
 }
 
-#toolbar2_radio #node_connect{
-	margin-top: 30px;
+#left_toolbar_button{
+	margin: 40px 0px 20px 0px;
+}
+
+#node_connect{
 	background-color: #C0C0C0;
   border: solid 2px #696969;
   border-radius : 20px;
@@ -270,25 +186,18 @@ toolbar2 radio button
   background : #31A9EE;
 }
 
-
-/*
-toolbar2 checkbox
-*/
-#toolbar2 input[type="checkbox"]{
-  display: none;
+#left_toolbar input[type="checkbox"] + label{
+	margin: 0px 0px 20px 0px;
 }
 
-#toolbar2_checkbox{
-  margin-top : 90px;
-  margin-left : -10px;
+#left_toolbar_checkbox{
+  margin: 60px 0px 0px -10px;
 }
 
-#toolbar2_checkbox div{
-  margin-bottom: 30px;
-  font-size : 18px;
-}
 
-/* �`���̈� */
+/***************
+svg描画領域
+***************/
 #draw_include{
   width:1039.5px;
   height:735px;
@@ -299,50 +208,73 @@ toolbar2 checkbox
 }
 
 /**************************
-�E�ۃR���e���c
+right toolbar
 **************************/
-#right_content{
+#right_toolbar{
   float:left;
-  margin-left:30px;
+  margin:0px 0px 0px 30px;
 }
 
-.br::before {
- content: "\A" ;
- white-space: pre ;
+/********************
+線種変更ラジオボタン
+********************/
+#stroke_style{
+	margin : 0px 0px 10px 20px;
 }
 
-/*
-選択状態ボックス変更テキストボックス
-*/
-
-#resizeBox_textbox{
-  margin-left : 5px;
+#stroke_style label{
+  padding: 0px 25px;	/* ボックス内左側の余白を指定する */
+  border: 2px solid #006DD9;/* ボックスの境界線を実線で指定する */
 }
 
-#resizeBox_textbox input[type="text"]{
-  width:80px;
+#stroke_style input[type="radio"]:checked + label {
+	background: #31A9EE;/* マウス選択時の背景色を指定する */
+	color: #ffffff; 	/* マウス選択時のフォント色を指定する */
+}
+
+/********************************************
+線幅、墨字、点字、画像透過度変更用スライダー設定
+********************************************/
+#rightUI_table{
+	margin : 0px 0px 30px 0px;
+}
+
+#rightUI_table td{
+	padding : 3px 3px;
+}
+
+#rightUI_table input[type="text"]{
+  width:30px;
   height:20px;
-  text-align: center;
-  margin-top:20px;
-  margin-right : 5px;
+  font-size: 100%;
 }
 
-#rb_width{
-  margin-left : 15px;
+#StrokeWidth_Slider,
+#resizeInk_Slider,
+#resizeBraille_Slider,
+#ImageOpacity_Slider{ /* css */
+  width:200px;
+  height:12px;
+}
+
+#StrokeWidth_Slider .ui-slider-handle,
+#resizeInk_Slider .ui-slider-handle,
+#resizeBraille_Slider .ui-slider-handle,
+#ImageOpacity_Slider .ui-slider-handle{
+  width:20px;
+  height:16px;
+  background:#3399ff;
+  border:3px solid #00008b;
+	margin : 2px 0px 0px -10px;
 }
 
 /*
 触知記号スタンプ
 */
 #stamp_table{
-  margin-top : 60px;
-  margin-left : 30px;
+  margin: 30px 0px 0px 30px;
   border-collapse: separate;
   border-spacing: 0px 30px;
-}
-
-#stamp_table input[type=radio] {
-	display: none; 	/* ラジオボタンを非表示にする */
 }
 
 #stamp_table input[type="radio"] + label{
@@ -358,8 +290,13 @@ toolbar2 checkbox
 /*
 レイヤ移動ボタン
 */
+#layer_select{
+	margin: 0px 0px 30px 10px;
+}
+
 #layer_select button{
-  width:90px;
+	margin: 3px;
+	width:90px;
   height:32px;
   background-color : #ffffff;
   background-position:center center; /*背景画像の位置*/
@@ -371,54 +308,28 @@ toolbar2 checkbox
   border-color: #006DD9;/* ボックスの境界線を実線で指定する */
 }
 
-#layer_select #front_button{
+#front_button{
   background-image: url('../images/front.png');
 }
 
-#layer_select #forward_button{
+#forward_button{
   background-image: url('../images/forward.png');
 }
 
-#layer_select #backward_button{
+#backward_button{
   background-image: url('../images/backward.png');
 }
 
-#layer_select #back_button{
+#back_button{
   background-image: url('../images/back.png');
 }
-
-
-/*
-線幅、墨字、点字サイズ変更ガジェット
-*/
-#right_ul {
-  list-style: none;
-  margin-left : -35px;
-}
-
-#right_ul li{
-  margin : 30px 0px;
-}
-
-#right_ul #inksize_resetbutton , #brasize_resetbutton{
-  margin-left : 13px;
-}
-
-#right_ul input[type="text"]{
-  width:30px;
-  height:20px;
-  font-size:14px;
-  margin:0px 10px;
-  margin-bottom : 10px;
-}
-
 
 /************************
 塗りつぶしボタン
 *************************/
 
 #fill_change{
-  margin:15px 0px;
+  margin: 0px 0px 30px 10px;
 }
 
 #fill_change button:hover{
@@ -457,65 +368,39 @@ toolbar2 checkbox
   background-image: url('../images/polkadot_water.png');
 }
 
-/*
-slider設定
-*/
-
-#StrokeWidth_Slider{ /* css �܂݃T�C�Y���� */
-  width:180px;
-  height:12px;
+/***********************************
+選択状態ボックス変更テキストボックス
+************************************/
+#resizeBox_textbox{
+	margin: 0px 0px 30px 10px;
 }
 
-#StrokeWidth_Slider .ui-slider-handle{
-  width:20px;
-  height:16px;
-  background:#3399ff;
-  border:3px solid #00008b;
+#resizeBox_textbox td{
+	padding: 5px;
 }
 
-#resizeInk_Slider{ /* css �܂݃T�C�Y���� */
-  width:180px;
-  height:12px;
+#resizeBox_textbox input[type="text"]{
+  width:90px;
+  height:30px;
+  text-align: center;
+	font-size : 100%;
 }
 
-#resizeInk_Slider .ui-slider-handle{
-  width:20px;
-  height:16px;
-  background:#3399ff;
-  border:3px solid #00008b;
-}
-
-#resizeBraille_Slider{ /* css �܂݃T�C�Y���� */
-  width:180px;
-  height:12px;
-}
-
-#resizeBraille_Slider .ui-slider-handle{
-  width:20px;
-  height:16px;
-  background:#3399ff;
-  border:3px solid #00008b;
-}
-
-
-
-
-#width_slider{ /* css �܂݃T�C�Y���� */
-  margin-top:30px;
-  margin-left:185px;
-  width:1045px;
+#width_slider{ /* css */
+  margin :30px 0px 0px 170px;
+  width:1040px;
   height:12px;
 }
 
 #width_slider .ui-slider-handle{
-  margin-left:-60px;
+  margin: 2px 0px 0px -60px;
   width:120px;
   height:16px;
   background:#3399ff;
   border:3px solid #00008b;
 }
 
-#height_slider{ /* css �܂݃T�C�Y���� */
+#height_slider{ /* css */
   margin-left:10px;
   width:12px;
   height:735px;
@@ -523,7 +408,7 @@ slider設定
 }
 
 #height_slider .ui-slider-handle{
-  margin-bottom: -60px;
+  margin: 0px -60px 0px 1px;
   width:16px;
   height:120px;
   background:#3399ff;

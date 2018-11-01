@@ -591,4 +591,39 @@ function gadget_set(e){
   $('#Braille').off('focusin').on('focusin' ,function() {
     $('input[name="tg_mode"][value="Text"]').prop('checked', true).trigger('change');
   })
+
+  /**************************************************************
+  //画像透過度を変更するテキストボックス、リセットボタン、スライダーの設定
+  **************************************************************/
+  $('#ImageOpacity_TextBox').val(100); //墨字の初期値を指定
+
+  $('#ImageOpacity_TextBox').off('keyup').on('keyup' ,function() {
+    if(!this.value.match(/[^0-9\.]/) && this.value!==0 && String(this.value)!=="\." && String(this.value)!==""){
+      let self_value = this.value;
+      draw.select('.edit_select').each(function(i,children){
+        if(this.hasClass('image')) this.attr({ 'opacity': self_value/100 });
+      })
+    }
+  })
+
+  $('#ImageOpacity_resetbutton').click(function(){  //リセットボタンを押下時の処理
+    $("#ImageOpacity_Slider").slider("value",100);
+    $("#ImageOpacity_TextBox").val(100);
+    draw.select('.edit_select').each(function(i,children){
+      if(this.hasClass('image'))this.attr({'opacity': 1});
+    })
+  }); //墨字の初期値を指定
+  $("#ImageOpacity_Slider").slider({
+    max:100, //最大値
+    min:1, //最小値
+    value: 100, //初期値
+    step: 1, //幅
+    slide: function( event, ui ) {
+      draw.select('.edit_select').each(function(i,children){
+        if(this.hasClass('image'))this.attr({'opacity': ui.value/100})
+      })
+      $('#ImageOpacity_TextBox').val(ui.value)
+    }
+  });
+
 }

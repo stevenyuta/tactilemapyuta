@@ -77,6 +77,7 @@ function draw_line(){
                 }
               }
               connectedPath.addClass('drawing_path');
+              now_drawing_path_ID = connectedPath.id();
               current_x = dpoint[0][1], current_y = dpoint[0][2];
               add_closePath_circle();
             }
@@ -85,6 +86,7 @@ function draw_line(){
             if(connectedPath){
               let dpoint = connectedPath.clear().array().settle();
               connectedPath.addClass('drawing_path');
+              now_drawing_path_ID = connectedPath.id();
               current_x = dpoint[dpoint.length-1][1], current_y = dpoint[dpoint.length-1][2];
               add_closePath_circle();
             }
@@ -97,6 +99,9 @@ function draw_line(){
               'stroke-width': PATH_STROKE_WIDTH*$('#StrokeWidth_TextBox').val(),
               'stroke-linejoin' : 'round'
             })
+            if($('input[name="stroke"]:checked').val()==='dotted_line'){
+              drawing_path.attr({ 'stroke-dasharray': PATH_STROKE_WIDTH*$('#StrokeWidth_TextBox').val() })
+            }
             drawing_path.addClass('connected').addClass('SVG_Element').addClass('drawing_path').addClass('path');
             drawing_path.back();
             for(var i=0; i< back_num; i++){
@@ -139,9 +144,6 @@ function draw_line(){
             })
           }else{
             drawing_path.L({x: mx, y: my}); //current_pathに線を描画
-            if($('input[name="stroke"]:checked').val()==='dotted_line'){
-              drawing_path.attr({ 'stroke-dasharray': PATH_STROKE_WIDTH*$('#StrokeWidth_TextBox').val() })
-            }
             draw.select('.edit_circle').front();
             current_x = mx , current_y = my;
             add_closePath_circle();
@@ -244,7 +246,7 @@ function set_strokewidth(){
     var strokewidth_flag = false;  //true: 選択状態のパスあり false: なし
     var strokewidth = false  // strokewidth属性の値を格納、 false: strokewitdhが違うpathが2つ以上ある場合
     draw.select('.edit_select').each(function(i,children){
-      if(!this.hasClass('ink') && !this.hasClass('braille')){
+      if(!this.hasClass('ink') && !this.hasClass('braille') && !this.hasClass('image')){
         if(!strokewidth_flag){
           strokewidth = this.attr('stroke-width');
           strokewidth_flag = true;

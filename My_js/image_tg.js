@@ -71,8 +71,9 @@ function import_image(image_url){
       this.back();
     })
     cash_svg();
-    let current_mode =  $('input[name="Stamp"]:checked');
-    $(current_mode).prop('checked', true).trigger('change'); //モードを設定
+    let Image_radio = $('#EditImage_div , #TrimBase64_div');
+    (draw.select('.image').first()) ? Image_radio.show() : Image_radio.hide();
+    (draw.select('.image').first()) ? $('.gadget_imageOpacity').show() : $('.gadget_imageOpacity').hide();
   })
 }
 
@@ -163,5 +164,28 @@ function trim_start() {
       cash_svg();
     };
     image.src = base64image;
+  }
+}
+
+function set_imageOpacity(){
+  if(draw.select('.image.edit_select').first()!==null){
+    let imageOpacity_flag = false;  //true: 選択状態のパスあり false: なし
+    let imageOpacity = false  // strokewidth属性の値を格納、 false: strokewitdhが違うpathが2つ以上ある場合
+    draw.select('.image.edit_select').each(function(i,children){
+      if(!imageOpacity_flag){
+        imageOpacity = this.attr('opacity');
+        imageOpacity_flag = true;
+      }else if(imageOpacity !== this.attr('opacity')){
+        imageOpacity = false;
+      }
+    })
+    if(imageOpacity_flag){
+      if(imageOpacity===false){
+        $('#ImageOpacity_TextBox').val('')
+      }else{
+        $("#ImageOpacity_Slider").slider("value",imageOpacity*100);
+        $('#ImageOpacity_TextBox').val(imageOpacity*100)
+      }
+    }
   }
 }

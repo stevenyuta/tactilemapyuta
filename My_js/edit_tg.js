@@ -95,6 +95,7 @@ function edit_mousedown_up(mode){
           })
           set_textsize();
           set_strokewidth();
+          set_imageOpacity();
           edit_hover();
           edit_mousedown_up();
           select_rect.remove();
@@ -146,6 +147,7 @@ function edit_hover(mode){
           upload_handle();
           set_textsize();
           set_strokewidth();
+          set_imageOpacity()
           this.off('mousedown');
           edit_hover();
         })
@@ -864,10 +866,12 @@ function paste_select(){
   }
   if(copy_elements.length > 0){
     copy_select();
-    if($('input[name="tg_mode"]:checked').val()==='Edit'){
+    let current_mode = $('input[name="tg_mode"]:checked').val();
+    if(current_mode==='Edit' || current_mode ==='EditImage'){
       upload_handle();
       set_textsize();
       set_strokewidth();
+      set_imageOpacity();
     }else{
       draw.select('.edit_select').removeClass('edit_select');
     }
