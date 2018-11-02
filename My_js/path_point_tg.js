@@ -31,9 +31,9 @@ function toConnected(editpath_flag){
       }else{
         new_path.L({x: dpoint[0][1], y: dpoint[0][2]})
       }
-      if(!self.hasClass('close') && j===self.children().length - 1) new_path.L({x: dpoint[1][1], y: dpoint[1][2]});
+      if(!self.hasClass('closed_path') && j===self.children().length - 1) new_path.L({x: dpoint[1][1], y: dpoint[1][2]});
     })
-    if(this.hasClass('close')){
+    if(this.hasClass('closed_path')){
       new_path.attr({'fill' : this.attr('fill_tmp')});
       new_path.Z();
     }
