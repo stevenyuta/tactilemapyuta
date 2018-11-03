@@ -390,7 +390,7 @@ right toolbar
 }
 
 #width_slider{ /* css */
-  margin :30px 0px 0px 170px;
+  margin :30px 0px 30px 170px;
   width:1040px;
   height:12px;
 }
