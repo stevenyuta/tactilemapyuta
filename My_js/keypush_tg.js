@@ -12,6 +12,12 @@ function set_key_down_up(){
         if(e.keyCode === 89) redo(); //89 : Yキー
         if(e.keyCode === 67) copy_select(); //67 : Cキー
         if(e.keyCode === 86) paste_select(); //86 : Vキー
+        draw.panZoom({ //zoomの導入
+          doPanning: false,
+          zoomFactor: 0.03,
+          zoomMin: 0.1,
+          zoomMax: 5
+        })
       }
       switch(e.keyCode){
         case 13: //Enterキー
@@ -104,9 +110,17 @@ function set_key_down_up(){
   $(document).off('keyup').on('keyup' , function(e){
     if($(':focus').length === 0){
       let current_mode = $('input[name="tg_mode"]:checked').val();
-      if(!e.ctrlKey && current_mode === 'EditPath'){ //ctrlキー押下時
-        editpath_mousemove('connect');
-        if(draw.select('.editing_target:not(.edit_circle)').first()) editpath_mousemove('normal');
+      if(!e.ctrlKey){ //ctrlキー押下時
+        draw.panZoom({ //zoomの導入
+          doPanning: false,
+          zoomFactor: 0.17,
+          zoomMin: 0.1,
+          zoomMax: 5
+        })
+        if(current_mode === 'EditPath'){
+          editpath_mousemove('connect');
+          if(draw.select('.editing_target:not(.edit_circle)').first()) editpath_mousemove('normal');
+        }
       }
     }
     input_key_buffer[e.keyCode] = false;

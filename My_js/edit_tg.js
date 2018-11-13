@@ -208,11 +208,27 @@ function upload_handle(){
   $('#rb_width').off('focusout').on('focusout' , update_widthBox);
   $('#rb_height').off('focusout').on('focusout' , update_heightBox);
 
+  (draw.select('.edit_select.ink').first()!==undefined) ? $('.resizeInk_gadget').show() : $('.resizeInk_gadget').hide();
+  (draw.select('.edit_select.braille').first()!==undefined) ? $('.resizeBraille_gadget').show() : $('.resizeBraille_gadget').hide();
+  (draw.select('.edit_select.path , .edit_select.circle').first()!==undefined) ? $('.strokewidth_gadget').show() : $('.strokewidth_gadget').hide();
+  (draw.select('.edit_select.path , .edit_select.circle').first()!==undefined) ? $('#stroke_style').show() : $('#stroke_style').hide();
+
   if(draw.select('.edit_select').first()===undefined){
     SVG.get('handle_group').hide();　//移動、サイズ変更、回転用のハンドルを非表示
+    $('#layer_select').hide();
+    $('#fill_change').hide();
   }else{
     SVG.get('handle_group').show();　//移動、サイズ変更、回転用のハンドルを表示
     SVG.get('handle_group').front();
+
+    $('#layer_select').show();
+    $('#fill_change').hide();
+    draw.select('.edit_select.connected').each(function(i, children) {
+      let dpoint = this.clear().array().settle();
+      if(dpoint[dpoint.length-1][0] === 'Z') $('#fill_change').show();
+    })
+
+
 
     var point1 = new Array() , point2 = new Array();  //affin変換行列作成に使う行列
     for(var i=0;i<3;i++){

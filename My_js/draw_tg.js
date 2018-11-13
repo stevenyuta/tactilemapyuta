@@ -14,7 +14,7 @@ function draw_line(){
       let dpoint = drawing_path.clear().array().settle();
       current_x = dpoint[dpoint.length-1][1];
       current_y = dpoint[dpoint.length-1][2];
-      add_closePath_circle();
+      add_closePath_rect();
     }else{
       draw.select('.drawing_path').removeClass('drawing_path');
     }
@@ -79,7 +79,7 @@ function draw_line(){
               connectedPath.addClass('drawing_path');
               now_drawing_path_ID = connectedPath.id();
               current_x = dpoint[0][1], current_y = dpoint[0][2];
-              add_closePath_circle();
+              add_closePath_rect();
             }
           }else if(draw.select('.hover_rect.draw_last_rect').first()){
             let connectedPath = SVG.get('#' + draw.select('.hover_rect.draw_last_rect').first().attr('connectedID'));
@@ -88,7 +88,7 @@ function draw_line(){
               connectedPath.addClass('drawing_path');
               now_drawing_path_ID = connectedPath.id();
               current_x = dpoint[dpoint.length-1][1], current_y = dpoint[dpoint.length-1][2];
-              add_closePath_circle();
+              add_closePath_rect();
             }
           }else{
             drawing_path = draw.path().M({x: mx, y: my}) //pathの描画
@@ -121,7 +121,7 @@ function draw_line(){
             }
             connectedPath.remove();
             drawing_path.removeClass('drawing_path');
-            draw.select('.draw_close_circle').each(function(i,children){
+            draw.select('.draw_close_rect').each(function(i,children){
               this.remove();
             })
           }else if(draw.select('.hover_rect.draw_last_rect').first()){
@@ -133,20 +133,20 @@ function draw_line(){
               }
               connectedPath.remove();
               drawing_path.removeClass('drawing_path');
-              draw.select('.draw_close_circle').each(function(i,children){
+              draw.select('.draw_close_rect').each(function(i,children){
                 this.remove();
               })
             }
-          }else if(draw.select('.hover_circle.draw_close_circle').first()){
+          }else if(draw.select('.hover_rect.draw_close_rect').first()){
             drawing_path.Z().removeClass('drawing_path'); //drawing_pathクラスを排除
-            draw.select('.draw_close_circle').each(function(i,children){
+            draw.select('.draw_close_rect').each(function(i,children){
               this.remove();
             })
           }else{
             drawing_path.L({x: mx, y: my}); //current_pathに線を描画
             draw.select('.edit_circle').front();
             current_x = mx , current_y = my;
-            add_closePath_circle();
+            add_closePath_rect();
           }
         }
         draw_connectedInitLast();
@@ -156,34 +156,32 @@ function draw_line(){
   }
 }
 
-function add_closePath_circle(){
-  draw.select('.draw_close_circle').each(function(i,children){
+function add_closePath_rect(){
+  draw.select('.draw_close_rect').each(function(i,children){
     this.remove();
   })
   if(draw.select('.drawing_path').first()){
     let dpoint = draw.select('.drawing_path').first().clear().array().settle();
     if(dpoint.length >= 3){
-      let cx = dpoint[0][1] , cy = dpoint[0][2];
-      let closePath_circle = draw.circle().addClass('draw_close_circle').front();
-      closePath_circle.attr({
-        'cx' : cx,
-        'cy' : cy,
-        'fill': CIRCLE_COLOR,
-        'r' : CIRCLE_RADIUS/(2 * draw.viewbox().zoom)
+      let ix = dpoint[0][1] , iy = dpoint[0][2];
+      let closePath_rect = draw.rect(RECT_WIDTH/(3*draw.zoom()) , RECT_HEIGHT/(3*draw.zoom())).addClass('draw_close_rect').front();
+      closePath_rect.attr({
+        'x' : ix - closePath_rect.width()/2,  'y' : iy - closePath_rect.width()/2,
+        'fill': '#D2691E'
       })
-      closePath_circle.mouseover(function(e){
+      closePath_rect.mouseover(function(e){
         this.attr({
           'fill': CIRCLE_HOVER_COLOR,
           'cursor':'pointer'
         })
-        this.addClass('hover_circle');
+        this.addClass('hover_rect');
       })
-      closePath_circle.mouseout(function(e){
+      closePath_rect.mouseout(function(e){
         this.attr({
-          'fill': CIRCLE_COLOR,
+          'fill': '#D2691E',
           'cursor': 'default'
         })
-        this.removeClass('hover_circle');
+        this.removeClass('hover_rect');
       })
     }
   }
@@ -195,7 +193,7 @@ function draw_end_function(){
     current_path.removeClass('drawing_path');
     if(current_path.clear().array().settle().length===1)  current_path.remove();
   }
-  add_closePath_circle();
+  add_closePath_rect();
   draw_connectedInitLast();
   dummy_delete();
   now_drawing_path_ID = "";
@@ -210,13 +208,13 @@ function draw_connectedInitLast(){
     if(dpoint[dpoint.length-1][0] !== "Z"){
       let ix = dpoint[0][1] , iy = dpoint[0][2];
       let lx = dpoint[dpoint.length-1][1] , ly = dpoint[dpoint.length-1][2];
-      let draw_init_rect = draw.rect(RECT_WIDTH/(2*draw.viewbox().zoom) , RECT_HEIGHT/(2*draw.viewbox().zoom)).addClass('draw_init_rect').front();
+      let draw_init_rect = draw.rect(RECT_WIDTH/(3*draw.zoom()) , RECT_HEIGHT/(3*draw.zoom())).addClass('draw_init_rect').front();
       draw_init_rect.attr({
         'x' : ix - draw_init_rect.width()/2,  'y' : iy - draw_init_rect.width()/2,
         'fill': CIRCLE_COLOR,
         'connectedID' : this.attr('id')
       })
-      let draw_last_rect = draw.rect(RECT_WIDTH/(2*draw.viewbox().zoom) , RECT_HEIGHT/(2*draw.viewbox().zoom)).addClass('draw_last_rect').front();
+      let draw_last_rect = draw.rect(RECT_WIDTH/(3*draw.zoom()) , RECT_HEIGHT/(3*draw.zoom())).addClass('draw_last_rect').front();
       draw_last_rect.attr({
         'x' : lx - draw_last_rect.width()/2, 'y' : ly - draw_last_rect.height()/2,
         'fill': CIRCLE_COLOR,

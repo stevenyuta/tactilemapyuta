@@ -128,27 +128,38 @@ function getmousepoint(mode,mouseevent,param1,param2,param3,param4){
 function layer_change(e){
  switch(this.id){
      case 'front_button': // ← key
-       draw.select('.edit_select').each(function(i , children){
+       draw.select('.edit_select, .fragmented_PathGroup').each(function(i , children){
          this.front();
+         let ghost_path = SVG.get('#ghost_path_' + this.attr('fragmented_Group_Number'));
+         if(ghost_path) this.before(ghost_path);
        })
        break;
      case 'forward_button': // ← key
-       draw.select('.edit_select').each(function(i , children){
-           this.forward();
+       draw.select('.edit_select, .fragmented_PathGroup').each(function(i , children){
+         this.forward();
+         let ghost_path = SVG.get('#ghost_path_' + this.attr('fragmented_Group_Number'));
+         if(ghost_path) this.before(ghost_path);
        })
        break;
      case 'backward_button': // ← key
-       draw.select('.edit_select').each(function(i , children){
-           this.backward();
+       draw.select('.edit_select, .fragmented_PathGroup').each(function(i , children){
+         this.backward();
+         let ghost_path = SVG.get('#ghost_path_' + this.attr('fragmented_Group_Number'));
+         if(ghost_path) this.before(ghost_path);
        })
        break;
      case 'back_button': // ← key
-       draw.select('.edit_select').each(function(i , children){
-           this.back();
+       draw.select('.edit_select, .fragmented_PathGroup').each(function(i , children){
+         this.back();
+         let ghost_path = SVG.get('#ghost_path_' + this.attr('fragmented_Group_Number'));
+         if(ghost_path) this.before(ghost_path);
        })
        break;
      default:
   }
+  draw.select('.fragmented_RectGroup').each(function(i , children){
+    this.front();
+  })
   SVG.get('guiderect_group').front();
   SVG.get('gridline_group').front();
   SVG.get('handle_group').front();
@@ -174,43 +185,80 @@ function layer_change(e){
 
     function change_fill(){
       var button_id = this.id
-      draw.select('.edit_select').each(function(i,children){
+      let fill_complete_flag = false; //fillの変更があった場合にtrue svg_cash用
+      draw.select(".edit_select , .fragmented_PathGroup").each(function(i,children){
+        let fill_flag = false;
         if(this.hasClass('connected')){
-          var dpoint = this.clear().array().settle() //pathのdpoint配列を取得
-          for(var j=0;j<dpoint.length;j++){
-            if(dpoint[j][0]==="Z"){
-              switch(button_id){
-                case 'fillnone_button': // ← key
-                  this.fill('none')
-                  break;
+          let dpoint = this.clear().array().settle();
+          if(dpoint[dpoint.length-1][0] === 'Z') fill_flag = true;
+        }else if(this.hasClass('circle')){
+          fill_flag = true;
+        }else if(this.hasClass('closed_path')){
+          fill_flag = true;
+        }
 
-                case 'white_button': // ← key
-                  this.fill('#fff')
-                  break;
-
-                case 'gray_button': // ← key
-                  this.fill('#333')
-                  break
-
-                case 'diagonal_button': // ← key
-                  this.fill('url(#diagonal-texture)')
-                  break
-
-                case 'polkadot_button': // ← key
-                  this.fill('url(#polkadot-texture)')
-                  break
-
-                case 'polkadot_water_button': // ← key
-                  this.fill('url(#polkadot_water-texture)')
-                  break
-
-                default:
+        if(fill_flag){
+          fill_complete_flag = true;
+          switch(button_id){
+            case 'fillnone_button': // ← key
+              if(this.hasClass('fragmented_PathGroup')){
+                SVG.get('#ghost_path_' + this.attr('fragmented_Group_Number')).attr({'fill' : 'none'});
+                this.attr({'fill_tmp': 'none'});
+              }else{
+                this.fill('none');
               }
-              cash_svg();
-            }
+              break;
+
+              case 'white_button': // ← key
+                if(this.hasClass('fragmented_PathGroup')){
+                  SVG.get('#ghost_path_' + this.attr('fragmented_Group_Number')).attr({'fill' : '#fff'});
+                  this.attr({'fill_tmp': '#fff'});
+                }else{
+                  this.fill('#fff');
+                }
+                break;
+
+              case 'gray_button': // ← key
+                if(this.hasClass('fragmented_PathGroup')){
+                  SVG.get('#ghost_path_' + this.attr('fragmented_Group_Number')).attr({'fill' : '#333'});
+                  this.attr({'fill_tmp': '#333'});
+                }else{
+                  this.fill('#333')
+                }
+                break;
+
+              case 'diagonal_button': // ← key
+                if(this.hasClass('fragmented_PathGroup')){
+                  SVG.get('#ghost_path_' + this.attr('fragmented_Group_Number')).attr({'fill' : 'url(#diagonal-texture)'});
+                  this.attr({'fill_tmp': 'url(#diagonal-texture)'});
+                }else{
+                  this.fill('url(#diagonal-texture)')
+                }
+                break;
+
+              case 'polkadot_button': // ← key
+                if(this.hasClass('fragmented_PathGroup')){
+                  SVG.get('#ghost_path_' + this.attr('fragmented_Group_Number')).attr({'fill' : 'url(#polkadot-texture)'});
+                  this.attr({'fill_tmp': 'url(#polkadot-texture)'});
+                }else{
+                  this.fill('url(#polkadot-texture)')
+                }
+                break;
+
+              case 'polkadot_water_button': // ← key
+                if(this.hasClass('fragmented_PathGroup')){
+                  SVG.get('#ghost_path_' + this.attr('fragmented_Group_Number')).attr({'fill' : 'url(#polkadot_water-texture)'});
+                  this.attr({'fill_tmp': 'url(#polkadot_water-texture)'});
+                }else{
+                  this.fill('url(#polkadot_water-texture)')
+                }
+                break;
+
+              default:
           }
         }
       })
+      if(fill_complete_flag) cash_svg();
     }
   }
 
@@ -227,10 +275,10 @@ function layer_change(e){
   //circleを一掃削除する関数
   ***********************************/
   function circle_delete(){
-    draw.select('.edit_circle , .draw_init_rect , .draw_last_rect , .draw_close_circle').each(function(i,children){
+    draw.select('.edit_rect , .draw_init_rect , .draw_last_rect , .draw_close_rect').each(function(i,children){
         this.remove();
     })
-    draw.select('.fragmented_CircleGroup').each(function(i,children){
+    draw.select('.fragmented_RectGroup').each(function(i,children){
         this.remove();
     })
   }

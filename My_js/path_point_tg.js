@@ -5,8 +5,8 @@
 ******************************************************/
 function toConnected(editpath_flag){
   draw.select('.fragmented_PathGroup').each(function(i,children){
-    if(SVG.get('fragmented_CircleGroup_' + String(this.attr('fragmented_Group_Number')))){
-      SVG.get('fragmented_CircleGroup_' + String(this.attr('fragmented_Group_Number'))).remove();
+    if(SVG.get('fragmented_RectGroup_' + String(this.attr('fragmented_Group_Number')))){
+      SVG.get('fragmented_RectGroup_' + String(this.attr('fragmented_Group_Number'))).remove();
     }
     var new_path = draw.path().addClass('connected').addClass('SVG_Element').addClass('path');
     this.after(new_path);

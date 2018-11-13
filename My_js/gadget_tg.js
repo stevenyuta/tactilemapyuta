@@ -108,8 +108,8 @@ function set_contextMenu(flag){
         name: '端点のノードを結合',
         icon: 'fa-compress',
         disabled: function(){
-          let connectCircle = get_node_connectCircle();
-          if(connectCircle.circle1 && connectCircle.circle2){
+          let connectRect = get_node_connectRect();
+          if(connectRect.rect1 && connectRect.rect2){
             return false;
           }else{
             return true;
@@ -157,13 +157,13 @@ function braillefont_set(){
 function stroke_radio_set(){
   $('input[name="stroke"]:radio').off('change').on('change',function(){ //ラジオボタン変更時の処理
    if($(this).val()==='solid_line'){ //実線の場合
-     draw.select('.edit_select').each(function(i,children){
+     draw.select('.edit_select , .fragmented').each(function(i,children){
       if(!this.hasClass('ink') && !this.hasClass('braille')){
         this.attr({'stroke-dasharray': ''});
       }
     })
   }else{ //点線の場合
-     draw.select('.edit_select').each(function(i,children){
+     draw.select('.edit_select , .fragmented').each(function(i,children){
       if(!this.hasClass('ink') && !this.hasClass('braille')){
         this.attr({'stroke-dasharray': PATH_STROKE_WIDTH * $('#StrokeWidth_TextBox').val()});
       }
@@ -298,6 +298,7 @@ function checkbox_set(){
   /**************************************************
   //目盛り枠の表示、非表示
   ***************************************************/
+  /**
   $('#graduation_frame').off('change').change( function() {
     if(!draw.select('.graduationFrame').first()) add_graduationFrame();
     if($('#graduation_frame').prop('checked')){
@@ -307,6 +308,7 @@ function checkbox_set(){
     }
   })
   $("#graduation_frame").prop('checked', false).change();//初期状態はチェックを入れないでおく
+  **/
 
   /**************************************************
   //ガイドの表示非表示チェックボックス
@@ -405,10 +407,11 @@ function set_zoom(){
   draw.panZoom({ //zoomの導入
     doPanning: false,
     zoomFactor: 0.07,
-    zoomMin: 0.1,
-    zoomMax: 4
+    zoomMin: 0.17,
+    zoomMax: 5
   })
   draw.off('zoom').on('zoom', function(ev) {
+    let zoom_lvl = draw.zoom();
     viewbox_x = draw.viewbox().x , viewbox_y = draw.viewbox().y
     $("#width_slider").slider({ //描画領域の左右移動用スライダー
         max: 8000-draw.viewbox().x-draw.viewbox().width,
@@ -423,21 +426,18 @@ function set_zoom(){
     var gY = 0;
     SVG.get('handle_group').each(function(i , children){
       if(this.type === 'rect') gY = this.attr('y');
-      if(this.type === 'circle') this.radius(HANDLE_CIRCLE_RADIUS/(2*draw.viewbox().zoom));
-      if(this.attr('id') === 'rot_resize') this.attr({'cy' : gY - 15/draw.viewbox().zoom});
+      if(this.type === 'circle') this.radius(HANDLE_CIRCLE_RADIUS/(2*zoom_lvl));
+      if(this.attr('id') === 'rot_resize') this.attr({'cy' : gY - 15/zoom_lvl});
     })
 
-    draw.select('.svg_select_points').attr({'r':HANDLE_CIRCLE_RADIUS/(2*draw.viewbox().zoom)});
-    draw.select('.svg_select_points_rot').attr({ 'r':HANDLE_CIRCLE_RADIUS/(2*draw.viewbox().zoom) });
+    draw.select('.svg_select_points').attr({'r':HANDLE_CIRCLE_RADIUS/(2*zoom_lvl)});
+    draw.select('.svg_select_points_rot').attr({ 'r':HANDLE_CIRCLE_RADIUS/(2*zoom_lvl) });
 
-    SVG.select('.edit_circle , .draw_close_circle').each(function(i , children){
-      this.radius(CIRCLE_RADIUS/(2*draw.viewbox().zoom))
-    })
-    SVG.select('.draw_init_rect , .draw_last_rect').each(function(i , children){
+    SVG.select('.edit_rect , .draw_init_rect , .draw_last_rect , .draw_close_rect').each(function(i , children){
       let origi_cx = this.x() + this.width()/2;
       let origi_cy = this.y() + this.height()/2;
-      this.width(RECT_WIDTH/(2*draw.viewbox().zoom));
-      this.height(RECT_HEIGHT/(2*draw.viewbox().zoom));
+      this.width(RECT_WIDTH/(3*zoom_lvl));
+      this.height(RECT_HEIGHT/(3*zoom_lvl));
       this.x(origi_cx - this.width()/2);
       this.y(origi_cy - this.height()/2);
     })
@@ -493,7 +493,7 @@ function gadget_set(e){
   $('#resetStrokeWidth_Button').click(function(){  //線幅リセットボタンを押下時の処理
     $("#StrokeWidth_Slider").slider("value" , 1);
     $("#StrokeWidth_TextBox").val(1);
-    draw.select('.edit_select').each(function(i,children){
+    draw.select('.edit_select , .fragmented').each(function(i,children){
       if(!this.hasClass('ink') && !this.hasClass('braille')){
         this.attr({'stroke-width':PATH_STROKE_WIDTH});
         if(this.attr('stroke-dasharray')!== undefined && this.attr('stroke-dasharray')!=='') this.attr({'stroke-dasharray':PATH_STROKE_WIDTH});
@@ -507,7 +507,7 @@ function gadget_set(e){
     value: 1, //初期値
     step: 0.1, //幅
     slide: function( event, ui ) {
-      draw.select('.edit_select').each(function(i,children){
+      draw.select('.edit_select , .fragmented').each(function(i,children){
         if(!this.hasClass('ink') && !this.hasClass('braille')){
           this.attr({'stroke-width':PATH_STROKE_WIDTH * ui.value});
           if(this.attr('stroke-dasharray')!==undefined && this.attr('stroke-dasharray')!=='') this.attr({'stroke-dasharray':PATH_STROKE_WIDTH*ui.value});

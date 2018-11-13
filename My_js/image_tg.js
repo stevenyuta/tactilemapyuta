@@ -10,7 +10,7 @@ function fileapi_svg(){
     var file = ev.target.files[0];
     var type = file.type;
 
-    if (!type.match('image.*')) {
+    if (type !== 'image/svg+xml') {
       alert('選択できるファイルはSVGファイルだけです。');
       inputFile.value = '';
       return;

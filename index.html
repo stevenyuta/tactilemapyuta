@@ -78,7 +78,7 @@
             <span id="downloader">
               <a id="svg_download" href="#" download="SVG_output.svg" onclick="svgDownload()">SVG</a>
               <a id="png_download" href="#" onclick="pngDownload()">PNG</a>
-              <a id="legend_download"  href="#" download="凡例.txt" onclick="legendDownload()">凡例</a>
+              <a id="legend_download"  href="#" download="凡例.txt" onclick="legendDownload()" style="display:none;">凡例</a>
               <a href="manual.pdf" target="_blank">取扱説明書</a>
             </span>
           </div>
@@ -87,9 +87,6 @@
             <div id="top_toolbar">
               <input  type="radio" name="tg_mode" value="Stamp" id="Stamp">
               <label for="Stamp">触知記号</label>
-
-              <input  type="radio" name="tg_mode" value="DrawCircle" id="DrawCircle">
-              <label for="DrawCircle">円記号</label>
 
               <input  type="radio" name="tg_mode" value="Text" id="Text">
               <label for="Text">文字</label>
@@ -101,9 +98,10 @@
               <input type="checkbox" id="check_bra" name="checkers" value="check_bra" class="checkbox01-input"/>
               <label for="check_bra" class="custom_check_label"></label>
               <input type="text" id="Braille" value="てんじ" oncopy="return false" onpaste="return false" oncontextmenu="return false">
-
-              <button id="undo"><i class="fa fa-undo"></i></button>
-              <button id="redo"><i class="fa fa-repeat"></i></button>
+              <span id="top_toolbar_buttons">
+                <button id="undo"><i class="fa fa-undo"></i></button>
+                <button id="redo"><i class="fa fa-repeat"></i></button>
+              </span>
             </div>
 
             <div id="left_toolbar">
@@ -120,6 +118,10 @@
                   <input  type="radio" name="tg_mode" value="EditPath" id="EditPath">
                   <label for="EditPath">線の詳細編集</label>
                 </div>
+                <div>
+                  <input  type="radio" name="tg_mode" value="DrawRect" id="DrawRect">
+                  <label for="DrawRect">矩形</label>
+                </div>
                 <div id = "EditImage_div">
                   <input  type="radio" name="tg_mode" value="EditImage" id="EditImage">
                   <label for="EditImage">画像選択</label>
@@ -132,7 +134,7 @@
 
               <div id="left_toolbar_button">
                 <div>
-                  <input type="button" id="node_connect" value="端点のノードを結合" disabled>
+                  <input type="button" id="node_connect" value="端点のノードを結合" style="display:none;" disabled>
                 </div>
                 <div>
                   <input type="button" id="distance_check_button" value="距離間チェック">
@@ -186,31 +188,31 @@
               </table>
 
               <table id = "rightUI_table">
-                <tr>
+                <tr class="strokewidth_gadget">
                   <td>線幅</td>
                   <td><input type="text" id="StrokeWidth_TextBox" oncopy="return false" onpaste="return false" oncontextmenu="return false"></td>
                   <td>mm</td>
                   <td><button id="resetStrokeWidth_Button">初期値</button></td>
                 </tr>
-                <tr><td colspan="4">
+                <tr class="strokewidth_gadget"><td colspan="4">
                   <div class="slider" id="StrokeWidth_Slider" ></div>
                 </td></tr>
-                <tr>
+                <tr class="resizeInk_gadget">
                   <td>墨字</td>
                   <td><input type="text" id="resizeInk_TextBox" oncopy="return false" onpaste="return false" oncontextmenu="return false"></td>
                   <td>pt</td>
                   <td><button id="resetInk_Button">初期値</button></td>
                 </tr>
-                <tr><td colspan="4">
+                <tr class="resizeInk_gadget"><td colspan="4">
                   <div class="slider" id="resizeInk_Slider"></div>
                 </td></tr>
-                <tr>
+                <tr class="resizeBraille_gadget">
                   <td>点字</td>
                   <td><input type="text" id="resizeBraille_TextBox" oncopy="return false" onpaste="return false" oncontextmenu="return false"></td>
                   <td>pt</td>
                   <td><button id="brasize_resetbutton">初期値</button></td>
                 </td></tr>
-                <tr><td colspan="4">
+                <tr class="resizeBraille_gadget"><td colspan="4">
                   <div class="slider" id="resizeBraille_Slider"></div>
                 </td></tr>
                 <tr class="gadget_imageOpacity">
@@ -226,7 +228,11 @@
 
               <table id="stamp_table">
                 <tr><td>
-                  <input  type="radio" name="tactileSymbol" value="Stair" id="Stair" checked="checked">
+                  <input  type="radio" name="tactileSymbol" value="DrawCircle" id="DrawCircle" checked="checked">
+                  <label for="DrawCircle">円記号</label>
+                </td></tr>
+                <tr><td>
+                  <input  type="radio" name="tactileSymbol" value="Stair" id="Stair">
                   <label for="Stair">階段</label>
                 </td></tr>
                 <tr><td>
@@ -316,15 +322,15 @@
 
         //pathの属性について
         const PATH_STROKE_COLOR = '#000' //通常時（黒色）
-        const PATH_SELECT_COLOR = '#f00' //選択時（赤色）
-        const PATH_EDIT_COLOR = '#00f' //詳細編集での選択時（青色）
+        const PATH_SELECT_COLOR = '#B22222' //選択時（赤色）
+        const PATH_EDIT_COLOR = '#0000CD' //詳細編集での選択時（青色）
         const PATH_STROKE_WIDTH = SVG_RATIO //線幅（1mm）
 
         const THRE_DISTANCE = 3 * SVG_RATIO //距離チェック時の閾値 3mm
 
         //textの基本設定
-        const INK_FILL_COLOR = '#0066ff'; //通常時（黒色）
-        const BRA_FILL_COLOR = '#000'; //通常時（黒色）
+        const INK_FILL_COLOR = '#0066ff';
+        const BRA_FILL_COLOR = '#000';
         const DEF_INK_SIZE = '18'; //デフォルトの墨字サイズ
         const DEF_BRA_SIZE = '20'; //デフォルトの点字サイズ
         const TEXT_CORRECTION = SVG_RATIO * 0.352778;
@@ -354,7 +360,7 @@
         //線の詳細編集などに使用するクリック用サークル、レクト関係
         const CIRCLE_RADIUS = 8;
         const HANDLE_CIRCLE_RADIUS = 10;
-        const CIRCLE_COLOR = '#0f0';
+        const CIRCLE_COLOR = '#32CD32';
         const CIRCLE_HOVER_COLOR = '#f00'; //ホバー時（red）
         const CIRCLE_EDIT_COLOR = '#00f'; //エディットホバー時(blue)
 
@@ -447,61 +453,74 @@
         dummy_delete(); //dummyの全削除
         circle_delete(); //circleの全削除
         select_rect_delete(); //select_rectの全削除
-        get_node_connectCircle();
+        get_node_connectRect();
+
+        /** 右メニューを全て一旦隠す**/
+        $('#stroke_style').hide(); //線種変更
+        $('.strokewidth_gadget').hide(); //線種変更
+        $('.resizeInk_gadget').hide(); //墨字サイズ変更
+        $('.resizeBraille_gadget').hide(); //点字サイズ変更
+        $('#layer_select').hide(); //レイヤ変更
+        $('#fill_change').hide();  //塗りつぶし変更
+        $('#resizeBox_textbox').hide(); //リサイズテキストボックス
+        $('#stamp_table').hide();
 
         /*************************************
         //各モードごとの処理
         *************************************/
         switch(nowchecked){
           case 'Draw':
+            $('#stroke_style').show(); //線種変更
+            $('.strokewidth_gadget').show(); //線種変更
             draw_line(); //線の描画モード
             break;
           case 'Edit':
             editselect_array = editselect_array.concat(editpath_array);
+            $('#resizeBox_textbox').show();
             edit();//線の詳細編集モード
             break;
           case 'EditPath':
             editpath_array = editpath_array.concat(editselect_array);
             editpath();//線の詳細編集モード
             break;
+          case 'DrawRect':
+            $('#stroke_style').show(); //線種変更
+            $('.strokewidth_gadget').show(); //線種変更
+            draw_rect();//矩形描画モード
+            break;
           case 'EditImage':
+            $('#layer_select').show();
+            $('#resizeBox_textbox').show();
             edit();//原図の移動モード
             break;
           case 'TrimBase64':
             trim_start();
             break;
-          case 'DrawCircle':
-            draw_circle(); //サークル生成モード
-            break;
           case 'Text':
+            $('.resizeInk_gadget').show(); //墨字サイズ変更
+            $('.resizeBraille_gadget').show(); //点字サイズ変更
             add_text(); //点字、墨字追加モード
             break;
           case 'Stamp':
+            $('#stroke_style').show(); //線種変更
+            $('.strokewidth_gadget').show(); //線種変更
+            $('#stamp_table').show();
             set_Stampmode();
             break;
           default:
             break;
         }
+
         if(nowchecked!=="Draw"){
           draw.select('.drawing_path').removeClass('drawing_path');
           now_drawing_path_ID = "";
         }
         if(nowchecked==="Edit" || nowchecked==="EditImage"){
-          $('#layer_select').show();
-          $('#fill_change').show();
-          $('#resizeBox_textbox').show();
+
         }else{
           editselect_array.length = 0;
-          $('#layer_select').hide();
-          $('#fill_change').hide();
-          $('#resizeBox_textbox').hide();
         }
         if(nowchecked!=="EditPath") editpath_array.length = 0;
-        if(nowchecked === "Stamp"){
-          $('#stamp_table').show();
-        }else{
-          $('#stamp_table').hide();
-        }
       }
 
 
@@ -580,6 +599,7 @@
             legend_ink_array.push(Ink.text());
           }
           if(Braille){
+            /**
             if($('#graduation_frame').prop('checked')){
               for(let i=-F_WIDTH/2; i < F_WIDTH/2; i += F_WIDTH/4){
                 if(i <= Braille.x() && Braille.x() < i + F_WIDTH/4) legend_str += ' 目盛り：横は' + String((i + F_WIDTH/2)/(F_WIDTH/4) + 1) + " ";
@@ -589,6 +609,7 @@
               }
             }
             legend_str += '\r\n';
+            **/
           }
         }
         var blob = new Blob([ legend_str ], { 'type' : 'text/plain' });

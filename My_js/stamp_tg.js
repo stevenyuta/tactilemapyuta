@@ -1,6 +1,18 @@
 function set_Stampmode(){
+  $(document).off(); //ページ上のイベントの削
+  draw.off(); //drawのイベント解除
+  draw.select('.SVG_Element , .image').off(); //SVG_Elementのイベント解除
+  draw.select('.SVG_Element , .image').attr({'cursor':'default'});
+  set_key_down_up();
+  set_contextMenu();
+  reset_dcheck_element();
+  set_zoom(); //zoomイベントの開始
+  dummy_delete(); //dummyの全削除
   let stamp_checked = $('input[name="tactileSymbol"]:checked').val();
   switch(stamp_checked){
+    case 'DrawCircle':
+      draw_circle();
+      break;
     case 'Stair':
       add_stair();
       break;
@@ -41,7 +53,7 @@ function add_stair(){
     dummy_stair.attr({
       'fill': 'none',
       'stroke': PATH_STROKE_COLOR,
-      'stroke-width': PATH_STROKE_WIDTH,
+      'stroke-width' : PATH_STROKE_WIDTH*$('#StrokeWidth_TextBox').val(),
       'stroke-linejoin' : 'round'
     })
   })
@@ -77,7 +89,7 @@ function add_escalator(){
     dummy_escalator.attr({
       'fill': 'none',
       'stroke': PATH_STROKE_COLOR,
-      'stroke-width': PATH_STROKE_WIDTH,
+      'stroke-width' : PATH_STROKE_WIDTH*$('#StrokeWidth_TextBox').val(),
       'stroke-linejoin' : 'round'
     })
   })
@@ -109,7 +121,7 @@ function add_arrow(){
     dummy_arrow.attr({
       'fill': 'none',
       'stroke': PATH_STROKE_COLOR,
-      'stroke-width': PATH_STROKE_WIDTH,
+      'stroke-width' : PATH_STROKE_WIDTH*$('#StrokeWidth_TextBox').val(),
       'stroke-linejoin' : 'round'
     })
   })
@@ -133,11 +145,11 @@ function add_Tiket_gate(){
     dummy_delete();
     let mx = getmousepoint('normal',e).x , my = getmousepoint('normal',e).y; //描画領域上でのマウスポイント計算
     let back_num = getPathCirclePos();
-    let dummy_tiket_gate1 = draw.path().M({x: mx-30, y: my}).L({x: mx-10,y:my}).addClass('dummy').back();
-    let dummy_tiket_gate2 = draw.path().M({x: mx-10, y: my-10}).L({x: mx-10,y:my+10}).addClass('dummy').back();
-    let dummy_tiket_gate3 = draw.path().M({x: mx, y: my-10}).L({x: mx,y:my+10}).addClass('dummy').back();
-    let dummy_tiket_gate4 = draw.path().M({x: mx+10, y: my-10}).L({x: mx+10,y:my+10}).addClass('dummy').back();
-    let dummy_tiket_gate5 = draw.path().M({x: mx+10, y: my}).L({x: mx+30,y:my}).addClass('dummy').back();
+    let dummy_tiket_gate1 = draw.path().M({x: mx-40, y: my}).L({x: mx-15,y:my}).addClass('dummy').back();
+    let dummy_tiket_gate2 = draw.path().M({x: mx-15, y: my-15}).L({x: mx-15,y:my+15}).addClass('dummy').back();
+    let dummy_tiket_gate3 = draw.path().M({x: mx, y: my-15}).L({x: mx,y:my+15}).addClass('dummy').back();
+    let dummy_tiket_gate4 = draw.path().M({x: mx+15, y: my-15}).L({x: mx+15,y:my+15}).addClass('dummy').back();
+    let dummy_tiket_gate5 = draw.path().M({x: mx+15, y: my}).L({x: mx+40,y:my}).addClass('dummy').back();
     symbol_id[0] = dummy_tiket_gate1.attr('id');
     symbol_id[1] = dummy_tiket_gate2.attr('id');
     symbol_id[2] = dummy_tiket_gate3.attr('id');
@@ -153,7 +165,7 @@ function add_Tiket_gate(){
     draw.select('.dummy').attr({
       'fill': 'none',
       'stroke': PATH_STROKE_COLOR,
-      'stroke-width': PATH_STROKE_WIDTH,
+      'stroke-width' : PATH_STROKE_WIDTH*$('#StrokeWidth_TextBox').val(),
       'stroke-linejoin' : 'round'
     })
   })
@@ -190,7 +202,7 @@ function add_reducescale(){
     dummy_scale.attr({
       'fill': 'none',
       'stroke': PATH_STROKE_COLOR,
-      'stroke-width': PATH_STROKE_WIDTH,
+      'stroke-width' : PATH_STROKE_WIDTH*$('#StrokeWidth_TextBox').val(),
       'stroke-linejoin' : 'round'
     })
   })
@@ -271,9 +283,60 @@ function draw_circle(){
 
       draw.off('mouseup').on('mouseup', function(e){
         if(e.button===0){
-          make_circle.removeClass('make_circle');
+          if(make_circle.attr('r') > 2 * SVG_RATIO){
+            make_circle.removeClass('make_circle');
+            cash_svg(); //svgデータのcash
+          }else{
+            make_circle.remove();
+          }
           draw.off('mousemove');
+        }
+      })
+    }
+  })
+}
+
+
+/******************************************************
+//矩形を生成する関数
+******************************************************/
+function draw_rect(){
+  let sx = 0 , sy = 0;
+  let lx = 0 , ly = 0;
+  let make_path;
+  draw.off('mousedown').on('mousedown', function(e){
+    if(e.button===0){
+      sx = getmousepoint('normal',e).x , sy = getmousepoint('normal',e).y; //描画領域上でのマウスポイント計算
+      let back_num = getPathCirclePos();
+      make_path = draw.path().attr({
+        'fill' : 'none',
+        'stroke-width' : PATH_STROKE_WIDTH * $('#StrokeWidth_TextBox').val(),
+        'stroke' : '#000000'
+      })
+      if($('input[name="stroke"]:checked').val()==='dotted_line'){
+        make_path.attr({ 'stroke-dasharray': PATH_STROKE_WIDTH*$('#StrokeWidth_TextBox').val() })
+      }
+      make_path.addClass('connected').addClass('SVG_Element').addClass('path').back();
+      for(let i=0; i< back_num; i++){
+        make_path.forward();
+      }
+      draw.off('mousemove').on('mousemove', function(e){
+        lx = getmousepoint('normal',e).x , ly = getmousepoint('normal',e).y //描画領域上でのマウスポイント計算
+        if(input_key_buffer[16]){
+          console.log(lx-sx , ly-sy)
+          if(lx - sx > ly - sy){
+            ly = sy + lx - sx;
+          }else{
+            lx = sx + ly - sy;
+          }
+        }
+        make_path.attr({'d':''})
+        make_path.M({x: sx, y: sy}).L({x: lx, y: sy}).L({x: lx, y: ly}).L({x: sx, y: ly}).Z();
+      })
+      draw.off('mouseup').on('mouseup', function(e){
+        if(e.button===0){
           cash_svg(); //svgデータのcash
+          draw.off('mousemove');
         }
       })
     }
@@ -369,21 +432,30 @@ function add_text(){
 
 /******************************************************
 /墨字の追加すべきレイヤー順番を示す番号を返す関数
-１、画像よりも上
-２、点字よりも下
-３、path、円記号、墨字よりも下
+1、画像よりも上
+2、塗りつぶされたpathよりも上
+3、点字よりも下
+4、墨字よりも上
+5、path、円記号よりも下
 の優先順位で配置する
 ******************************************************/
 function getInkPos(){
   let position; //一番低い位置にある要素のpositon番号を格納
-  draw.select(".path , .circle , .braille").each(function(i , children){
+  draw.select(".path , .circle").each(function(i , children){
     if(position > this.position() || position === undefined) position = this.position();
   })
-  let lastImage = draw.select('.image').last();
-  if(lastImage){
-    if(position < lastImage.position() || position === undefined) position = Number(lastImage.position()) + 1;
-  }
-
+  draw.select(".ink").each(function(i , children){
+    if(position < this.position() || position === undefined) position = this.position() + 1;
+  })
+  draw.select(".braille").each(function(i , children){
+    if(position > this.position() || position === undefined) position = this.position();
+  })
+  draw.select('.path:not([fill="none"])').each(function(i , children){
+    if(position <= this.position() || position === undefined) position = this.position() + 1;
+  })
+  draw.select(".image").each(function(i , children){
+    if(position < this.position() || position === undefined) position = this.position() + 1;
+  })
   if(position === undefined){
     return 0;
   }else{
@@ -444,20 +516,26 @@ function set_textsize(){
 /******************************************************
 pathまたは円記号の追加すべきレイヤー順番を示す番号を返す関数
 path（線、触知記号）、または円はレイヤー順で
-１、画像よりも上
-２、点字よりも下
-３、path、円記号、墨字よりも上
+1、画像よりも上
+2、path、円記号よりも上
+3、点字よりも下
+4、墨字よりも上
 の優先順位で配置する
 ******************************************************/
 function getPathCirclePos(){
   let position; //一番低い位置にある要素のpositon番号を格納
+  draw.select(".ink").each(function(i , children){
+    if(position < this.position() || position === undefined) position = Number(this.position()) + 1;
+  })
   draw.select(".braille").each(function(i , children){ //点字で一番下のレイヤーにあるものの順番を取得
     if(position > this.position() || position === undefined) position = this.position();
   })
-  let lastImage = draw.select('.image').last();
-  if(lastImage){
-    if(position < lastImage.position() || position === undefined) position = Number(lastImage.position()) + 1;
-  }
+  draw.select(".path , .circle").each(function(i , children){
+    if(position < this.position() || position === undefined) position = this.position() + 1;
+  })
+  draw.select(".image").each(function(i , children){
+    if(position < this.position() || position === undefined) position = Number(this.position()) + 1;
+  })
   if(position === undefined){
     return 0;
   }else{
