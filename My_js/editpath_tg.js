@@ -135,7 +135,7 @@ function toFragmented(connectedPath){
   connectedPath.after(fragmented_PathGroup);
   for(let j = 0; j < dpoint.length - 1; j++){
     let fragmentedPath = fragmented_PathGroup.path().addClass('fragmented').addClass('SVG_Element').addClass('path');
-    let rect = fragmented_RectGroup.rect(RECT_WIDTH/(3*draw.zoom()) , RECT_HEIGHT/(3*draw.zoom())).addClass('edit_rect').front(); ////重ね順を一番前に
+    let rect = fragmented_RectGroup.rect(RECT_WIDTH/(2*draw.zoom()) , RECT_HEIGHT/(2*draw.zoom())).addClass('edit_rect').front(); ////重ね順を一番前に
     fragmentedPath.attr({
       'fill' : 'none',
       'stroke' : PATH_SELECT_COLOR,
@@ -164,7 +164,7 @@ function toFragmented(connectedPath){
     }else{ //次の要素がZ要素でない場合
       fragmentedPath.M({x: dpoint[j][1], y: dpoint[j][2]}).L({x: dpoint[j+1][1], y: dpoint[j+1][2]});
       if(j === dpoint.length -2){
-        let rect = fragmented_RectGroup.rect(RECT_WIDTH/(3*draw.zoom()) , RECT_HEIGHT/(3*draw.zoom())).addClass('edit_rect').addClass('last_rect').front(); ////重ね順を一番前に
+        let rect = fragmented_RectGroup.rect(RECT_WIDTH/(2*draw.zoom()) , RECT_HEIGHT/(2*draw.zoom())).addClass('edit_rect').addClass('last_rect').front(); ////重ね順を一番前に
         rect.attr({
           'x' : dpoint[j + 1][1] - rect.width()/2,
           'y' : dpoint[j + 1][2] - rect.height()/2,
@@ -251,7 +251,7 @@ function fragmentedPath_EventSet(){
         let assignment_Number = this.attr('assignment_Number');
         let fragmentedPath1 = draw.path().M({x: dpoint[0][1], y: dpoint[0][2]}).L({x: mx, y: my }).addClass('fragmented').addClass('SVG_Element').addClass('path');
         let fragmentedPath2 = draw.path().M({x: mx, y: my}).L({x: dpoint[1][1], y: dpoint[1][2] }).addClass('fragmented').addClass('SVG_Element').addClass('path');
-        let rect = SVG.get('#fragmented_RectGroup_' + String(this.parent().attr('fragmented_Group_Number'))).rect(RECT_WIDTH/(3*draw.zoom()) , RECT_HEIGHT/(3*draw.zoom())).addClass('edit_rect').back();
+        let rect = SVG.get('#fragmented_RectGroup_' + String(this.parent().attr('fragmented_Group_Number'))).rect(RECT_WIDTH/(2*draw.zoom()) , RECT_HEIGHT/(2*draw.zoom())).addClass('edit_rect').back();
         fragmentedPath1.attr({
           'fill' : 'none',
           'stroke' : PATH_SELECT_COLOR,
