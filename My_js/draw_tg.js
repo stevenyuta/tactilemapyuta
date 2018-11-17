@@ -164,10 +164,10 @@ function add_closePath_rect(){
     let dpoint = draw.select('.drawing_path').first().clear().array().settle();
     if(dpoint.length >= 3){
       let ix = dpoint[0][1] , iy = dpoint[0][2];
-      let closePath_rect = draw.rect(RECT_WIDTH/(3*draw.zoom()) , RECT_HEIGHT/(3*draw.zoom())).addClass('draw_close_rect').front();
+      let closePath_rect = draw.rect(RECT_WIDTH/(2*draw.zoom()) , RECT_HEIGHT/(2*draw.zoom())).addClass('draw_close_rect').front();
       closePath_rect.attr({
         'x' : ix - closePath_rect.width()/2,  'y' : iy - closePath_rect.width()/2,
-        'fill': '#D2691E'
+        'fill': '#6495ED'
       })
       closePath_rect.mouseover(function(e){
         this.attr({
@@ -178,7 +178,7 @@ function add_closePath_rect(){
       })
       closePath_rect.mouseout(function(e){
         this.attr({
-          'fill': '#D2691E',
+          'fill': '#6495ED',
           'cursor': 'default'
         })
         this.removeClass('hover_rect');
@@ -208,13 +208,13 @@ function draw_connectedInitLast(){
     if(dpoint[dpoint.length-1][0] !== "Z"){
       let ix = dpoint[0][1] , iy = dpoint[0][2];
       let lx = dpoint[dpoint.length-1][1] , ly = dpoint[dpoint.length-1][2];
-      let draw_init_rect = draw.rect(RECT_WIDTH/(3*draw.zoom()) , RECT_HEIGHT/(3*draw.zoom())).addClass('draw_init_rect').front();
+      let draw_init_rect = draw.rect(RECT_WIDTH/(2*draw.zoom()) , RECT_HEIGHT/(2*draw.zoom())).addClass('draw_init_rect').front();
       draw_init_rect.attr({
         'x' : ix - draw_init_rect.width()/2,  'y' : iy - draw_init_rect.width()/2,
         'fill': CIRCLE_COLOR,
         'connectedID' : this.attr('id')
       })
-      let draw_last_rect = draw.rect(RECT_WIDTH/(3*draw.zoom()) , RECT_HEIGHT/(3*draw.zoom())).addClass('draw_last_rect').front();
+      let draw_last_rect = draw.rect(RECT_WIDTH/(2*draw.zoom()) , RECT_HEIGHT/(2*draw.zoom())).addClass('draw_last_rect').front();
       draw_last_rect.attr({
         'x' : lx - draw_last_rect.width()/2, 'y' : ly - draw_last_rect.height()/2,
         'fill': CIRCLE_COLOR,

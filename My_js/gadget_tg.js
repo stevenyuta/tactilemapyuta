@@ -436,8 +436,8 @@ function set_zoom(){
     SVG.select('.edit_rect , .draw_init_rect , .draw_last_rect , .draw_close_rect').each(function(i , children){
       let origi_cx = this.x() + this.width()/2;
       let origi_cy = this.y() + this.height()/2;
-      this.width(RECT_WIDTH/(3*zoom_lvl));
-      this.height(RECT_HEIGHT/(3*zoom_lvl));
+      this.width(RECT_WIDTH/(2*zoom_lvl));
+      this.height(RECT_HEIGHT/(2*zoom_lvl));
       this.x(origi_cx - this.width()/2);
       this.y(origi_cy - this.height()/2);
     })

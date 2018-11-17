@@ -361,7 +361,7 @@
         const CIRCLE_RADIUS = 8;
         const HANDLE_CIRCLE_RADIUS = 10;
         const CIRCLE_COLOR = '#32CD32';
-        const CIRCLE_HOVER_COLOR = '#f00'; //ホバー時（red）
+        const CIRCLE_HOVER_COLOR = '#B22222'; //ホバー時（red）
         const CIRCLE_EDIT_COLOR = '#00f'; //エディットホバー時(blue)
 
         const RECT_WIDTH = 13;
@@ -432,7 +432,6 @@
         nowchecked = $('input[name="tg_mode"]:checked').val();
         let Image_radio = $('#EditImage_div , #TrimBase64_div');
         (draw.select('.image').first()) ? Image_radio.show() : Image_radio.hide();
-        (draw.select('.image').first()) ? $('.gadget_imageOpacity').show() : $('.gadget_imageOpacity').hide();
         /*************************************
         //モードを変更したときに必ず行う処理
         *************************************/
@@ -460,6 +459,7 @@
         $('.strokewidth_gadget').hide(); //線種変更
         $('.resizeInk_gadget').hide(); //墨字サイズ変更
         $('.resizeBraille_gadget').hide(); //点字サイズ変更
+        $('.gadget_imageOpacity').hide(); //画像透過度変更
         $('#layer_select').hide(); //レイヤ変更
         $('#fill_change').hide();  //塗りつぶし変更
         $('#resizeBox_textbox').hide(); //リサイズテキストボックス
@@ -521,103 +521,6 @@
           editselect_array.length = 0;
         }
         if(nowchecked!=="EditPath") editpath_array.length = 0;
-      }
-
-
-      //ダウンロードリンク
-      function svgDownload() {
-        var svg_str = download_setSVG(draw)
-        var blob = new Blob([ svg_str ], { 'type' : 'text/plain' });
-        if (window.navigator.msSaveBlob) {
-          window.navigator.msSaveOrOpenBlob(blob, 'SVG_output.svg');
-        } else {
-          document.getElementById('svg_download').href = window.URL.createObjectURL(blob);
-        }
-      }
-
-      function pngDownload() {
-        var png_str = download_setPNG(draw)
-        if(draw.select('.A4').first().style('display')!=='none'){
-          var rotation = draw.select('.A4').first().transform('rotation')
-          if(Math.abs(rotation) === 90){
-            $("body").append("<canvas id='canvas1' visibility='hidden' width='2205' height='3118.5'></canvas>")
-          }else{
-            $("body").append("<canvas id='canvas1' visibility='hidden' width='3118.5' height='2205'></canvas>")
-          }
-        }else{
-          var rotation = draw.select('.B4').first().transform('rotation')
-          if(Math.abs(rotation) === 90){
-            $("body").append("<canvas id='canvas1' visibility='hidden' width='2697' height='3822'></canvas>")
-          }else{
-            $("body").append("<canvas id='canvas1' visibility='hidden' width='3822' height='2697'></canvas>")
-          }
-        }
-        var canvas = $("#canvas1")[0]
-        var ctx = canvas.getContext("2d")
-        var imgsrc = "data:image/svg+xml;charset=utf-8;base64,"+ btoa(unescape(encodeURIComponent(png_str)))
-        var image = new Image()
-
-        image.onload = function(){
-          ctx.drawImage(image, 0, 0);
-          var dataurl = canvas.toDataURL("image/png");
-          var bin = atob(dataurl.split(',')[1]);
-          // 空の Uint8Array ビューを作る
-          var buffer = new Uint8Array(bin.length);
-          // Uin t8Array ビューに 1 バイトずつ値を埋める
-          for (var i = 0; i < bin.length; i++) {
-            buffer[i] = bin.charCodeAt(i);
-          }
-          // Uint8Array ビューのバッファーを抜き出し、それを元に Blob を作る
-          var blob = new Blob([buffer.buffer], {type: "image/png"});
-          var url = window.URL.createObjectURL(blob);
-          ctx.drawImage(image, 0, 0);
-          // Optional: 自動でダウンロードさせる場合
-          $("body").append("<a id='image-file' class='hidden' type='application/octet-stream' href='"
-                           + url + "' download='PNG_output.png'>Donload Image</a>");
-          $("#image-file")[0].click();
-          // 後処理
-          $("#canvas1").remove();
-          $("#image-file").remove();
-          URL.revokeObjectURL(url); // オブジェクトURLを開放
-        }
-        image.src = imgsrc;
-      }
-
-      function legendDownload() {
-        var legend_ink_array = new Array() , legend_braille_array = new Array();
-        var legend_str = "";
-        for(var i=0; i < text_pairs.length; i++){
-          var text_pairs_id = text_pairs[i];
-          var Braille = undefined , Ink = undefined;
-          if(text_pairs_id.Braille) var Braille = SVG.get("#" + text_pairs_id.Braille);
-          if(text_pairs_id.Ink) var Ink = SVG.get("#" + text_pairs_id.Ink);
-          if(Braille){  //点字要素が入手できた場合
-            legend_str += Braille.text() + " ： ";
-          }
-          if(Ink){
-            legend_str += Ink.text();
-            legend_ink_array.push(Ink.text());
-          }
-          if(Braille){
-            /**
-            if($('#graduation_frame').prop('checked')){
-              for(let i=-F_WIDTH/2; i < F_WIDTH/2; i += F_WIDTH/4){
-                if(i <= Braille.x() && Braille.x() < i + F_WIDTH/4) legend_str += ' 目盛り：横は' + String((i + F_WIDTH/2)/(F_WIDTH/4) + 1) + " ";
-              }
-              for(let i=-F_HEIGHT/2; i < F_HEIGHT/2; i += F_HEIGHT/3){
-                if(i <= Braille.y() && Braille.y() < i + F_HEIGHT/3) legend_str += ' 縦は' + String((i + F_HEIGHT/2)/(F_HEIGHT/3) + 1) + " ";
-              }
-            }
-            legend_str += '\r\n';
-            **/
-          }
-        }
-        var blob = new Blob([ legend_str ], { 'type' : 'text/plain' });
-        if (window.navigator.msSaveBlob) {
-          window.navigator.msSaveOrOpenBlob(blob, '凡例.txt');
-        } else {
-          document.getElementById('legend_download').href = window.URL.createObjectURL(blob);
-        }
       }
     </script>
   </body>

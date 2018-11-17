@@ -212,6 +212,7 @@ function upload_handle(){
   (draw.select('.edit_select.braille').first()!==undefined) ? $('.resizeBraille_gadget').show() : $('.resizeBraille_gadget').hide();
   (draw.select('.edit_select.path , .edit_select.circle').first()!==undefined) ? $('.strokewidth_gadget').show() : $('.strokewidth_gadget').hide();
   (draw.select('.edit_select.path , .edit_select.circle').first()!==undefined) ? $('#stroke_style').show() : $('#stroke_style').hide();
+  (draw.select('.edit_select.image').first()!==undefined) ? $('.gadget_imageOpacity').show() : $('.gadget_imageOpacity').hide();
 
   if(draw.select('.edit_select').first()===undefined){
     SVG.get('handle_group').hide();　//移動、サイズ変更、回転用のハンドルを非表示

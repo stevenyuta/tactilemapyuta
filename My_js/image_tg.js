@@ -1,37 +1,3 @@
-/******************************************************
-//file_apiの設定関数
-******************************************************/
-function fileapi_svg(){
-  //file_apiの処理
-  var inputFile = $('#file_svg');
-  var reader = new FileReader();
-
-  function fileChange(ev) { //ファイル選択ボタンを押下時
-    var file = ev.target.files[0];
-    var type = file.type;
-
-    if (type !== 'image/svg+xml') {
-      alert('選択できるファイルはSVGファイルだけです。');
-      inputFile.value = '';
-      return;
-    }
-    reader.readAsText(file);
-  }
-  function fileLoad() {
-    var svg_text = reader.result;
-    svg_text = svg_text.replace(/<svg.+>/g, '')
-    svg_text = svg_text.replace( /<\/svg>/g , "" );
-    continue_setSVG(svg_text,-DRAW_AREA_WIDTH, -DRAW_AREA_HEIGHT, DRAW_AREA_WIDTH * 2, DRAW_AREA_HEIGHT * 2);
-    cash_svg();
-  }
-  function fileClear() {
-    this.value = null;
-  }
-  inputFile.on('click',fileClear);
-  inputFile.on('change',fileChange);
-  $(reader).on('load',fileLoad);
-}
-
 function fileapi_image(){
   var inputFile = $('#file_img');
   var reader = new FileReader();
@@ -73,7 +39,6 @@ function import_image(image_url){
     cash_svg();
     let Image_radio = $('#EditImage_div , #TrimBase64_div');
     (draw.select('.image').first()) ? Image_radio.show() : Image_radio.hide();
-    (draw.select('.image').first()) ? $('.gadget_imageOpacity').show() : $('.gadget_imageOpacity').hide();
   })
 }
 

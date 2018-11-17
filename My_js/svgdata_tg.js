@@ -232,3 +232,134 @@ function continue_setSVG(input_draw,vx,vy,vwidth,vheight){ //svgデータを読�
   checkBox_change();
   $('input[name="tg_mode"]:checked').prop('checked', true).trigger('change'); //モードを設定
 }
+
+/******************************************************
+//file_apiの設定関数
+******************************************************/
+function fileapi_svg(){
+  //file_apiの処理
+  var inputFile = $('#file_svg');
+  var reader = new FileReader();
+
+  function fileChange(ev) { //ファイル選択ボタンを押下時
+    var file = ev.target.files[0];
+    var type = file.type;
+
+    if (type !== 'image/svg+xml') {
+      alert('選択できるファイルはSVGファイルだけです。');
+      inputFile.value = '';
+      return;
+    }
+    reader.readAsText(file);
+  }
+  function fileLoad() {
+    var svg_text = reader.result;
+    svg_text = svg_text.replace(/<svg.+>/g, '')
+    svg_text = svg_text.replace( /<\/svg>/g , "" );
+    continue_setSVG(svg_text,-DRAW_AREA_WIDTH, -DRAW_AREA_HEIGHT, DRAW_AREA_WIDTH * 2, DRAW_AREA_HEIGHT * 2);
+    cash_svg();
+  }
+  function fileClear() {
+    this.value = null;
+  }
+  inputFile.on('click',fileClear);
+  inputFile.on('change',fileChange);
+  $(reader).on('load',fileLoad);
+}
+
+
+//ダウンロードリンク
+function svgDownload() {
+  var svg_str = download_setSVG(draw)
+  var blob = new Blob([ svg_str ], { 'type' : 'text/plain' });
+  if (window.navigator.msSaveBlob) {
+    window.navigator.msSaveOrOpenBlob(blob, 'SVG_output.svg');
+  } else {
+    document.getElementById('svg_download').href = window.URL.createObjectURL(blob);
+  }
+}
+
+function pngDownload() {
+  var png_str = download_setPNG(draw)
+  if(draw.select('.A4').first().style('display')!=='none'){
+    var rotation = draw.select('.A4').first().transform('rotation')
+    if(Math.abs(rotation) === 90){
+      $("body").append("<canvas id='canvas1' visibility='hidden' width='2205' height='3118.5'></canvas>")
+    }else{
+      $("body").append("<canvas id='canvas1' visibility='hidden' width='3118.5' height='2205'></canvas>")
+    }
+  }else{
+    var rotation = draw.select('.B4').first().transform('rotation')
+    if(Math.abs(rotation) === 90){
+      $("body").append("<canvas id='canvas1' visibility='hidden' width='2697' height='3822'></canvas>")
+    }else{
+      $("body").append("<canvas id='canvas1' visibility='hidden' width='3822' height='2697'></canvas>")
+    }
+  }
+  var canvas = $("#canvas1")[0]
+  var ctx = canvas.getContext("2d")
+  var imgsrc = "data:image/svg+xml;charset=utf-8;base64,"+ btoa(unescape(encodeURIComponent(png_str)))
+  var image = new Image()
+
+  image.onload = function(){
+    ctx.drawImage(image, 0, 0);
+    var dataurl = canvas.toDataURL("image/png");
+    var bin = atob(dataurl.split(',')[1]);
+    // 空の Uint8Array ビューを作る
+    var buffer = new Uint8Array(bin.length);
+    // Uin t8Array ビューに 1 バイトずつ値を埋める
+    for (var i = 0; i < bin.length; i++) {
+      buffer[i] = bin.charCodeAt(i);
+    }
+    // Uint8Array ビューのバッファーを抜き出し、それを元に Blob を作る
+    var blob = new Blob([buffer.buffer], {type: "image/png"});
+    var url = window.URL.createObjectURL(blob);
+    ctx.drawImage(image, 0, 0);
+    // Optional: 自動でダウンロードさせる場合
+    $("body").append("<a id='image-file' class='hidden' type='application/octet-stream' href='"
+                     + url + "' download='PNG_output.png'>Donload Image</a>");
+    $("#image-file")[0].click();
+    // 後処理
+    $("#canvas1").remove();
+    $("#image-file").remove();
+    URL.revokeObjectURL(url); // オブジェクトURLを開放
+  }
+  image.src = imgsrc;
+}
+
+function legendDownload() {
+  var legend_ink_array = new Array() , legend_braille_array = new Array();
+  var legend_str = "";
+  for(var i=0; i < text_pairs.length; i++){
+    var text_pairs_id = text_pairs[i];
+    var Braille = undefined , Ink = undefined;
+    if(text_pairs_id.Braille) var Braille = SVG.get("#" + text_pairs_id.Braille);
+    if(text_pairs_id.Ink) var Ink = SVG.get("#" + text_pairs_id.Ink);
+    if(Braille){  //点字要素が入手できた場合
+      legend_str += Braille.text() + " ： ";
+    }
+    if(Ink){
+      legend_str += Ink.text();
+      legend_ink_array.push(Ink.text());
+    }
+    if(Braille){
+      /**
+      if($('#graduation_frame').prop('checked')){
+        for(let i=-F_WIDTH/2; i < F_WIDTH/2; i += F_WIDTH/4){
+          if(i <= Braille.x() && Braille.x() < i + F_WIDTH/4) legend_str += ' 目盛り：横は' + String((i + F_WIDTH/2)/(F_WIDTH/4) + 1) + " ";
+        }
+        for(let i=-F_HEIGHT/2; i < F_HEIGHT/2; i += F_HEIGHT/3){
+          if(i <= Braille.y() && Braille.y() < i + F_HEIGHT/3) legend_str += ' 縦は' + String((i + F_HEIGHT/2)/(F_HEIGHT/3) + 1) + " ";
+        }
+      }
+      legend_str += '\r\n';
+      **/
+    }
+  }
+  var blob = new Blob([ legend_str ], { 'type' : 'text/plain' });
+  if (window.navigator.msSaveBlob) {
+    window.navigator.msSaveOrOpenBlob(blob, '凡例.txt');
+  } else {
+    document.getElementById('legend_download').href = window.URL.createObjectURL(blob);
+  }
+}
