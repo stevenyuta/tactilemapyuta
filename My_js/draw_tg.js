@@ -44,7 +44,8 @@ function draw_line(){
     draw.off('mousedown').mousedown(function(e){
       if(e.button===0){ //左クリック時
         //StrokeWidth_TextBoxの値が何もないまたは0の場合はリセットボタンを発火させる
-        if($('#StrokeWidth_TextBox').val()==='' || $('#StrokeWidth_TextBox').val()==='0') $('#resetStrokeWidth_Button').click();
+        if($('#StrokeWidth_TextBox').val()==='') $('#resetStrokeWidth_Button').click();
+        if($('#StrokeWidth_TextBox').val()==='0' && $('input[name="draw_line_fillRadio"]:checked').val()==='none') $('#resetStrokeWidth_Button').click();
         let position_num = getPathCirclePos();
         if(!draw.select('.drawing_path').first()){  //書き始めの場合：drawing_pathクラスをもつ要素がない
           if(draw.select('.hovering_node.init_node').first()){ //他のpathの始点ノードのホバー時
@@ -221,7 +222,7 @@ function set_InitLastNode(){
 //選択状態のpathが存在しない場合は変更なし、または複数存在する場合は空白にする
 **********************************************************************************/
 function set_strokewidth(){
-  if(!draw.select('.edit_select').first()){
+  if(draw.select('.edit_select').first()){
     let strokewidth_flag = false;  //true: 選択状態のパスあり false: なし
     let strokewidth = false  // strokewidth属性の値を格納、 false: strokewitdhが違うpathが2つ以上ある場合
     draw.select('.edit_select').each(function(i,children){
@@ -239,7 +240,8 @@ function set_strokewidth(){
         $('#StrokeWidth_TextBox').val('')
       }else{
         $("#StrokeWidth_Slider").slider("value",Math.round(strokewidth/ SVG_RATIO * 10)/10);
-        $('#StrokeWidth_TextBox').val(Math.round(strokewidth/ SVG_RATIO * 10)/10)
+        $('#StrokeWidth_TextBox').val(Math.round(strokewidth/ SVG_RATIO * 10)/10);
+
       }
     }
   }

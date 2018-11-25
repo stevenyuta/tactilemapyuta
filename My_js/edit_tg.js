@@ -191,6 +191,8 @@ function edit_hover(mode){
 ******************************************************/
 function edit_clear(clear_flag){
   SVG.get('handle_group').hide();
+  if($('#rb_width').is(':focus')) update_widthBox();
+  if($('#rb_height').is(':focus')) update_heightBox();
   draw.select('.edit_select').each(function(i, children) {
     if(this.hasClass('ink')){  //text要素の場合
       this.attr({'stroke': 'none'});

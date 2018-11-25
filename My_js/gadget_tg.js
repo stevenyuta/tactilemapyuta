@@ -451,23 +451,13 @@ function gadget_set(e){
   /************************************************************
   線幅を変更するテキストボックス、リセットボタン、スライダーの設定
   *************************************************************/
-  $('#StrokeWidth_TextBox').off('keyup').on('keyup' ,function() {
-    if(!this.value.match(/[^0-9\.]/) && this.value!==0 && String(this.value)!=="\." && String(this.value)!==""){
-      let self_value = this.value;
-      draw.select('.edit_select').each(function(i,children){
-        if(!this.hasClass('ink') && !this.hasClass('braille')){
-          this.attr({'stroke-width': Number(self_value) * PATH_STROKE_WIDTH });
-          if(this.attr('stroke-dasharray')!==undefined && this.attr('stroke-dasharray')!=='')this.attr({'stroke-dasharray': PATH_STROKE_WIDTH});
-        }
-      })
-    }
-  })
+  $('#StrokeWidth_TextBox').off('focusout').on('focusout' , update_StrokeWidth_TextBox);
   $('#StrokeWidth_TextBox').val(1); //線幅の初期値を指定
 
   $('#resetStrokeWidth_Button').click(function(){  //線幅リセットボタンを押下時の処理
     $("#StrokeWidth_Slider").slider("value" , 1);
     $("#StrokeWidth_TextBox").val(1);
-    draw.select('.edit_select , .fragmented').each(function(i,children){
+    draw.select('.edit_select , .fragmented , .drawing_path').each(function(i,children){
       if(!this.hasClass('ink') && !this.hasClass('braille')){
         this.attr({'stroke-width':PATH_STROKE_WIDTH});
         if(this.attr('stroke-dasharray')!== undefined && this.attr('stroke-dasharray')!=='') this.attr({'stroke-dasharray':PATH_STROKE_WIDTH});
@@ -481,7 +471,7 @@ function gadget_set(e){
     value: 1, //初期値
     step: 0.1, //幅
     slide: function( event, ui ) {
-      draw.select('.edit_select , .fragmented').each(function(i,children){
+      draw.select('.edit_select , .fragmented , .drawing_path').each(function(i,children){
         if(!this.hasClass('ink') && !this.hasClass('braille')){
           this.attr({'stroke-width':PATH_STROKE_WIDTH * ui.value});
           if(this.attr('stroke-dasharray')!==undefined && this.attr('stroke-dasharray')!=='') this.attr({'stroke-dasharray':PATH_STROKE_WIDTH*ui.value});
@@ -494,16 +484,8 @@ function gadget_set(e){
   /**************************************************************
   //墨字を変更するテキストボックス、リセットボタン、スライダーの設定
   **************************************************************/
+  $('#resizeInk_TextBox').off('focusout').on('focusout' , update_resizeInk_TextBox);
   $('#resizeInk_TextBox').val(16); //墨字の初期値を指定
-
-  $('#resizeInk_TextBox').off('keyup').on('keyup' ,function() {
-    if(!this.value.match(/[^0-9\.]/) && this.value!==0 && String(this.value)!=="\." && String(this.value)!==""){
-      let self_value = this.value;
-      draw.select('.edit_select').each(function(i,children){
-        if(this.hasClass('ink')) this.attr({ 'font-size': Number(self_value) * SVG_RATIO * 0.352778 });
-      })
-    }
-  })
 
   $('#resetInk_Button').click(function(){  //リセットボタンを押下時の処理
     $("#resizeInk_Slider").slider("value",16);
@@ -528,16 +510,8 @@ function gadget_set(e){
   /*****************************************
   //点字の大きさを設定するスライダー
   ******************************************/
+  $('#resizeBraille_TextBox').off('focusout').on('focusout' , update_resizeBraille_TextBox);
   $('#resizeBraille_TextBox').val(18); //墨字の初期値を指定
-
-  $('#resizeBraille_TextBox').off('keyup').on('keyup' ,function() {
-    if(!this.value.match(/[^0-9\.]/) && this.value!==0 && String(this.value)!=="\." && String(this.value)!==""){
-      let self_value = this.value;
-      draw.select('.edit_select').each(function(i,children){
-        if(this.hasClass('braille'))this.attr({'font-size': Number(self_value) * SVG_RATIO * 0.352778});
-      })
-    }
-  })
 
   $('#brasize_resetbutton').click(function(){  //リセットボタンを押下時の処理
     $("#resizeBraille_Slider").slider("value",18);
@@ -601,5 +575,51 @@ function gadget_set(e){
       $('#ImageOpacity_TextBox').val(ui.value)
     }
   });
+}
 
+function leaveOnlyNumber(String_num){
+  let converted = String_num.replace(/[０-９]/g, function(s) { // (1)
+      return String.fromCharCode(s.charCodeAt(0) - 65248); // (2)
+  });
+  let array = converted.match(/[0-9]+\.?[0-9]*/g);
+  return array[0]
+}
+
+function update_StrokeWidth_TextBox(){
+  if(String($('#StrokeWidth_TextBox').val())!==""){
+    let transNumber = leaveOnlyNumber($('#StrokeWidth_TextBox').val());
+    $('#StrokeWidth_TextBox').val(transNumber)
+    if(!transNumber.match(/[^0-9\.]/)){
+      draw.select('.edit_select , .fragmented , .drawing_path').each(function(i,children){
+        if(!this.hasClass('ink') && !this.hasClass('braille')){
+          this.attr({'stroke-width': Number(transNumber) * PATH_STROKE_WIDTH });
+          if(this.attr('stroke-dasharray')!==undefined && this.attr('stroke-dasharray')!=='')this.attr({'stroke-dasharray': PATH_STROKE_WIDTH});
+        }
+      })
+    }
+  }
+}
+
+function update_resizeInk_TextBox(){
+  if(String($('#resizeInk_TextBox').val())!==""){
+    let transNumber = leaveOnlyNumber($('#resizeInk_TextBox').val());
+    $('#resizeInk_TextBox').val(transNumber)
+    if(!transNumber.match(/[^0-9\.]/)){
+      draw.select('.edit_select').each(function(i,children){
+        if(this.hasClass('ink')) this.attr({ 'font-size': Number(transNumber) * SVG_RATIO * 0.352778 });
+      })
+    }
+  }
+}
+
+function update_resizeBraille_TextBox(){
+  if(String($('#resizeBraille_TextBox').val())!==""){
+    let transNumber = leaveOnlyNumber($('#resizeBraille_TextBox').val());
+    $('#resizeInk_TextBox').val(transNumber)
+    if(!transNumber.match(/[^0-9\.]/)){
+      draw.select('.edit_select').each(function(i,children){
+        if(this.hasClass('braille')) this.attr({ 'font-size': Number(transNumber) * SVG_RATIO * 0.352778 });
+      })
+    }
+  }
 }

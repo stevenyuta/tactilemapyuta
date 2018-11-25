@@ -99,9 +99,14 @@ function set_key_down_up(){
         default:
       }
     }else{
-      if(e.keyCode === 13 && (current_mode === 'Edit' || current_mode === 'EditImage')){
-        if($('#rb_width').is(':focus')) update_widthBox();
-        if($('#rb_height').is(':focus')) update_heightBox();
+      if(e.keyCode === 13){
+        if(current_mode === 'Edit' || current_mode === 'EditImage'){
+          if($('#rb_width').is(':focus')) update_widthBox();
+          if($('#rb_height').is(':focus')) update_heightBox();
+        }
+        if($('#StrokeWidth_TextBox').is(':focus')) update_StrokeWidth_TextBox();
+        if($('#resizeInk_TextBox').is(':focus')) update_resizeInk_TextBox();
+        if($('#resizeBraille_TextBox').is(':focus')) update_resizeBraille_TextBox();
       }
     }
     input_key_buffer[e.keyCode] = true;
