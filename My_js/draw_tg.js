@@ -7,14 +7,14 @@ function draw_line(){
   let drawing_path;
   draw_mousemove();
   draw_mousedown();
-  draw_connectedInitLast();
+  set_InitLastNode();
   if(draw.select('.drawing_path').first()){
     if(draw.select('.drawing_path').first().id() === now_drawing_path_ID){
       drawing_path = draw.select('.drawing_path').first();
       let dpoint = drawing_path.clear().array().settle();
       current_x = dpoint[dpoint.length-1][1];
       current_y = dpoint[dpoint.length-1][2];
-      add_closePath_rect();
+      set_closePathNode();
     }else{
       draw.select('.drawing_path').removeClass('drawing_path');
     }
@@ -25,163 +25,147 @@ function draw_line(){
   ***********************************/
   function draw_mousemove(){
     draw.off('mousemove').mousemove(function(e){
-      if(input_key_buffer[17]){ //press ctrl key
+      if(input_key_buffer[17]){ //ctrlキーを押しているとき
         mx = getmousepoint('15degree',e,current_x,current_y).x , my = getmousepoint('15degree',e,current_x,current_y).y;
       }else{
         mx = getmousepoint('connect',e).x , my = getmousepoint('connect',e).y;
       }
-      dummy_delete();
-      var back_num = getPathCirclePos();
-      if(SVG.select('.drawing_path').first()){
-        let dummy_path = draw.path().M({x: current_x, y: current_y}).L({x: mx, y: my});
-        dummy_path.attr({
-          'fill': 'none',
-          'stroke' : PATH_STROKE_COLOR,
-          'stroke-width' : PATH_STROKE_WIDTH*$('#StrokeWidth_TextBox').val(),
-          'stroke-linejoin' : 'round'
-        })
-        if($('input[name="stroke"]:checked').val()==='dotted_line'){
-          dummy_path.attr({
-            'stroke-dasharray': PATH_STROKE_WIDTH * $('#StrokeWidth_TextBox').val()
-          })
-        }
-        draw.select('.edit_circle').front();
-        dummy_path.addClass('dummy').back();
-        for(var i=0; i< back_num; i++){
-          dummy_path.forward();
-        }
+      if(draw.select('.drawing_path').first()){
+        let change_dpoint = drawing_path_dpoint + 'L ' + mx +' '+ my;
+        drawing_path.attr({'d' : change_dpoint});
       }
     })
   }
 
   /*********************************************
-  //mousedown時のイベントを設定する関数
+  //マウスクリック時のイベントを設定する関数
   **********************************************/
   function draw_mousedown(){
     draw.off('mousedown').mousedown(function(e){
       if(e.button===0){ //左クリック時
-        if($('#StrokeWidth_TextBox').val()==='' || $('#StrokeWidth_TextBox').val()==='0') $('#resetStrokeWidth_Button').click() //StrokeWidth_TextBoxの値が何もない場合はリセットボタンを発火させる
-        dummy_delete(); //dummy線を全削除
-        var back_num = getPathCirclePos();
+        //StrokeWidth_TextBoxの値が何もないまたは0の場合はリセットボタンを発火させる
+        if($('#StrokeWidth_TextBox').val()==='' || $('#StrokeWidth_TextBox').val()==='0') $('#resetStrokeWidth_Button').click();
+        let position_num = getPathCirclePos();
         if(!draw.select('.drawing_path').first()){  //書き始めの場合：drawing_pathクラスをもつ要素がない
-          if(draw.select('.hover_rect.draw_init_rect').first()){
-            let connectedPath = SVG.get('#' + draw.select('.hover_rect.draw_init_rect').first().attr('connectedID'));
-            if(connectedPath){
-              let dpoint = connectedPath.clear().array().settle();
-              connectedPath.attr({'d' : ''});
-              for(let j = dpoint.length - 1; j >= 0; j--){
-                if(j===dpoint.length - 1){
-                  connectedPath.M({x : dpoint[j][1] , y : dpoint[j][2]});
-                }else{
-                  connectedPath.L({x : dpoint[j][1] , y : dpoint[j][2]});
-                }
+          if(draw.select('.hovering_node.init_node').first()){ //他のpathの始点ノードのホバー時
+            let connectedPath = SVG.get(draw.select('.hovering_node.init_node').first().attr('connectedID'));
+            let dpoint = connectedPath.clear().array().settle();
+            connectedPath.attr({'d' : ''}).addClass('drawing_path');
+            drawing_path_dpoint="";
+            for(let j = dpoint.length - 1; j >= 0; j--){
+              if(j===dpoint.length - 1){
+                connectedPath.M({x : dpoint[j][1] , y : dpoint[j][2]});
+                drawing_path_dpoint += "M "+ dpoint[j][1] + " " + dpoint[j][2];
+              }else{
+                connectedPath.L({x : dpoint[j][1] , y : dpoint[j][2]});
+                drawing_path_dpoint += "L "+ dpoint[j][1] + " " + dpoint[j][2];
               }
-              connectedPath.addClass('drawing_path');
-              now_drawing_path_ID = connectedPath.id();
-              current_x = dpoint[0][1], current_y = dpoint[0][2];
-              add_closePath_rect();
             }
-          }else if(draw.select('.hover_rect.draw_last_rect').first()){
-            let connectedPath = SVG.get('#' + draw.select('.hover_rect.draw_last_rect').first().attr('connectedID'));
-            if(connectedPath){
-              let dpoint = connectedPath.clear().array().settle();
-              connectedPath.addClass('drawing_path');
-              now_drawing_path_ID = connectedPath.id();
-              current_x = dpoint[dpoint.length-1][1], current_y = dpoint[dpoint.length-1][2];
-              add_closePath_rect();
+            now_drawing_path_ID = connectedPath.id();
+            current_x = dpoint[0][1], current_y = dpoint[0][2];
+            set_closePathNode();
+          }else if(draw.select('.hovering_node.last_node').first()){ //他のpathの終点ノードのホバー時
+            let connectedPath = SVG.get(draw.select('.hovering_node.last_node').first().attr('connectedID'));
+            let dpoint = connectedPath.clear().array().settle();
+            connectedPath.addClass('drawing_path');
+            now_drawing_path_ID = connectedPath.id();
+            current_x = dpoint[dpoint.length-1][1], current_y = dpoint[dpoint.length-1][2];
+            /*現在のdrawing_pathのd属性情報を記憶*/
+            drawing_path_dpoint="";
+            for(let i=0; i < dpoint.length; i++){
+              drawing_path_dpoint += dpoint[i][0] +" "+ dpoint[i][1] + " " + dpoint[i][2];
             }
-          }else{
+            set_closePathNode();
+          }else{ //ノードをホバーしていない場合
             drawing_path = draw.path().M({x: mx, y: my}) //pathの描画
             now_drawing_path_ID = drawing_path.id();
             drawing_path.attr({
-              'fill': 'none',
-              'stroke': PATH_STROKE_COLOR,
-              'stroke-width': PATH_STROKE_WIDTH*$('#StrokeWidth_TextBox').val(),
-              'stroke-linejoin' : 'round'
+              'fill': $('input[name="draw_line_fillRadio"]:checked').val(), 'stroke': PS_COLOR,
+              'stroke-width': PS_WIDTH*$('#StrokeWidth_TextBox').val(), 'stroke-linejoin' : 'round'
             })
             if($('input[name="stroke"]:checked').val()==='dotted_line'){
-              drawing_path.attr({ 'stroke-dasharray': PATH_STROKE_WIDTH*$('#StrokeWidth_TextBox').val() })
+              drawing_path.attr({ 'stroke-dasharray': PS_WIDTH*$('#StrokeWidth_TextBox').val() })
             }
             drawing_path.addClass('connected').addClass('SVG_Element').addClass('drawing_path').addClass('path');
             drawing_path.back();
-            for(var i=0; i< back_num; i++){
-              drawing_path.forward();
-            }
+            for(var i=0; i< position_num; i++) drawing_path.forward();
             current_x = mx, current_y = my;
+            /*現在のdrawing_pathのd属性情報を記憶*/
+            drawing_path_dpoint="";
+            let dp_dpoint = drawing_path.clear().array().settle();
+            for(let i=0; i < dp_dpoint.length; i++){
+              drawing_path_dpoint += dp_dpoint[i][0] +" "+ dp_dpoint[i][1] + " " + dp_dpoint[i][2];
+            }
           }
         }else{  //書き始めでない場合：drawing_pathクラスをもつ要素がある
           drawing_path = draw.select('.drawing_path').first();
-          if(draw.select('.hover_rect.draw_init_rect').first()){
-            let connectedPath = SVG.get('#' + draw.select('.hover_rect.draw_init_rect').first().attr('connectedID'));
-            if(connectedPath){
-              connectedPath_dpoint = connectedPath.clear().array().settle();
-              for(let i = 0; i < connectedPath_dpoint.length; i++){
-                drawing_path.L({x : connectedPath_dpoint[i][1] , y : connectedPath_dpoint[i][2]});
-              }
+          drawing_path.attr({'d' : drawing_path_dpoint});
+          drawing_path_dpoint="";
+          if(draw.select('.hovering_node.init_node').first()){
+            let connectedPath = SVG.get(draw.select('.hovering_node.init_node').first().attr('connectedID'));
+            connectedPath_dpoint = connectedPath.clear().array().settle();
+            for(let i = 0; i < connectedPath_dpoint.length; i++){
+              drawing_path.L({x : connectedPath_dpoint[i][1] , y : connectedPath_dpoint[i][2]});
             }
             connectedPath.remove();
             drawing_path.removeClass('drawing_path');
-            draw.select('.draw_close_rect').each(function(i,children){
+            draw.select('.close_node').each(function(i,children){
               this.remove();
             })
-          }else if(draw.select('.hover_rect.draw_last_rect').first()){
-            let connectedPath = SVG.get('#' + draw.select('.hover_rect.draw_last_rect').first().attr('connectedID'));
-            if(connectedPath){
-              connectedPath_dpoint = connectedPath.clear().array().settle();
-              for(let i = connectedPath_dpoint.length -1; i >= 0; i--){
-                drawing_path.L({x : connectedPath_dpoint[i][1] , y : connectedPath_dpoint[i][2]});
-              }
-              connectedPath.remove();
-              drawing_path.removeClass('drawing_path');
-              draw.select('.draw_close_rect').each(function(i,children){
-                this.remove();
-              })
+          }else if(draw.select('.hovering_node.last_node').first()){
+            let connectedPath = SVG.get('#' + draw.select('.hovering_node.last_node').first().attr('connectedID'));
+            connectedPath_dpoint = connectedPath.clear().array().settle();
+            for(let i = connectedPath_dpoint.length -1; i >= 0; i--){
+              drawing_path.L({x : connectedPath_dpoint[i][1] , y : connectedPath_dpoint[i][2]});
             }
-          }else if(draw.select('.hover_rect.draw_close_rect').first()){
+            connectedPath.remove();
+            drawing_path.removeClass('drawing_path');
+            draw.select('.close_node').each(function(i,children){
+              this.remove();
+            })
+          }else if(draw.select('.hovering_node.close_node').first()){
             drawing_path.Z().removeClass('drawing_path'); //drawing_pathクラスを排除
-            draw.select('.draw_close_rect').each(function(i,children){
+            draw.select('.close_node').each(function(i,children){
               this.remove();
             })
           }else{
             drawing_path.L({x: mx, y: my}); //current_pathに線を描画
-            draw.select('.edit_circle').front();
             current_x = mx , current_y = my;
-            add_closePath_rect();
+            /*現在のdrawing_pathのd属性情報を記憶*/
+            let dp_dpoint = drawing_path.clear().array().settle();
+            for(let i=0; i < dp_dpoint.length; i++){
+              drawing_path_dpoint += dp_dpoint[i][0] +" "+ dp_dpoint[i][1] + " " + dp_dpoint[i][2];
+            }
+            set_closePathNode();
           }
         }
-        draw_connectedInitLast();
+        set_InitLastNode();
         cash_svg();
       }
     })
   }
 }
 
-function add_closePath_rect(){
-  draw.select('.draw_close_rect').each(function(i,children){
+function set_closePathNode(){
+  draw.select('.close_node').each(function(i,children){
     this.remove();
   })
   if(draw.select('.drawing_path').first()){
     let dpoint = draw.select('.drawing_path').first().clear().array().settle();
     if(dpoint.length >= 3){
       let ix = dpoint[0][1] , iy = dpoint[0][2];
-      let closePath_rect = draw.rect(RECT_WIDTH/(2*draw.zoom()) , RECT_HEIGHT/(2*draw.zoom())).addClass('draw_close_rect').front();
+      let closePath_rect = draw.rect(RECT_WIDTH/(1.5*draw.zoom()) , RECT_HEIGHT/(1.5*draw.zoom())).addClass('close_node').front();
       closePath_rect.attr({
         'x' : ix - closePath_rect.width()/2,  'y' : iy - closePath_rect.width()/2,
         'fill': '#6495ED'
       })
       closePath_rect.mouseover(function(e){
-        this.attr({
-          'fill': CIRCLE_HOVER_COLOR,
-          'cursor':'pointer'
-        })
-        this.addClass('hover_rect');
+        this.attr({ 'fill': NODE_HOVER_COLOR,  'cursor':'pointer' });
+        this.addClass('hovering_node');
       })
       closePath_rect.mouseout(function(e){
-        this.attr({
-          'fill': '#6495ED',
-          'cursor': 'default'
-        })
-        this.removeClass('hover_rect');
+        this.attr({ 'fill': '#6495ED',  'cursor': 'default' });
+        this.removeClass('hovering_node');
       })
     }
   }
@@ -189,60 +173,57 @@ function add_closePath_rect(){
 
 function draw_end_function(){
   let current_path = draw.select('.drawing_path').first();
-  if(current_path){
-    current_path.removeClass('drawing_path');
-    if(current_path.clear().array().settle().length===1)  current_path.remove();
-  }
-  add_closePath_rect();
-  draw_connectedInitLast();
-  dummy_delete();
+  current_path.attr({'d' : drawing_path_dpoint});
+  drawing_path_dpoint="";
+  current_path.removeClass('drawing_path');
+  if(current_path.clear().array().settle().length <= 1)  current_path.remove();
+  set_closePathNode();
+  set_InitLastNode();
   now_drawing_path_ID = "";
 }
 
-function draw_connectedInitLast(){
-  draw.select('.draw_init_rect , .draw_last_rect').each(function(i,children){
+function set_InitLastNode(){
+  draw.select('.init_node , .last_node').each(function(i,children){
     this.remove();
   })
   draw.select('.connected:not(.drawing_path)').each(function(i , children){
     let dpoint = this.clear().array().settle();
+    let node_width = RECT_WIDTH/(2.5*draw.zoom()) , node_height = RECT_HEIGHT/(2.5*draw.zoom());
     if(dpoint[dpoint.length-1][0] !== "Z"){
       let ix = dpoint[0][1] , iy = dpoint[0][2];
       let lx = dpoint[dpoint.length-1][1] , ly = dpoint[dpoint.length-1][2];
-      let draw_init_rect = draw.rect(RECT_WIDTH/(2*draw.zoom()) , RECT_HEIGHT/(2*draw.zoom())).addClass('draw_init_rect').front();
-      draw_init_rect.attr({
-        'x' : ix - draw_init_rect.width()/2,  'y' : iy - draw_init_rect.width()/2,
-        'fill': CIRCLE_COLOR,
-        'connectedID' : this.attr('id')
+      let init_node = draw.rect(node_width , node_height).addClass('init_node').front();
+      init_node.attr({
+        'x' : ix - init_node.width()/2,  'y' : iy - init_node.width()/2,
+        'fill': NODE_COLOR, 'connectedID' : this.attr('id')
       })
-      let draw_last_rect = draw.rect(RECT_WIDTH/(2*draw.zoom()) , RECT_HEIGHT/(2*draw.zoom())).addClass('draw_last_rect').front();
-      draw_last_rect.attr({
-        'x' : lx - draw_last_rect.width()/2, 'y' : ly - draw_last_rect.height()/2,
-        'fill': CIRCLE_COLOR,
-        'connectedID' : this.attr('id')
+      let last_node = draw.rect(node_width , node_height).addClass('last_node').front();
+      last_node.attr({
+        'x' : lx - last_node.width()/2, 'y' : ly - last_node.height()/2,
+        'fill': NODE_COLOR, 'connectedID' : this.attr('id')
       })
-      draw_init_rect.off('mouseover').mouseover(function(e){
-        this.attr({ 'fill': CIRCLE_HOVER_COLOR , 'cursor' : 'pointer' }).addClass('hover_rect');
-      }).off('mouseout').mouseout(function(e){
-        this.attr({ 'fill': CIRCLE_COLOR , 'cursor' : 'default'}).removeClass('hover_rect');
+      init_node.off('mouseover').mouseover(function(){
+        this.attr({ 'fill': NODE_HOVER_COLOR , 'cursor' : 'pointer' }).addClass('hovering_node');
+      }).off('mouseout').mouseout(function(){
+        this.attr({ 'fill': NODE_COLOR , 'cursor' : 'default'}).removeClass('hovering_node');
       })
-      draw_last_rect.off('mouseover').mouseover(function(e){
-        this.attr({ 'fill': CIRCLE_HOVER_COLOR , 'cursor' : 'pointer'}).addClass('hover_rect');
-      }).off('mouseout').mouseout(function(e){
-        this.attr({ 'fill': CIRCLE_COLOR , 'cursor' : 'default'}).removeClass('hover_rect');
+      last_node.off('mouseover').mouseover(function(){
+        this.attr({ 'fill': NODE_HOVER_COLOR , 'cursor' : 'pointer'}).addClass('hovering_node');
+      }).off('mouseout').mouseout(function(){
+        this.attr({ 'fill': NODE_COLOR , 'cursor' : 'default'}).removeClass('hovering_node');
       })
     }
   })
 }
-
 
 /**************************************************************************************
 //選択状態のpathのstroke-widthを取得してテキストボックスとスライダーの値を変更する関数
 //選択状態のpathが存在しない場合は変更なし、または複数存在する場合は空白にする
 **********************************************************************************/
 function set_strokewidth(){
-  if(draw.select('.edit_select').first()!==null){
-    var strokewidth_flag = false;  //true: 選択状態のパスあり false: なし
-    var strokewidth = false  // strokewidth属性の値を格納、 false: strokewitdhが違うpathが2つ以上ある場合
+  if(!draw.select('.edit_select').first()){
+    let strokewidth_flag = false;  //true: 選択状態のパスあり false: なし
+    let strokewidth = false  // strokewidth属性の値を格納、 false: strokewitdhが違うpathが2つ以上ある場合
     draw.select('.edit_select').each(function(i,children){
       if(!this.hasClass('ink') && !this.hasClass('braille') && !this.hasClass('image')){
         if(!strokewidth_flag){

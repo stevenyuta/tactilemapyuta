@@ -123,7 +123,7 @@ function download_setSVG(original_draw) { //ダウンロード時に出力svgフ
 
   dummy_delete();
   edit_clear();
-  toConnected();
+  //toConnected();
   select_rect_delete(); //select_rectの全削除
   draw.select('.image_FrameRect').each(function(i,children){
     this.remove();
@@ -236,9 +236,9 @@ function continue_setSVG(input_draw,vx,vy,vwidth,vheight){ //svgデータを読�
 /******************************************************
 //file_apiの設定関数
 ******************************************************/
-function fileapi_svg(){
+function set_fileAPI_continue(){
   //file_apiの処理
-  var inputFile = $('#file_svg');
+  var inputFile = $('#fileAPI_continue');
   var reader = new FileReader();
 
   function fileChange(ev) { //ファイル選択ボタンを押下時

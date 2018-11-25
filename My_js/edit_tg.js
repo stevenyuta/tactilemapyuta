@@ -7,7 +7,7 @@ function edit(){
   let change_gX , change_gY , change_gWidth , change_gHeight;
   let current_mode = $('input[name="tg_mode"]:checked').val();
   for(let i=0; i<editselect_array.length; i++){
-    let select_element = SVG.get("#" + editselect_array[i]);
+    let select_element = SVG.get(editselect_array[i]);
     if(select_element){
       if(current_mode === 'Edit'){
         if(!select_element.hasClass('image')){
@@ -224,10 +224,7 @@ function upload_handle(){
 
     $('#layer_select').show();
     $('#fill_change').hide();
-    draw.select('.edit_select.connected').each(function(i, children) {
-      let dpoint = this.clear().array().settle();
-      if(dpoint[dpoint.length-1][0] === 'Z') $('#fill_change').show();
-    })
+    if(draw.select('.edit_select.connected').first()) $('#fill_change').show();
 
 
 

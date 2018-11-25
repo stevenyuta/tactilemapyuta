@@ -1,5 +1,5 @@
-function fileapi_image(){
-  var inputFile = $('#file_img');
+function set_fileAPI_image(){
+  var inputFile = $('#fileAPI_img');
   var reader = new FileReader();
 
   function fileChange(ev) { //ファイル選択ボタンを押下時
@@ -37,7 +37,7 @@ function import_image(image_url){
       this.back();
     })
     cash_svg();
-    let Image_radio = $('#EditImage_div , #TrimBase64_div');
+    let Image_radio = $('#EditImage_div');
     (draw.select('.image').first()) ? Image_radio.show() : Image_radio.hide();
   })
 }
@@ -133,7 +133,7 @@ function trim_start() {
 }
 
 function set_imageOpacity(){
-  if(draw.select('.image.edit_select').first()!==null){
+  if(draw.select('.image.edit_select').first()){
     let imageOpacity_flag = false;  //true: 選択状態のパスあり false: なし
     let imageOpacity = false  // strokewidth属性の値を格納、 false: strokewitdhが違うpathが2つ以上ある場合
     draw.select('.image.edit_select').each(function(i,children){

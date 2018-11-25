@@ -15,13 +15,13 @@ function set_key_down_up(){
         draw.panZoom({ //zoomの導入
           doPanning: false,
           zoomFactor: 0.03,
-          zoomMin: 0.1,
+          zoomMin: 0.25,
           zoomMax: 5
         })
       }
       switch(e.keyCode){
         case 13: //Enterキー
-          if(current_mode === 'Draw')  draw_end_function();
+          if(current_mode === 'Draw' && draw.select('.drawing_path').first())  draw_end_function();
           break;
         case 46: // delete key
           if(current_mode === "Edit" || current_mode === "EditImage") delete_select();
@@ -96,7 +96,6 @@ function set_key_down_up(){
             })
           }
           break;
-
         default:
       }
     }else{
@@ -113,8 +112,8 @@ function set_key_down_up(){
       if(!e.ctrlKey){ //ctrlキー押下時
         draw.panZoom({ //zoomの導入
           doPanning: false,
-          zoomFactor: 0.17,
-          zoomMin: 0.1,
+          zoomFactor: 0.2,
+          zoomMin: 0.25,
           zoomMax: 5
         })
         if(current_mode === 'EditPath'){

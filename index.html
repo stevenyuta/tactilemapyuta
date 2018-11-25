@@ -5,22 +5,24 @@
     <title>立体コピー触地図作成支援Webアプリ</title>
   </head>
   <body>
-    <!-- jqueryの導入 -->
-    <script type="text/javascript" src="./dl_lib/jquery-3.2.1.min.js"></script>
-    <script type="text/javascript" src="./dl_lib/jquery-ui.min.js"></script>
+    <!-- jquery関連のjsファイル -->
+    <script type="text/javascript" src="./dl_js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="./dl_js/jquery-ui.min.js"></script>
+    <script src="./dl_js/jquery.contextMenu.min.js" type="text/javascript"></script>
 
-    <!-- svg.jsの導入 -->
-    <script type="text/javascript" src="./dl_lib/svg.min.js"></script>
-    <script type="text/javascript" src="./dl_lib/svg.path.js"></script>
-    <script type="text/javascript" src="./dl_lib/svg.panzoom.min.js"></script>
-    <script type="text/javascript" src="./dl_lib/svg.draw.min.js"></script><!--svg.draw.jsの導入-->
+    <!-- svg.js関連のjsファイル -->
+    <script type="text/javascript" src="./dl_js/svg.min.js"></script>
+    <script type="text/javascript" src="./dl_js/svg.path.js"></script>
+    <script type="text/javascript" src="./dl_js/svg.panzoom.min.js"></script>
+    <script type="text/javascript" src="./dl_js/svg.draw.min.js"></script>
+    <script type="text/javascript" src="./dl_js/svg.draggable.min.js"></script>
 
-    <script type="text/javascript" src="./dl_lib/rangeslider.min.js"></script>
-    <script type="text/javascript" src="./dl_lib/tactileGraph.min.js"></script><!-- tactileGraph.jsの導入  -->
-    <script type="text/javascript" src="./dl_lib/math.js"></script><!-- math.jsの導入  -->
-    <script src="./dl_lib/jquery.contextMenu.min.js" type="text/javascript"></script>
+    <!-- その他のjsファイル -->
+    <script type="text/javascript" src="./dl_js/rangeslider.min.js"></script>
+    <script type="text/javascript" src="./dl_js/tactileGraph.min.js"></script><!-- tactileGraph.jsの導入  -->
+    <script type="text/javascript" src="./dl_js/math.js"></script>
 
-    <!-- 自作jsの導入 -->
+    <!-- 自作jsファイル -->
     <script type="text/javascript" src="./My_js/draw_tg.js"></script> <!--ペン機能関係-->
     <script type="text/javascript" src="./My_js/edit_tg.js"></script> <!--要素操作機能関係-->
     <script type="text/javascript" src="./My_js/editpath_tg.js"></script> <!--線の詳細編集機能関係-->
@@ -29,29 +31,30 @@
     <script type="text/javascript" src="./My_js/gadget_tg.js"></script> <!--html上のスライダー、チェックボックス関係の関数-->
     <script type="text/javascript" src="./My_js/svgdata_tg.js"></script> <!--svgのデータ関係関数-->
     <script type="text/javascript" src="./My_js/image_tg.js"></script> <!--画像関係関数-->
-    <script type="text/javascript" src="./My_js/keypush_tg.js"></script> <!--ペン機能関係-->
-    <script type="text/javascript" src="./My_js/other_tg.js"></script> <!--そのほかの関数-->
+    <script type="text/javascript" src="./My_js/keypush_tg.js"></script> <!--キー入力受付関係-->
+    <script type="text/javascript" src="./My_js/other_tg.js"></script> <!--そのほかいろいろ-->
 
+    <!-- bootstrap関連のjsファイル -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 
-    <!-- css導入 -->
-    <link type="text/css" rel="stylesheet" href="./My_css/jquery-ui.min.css" />
-    <link type="text/css" rel="stylesheet" href="./My_css/rangeslider.css" />
-    <link rel="stylesheet" href="./My_css/My_css.css" type="text/css"/>
-    <link rel="stylesheet" href="./My_css/jquery.contextMenu.min.css" type="text/css"/>
+    <!-- cssファイル導入 -->
+    <link type="text/css" rel="stylesheet" href="./css/jquery-ui.min.css" />
+    <link type="text/css" rel="stylesheet" href="./css/rangeslider.css" />
+    <link rel="stylesheet" href="./css/My_css.css" type="text/css"/>
+    <link rel="stylesheet" href="./css/jquery.contextMenu.min.css" type="text/css"/>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous"/>
 
     <div class="container-fluid">
       <div class="row">
-        <div class="col-1"></div>
+        <div class="col-1"><span >現在、ブラウザはGoogle Chrome<br>のみ動作確認</span></div>
         <div class="col-10">
           <div id="top_contents">
             <span>
-              <input type="file" id = "file_svg">
-              <input type="button" value="続きから開始" onClick="$('#file_svg').click();" >
-              <input type="file" id = "file_img">
-              <input type="button" value="画像ファイル選択" onClick="$('#file_img').click();" >
+              <input type="file" id="fileAPI_continue">
+              <input type="button" value="続きから開始" onClick="$('#fileAPI_continue').click();" >
+              <input type="file" id="fileAPI_img">
+              <input type="button" value="画像ファイル選択" onClick="$('#fileAPI_img').click();" >
             </span>
 
             <span>
@@ -84,32 +87,8 @@
           </div>
 
           <div id="main_content" style="width:2000px;">
-            <div id="top_toolbar">
-              <input  type="radio" name="tg_mode" value="Stamp" id="Stamp">
-              <label for="Stamp">触知記号</label>
-
-              <input  type="radio" name="tg_mode" value="Text" id="Text">
-              <label for="Text">文字</label>
-
-              <input type="checkbox" id="check_ink" name="checkers" value="check_ink" class="checkbox01-input"/>
-              <label for="check_ink" class="custom_check_label"></label>
-              <input type="text" id="InkChar" value="墨字" oncopy="return false" onpaste="return false" oncontextmenu="return false">
-
-              <input type="checkbox" id="check_bra" name="checkers" value="check_bra" class="checkbox01-input"/>
-              <label for="check_bra" class="custom_check_label"></label>
-              <input type="text" id="Braille" value="てんじ" oncopy="return false" onpaste="return false" oncontextmenu="return false">
-              <span id="top_toolbar_buttons">
-                <button id="undo"><i class="fa fa-undo"></i></button>
-                <button id="redo"><i class="fa fa-repeat"></i></button>
-              </span>
-            </div>
-
             <div id="left_toolbar">
               <div id="toolbar2_radio">
-                <div>
-                  <input  type="radio" name="tg_mode" value="Draw" id="Draw">
-                  <label for="Draw">ペン</label>
-                </div>
                 <div>
                   <input  type="radio" name="tg_mode" value="Edit" id="Edit">
                   <label for="Edit">選択</label>
@@ -119,35 +98,41 @@
                   <label for="EditPath">線の詳細編集</label>
                 </div>
                 <div>
+                  <input  type="radio" name="tg_mode" value="Draw" id="Draw">
+                  <label for="Draw">線</label>
+                </div>
+                <div>
                   <input  type="radio" name="tg_mode" value="DrawRect" id="DrawRect">
-                  <label for="DrawRect">矩形</label>
+                  <label for="DrawRect">四角形</label>
+                </div>
+                <div>
+                  <input  type="radio" name="tg_mode" value="DrawCircle" id="DrawCircle">
+                  <label for="DrawCircle">円</label>
+                </div>
+                <div>
+                  <input  type="radio" name="tg_mode" value="Stamp" id="Stamp">
+                  <label for="Stamp">文字・記号</label>
                 </div>
                 <div id = "EditImage_div">
                   <input  type="radio" name="tg_mode" value="EditImage" id="EditImage">
                   <label for="EditImage">画像選択</label>
                 </div>
-                <div id = "TrimBase64_div">
+                <div id = "TrimBase64_div" style="display:none;">
                   <input  type="radio" name="tg_mode" value="TrimBase64" id="TrimBase64">
                   <label for="TrimBase64">画像切り取り</label>
                 </div>
               </div>
 
               <div id="left_toolbar_button">
-                <div>
-                  <input type="button" id="node_connect" value="端点のノードを結合" style="display:none;" disabled>
-                </div>
-                <div>
-                  <input type="button" id="distance_check_button" value="距離間チェック">
-                </div>
-                <div>
-                    <input type="button" style = "display:none;" id="trans" value="平面図変換">
-                </div>
+                <div><input type="button" id="node_connect" value="端点のノードを結合" style="display:none;" disabled></div>
+                <div><input type="button" id="distance_check_button" value="距離間チェック"></div>
+                <div><input type="button" style = "display:none;" id="trans" value="平面図変換"></div>
               </div>
 
               <div id="left_toolbar_checkbox">
                   <div>
-                    <input type="checkbox" id="draw_svg" name="checkers" value="draw_svg"/>
-                    <label for="draw_svg" class="custom_check_label">描画要素</label>
+                    <input type="checkbox" id="display_DrawElement" name="checkers" value="display_DrawElement"/>
+                    <label for="display_DrawElement" class="custom_check_label">描画要素</label>
                   </div>
                   <div>
                     <input type="checkbox" id="image" name="checkers" value="image"/>
@@ -169,22 +154,23 @@
             </div>
 
             <span id="draw_include" unselectable=on><div id="draw_area"></div></span>
-            <div  id="height_slider" ></div>
+            <div  id="svg_height_scrollbar" ></div>
 
             <div id="right_toolbar">
+              <span id="top_toolbar_buttons">
+                <button id="undo"><i class="fa fa-undo"></i></button> <!-- undo ボタン-->
+                <button id="redo"><i class="fa fa-repeat"></i></button> <!-- redo ボタン-->
+              </span>
 
               <!-- 線種変更ラジオボタン -->
               <table id="stroke_style">
-                <tr>
-                  <td>
-                    <input type="radio" id="solid_line" name="stroke" value="solid_line"/>
-                    <label for="solid_line">実線</label>
-                  </td>
-                  <td>
-                    <input type="radio" id="dotted_line" name="stroke" value="dotted_line"/>
-                    <label for="dotted_line">点線</label>
-                  </td>
-                </tr>
+                <tr><td>
+                  <input type="radio" id="solid_line" name="stroke" value="solid_line"/>
+                  <label for="solid_line">実線</label>
+                </td><td>
+                  <input type="radio" id="dotted_line" name="stroke" value="dotted_line"/>
+                  <label for="dotted_line">点線</label>
+                </td></tr>
               </table>
 
               <table id = "rightUI_table">
@@ -226,11 +212,35 @@
                 </td></tr>
               </table>
 
-              <table id="stamp_table">
-                <tr><td>
-                  <input  type="radio" name="tactileSymbol" value="DrawCircle" id="DrawCircle" checked="checked">
-                  <label for="DrawCircle">円記号</label>
+              <!-- ドローモード塗りつぶし状態変更ラジオボタン -->
+              <table id="draw_line_fill_table" border="1">
+                <tr><td colspan="2" align="center">
+                  塗りつぶし
                 </td></tr>
+                <tr><td>
+                  <input type="radio" id="draw_fill_none" name="draw_line_fillRadio" value="none" checked="checked"/>
+                  <label for="draw_fill_none" style="display: table-cell; text-align: center;">なし</label>
+                </td><td>
+                  <input type="radio" id="draw_fill_diagonal" name="draw_line_fillRadio" value="url(#diagonal-texture)"/>
+                  <label for="draw_fill_diagonal"></label>
+                </td></tr>
+                <tr><td>
+                  <input type="radio" id="draw_fill_white" name="draw_line_fillRadio" value="#fff"/>
+                  <label for="draw_fill_white"></label>
+                </td><td>
+                  <input type="radio" id="draw_fill_gray" name="draw_line_fillRadio" value="#333"/>
+                  <label for="draw_fill_gray"></label>
+                </td></tr>
+                <tr><td>
+                  <input type="radio" id="draw_fill_polkadot" name="draw_line_fillRadio" value="url(#polkadot-texture)"/>
+                  <label for="draw_fill_polkadot"></label>
+                </td><td>
+                  <input type="radio" id="draw_fill_polkadot_water" name="draw_line_fillRadio" value="url(#polkadot_water-texture)"/>
+                  <label for="draw_fill_polkadot_water"></label>
+                </td></tr>
+              </table>
+
+              <table id="stamp_table">
                 <tr><td>
                   <input  type="radio" name="tactileSymbol" value="Stair" id="Stair">
                   <label for="Stair">階段</label>
@@ -250,6 +260,22 @@
                 <tr><td>
                   <input  type="radio" name="tactileSymbol" value="Reducescale" id="Reducescale">
                   <label for="Reducescale">縮尺</label>
+                </td></tr>
+                <tr><td>
+                  <input  type="radio" name="tactileSymbol" value="Text" id="Text" checked="checked">
+                  <label for="Text">墨点字</label>
+                </td></tr>
+                <tr><td>
+                  <input type="checkbox" id="check_ink" name="checkers" value="check_ink"/>
+                  <label for="check_ink" class="custom_check_label" style="margin-left:-10px;"></label>
+                  <input type="text" id="InkChar" value="墨字" oncopy="return false" onpaste="return false" oncontextmenu="return false" >
+
+                </td></tr>
+                <tr><td>
+                  <input type="checkbox" id="check_bra" name="checkers" value="check_bra"/>
+                  <label for="check_bra" class="custom_check_label" style="margin-left:-10px;"></label>
+                  <input type="text" id="Braille" value="てんじ" oncopy="return false" onpaste="return false" oncontextmenu="return false">
+
                 </td></tr>
               </table>
 
@@ -299,13 +325,13 @@
               </table>
 
              </div>
-             <div style="clear:both;" id="width_slider" ></div>
+             <div style="clear:both;" id="svg_width_scrollbar"></div>
           </div>
-          <span >現在、ブラウザはGoogle Chromeのみ対応しております。他のブラウザでは動作しない可能性があります。</span>
         </div>
         <div class="col-1"></div>
       </div>
     </div>
+
 
     <script>
 
@@ -322,9 +348,11 @@
 
         //pathの属性について
         const PATH_STROKE_COLOR = '#000' //通常時（黒色）
+        const PS_COLOR = '#000' //通常時（黒色）
         const PATH_SELECT_COLOR = '#B22222' //選択時（赤色）
         const PATH_EDIT_COLOR = '#0000CD' //詳細編集での選択時（青色）
         const PATH_STROKE_WIDTH = SVG_RATIO //線幅（1mm）
+        const PS_WIDTH = SVG_RATIO //線幅（1mm）
 
         const THRE_DISTANCE = 3 * SVG_RATIO //距離チェック時の閾値 3mm
 
@@ -361,33 +389,38 @@
         const CIRCLE_RADIUS = 8;
         const HANDLE_CIRCLE_RADIUS = 10;
         const CIRCLE_COLOR = '#32CD32';
+        const NODE_COLOR = '#32CD32';
         const CIRCLE_HOVER_COLOR = '#B22222'; //ホバー時（red）
+        const NODE_HOVER_COLOR = '#B22222'; //ホバー時（red）
         const CIRCLE_EDIT_COLOR = '#00f'; //エディットホバー時(blue)
 
         const RECT_WIDTH = 13;
         const RECT_HEIGHT = 13;
 
         //カーソルキーによる移動量
-        const CURSOR_KEY_MOVE = 0.1
+        const CURSOR_KEY_MOVE = 0.3
 
         //目盛付き枠用
         const F_WIDTH = SVG_RATIO * 297 * 297/364 ,  F_HEIGHT = SVG_RATIO * 210 * 297/364 ;
         const F_SCALE = SVG_RATIO * 5; //5mm
 
-        var cash_array = new Array() //undo、redo機能用
+        let cash_array = new Array() //undo、redo機能用
         let cash_pointer = 0;
-        var input_key_buffer = new Array() //キー入力状態を保有
-        var arrIntervalCnt = new Array() //タイマー処理のリセット用
-        var copy_elements =  new Array() //要素のコピー機能用
-        var text_pairs = new Array();　//凡例機能用
-        var editselect_array = new Array();
-        var editpath_array = new Array();
-        var viewbox_x = -DRAW_AREA_WIDTH/2 , viewbox_y = -DRAW_AREA_HEIGHT/2; //現在のviewboxのx,yの値
-        let now_drawing_path_ID;
+        let input_key_buffer = new Array() //キー入力状態を保有
+        let arrIntervalCnt = new Array() //タイマー処理のリセット用
+        let copy_elements =  new Array() //要素のコピー機能用
+        let text_pairs = new Array();　//凡例機能用
+        let editselect_array = new Array();
+        let editpath_array = new Array();
+        let viewbox_x = -DRAW_AREA_WIDTH , viewbox_y = -DRAW_AREA_HEIGHT; //現在のviewboxのx,yの値
+        let widthScrollBar_ratio , widthScrollBar_center;
+        let heightScrollBar_ratio , heightScrollBar_center;
+        let now_drawing_path_ID , drawing_path_dpoint="";
         let now_movingFlag = false;
         let nowchecked;
 
       $(window).on('load',function () { //window読み込み後
+
         //描画領域の初期設定
         continue_setSVG('',-DRAW_AREA_WIDTH, -DRAW_AREA_HEIGHT, DRAW_AREA_WIDTH * 2, DRAW_AREA_HEIGHT * 2);
 
@@ -397,8 +430,8 @@
         braillefont_set();
 
         set_fillbutton(); //塗りつぶしボタンの設定
-        fileapi_svg(); //続きからボタンの設定
-        fileapi_image(); //画像表示ボタンの設定
+        set_fileAPI_continue(); //続きからボタンの設定
+        set_fileAPI_image(); //画像表示ボタンの設定
 
         $('#undo').click(undo); //undo機能
         $('#redo').click(redo); //undo機能
@@ -430,7 +463,7 @@
 
       function RadioEvent_set(){
         nowchecked = $('input[name="tg_mode"]:checked').val();
-        let Image_radio = $('#EditImage_div , #TrimBase64_div');
+        let Image_radio = $('#EditImage_div');
         (draw.select('.image').first()) ? Image_radio.show() : Image_radio.hide();
         /*************************************
         //モードを変更したときに必ず行う処理
@@ -443,6 +476,7 @@
         draw.select('.connected').each(function(i,children){
           if(this.clear().array().settle().length < 2) this.remove();
         })
+
         set_key_down_up();
         set_contextMenu();
         reset_dcheck_element();
@@ -460,6 +494,7 @@
         $('.resizeInk_gadget').hide(); //墨字サイズ変更
         $('.resizeBraille_gadget').hide(); //点字サイズ変更
         $('.gadget_imageOpacity').hide(); //画像透過度変更
+        $('#draw_line_fill_table').hide();
         $('#layer_select').hide(); //レイヤ変更
         $('#fill_change').hide();  //塗りつぶし変更
         $('#resizeBox_textbox').hide(); //リサイズテキストボックス
@@ -472,6 +507,7 @@
           case 'Draw':
             $('#stroke_style').show(); //線種変更
             $('.strokewidth_gadget').show(); //線種変更
+            $('#draw_line_fill_table').show();
             draw_line(); //線の描画モード
             break;
           case 'Edit':
@@ -496,14 +532,13 @@
           case 'TrimBase64':
             trim_start();
             break;
-          case 'Text':
-            $('.resizeInk_gadget').show(); //墨字サイズ変更
-            $('.resizeBraille_gadget').show(); //点字サイズ変更
-            add_text(); //点字、墨字追加モード
-            break;
-          case 'Stamp':
+
+          case 'DrawCircle':
             $('#stroke_style').show(); //線種変更
             $('.strokewidth_gadget').show(); //線種変更
+            draw_circle();
+            break;
+          case 'Stamp':
             $('#stamp_table').show();
             set_Stampmode();
             break;
@@ -512,14 +547,14 @@
         }
 
         if(nowchecked!=="Draw"){
-          draw.select('.drawing_path').removeClass('drawing_path');
-          now_drawing_path_ID = "";
+          let current_path = draw.select('.drawing_path').first();
+          if(current_path){
+            current_path.attr({'d' : drawing_path_dpoint}).removeClass('drawing_path');
+            drawing_path_dpoint="";
+            now_drawing_path_ID = "";
+          }
         }
-        if(nowchecked==="Edit" || nowchecked==="EditImage"){
-
-        }else{
-          editselect_array.length = 0;
-        }
+        if(nowchecked!=="Edit" && nowchecked!=="EditImage")  editselect_array.length = 0;
         if(nowchecked!=="EditPath") editpath_array.length = 0;
       }
     </script>

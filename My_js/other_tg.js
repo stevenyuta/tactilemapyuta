@@ -10,39 +10,36 @@ function getmousepoint(mode,mouseevent,param1,param2,param3,param4){
   if(mode==="connect"){
     mx = (mouseevent.pageX-Number($('#draw_area').offset().left))/draw.viewbox().zoom+Number(draw.viewbox().x); //描画領域上でのマウスポイント計算
     my = (mouseevent.pageY-Number($('#draw_area').offset().top))/draw.viewbox().zoom+Number(draw.viewbox().y);
-    var thre_xy = 3; //線へ自動接続される範囲
-    var ci="EMPTY",cj="EMPTY",ck="EMPTY";
-    var Min_dis = "EMPTY",thre_Min_dis=3;
-    var mini_pA, mini_pB, mini_pC
-    var mini_x1 , mini_y1 , mini_x2 , mini_y2
+    let thre_xy = 3; //線へ自動接続される範囲
+    let ci="EMPTY",cj="EMPTY",ck="EMPTY";
+    let Min_dis = "EMPTY" , thre_Min_dis=3;
+    let mini_pA, mini_pB, mini_pC
+    let mini_x1 , mini_y1 , mini_x2 , mini_y2
+    let path_x1 , path_y1 , path_x2 , path_y2
     draw.select('.connected').each(function(i,children){
-      var dpoint = this.clear().array().settle() //pathのdpoint配列を取得
-      for(var j=0; j < dpoint.length - 1; j++){
+      let dpoint = this.clear().array().settle() //pathのdpoint配列を取得
+      for(let j=0; j < dpoint.length - 1; j++){
         if(dpoint[j + 1][0] !== 'Z'){
-          var path_x1 = Number( dpoint[j][1])
-          var path_y1 = Number( dpoint[j][2])
-          var path_x2 = Number( dpoint[j + 1][1])
-          var path_y2 = Number( dpoint[j + 1][2])
+          path_x1 = Number( dpoint[j][1]) , path_y1 = Number( dpoint[j][2])
+          path_x2 = Number( dpoint[j + 1][1]) , path_y2 = Number( dpoint[j + 1][2])
         }else{
-          var path_x1 = Number( dpoint[j][1])
-          var path_y1 = Number( dpoint[j][2])
-          var path_x2 = Number( dpoint[0][1])
-          var path_y2 = Number( dpoint[0][2])
+          path_x1 = Number( dpoint[j][1]) , path_y1 = Number( dpoint[j][2])
+          path_x2 = Number( dpoint[0][1]) , path_y2 = Number( dpoint[0][2])
         }
 
-        var pA = -Number(path_y2) + Number(path_y1)//補正前の直線パラメータのa,b,c
-        var pB =  Number(path_x2) - Number(path_x1)
-        var pC = -pA * Number(path_x1) - pB * Number(path_y1);
+        let pA = -Number(path_y2) + Number(path_y1)//補正前の直線パラメータのa,b,c
+        let pB =  Number(path_x2) - Number(path_x1)
+        let pC = -pA * Number(path_x1) - pB * Number(path_y1);
 
-        var x1 = path_x1  //座標パラメータ取得
-        var y1 = path_y1
-        var x2 = path_x2
-        var y2 = path_y2
+        let x1 = path_x1  //座標パラメータ取得
+        let y1 = path_y1
+        let x2 = path_x2
+        let y2 = path_y2
 
-        var relativeXY = get_relativeXY(x1,y1,x2,y2,thre_xy); //直線の領域のx,y座標
+        let relativeXY = get_relativeXY(x1,y1,x2,y2,thre_xy); //直線の領域のx,y座標
 
         if(mx < relativeXY.max_x && mx > relativeXY.min_x && my < relativeXY.max_y && my > relativeXY.min_y){ //マウスポイントが閾値の領域内にあったら
-          var dis = Math.abs(pA * mx + pB * my + pC)/Math.sqrt(pA * pA + pB * pB); //直線とマウスポイントの距離
+          let dis = Math.abs(pA * mx + pB * my + pC)/Math.sqrt(pA * pA + pB * pB); //直線とマウスポイントの距離
           if(Min_dis==="EMPTY"){ //Min_disがEMPTY(一度も書き換えられていない)
             Min_dis = dis;
             mini_pA = pA , mini_pB = pB , mini_pC = pC
@@ -58,9 +55,9 @@ function getmousepoint(mode,mouseevent,param1,param2,param3,param4){
       }
     })
     if(Min_dis!=="EMPTY" && Min_dis < thre_Min_dis){ //Min_disがEMPTYでなく、1以下なら
-      var relativeXY = get_relativeXY(mini_x1,mini_y1,mini_x2,mini_y2,thre_xy); //直線の領域のx,y座標
-      var change_x = (mini_pB * mini_pB * mx - mini_pA * mini_pB * my - mini_pA * mini_pC)/(mini_pA * mini_pA + mini_pB * mini_pB);
-      var change_y =  - (mini_pA * mini_pB * mx - mini_pA * mini_pA * my + mini_pB * mini_pC)/(mini_pA * mini_pA + mini_pB * mini_pB);
+      let relativeXY = get_relativeXY(mini_x1,mini_y1,mini_x2,mini_y2,thre_xy); //直線の領域のx,y座標
+      let change_x = (mini_pB * mini_pB * mx - mini_pA * mini_pB * my - mini_pA * mini_pC)/(mini_pA * mini_pA + mini_pB * mini_pB);
+      let change_y =  - (mini_pA * mini_pB * mx - mini_pA * mini_pA * my + mini_pB * mini_pC)/(mini_pA * mini_pA + mini_pB * mini_pB);
       if(change_x < (relativeXY.min_x + thre_xy) )  change_x = relativeXY.min_x + thre_xy;
       if(change_x > (relativeXY.max_x - thre_xy) )  change_x = relativeXY.max_x - thre_xy;
       if(change_y < (relativeXY.min_y + thre_xy) )  change_y = relativeXY.min_y + thre_xy;
@@ -69,53 +66,53 @@ function getmousepoint(mode,mouseevent,param1,param2,param3,param4){
       my = change_y;
     }
 
-    var mouse = new Object();
+    let mouse = new Object();
     mouse.x = mx;
     mouse.y = my;
     return mouse;
   }else if(mode==='15degree'){
     if(param1===undefined || param2===undefined)console.log('getmousepoint_error Insufficient parameters');
-    var prepoint_x = param1,prepoint_y = param2;
+    let prepoint_x = param1,prepoint_y = param2;
     mx = (mouseevent.pageX-Number($('#draw_area').offset().left))/draw.viewbox().zoom+Number(draw.viewbox().x); //描画領域上でのマウスポイント計算
     my = (mouseevent.pageY-Number($('#draw_area').offset().top))/draw.viewbox().zoom+Number(draw.viewbox().y);
-    var atan = Math.atan((my-prepoint_y)/(mx-prepoint_x)); //角度計算
-    var norm = Math.sqrt( (my-prepoint_y)*(my-prepoint_y) + (mx-prepoint_x)*(mx-prepoint_x) );
-    var arg = Math.round(atan*12/Math.PI)*Math.PI/12;
-    var line_a = Math.tan(arg),line_b = -1,line_c = prepoint_y-prepoint_x*line_a;
-    var connect_x = (line_b * line_b * mx - line_a * line_b * my - line_a * line_c)/(line_a * line_a + line_b * line_b);
-    var connect_y =  - (line_a * line_b * mx - line_a * line_a * my + line_b * line_c)/(line_a * line_a + line_b * line_b);
+    let atan = Math.atan((my-prepoint_y)/(mx-prepoint_x)); //角度計算
+    let norm = Math.sqrt( (my-prepoint_y)*(my-prepoint_y) + (mx-prepoint_x)*(mx-prepoint_x) );
+    let arg = Math.round(atan*12/Math.PI)*Math.PI/12;
+    let line_a = Math.tan(arg),line_b = -1,line_c = prepoint_y-prepoint_x*line_a;
+    let connect_x = (line_b * line_b * mx - line_a * line_b * my - line_a * line_c)/(line_a * line_a + line_b * line_b);
+    let connect_y =  - (line_a * line_b * mx - line_a * line_a * my + line_b * line_c)/(line_a * line_a + line_b * line_b);
     mx = connect_x;
     my = connect_y;
 
-    var mouse = new Object();
+    let mouse = new Object();
     mouse.x = mx;
     mouse.y = my;
     return mouse;
   }else if(mode==='90degree'){
     if(param1===undefined || param2===undefined)console.log('getmousepoint_error Insufficient parameters');
-    var prepoint_x = param1,prepoint_y = param2;
+    let prepoint_x = param1,prepoint_y = param2;
     mx = (mouseevent.pageX-Number($('#draw_area').offset().left))/draw.viewbox().zoom+Number(draw.viewbox().x); //描画領域上でのマウスポイント計算
     my = (mouseevent.pageY-Number($('#draw_area').offset().top))/draw.viewbox().zoom+Number(draw.viewbox().y);
     if(mx !== prepoint_x){
-      var atan = Math.atan((my-prepoint_y)/(mx-prepoint_x));
-      var norm = Math.sqrt( (my-prepoint_y)*(my-prepoint_y) + (mx-prepoint_x)*(mx-prepoint_x) );
-      var arg = Math.round(atan*2/Math.PI)*Math.PI/2;
-      var line_a = Math.tan(arg);
-      var line_b = -1;
-      var line_c = prepoint_y-prepoint_x*line_a;
-      var connect_x = (line_b * line_b * mx - line_a * line_b * my - line_a * line_c)/(line_a * line_a + line_b * line_b);
-      var connect_y =  - (line_a * line_b * mx - line_a * line_a * my + line_b * line_c)/(line_a * line_a + line_b * line_b);
+      let atan = Math.atan((my-prepoint_y)/(mx-prepoint_x));
+      let norm = Math.sqrt( (my-prepoint_y)*(my-prepoint_y) + (mx-prepoint_x)*(mx-prepoint_x) );
+      let arg = Math.round(atan*2/Math.PI)*Math.PI/2;
+      let line_a = Math.tan(arg);
+      let line_b = -1;
+      let line_c = prepoint_y-prepoint_x*line_a;
+      let connect_x = (line_b * line_b * mx - line_a * line_b * my - line_a * line_c)/(line_a * line_a + line_b * line_b);
+      let connect_y =  - (line_a * line_b * mx - line_a * line_a * my + line_b * line_c)/(line_a * line_a + line_b * line_b);
       mx = connect_x
       my = connect_y
     }
-      var mouse = new Object();
+      let mouse = new Object();
       mouse.x = mx;
       mouse.y = my;
     return mouse;
   }else if(mode==='normal'){
     mx = (mouseevent.pageX-Number($('#draw_area').offset().left))/draw.viewbox().zoom+Number(draw.viewbox().x); //描画領域上でのマウスポイント計算
     my = (mouseevent.pageY-Number($('#draw_area').offset().top))/draw.viewbox().zoom+Number(draw.viewbox().y);
-    var mouse = new Object();
+    let mouse = new Object();
     mouse.x = mx;
     mouse.y = my;
     return mouse;
@@ -175,6 +172,14 @@ function layer_change(e){
   //Fillを変更するボタンを設定する関数
   ***********************************/
   function set_fillbutton(){
+
+    /*線モードでのfillボタン*/
+    $('input[name="draw_line_fillRadio"]:radio').off('change').on('change',function(){
+      draw.select('.drawing_path').fill($('input[name="draw_line_fillRadio"]:checked').val())
+    });
+
+
+    /**選択モードでのfillボタン*/
     $("#fillnone_button").click(change_fill)
     $("#white_button").click(change_fill)
     $("#gray_button").click(change_fill)
@@ -184,16 +189,15 @@ function layer_change(e){
 
 
     function change_fill(){
-      var button_id = this.id
+      let button_id = this.id
       let fill_complete_flag = false; //fillの変更があった場合にtrue svg_cash用
       draw.select(".edit_select , .fragmented_PathGroup").each(function(i,children){
         let fill_flag = false;
         if(this.hasClass('connected')){
-          let dpoint = this.clear().array().settle();
-          if(dpoint[dpoint.length-1][0] === 'Z') fill_flag = true;
+          fill_flag = true;
         }else if(this.hasClass('circle')){
           fill_flag = true;
-        }else if(this.hasClass('closed_path')){
+        }else if(SVG.get('#ghost_path_' + this.attr('fragmented_Group_Number'))){
           fill_flag = true;
         }
 
@@ -275,7 +279,7 @@ function layer_change(e){
   //circleを一掃削除する関数
   ***********************************/
   function circle_delete(){
-    draw.select('.edit_rect , .draw_init_rect , .draw_last_rect , .draw_close_rect').each(function(i,children){
+    draw.select('.edit_rect , .init_node , .last_node , .close_node').each(function(i,children){
         this.remove();
     })
     draw.select('.fragmented_RectGroup').each(function(i,children){
@@ -302,7 +306,7 @@ function layer_change(e){
       this.remove()
     })
 
-    var diagonal_pattern = draw.pattern(8, 8, function(add) {
+    let diagonal_pattern = draw.pattern(8, 8, function(add) {
       add.rect(8 , 8).attr({
         'fill' : '#fff'
       })
@@ -316,7 +320,7 @@ function layer_change(e){
       'patternTransform' : 'rotate(45)'
     }).addClass('pattern')
 
-    var polkadot_pattern = draw.pattern(10, 20, function(add) {
+    let polkadot_pattern = draw.pattern(10, 20, function(add) {
       add.rect(10 , 20).attr({
         'fill' : '#fff'
       })
@@ -346,7 +350,7 @@ function layer_change(e){
     }).addClass('pattern')
 
 
-    var polkadot_water_pattern = draw.pattern(10, 20, function(add) {
+    let polkadot_water_pattern = draw.pattern(10, 20, function(add) {
       add.rect(10 , 20).attr({
         'fill' : '#1E90FF'
       })
@@ -381,11 +385,11 @@ function layer_change(e){
   //直線パラメータを取得
   ****************************************/
   function getLineParam(x1,y1,x2,y2) {
-    var line_a = -y2 + y1; //直線パラメータのa,b,c
-    var line_b = x2 - x1;
-    var line_c = -line_a * x1 - line_b * y1;
+    let line_a = -y2 + y1; //直線パラメータのa,b,c
+    let line_b = x2 - x1;
+    let line_c = -line_a * x1 - line_b * y1;
 
-    var line_param = new Object();
+    let line_param = new Object();
     line_param.a = line_a;
     line_param.b = line_b;
     line_param.c = line_c;
@@ -396,10 +400,10 @@ function layer_change(e){
   //relative_select
   ***********************************/
   function get_relativeXY(x1,y1,x2,y2,threshold)  {
-    var max_x = Math.max(x1, x2) , max_y = Math.max(y1, y2);
-    var min_x = Math.min(x1, x2) , min_y = Math.min(y1, y2);
+    let max_x = Math.max(x1, x2) , max_y = Math.max(y1, y2);
+    let min_x = Math.min(x1, x2) , min_y = Math.min(y1, y2);
 
-    var relativeXY = new Object();
+    let relativeXY = new Object();
     relativeXY.max_x = max_x + threshold;
     relativeXY.min_x = min_x - threshold;
     relativeXY.max_y = max_y + threshold;
@@ -410,7 +414,7 @@ function layer_change(e){
 
   //sleep関数：引数[ms]待つ
   function js_sleep(waitMsec) {
-    var startMsec = new Date();
+    let startMsec = new Date();
     // 指定ミリ秒間、空ループ。CPUは常にビジー。
     while (new Date() - startMsec < waitMsec);
   }

@@ -17,14 +17,13 @@ function toConnected(editpath_flag){
       if(j===0){
         new_path.M({x: dpoint[0][1], y: dpoint[0][2]});
         new_path.attr({ //線属性の指定
-          'fill': 'none',
           'stroke': PATH_STROKE_COLOR,
           'stroke-width': this.attr('stroke-width'),
           'stroke-dasharray': this.attr('stroke-dasharray'),
           'stroke-linejoin' : 'round'
         })
         if(this.attr('stroke-dasharray')){
-          if( String( this.attr('stroke-dasharray') ).split(/\s/).length === 4 ){
+          if( String( this.attr('stroke-dasharray') ).split(/\s/).length === 2 ){
             new_path.attr({ 'stroke-width': 0 , 'stroke-dasharray': '' })
           }
         }
@@ -33,10 +32,9 @@ function toConnected(editpath_flag){
       }
       if(!self.hasClass('closed_path') && j===self.children().length - 1) new_path.L({x: dpoint[1][1], y: dpoint[1][2]});
     })
-    if(this.hasClass('closed_path')){
-      new_path.attr({'fill' : this.attr('fill_tmp')});
-      new_path.Z();
-    }
+
+    new_path.attr({'fill' : this.attr('fill_tmp')});
+    if(this.hasClass('closed_path'))  new_path.Z();
     this.remove();
   })
   draw.select('.ghost_path').each(function(i, children) {

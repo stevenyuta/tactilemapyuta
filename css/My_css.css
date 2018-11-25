@@ -76,6 +76,10 @@ input[type=checkbox]:checked + .custom_check_label:before {
 /**************
 top_contents
 ***************/
+#top_contents{
+	margin : 0px 0px 20px 0px;
+}
+
 #top_contents span{
 	margin : 0px 30px 0px 0px;
 }
@@ -98,20 +102,7 @@ top_contents
 /******************
  top_toolbar
 ******************/
-#top_toolbar{
-  margin : 10px 0px 10px 170px;
-}
 
-#top_toolbar input[type="radio"] + label{
-	margin: 0px 20px 0px 0px;
-	padding: 5px 15px; 	/* ボックス内左側の余白を指定する */
-  border: 2px solid #006DD9;/* ボックスの境界線を実線で指定する */
-}
-
-#top_toolbar input[type="radio"]:checked + label {
-	background: #31A9EE;/* マウス選択時の背景色を指定する */
-	color: #ffffff; 	/* マウス選択時のフォント色を指定する */
-}
 
 #top_toolbar input[type=text] {
 	margin: 0px 20px 0px 0px;
@@ -121,11 +112,11 @@ top_contents
 }
 
 #top_toolbar_buttons{
-	margin: 0px 0px 0px 100px;
+	margin : 0px 0px 0px 20px;
 }
 
-#top_toolbar button{
-	margin: 0px 0px 0px 30px;
+#top_toolbar_buttons button{
+	margin : 0px 10px 20px 15px;
 	width:50px;
   height:40px;
   font-size: 100%;
@@ -135,7 +126,7 @@ top_contents
   cursor : pointer;
 }
 
-#top_toolbar button:hover{
+#top_toolbar_buttons button:hover{
   background: #31A9EE;/* マウス選択時の背景色を指定する */
 }
 
@@ -207,7 +198,6 @@ svg描画領域
   width:1039.5px;
   height:735px;
   float:left;
-  margin-bottom:10px;
   border:#00f 3px solid;
   overflow:hidden;
 }
@@ -274,12 +264,60 @@ right toolbar
 }
 
 /*
+ドローラインモード塗りつぶしラジオボタン
+*/
+#draw_line_fill_table{
+	margin: 30px 0px 0px 10px;
+}
+
+#draw_line_fill_table input[type="radio"] + label{
+  border: 2.5px solid #003300;/* ボックスの境界線を実線で指定する */
+	width : 80px;
+	height : 40px;
+	background-color : #ffffff;
+  background-position:center center; /*背景画像の位置*/
+	margin : 2px;
+	padding : 5px;
+}
+
+
+#draw_line_fill_table input[type="radio"]:hover + label{
+  border-color: #006DD9;/* ボックスの境界線を実線で指定する */
+}
+
+#draw_line_fill_table input[type="radio"]:checked + label {
+	border-color: orange;/* ボックスの境界線を実線で指定する */
+}
+
+#draw_fill_diagonal + label{
+  background-image: url('../images/diagonal.png');
+}
+
+#draw_fill_white + label{
+  background-image: url('../images/white.png');
+}
+
+#draw_fill_gray + label{
+  background-image: url('../images/gray.png');
+}
+
+#draw_fill_polkadot + label{
+  background-image: url('../images/polkadot.png');
+}
+
+#draw_fill_polkadot_water + label{
+  background-image: url('../images/polkadot_water.png');
+}
+
+
+
+/*
 触知記号スタンプ
 */
 #stamp_table{
   margin: 30px 0px 0px 30px;
   border-collapse: separate;
-  border-spacing: 0px 20px;
+  border-spacing: 0px 15px;
 }
 
 #stamp_table input[type="radio"] + label{
@@ -394,21 +432,15 @@ right toolbar
 	font-size : 100%;
 }
 
-#width_slider{ /* css */
-  margin :30px 0px 30px 170px;
+#svg_width_scrollbar{ /* css */
+  margin :0px 0px 30px 170px;
   width:1040px;
   height:12px;
 }
 
-#width_slider .ui-slider-handle{
-  margin: 2px 0px 0px -60px;
-  width:120px;
-  height:16px;
-  background:#3399ff;
-  border:3px solid #00008b;
-}
 
-#height_slider{ /* css */
+
+#svg_height_scrollbar{ /* css */
   margin-left:10px;
   width:12px;
   height:735px;

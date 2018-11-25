@@ -135,7 +135,7 @@ function toFragmented(connectedPath){
   connectedPath.after(fragmented_PathGroup);
   for(let j = 0; j < dpoint.length - 1; j++){
     let fragmentedPath = fragmented_PathGroup.path().addClass('fragmented').addClass('SVG_Element').addClass('path');
-    let rect = fragmented_RectGroup.rect(RECT_WIDTH/(2*draw.zoom()) , RECT_HEIGHT/(2*draw.zoom())).addClass('edit_rect').front(); ////重ね順を一番前に
+    let rect = fragmented_RectGroup.rect(RECT_WIDTH/(1.5*draw.zoom()) , RECT_HEIGHT/(1.5*draw.zoom())).addClass('edit_rect').front(); ////重ね順を一番前に
     fragmentedPath.attr({
       'fill' : 'none',
       'stroke' : PATH_SELECT_COLOR,
@@ -146,7 +146,7 @@ function toFragmented(connectedPath){
     if(fragmentedPath.attr('stroke-width') === 0){ //線幅が0の場合
       fragmentedPath.attr({
         'stroke-width': PATH_STROKE_WIDTH,
-        'stroke-dasharray' : '3 3 10 3'
+        'stroke-dasharray' : 4*PATH_STROKE_WIDTH + ' ' + PATH_STROKE_WIDTH
       })
     }
     rect.attr({
@@ -164,7 +164,7 @@ function toFragmented(connectedPath){
     }else{ //次の要素がZ要素でない場合
       fragmentedPath.M({x: dpoint[j][1], y: dpoint[j][2]}).L({x: dpoint[j+1][1], y: dpoint[j+1][2]});
       if(j === dpoint.length -2){
-        let rect = fragmented_RectGroup.rect(RECT_WIDTH/(2*draw.zoom()) , RECT_HEIGHT/(2*draw.zoom())).addClass('edit_rect').addClass('last_rect').front(); ////重ね順を一番前に
+        let rect = fragmented_RectGroup.rect(RECT_WIDTH/(1.5*draw.zoom()) , RECT_HEIGHT/(1.5*draw.zoom())).addClass('edit_rect').addClass('last_rect').front(); ////重ね順を一番前に
         rect.attr({
           'x' : dpoint[j + 1][1] - rect.width()/2,
           'y' : dpoint[j + 1][2] - rect.height()/2,
@@ -173,15 +173,13 @@ function toFragmented(connectedPath){
       }
     }
   }
-  if(fragmented_PathGroup.hasClass('closed_path')){
-    let ghost_path = draw.path().attr({
-      'id' : 'ghost_path_' + String(max_frag_num + 1),
-      'fill' : connectedPath.attr('fill'),
-      'fragmented_Group_Number' : String(max_frag_num + 1),
-      'class' : 'ghost_path'
-    });
-    fragmented_PathGroup.before(ghost_path);
-  }
+  let ghost_path = draw.path().attr({
+    'id' : 'ghost_path_' + String(max_frag_num + 1),
+    'fill' : connectedPath.attr('fill'),
+    'fragmented_Group_Number' : String(max_frag_num + 1),
+    'class' : 'ghost_path'
+  });
+  fragmented_PathGroup.before(ghost_path);
   update_ghostPath();
   checkEditPath_gadget();
 }
@@ -194,7 +192,7 @@ function update_editElement(){
     if(this.children().length === 0){
       let fragmented_Group_Number = this.attr('fragmented_Group_Number');
       SVG.get('#fragmented_RectGroup_' + String(fragmented_Group_Number)).remove();
-      if(this.parent().hasClass('closed_path')) SVG.get('#ghost_path_' + String(fragmented_Group_Number)).remove();
+      if(SVG.get('#ghost_path_' + String(fragmented_Group_Number))) SVG.get('#ghost_path_' + String(fragmented_Group_Number)).remove();
       this.remove();
     }
   })
@@ -251,7 +249,7 @@ function fragmentedPath_EventSet(){
         let assignment_Number = this.attr('assignment_Number');
         let fragmentedPath1 = draw.path().M({x: dpoint[0][1], y: dpoint[0][2]}).L({x: mx, y: my }).addClass('fragmented').addClass('SVG_Element').addClass('path');
         let fragmentedPath2 = draw.path().M({x: mx, y: my}).L({x: dpoint[1][1], y: dpoint[1][2] }).addClass('fragmented').addClass('SVG_Element').addClass('path');
-        let rect = SVG.get('#fragmented_RectGroup_' + String(this.parent().attr('fragmented_Group_Number'))).rect(RECT_WIDTH/(2*draw.zoom()) , RECT_HEIGHT/(2*draw.zoom())).addClass('edit_rect').back();
+        let rect = SVG.get('#fragmented_RectGroup_' + String(this.parent().attr('fragmented_Group_Number'))).rect(RECT_WIDTH/(1.5*draw.zoom()) , RECT_HEIGHT/(1.5*draw.zoom())).addClass('edit_rect').back();
         fragmentedPath1.attr({
           'fill' : 'none',
           'stroke' : PATH_SELECT_COLOR,
@@ -407,11 +405,12 @@ function delete_editpath_rect(editing_target){
   if(nears.beforePath!==null)nears.beforePath.remove(); //beforePathの削除
   if(nears.afterPath!==null)nears.afterPath.remove();  //afterPathの削除
   let fragmented_PathGroup = SVG.get('fragmented_PathGroup_' + String(editing_target.parent().attr('fragmented_Group_Number')));
-  if(fragmented_PathGroup.hasClass('closed_path') && fragmented_PathGroup.children().length < 3){ //線が閉じていて、グループ内に線が2本以下の場合
-    fragmented_PathGroup.removeClass('closed_path');
-    editing_target.parent().removeClass('closed_path');
-    SVG.get('#ghost_path_' + String(editing_target.parent().attr('fragmented_Group_Number'))).remove();
-    new_fragmentedPath.remove();
+  if(fragmented_PathGroup.children().length < 2){ //線が閉じていて、グループ内に線が2本以下の場合
+    if(fragmented_PathGroup.hasClass('closed_path')){
+      fragmented_PathGroup.removeClass('closed_path');
+      editing_target.parent().removeClass('closed_path');
+      new_fragmentedPath.remove();
+    }
   }
   editing_target.remove(); //editing_rectの削除
 }
@@ -428,6 +427,13 @@ function delete_editpath_fragmentedPath(editing_target){
       'connected_id' : editing_target.parent().attr('connected_id'),
       'fill_tmp': editing_target.parent().attr('fill_tmp')
     })
+    let ghost_path = draw.path().attr({
+      'id' : 'ghost_path_' + String(max_fragmented_Group_Number + 1),
+      'fill' : editing_target.parent().attr('fill_tmp'),
+      'fragmented_Group_Number' : String(max_fragmented_Group_Number + 1),
+      'class' : 'ghost_path'
+    });
+    new_fragmented_PathGroup.before(ghost_path);
     new_fragmented_RectGroup.attr({
       'id' : 'fragmented_RectGroup_' + String(max_fragmented_Group_Number + 1),
       'fragmented_Group_Number' : String(max_fragmented_Group_Number + 1),
@@ -444,10 +450,8 @@ function delete_editpath_fragmentedPath(editing_target){
       SVG.get('rect_'+ String(current_fragmented_Group_Number) + '_'  + String(j)).front();
     }
     editing_target.parent().removeClass('closed_path');
-    let ghost_path = SVG.get('#ghost_path_' + String(current_fragmented_Group_Number));
     let fragmented_RectGroup = SVG.get('fragmented_RectGroup_'+ String(current_fragmented_Group_Number));
     if(fragmented_RectGroup) fragmented_RectGroup.removeClass('closed_path');
-    if(ghost_path) ghost_path.remove();
   }
   editing_target.remove(); //editing_pathの削除
 }
@@ -682,6 +686,7 @@ function verhor_fragmentedPath(){
   })
   if(draw.select('.editing_target:not(.edit_rect)').first())cash_svg();
   reset_editing_target();
+  editpath_hover(true);
 }
 
 /****************************************************
@@ -696,8 +701,8 @@ function checkEditPath_gadget(){
     $('#stroke_style').show();
     $('.strokewidth_gadget').show();
     $('#layer_select').show();
+    $('#fill_change').show();
   }
-  if(draw.select('.fragmented_PathGroup.closed_path').first()!==undefined) $('#fill_change').show();
 }
 
 /****************************************
@@ -709,19 +714,15 @@ function update_ghostPath(){
     ghost_path.attr({'d' : ''});
     let fragmented_Group_Number = ghost_path.attr('fragmented_Group_Number');
     let fragmented_PathGroup = SVG.get('#fragmented_PathGroup_' + fragmented_Group_Number);
-    if(fragmented_PathGroup.hasClass('closed_path')){
-      fragmented_PathGroup.each(function(i , children){
-        let dpoint = this.clear().array().settle() //pathのdpoint配列を取得
-        if(i===0){
-          ghost_path.M({x: dpoint[0][1], y: dpoint[0][2]}).L({x: dpoint[1][1], y: dpoint[1][2]})
-        }else{
-          ghost_path.L({x: dpoint[0][1], y: dpoint[0][2]}).L({x: dpoint[1][1], y: dpoint[1][2]})
-        }
-      })
-      ghost_path.Z();
-    }else{
-      ghost_path.remove();
-    }
+    fragmented_PathGroup.each(function(i , children){
+      let dpoint = this.clear().array().settle() //pathのdpoint配列を取得
+      if(i===0){
+        ghost_path.M({x: dpoint[0][1], y: dpoint[0][2]}).L({x: dpoint[1][1], y: dpoint[1][2]})
+      }else{
+        ghost_path.L({x: dpoint[0][1], y: dpoint[0][2]}).L({x: dpoint[1][1], y: dpoint[1][2]})
+      }
+    })
+    ghost_path.Z();
   })
 }
 
