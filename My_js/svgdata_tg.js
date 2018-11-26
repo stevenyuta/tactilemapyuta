@@ -123,7 +123,7 @@ function download_setSVG(original_draw) { //ダウンロード時に出力svgフ
 
   dummy_delete();
   edit_clear();
-  //toConnected();
+  toConnected();
   select_rect_delete(); //select_rectの全削除
   draw.select('.image_FrameRect').each(function(i,children){
     this.remove();

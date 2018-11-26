@@ -16,7 +16,7 @@ function getmousepoint(mode,mouseevent,param1,param2,param3,param4){
     let mini_pA, mini_pB, mini_pC
     let mini_x1 , mini_y1 , mini_x2 , mini_y2
     let path_x1 , path_y1 , path_x2 , path_y2
-    draw.select('.connected').each(function(i,children){
+    draw.select('.connected:not(.drawing_path)').each(function(i,children){
       let dpoint = this.clear().array().settle() //pathのdpoint配列を取得
       for(let j=0; j < dpoint.length - 1; j++){
         if(dpoint[j + 1][0] !== 'Z'){
@@ -65,7 +65,6 @@ function getmousepoint(mode,mouseevent,param1,param2,param3,param4){
       mx = change_x;
       my = change_y;
     }
-
     let mouse = new Object();
     mouse.x = mx;
     mouse.y = my;

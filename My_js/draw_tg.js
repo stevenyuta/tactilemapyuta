@@ -30,6 +30,7 @@ function draw_line(){
       }else{
         mx = getmousepoint('connect',e).x , my = getmousepoint('connect',e).y;
       }
+
       if(draw.select('.drawing_path').first()){
         let change_dpoint = drawing_path_dpoint + 'L ' + mx +' '+ my;
         drawing_path.attr({'d' : change_dpoint});
