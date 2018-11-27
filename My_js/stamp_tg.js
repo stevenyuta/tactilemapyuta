@@ -276,12 +276,15 @@ function draw_circle(){
   let make_circle;
   draw.off('mousedown').on('mousedown', function(e){
     if(e.button===0){
+      //StrokeWidth_TextBoxの値が何もないまたは0の場合はリセットボタンを発火させる
+      if($('#StrokeWidth_TextBox').val()==='') $('#resetStrokeWidth_Button').click();
+      if($('#StrokeWidth_TextBox').val()==='0' && $('input[name="draw_line_fillRadio"]:checked').val()==='none') $('#resetStrokeWidth_Button').click();
       sx = getmousepoint('normal',e).x , sy = getmousepoint('normal',e).y; //描画領域上でのマウスポイント計算
       let back_num = getPathCirclePos();
       make_circle = draw.circle(0).attr({
         'cx' : sx,
         'cy' : sy,
-        'fill' : 'none',
+        'fill': $('input[name="draw_line_fillRadio"]:checked').val(),
         'stroke-width' : PATH_STROKE_WIDTH * $('#StrokeWidth_TextBox').val(),
         'stroke' : '#000000'
       })
@@ -324,10 +327,13 @@ function draw_rect(){
   let make_path;
   draw.off('mousedown').on('mousedown', function(e){
     if(e.button===0){
+      //StrokeWidth_TextBoxの値が何もないまたは0の場合はリセットボタンを発火させる
+      if($('#StrokeWidth_TextBox').val()==='') $('#resetStrokeWidth_Button').click();
+      if($('#StrokeWidth_TextBox').val()==='0' && $('input[name="draw_line_fillRadio"]:checked').val()==='none') $('#resetStrokeWidth_Button').click();
       sx = getmousepoint('normal',e).x , sy = getmousepoint('normal',e).y; //描画領域上でのマウスポイント計算
       let back_num = getPathCirclePos();
       make_path = draw.path().attr({
-        'fill' : 'none',
+        'fill': $('input[name="draw_line_fillRadio"]:checked').val(),
         'stroke-width' : PATH_STROKE_WIDTH * $('#StrokeWidth_TextBox').val(),
         'stroke' : '#000000'
       })

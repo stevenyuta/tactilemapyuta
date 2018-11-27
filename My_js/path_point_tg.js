@@ -427,9 +427,7 @@ function reset_dcheck_element(){
 function fig_trans(){
   var current_mode =  $('input[name="tg_mode"]:checked');
   $(current_mode).prop('checked', true).trigger('change'); //モードを設定
-
   fig_connect();
-
   //左側角度、右側角度の取得
   var min_x = 1000000 ,  min_y = 1000000
   var max_x = -1000000 ,  max_y = -1000000
@@ -480,9 +478,6 @@ function fig_trans(){
       }
     }
   })
-
-
-
   var left_k=45,right_k=45;
   var left_angle_max=0,right_angle_max=0;
   for(var k=0; k<180; k++){
@@ -559,8 +554,8 @@ function fig_trans(){
 }
 
 function fig_straight(){
-  var thre_angle_max = Math.tan( 75 * (Math.PI/180) ); //垂直線だと判定するための閾値
-  var thre_angle_min = Math.tan( 15 * (Math.PI/180) ); //平行線だと判定するための閾値
+  var thre_angle_max = Math.tan( 85 * (Math.PI/180) ); //垂直線だと判定するための閾値
+  var thre_angle_min = Math.tan( 5 * (Math.PI/180) ); //平行線だと判定するための閾値
   draw.select('.connected').each(function(i , children){
     var attr_d = ''
     var dpoint = this.clear().array().settle() //pathのdpoint配列を取得
@@ -595,8 +590,8 @@ function fig_straight(){
 }
 
 function fig_connect(){
-  var thre_xy = 5
-  var thre_distance = 5
+  var thre_xy = 5;
+  var thre_distance = 5;
   draw.select('.connected').each(function(i , children){
     var dpoint = this.clear().array().settle() //pathのdpoint配列を取得
     for(var j=0; j < dpoint.length - 1; j++){

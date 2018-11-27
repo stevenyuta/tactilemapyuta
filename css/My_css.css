@@ -167,7 +167,7 @@ top_contents
   font-size: 14px;
 }
 
-#distance_check_button , #trans{
+#distance_check_button , #trans ,#straight_connect_button{
   cursor : pointer;
   background-color : #E2EDF9;
   border: 2px solid orange;/* ボックスの境界線を実線で指定する */
@@ -178,7 +178,7 @@ top_contents
   font-size: 14px;
 }
 
-#distance_check_button:hover , #trans:hover{
+#distance_check_button:hover , #trans:hover ,#straight_connect_button:hover{
   background : #31A9EE;
 }
 
