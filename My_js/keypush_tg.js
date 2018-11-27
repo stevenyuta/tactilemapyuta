@@ -56,14 +56,14 @@ function set_key_down_up(){
             })
           }else if(current_mode === 'EditPath'){
             draw.select('.editing_target').each(function(i, children){
-              if(this.hasClass('edit_circle')){
-                let orig_cx = this.attr('cx') ,orig_cy =  this.attr('cy');
+              if(this.hasClass('edit_rect')){
+                let original_cx = this.attr('x') + this.width()/2, original_cy = this.attr('y') + this.height()/2; //クリックを行った点
                 let cx = 0 , cy = 0;
-                if(e.keyCode===37) cx = orig_cx - CURSOR_KEY_MOVE , cy = orig_cy;
-                if(e.keyCode===38) cy = orig_cy - CURSOR_KEY_MOVE , cx = orig_cx;
-                if(e.keyCode===39) cx = orig_cx + CURSOR_KEY_MOVE , cy = orig_cy;
-                if(e.keyCode===40) cy = orig_cy + CURSOR_KEY_MOVE , cx = orig_cx;
-                this.attr({'cx':cx}) , this.attr({'cy':cy}); //円の位置を格納
+                if(e.keyCode===37) cx = original_cx - CURSOR_KEY_MOVE , cy = original_cy;
+                if(e.keyCode===38) cx = original_cx, cy = original_cy - CURSOR_KEY_MOVE;
+                if(e.keyCode===39) cx = original_cx + CURSOR_KEY_MOVE , cy = original_cy;
+                if(e.keyCode===40) cx = original_cx, cy = original_cy + CURSOR_KEY_MOVE;
+                this.attr({'x':cx - this.width()/2}) , this.attr({'y':cy - this.height()/2}); //円の位置を格納
                 let nears = getSimultaneouslyEdit_element(this);
                 if(nears.afterPath){
                   let dpoint = nears.afterPath.clear().array().settle(); //pathのdpoint配列を取得
@@ -82,8 +82,9 @@ function set_key_down_up(){
                 if(e.keyCode===40) x1 = dpoint[0][1] , y1 = dpoint[0][2] + CURSOR_KEY_MOVE , x2 = dpoint[1][1] , y2 = dpoint[1][2] + CURSOR_KEY_MOVE;
                 this.attr({'d':''}).M({x: x1, y: y1}).L({x: x2, y: y2});
                 let nears = getSimultaneouslyEdit_element(this);
-                if(nears.beforeCircle) nears.beforeCircle.attr({'cx':x1,'cy':y1});
-                if(nears.afterCircle) nears.afterCircle.attr({'cx':x2,'cy':y2});
+                
+                if(nears.beforeRect) nears.beforeRect.attr({'x': x1 - nears.beforeRect.width()/2,'y':y1 - nears.beforeRect.height()/2});
+                if(nears.afterRect) nears.afterRect.attr({'x':x2 - nears.afterRect.width()/2,'y':y2 - nears.afterRect.height()/2});
                 if(nears.beforePath){
                   let dpoint = nears.beforePath.clear().array().settle(); //pathのdpoint配列を取得
                   nears.beforePath.attr({'d':''}).M({x: dpoint[0][1], y: dpoint[0][2]}).L({x: x1, y: y1});
