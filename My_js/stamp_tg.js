@@ -77,7 +77,6 @@ function add_stair(){
       'fill': 'none',
       'stroke': PATH_STROKE_COLOR,
       'stroke-width' : PATH_STROKE_WIDTH*$('#StrokeWidth_TextBox').val(),
-      'stroke-linejoin' : 'round'
     })
   })
 
@@ -113,7 +112,6 @@ function add_escalator(){
       'fill': 'none',
       'stroke': PATH_STROKE_COLOR,
       'stroke-width' : PATH_STROKE_WIDTH*$('#StrokeWidth_TextBox').val(),
-      'stroke-linejoin' : 'round'
     })
   })
   draw.off('mousedown').mousedown(function(e){
@@ -145,7 +143,6 @@ function add_arrow(){
       'fill': 'none',
       'stroke': PATH_STROKE_COLOR,
       'stroke-width' : PATH_STROKE_WIDTH*$('#StrokeWidth_TextBox').val(),
-      'stroke-linejoin' : 'round'
     })
   })
 
@@ -189,7 +186,6 @@ function add_Tiket_gate(){
       'fill': 'none',
       'stroke': PATH_STROKE_COLOR,
       'stroke-width' : PATH_STROKE_WIDTH*$('#StrokeWidth_TextBox').val(),
-      'stroke-linejoin' : 'round'
     })
   })
 
@@ -226,7 +222,6 @@ function add_reducescale(){
       'fill': 'none',
       'stroke': PATH_STROKE_COLOR,
       'stroke-width' : PATH_STROKE_WIDTH*$('#StrokeWidth_TextBox').val(),
-      'stroke-linejoin' : 'round'
     })
   })
 

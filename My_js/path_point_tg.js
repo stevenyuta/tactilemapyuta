@@ -20,7 +20,6 @@ function toConnected(editpath_flag){
           'stroke': PATH_STROKE_COLOR,
           'stroke-width': this.attr('stroke-width'),
           'stroke-dasharray': this.attr('stroke-dasharray'),
-          'stroke-linejoin' : 'round'
         })
         if(this.attr('stroke-dasharray')){
           if( String( this.attr('stroke-dasharray') ).split(/\s/).length === 2 ){

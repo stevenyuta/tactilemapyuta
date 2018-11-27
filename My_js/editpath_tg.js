@@ -139,7 +139,6 @@ function toFragmented(connectedPath){
     fragmentedPath.attr({
       'fill' : 'none',
       'stroke' : PATH_SELECT_COLOR,
-      'stroke-linejoin' : 'round',
       'stroke-width': connectedPath.attr('stroke-width'),
       'stroke-dasharray' : connectedPath.attr('stroke-dasharray'),
     })
@@ -253,14 +252,12 @@ function fragmentedPath_EventSet(){
         fragmentedPath1.attr({
           'fill' : 'none',
           'stroke' : PATH_SELECT_COLOR,
-          'stroke-linejoin' : 'round',
           'stroke-width': this.attr('stroke-width'),
           'stroke-dasharray': this.attr('stroke-dasharray'),
         })
         fragmentedPath2.attr({
           'fill' : 'none',
           'stroke' : PATH_SELECT_COLOR,
-          'stroke-linejoin' : 'round',
           'stroke-width': this.attr('stroke-width'),
           'stroke-dasharray': this.attr('stroke-dasharray'),
         })
@@ -396,7 +393,6 @@ function delete_editpath_rect(editing_target){
     new_fragmentedPath.attr({
       'fill' : 'none',
       'stroke' : PATH_SELECT_COLOR,
-      'stroke-linejoin' : 'round',
       'stroke-width': nears.beforePath.attr('stroke-width'),
       'stroke-dasharray': nears.beforePath.attr('stroke-dasharray'),
     })
@@ -482,7 +478,6 @@ function node_connect_function(){
     new_path.attr({
       'fill' : 'none',
       'stroke' : PATH_SELECT_COLOR,
-      'stroke-linejoin' : 'round',
       'stroke-width': fragmented_PathGroup1.first().attr('stroke-width'),
       'stroke-dasharray': fragmented_PathGroup1.first().attr('stroke-dasharray'),
     })

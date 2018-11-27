@@ -83,7 +83,7 @@ function draw_line(){
             now_drawing_path_ID = drawing_path.id();
             drawing_path.attr({
               'fill': $('input[name="draw_line_fillRadio"]:checked').val(), 'stroke': PS_COLOR,
-              'stroke-width': PS_WIDTH*$('#StrokeWidth_TextBox').val(), 'stroke-linejoin' : 'round'
+              'stroke-width': PS_WIDTH*$('#StrokeWidth_TextBox').val()
             })
             if($('input[name="stroke"]:checked').val()==='dotted_line'){
               drawing_path.attr({ 'stroke-dasharray': PS_WIDTH*$('#StrokeWidth_TextBox').val() })
