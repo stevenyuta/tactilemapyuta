@@ -14,6 +14,10 @@ function draw_line(){
       let dpoint = drawing_path.clear().array().settle();
       current_x = dpoint[dpoint.length-1][1];
       current_y = dpoint[dpoint.length-1][2];
+      drawing_path_dpoint="";
+      for(let i=0; i < dpoint.length; i++){
+        drawing_path_dpoint += dpoint[i][0] +" "+ dpoint[i][1] + " " + dpoint[i][2];
+      }
       set_closePathNode();
     }else{
       draw.select('.drawing_path').removeClass('drawing_path');

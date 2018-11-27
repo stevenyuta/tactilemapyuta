@@ -550,8 +550,8 @@
           let current_path = draw.select('.drawing_path').first();
           if(current_path){
             current_path.attr({'d' : drawing_path_dpoint}).removeClass('drawing_path');
-            drawing_path_dpoint="";
             now_drawing_path_ID = "";
+            drawing_path_dpoint="";
           }
         }
         if(nowchecked!=="Edit" && nowchecked!=="EditImage")  editselect_array.length = 0;
