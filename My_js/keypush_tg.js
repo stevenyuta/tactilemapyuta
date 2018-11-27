@@ -107,6 +107,7 @@ function set_key_down_up(){
         if($('#StrokeWidth_TextBox').is(':focus')) update_StrokeWidth_TextBox();
         if($('#resizeInk_TextBox').is(':focus')) update_resizeInk_TextBox();
         if($('#resizeBraille_TextBox').is(':focus')) update_resizeBraille_TextBox();
+        if($('#ImageOpacity_TextBox').is(':focus')) update_ImageOpacity_TextBox();
       }
     }
     input_key_buffer[e.keyCode] = true;
