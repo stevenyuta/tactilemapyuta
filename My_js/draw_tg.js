@@ -33,7 +33,7 @@ function draw_line(){
 
       if(draw.select('.drawing_path').first()){
         let change_dpoint = drawing_path_dpoint + 'L ' + mx +' '+ my;
-        drawing_path.attr({'d' : change_dpoint});
+        draw.select('.drawing_path').first().attr({'d' : change_dpoint});
       }
     })
   }

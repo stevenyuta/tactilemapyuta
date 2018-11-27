@@ -128,7 +128,7 @@ function download_setSVG(original_draw) { //ダウンロード時に出力svgフ
   draw.select('.image_FrameRect').each(function(i,children){
     this.remove();
   })
-  //circle_delete(); //edit_circleの全削除
+  rect_delete(); //edit_circleの全削除
   //不要なグループの削除
   SVG.get('gridline_group').remove();
   SVG.get('handle_group').remove();
@@ -189,7 +189,7 @@ function download_setPNG(original_draw) { //ダウンロード時に出力pngフ
   edit_clear();
   toConnected();
   select_rect_delete(); //select_rectの全削除
-  circle_delete(); //edit_circleの全削除
+  rect_delete(); //edit_circleの全削除
   //不要なグループの削除
   SVG.get('gridline_group').remove();
   SVG.get('handle_group').remove();

@@ -277,7 +277,7 @@ function layer_change(e){
   /***********************************
   //circleを一掃削除する関数
   ***********************************/
-  function circle_delete(){
+  function rect_delete(){
     draw.select('.edit_rect , .init_node , .last_node , .close_node').each(function(i,children){
         this.remove();
     })
