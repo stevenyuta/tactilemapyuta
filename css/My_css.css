@@ -17,20 +17,20 @@
 
 }
 
-.container-fluid{
-	margin-top : 10px;
+.aplication_area{
+	margin : 10px 0px 0px 10px;
 }
-.container-fluid input[type=radio],
-.container-fluid input[type=file],
-.container-fluid input[type="checkbox"]{
+.aplication_area input[type=radio],
+.aplication_area input[type=file],
+.aplication_area input[type="checkbox"]{
   display: none;
 }
 
-.container-fluid input[type="radio"] + label:hover{
+.aplication_area input[type="radio"] + label:hover{
 	background-color: #E2EDF9; 	/* マウスオーバー時の背景色を指定する */
 }
 
-.container-fluid input[type=text]:hover {
+.aplication_area input[type=text]:hover {
   border-color: #0171bd;	/* ボックスの境界線を実線で指定する */
 }
 
@@ -433,24 +433,14 @@ right toolbar
 }
 
 #svg_width_scrollbar{ /* css */
-  margin :0px 0px 30px 170px;
+  margin :0px 0px 0px 170px;
   width:1040px;
   height:12px;
 }
-
-
 
 #svg_height_scrollbar{ /* css */
   margin-left:10px;
   width:12px;
   height:735px;
   float:left;
-}
-
-#height_slider .ui-slider-handle{
-  margin: 0px -60px 0px 1px;
-  width:16px;
-  height:120px;
-  background:#3399ff;
-  border:3px solid #00008b;
 }

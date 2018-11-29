@@ -10,12 +10,12 @@ function getmousepoint(mode,mouseevent,param1,param2,param3,param4){
   if(mode==="connect"){
     mx = (mouseevent.pageX-Number($('#draw_area').offset().left))/draw.viewbox().zoom+Number(draw.viewbox().x); //描画領域上でのマウスポイント計算
     my = (mouseevent.pageY-Number($('#draw_area').offset().top))/draw.viewbox().zoom+Number(draw.viewbox().y);
-    let thre_xy = 3; //線へ自動接続される範囲
+    let thre_xy = RECT_WIDTH/(3*draw.zoom()); //線へ自動接続される範囲
     let ci="EMPTY",cj="EMPTY",ck="EMPTY";
-    let Min_dis = "EMPTY" , thre_Min_dis=3;
-    let mini_pA, mini_pB, mini_pC
-    let mini_x1 , mini_y1 , mini_x2 , mini_y2
-    let path_x1 , path_y1 , path_x2 , path_y2
+    let Min_dis = "EMPTY" , thre_Min_dis=RECT_WIDTH/(3*draw.zoom());
+    let mini_pA, mini_pB, mini_pC;
+    let mini_x1 , mini_y1 , mini_x2 , mini_y2;
+    let path_x1 , path_y1 , path_x2 , path_y2;
     draw.select('.connected:not(.drawing_path)').each(function(i,children){
       let dpoint = this.clear().array().settle() //pathのdpoint配列を取得
       for(let j=0; j < dpoint.length - 1; j++){
@@ -416,4 +416,13 @@ function layer_change(e){
     let startMsec = new Date();
     // 指定ミリ秒間、空ループ。CPUは常にビジー。
     while (new Date() - startMsec < waitMsec);
+  }
+
+  function resize_aplication_area(){
+    let window_width = $(window).width() , window_height = $(window).height();
+    let width_Margin = ($(window).width() - 1550)/2;
+    let height_Margin = ($(window).height() - 805)/2;
+    if(width_Margin > 0 && height_Margin > 0){
+      $('.aplication_area').css( "margin" , height_Margin + 'px ' + width_Margin + 'px');
+    }
   }

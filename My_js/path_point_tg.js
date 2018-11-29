@@ -332,11 +332,13 @@ function distance_check(){
       'class' : 'distance_rect'
     });
   })
+  /**
   alert(  "距離間が近い要素の数\n" +
           "点字："+ dis_braille_num + "\n" +
           "記号："+ dis_symbol_num + "\n" +
           "円："+ dis_circle_num + "\n"
         );
+        **/
 }
 
 //引数に指定した要素の4点座標を返す。pathの場合は配列＋objectで返す。

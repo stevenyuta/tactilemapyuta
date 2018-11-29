@@ -18,7 +18,7 @@ function undo() { //操作を１つ戻る関数
     draw_gridline(3000,3000,50,50); //グリッド線の描画
     defs_set();
 
-    RadioEvent_set();
+    RadioEvent_set(true);
     checkBox_change();
     js_sleep(100); //100ms待機
   }
@@ -48,7 +48,7 @@ function redo(e) { //操作を１つ戻る関数
     draw_gridline(3000,3000,50,50); //グリッド線の描画
     defs_set();
 
-    RadioEvent_set();
+    RadioEvent_set(true);
     checkBox_change();
     js_sleep(100); //100ms待機
   }
