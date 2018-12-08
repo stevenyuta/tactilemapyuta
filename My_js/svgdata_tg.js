@@ -190,6 +190,7 @@ function download_setPNG(original_draw) { //ダウンロード時に出力pngフ
   toConnected();
   select_rect_delete(); //select_rectの全削除
   rect_delete(); //edit_circleの全削除
+  add_fontStyle();
   //不要なグループの削除
   SVG.get('gridline_group').remove();
   SVG.get('handle_group').remove();
