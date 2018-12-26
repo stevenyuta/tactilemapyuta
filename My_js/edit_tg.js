@@ -226,7 +226,7 @@ function upload_handle(){
 
     $('#layer_select').show();
     $('#fill_change').hide();
-    if(draw.select('.edit_select.connected').first()) $('#fill_change').show();
+    if(draw.select('.edit_select.connected , .edit_select.circle').first()) $('#fill_change').show();
 
 
 
@@ -833,6 +833,7 @@ function get_bbox(tg_element){
     pmax_x = Number(tg_element.attr('x')) + Number(tg_element.bbox().width);
     pmin_y = Number(tg_element.attr('y'));
     pmax_y = Number(tg_element.attr('y')) + Number(tg_element.bbox().height);
+
   }else{
     pmin_x = Number(tg_element.attr('x'));
     pmax_x = Number(tg_element.attr('x')) + Number(tg_element.bbox().width);

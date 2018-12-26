@@ -79,7 +79,7 @@
         <span id="downloader">
           <a id="svg_download" href="#" download="SVG_output.svg" onclick="svgDownload()">SVG</a>
           <a id="png_download" href="#" onclick="pngDownload()">PNG</a>
-          <a id="legend_download"  href="#" download="凡例.txt" onclick="legendDownload()" style="display:none;">凡例</a>
+          <a id="legend_download"  href="#" download="凡例.csv" onclick="legendDownload()" >凡例</a>
           <a href="manual.pdf" target="_blank">取扱説明書</a>
         </span>
       </div>
@@ -88,7 +88,7 @@
         <div id="left_toolbar">
           <div id="toolbar2_radio">
             <div>
-              <input  type="radio" name="tg_mode" value="Edit" id="Edit">
+              <input  type="radio" name="tg_mode" value="Edit" id="Edit" checked>
               <label for="Edit">選択</label>
             </div>
             <div>
@@ -137,9 +137,9 @@
                 <input type="checkbox" id="image" name="checkers" value="image"/>
                 <label for="image" class="custom_check_label">画像</label>
               </div>
-              <div style="display:none;">
-                <input type="checkbox" id="graduation_frame" name="checkers" value="graduation_frame" />
-                <label for="graduation_frame" class="custom_check_label">目盛付き枠</label>
+              <div>
+                <input type="checkbox" id="graduation_frame" name="checkers" value="graduation_frame"/>
+                <label for="graduation_frame" class="custom_check_label" style="display:none;">目盛付き枠</label>
               </div>
               <div>
                 <input type="checkbox" id="gridline" name="checkers" value="gridline" />
@@ -460,12 +460,14 @@
         //各機能のラジオボタンの設定
         nowchecked = $('input[name="tg_mode"]:checked').val();
         $('input[name="tg_mode"]:radio').off('click').on('click',function(){
+          /**
           if($(this).val() == nowchecked){
             $(this).prop('checked', false);
             nowchecked = false;
           }else{
             nowchecked = $(this).val();
           }
+          **/
           RadioEvent_set();
         });
         RadioEvent_set();
@@ -492,7 +494,6 @@
 
         set_key_down_up();
         set_contextMenu();
-        reset_dcheck_element();
         toConnected();  //バラバラ状態のpathをくっつき状態に
         set_zoom(); //zoomイベントの開始
         edit_clear(true); //edit_groupの解散

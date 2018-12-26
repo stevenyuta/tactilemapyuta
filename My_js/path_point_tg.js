@@ -3,7 +3,7 @@
 //pathを解析して、くっつきモードとバラバラモード
 //配列を介して切り替える関数
 ******************************************************/
-function toConnected(editpath_flag){
+function toConnected(){
   draw.select('.fragmented_PathGroup').each(function(i,children){
     if(SVG.get('fragmented_RectGroup_' + String(this.attr('fragmented_Group_Number')))){
       SVG.get('fragmented_RectGroup_' + String(this.attr('fragmented_Group_Number'))).remove();
@@ -339,6 +339,7 @@ function distance_check(){
           "円："+ dis_circle_num + "\n"
         );
         **/
+  setTimeout("reset_dcheck_element()", 5000);
 }
 
 //引数に指定した要素の4点座標を返す。pathの場合は配列＋objectで返す。
@@ -558,63 +559,79 @@ function fig_trans(){
 function fig_straight(){
   var thre_angle_max = Math.tan( 85 * (Math.PI/180) ); //垂直線だと判定するための閾値
   var thre_angle_min = Math.tan( 5 * (Math.PI/180) ); //平行線だと判定するための閾値
-  draw.select('.connected').each(function(i , children){
-    var attr_d = ''
+  draw.select('.connected , .fragmented').each(function(i , children){
+    var attr_d = '';
     var dpoint = this.clear().array().settle() //pathのdpoint配列を取得
     for(var j=0; j < dpoint.length - 1; j++){
       if(dpoint[j + 1][0] !== 'Z'){
-        var path_x1_base = Number( dpoint[j][1])
-        var path_y1_base = Number( dpoint[j][2])
-        var path_x2_base = Number( dpoint[j + 1][1])
-        var path_y2_base = Number( dpoint[j + 1][2])
+        var path_x1_base = Number( dpoint[j][1]);
+        var path_y1_base = Number( dpoint[j][2]);
+        var path_x2_base = Number( dpoint[j + 1][1]);
+        var path_y2_base = Number( dpoint[j + 1][2]);
       }else{
-        var path_x1_base = Number( dpoint[j][1])
-        var path_y1_base = Number( dpoint[j][2])
-        var path_x2_base = Number( dpoint[0][1])
-        var path_y2_base = Number( dpoint[0][2])
+        var path_x1_base = Number( dpoint[j][1]);
+        var path_y1_base = Number( dpoint[j][2]);
+        var path_x2_base = Number( dpoint[0][1]);
+        var path_y2_base = Number( dpoint[0][2]);
       }
       var tan = Math.abs(path_y2_base-path_y1_base) / Math.abs(path_x2_base - path_x1_base); //対象の直線の傾きを求める
       if(tan > thre_angle_max || tan < thre_angle_min ){
         if(tan > thre_angle_max) path_x1_base = path_x2_base;
         if(tan < thre_angle_min) path_y1_base = path_y2_base;
       }
-      attr_d += dpoint[j][0] + ' ' + path_x1_base + ' ' +  path_y1_base + ' '
+      attr_d += dpoint[j][0] + ' ' + path_x1_base + ' ' +  path_y1_base + ' ';
       if(j===dpoint.length - 2){
         if(dpoint[j + 1][0] === 'Z'){
-          attr_d += 'Z '
+          attr_d += 'Z ';
         }else{
-        attr_d += dpoint[j + 1][0] + ' ' + path_x2_base + ' ' +  path_y2_base + ' '
+        attr_d += dpoint[j + 1][0] + ' ' + path_x2_base + ' ' +  path_y2_base + ' ';
         }
       }
     }
-    this.attr({'d' : attr_d})
+    this.attr({'d' : attr_d});
+    if(this.hasClass('fragmented')){ //fragmented パスの場合
+      let dpoint = this.clear().array().settle();
+      let x1 = Number(dpoint[0][1]) , y1 = Number(dpoint[0][2]);
+      let x2 = Number(dpoint[1][1]) , y2 = Number(dpoint[1][2]);
+      let nears = getSimultaneouslyEdit_element(this);
+      if(nears.beforeRect) nears.beforeRect.attr({'x':x1 - nears.beforeRect.width()/2,'y':y1 - nears.beforeRect.height()/2});
+      if(nears.afterRect) nears.afterRect.attr({'x':x2 - nears.afterRect.width()/2,'y':y2 - nears.afterRect.height()/2});
+      if(nears.beforePath){
+        let dpoint = nears.beforePath.clear().array().settle();
+        nears.beforePath.attr({'d':''}).M({x: dpoint[0][1], y: dpoint[0][2]}).L({x: x1, y: y1});
+      }
+      if(nears.afterPath){
+        let dpoint = nears.afterPath.clear().array().settle();
+        nears.afterPath.attr({'d':''}).M({x: x2, y: y2}).L({x: dpoint[1][1], y: dpoint[1][2]});
+      }
+    }
   })
 }
 
 function fig_connect(){
   var thre_xy = 5;
   var thre_distance = 5;
-  draw.select('.connected').each(function(i , children){
-    var dpoint = this.clear().array().settle() //pathのdpoint配列を取得
+  draw.select('.connected,.fragmented').each(function(i , children){
+    var dpoint = this.clear().array().settle(); //pathのdpoint配列を取得
     for(var j=0; j < dpoint.length - 1; j++){
       if(dpoint[j + 1][0] !== 'Z'){
-        var path_x1_base = Number( dpoint[j][1])
-        var path_y1_base = Number( dpoint[j][2])
-        var path_x2_base = Number( dpoint[j + 1][1])
-        var path_y2_base = Number( dpoint[j + 1][2])
+        var path_x1_base = Number( dpoint[j][1]);
+        var path_y1_base = Number( dpoint[j][2]);
+        var path_x2_base = Number( dpoint[j + 1][1]);
+        var path_y2_base = Number( dpoint[j + 1][2]);
       }else{
-        var path_x1_base = Number( dpoint[j][1])
-        var path_y1_base = Number( dpoint[j][2])
-        var path_x2_base = Number( dpoint[0][1])
-        var path_y2_base = Number( dpoint[0][2])
+        var path_x1_base = Number( dpoint[j][1]);
+        var path_y1_base = Number( dpoint[j][2]);
+        var path_x2_base = Number( dpoint[0][1]);
+        var path_y2_base = Number( dpoint[0][2]);
       }
 
       var relativeXY = get_relativeXY(path_x1_base ,path_y1_base, path_x2_base , path_y2_base , thre_xy); //直線の領域のx,y座標
       var line_param = getLineParam(path_x1_base , path_y1_base , path_x2_base , path_y2_base);
 
-      draw.select('.connected').each(function(k , children){
-        var attr_d = ''
-        var dpoint_select = this.clear().array().settle() //pathのdpoint配列を取得
+      draw.select('.connected,.fragmented').each(function(k , children){
+        var attr_d = '';
+        var dpoint_select = this.clear().array().settle(); //pathのdpoint配列を取得
         for(var l=0; l < dpoint_select.length; l++){
           if(dpoint_select[l][0] !== 'Z'){
             var path_x1 = Number( dpoint_select[l][1] )
@@ -648,7 +665,15 @@ function fig_connect(){
             attr_d += 'Z '
           }
         }
-        this.attr({ 'd' : attr_d })
+        this.attr({ 'd' : attr_d });
+        if(this.hasClass('fragmented')){ //fragmented パスの場合
+          let dpoint = this.clear().array().settle();
+          let x1 = Number(dpoint[0][1]) , y1 = Number(dpoint[0][2]);
+          let x2 = Number(dpoint[1][1]) , y2 = Number(dpoint[1][2]);
+          let nears = getSimultaneouslyEdit_element(this);
+          if(nears.beforeRect) nears.beforeRect.attr({'x':x1 - nears.beforeRect.width()/2,'y':y1 - nears.beforeRect.height()/2});
+          if(nears.afterRect) nears.afterRect.attr({'x':x2 - nears.afterRect.width()/2,'y':y2 - nears.afterRect.height()/2});
+        }
       })
     }
   })

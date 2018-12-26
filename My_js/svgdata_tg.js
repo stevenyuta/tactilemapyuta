@@ -18,6 +18,10 @@ function undo() { //操作を１つ戻る関数
     draw_gridline(3000,3000,50,50); //グリッド線の描画
     defs_set();
 
+
+    editselect_array.length = 0;
+    editpath_array.length = 0;
+
     RadioEvent_set(true);
     checkBox_change();
     js_sleep(100); //100ms待機
@@ -329,23 +333,20 @@ function pngDownload() {
 }
 
 function legendDownload() {
-  var legend_ink_array = new Array() , legend_braille_array = new Array();
-  var legend_str = "";
-  for(var i=0; i < text_pairs.length; i++){
-    var text_pairs_id = text_pairs[i];
-    var Braille = undefined , Ink = undefined;
-    if(text_pairs_id.Braille) var Braille = SVG.get("#" + text_pairs_id.Braille);
-    if(text_pairs_id.Ink) var Ink = SVG.get("#" + text_pairs_id.Ink);
-    if(Braille){  //点字要素が入手できた場合
-      legend_str += Braille.text() + " ： ";
-    }
-    if(Ink){
-      legend_str += Ink.text();
-      legend_ink_array.push(Ink.text());
-    }
+  let legend_str = "";
+  for(let i=0; i < text_pairs.length; i++){
+    let text_pairs_id = text_pairs[i];
+    let Braille = undefined , Ink = undefined;
+
+    if(text_pairs_id.Braille) Braille = SVG.get("#" + text_pairs_id.Braille);
+    if(text_pairs_id.Ink) Ink = SVG.get("#" + text_pairs_id.Ink);
+
+    if(Braille) legend_str += Braille.attr('brailleOriginText') + ",";//点字要素が入手できた場合
+    if(Ink)legend_str += Ink.text();
+
     if(Braille){
-      /**
       if($('#graduation_frame').prop('checked')){
+        let mainFrame = SVG.get('mainFrame');
         for(let i=-F_WIDTH/2; i < F_WIDTH/2; i += F_WIDTH/4){
           if(i <= Braille.x() && Braille.x() < i + F_WIDTH/4) legend_str += ' 目盛り：横は' + String((i + F_WIDTH/2)/(F_WIDTH/4) + 1) + " ";
         }
@@ -354,12 +355,11 @@ function legendDownload() {
         }
       }
       legend_str += '\r\n';
-      **/
     }
   }
-  var blob = new Blob([ legend_str ], { 'type' : 'text/plain' });
+  let blob = new Blob([ legend_str ], { 'type' : 'text/plain' });
   if (window.navigator.msSaveBlob) {
-    window.navigator.msSaveOrOpenBlob(blob, '凡例.txt');
+    window.navigator.msSaveOrOpenBlob(blob, '凡例.csv');
   } else {
     document.getElementById('legend_download').href = window.URL.createObjectURL(blob);
   }

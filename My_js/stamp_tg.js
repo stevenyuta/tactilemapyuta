@@ -239,29 +239,28 @@ function add_reducescale(){
 ******************************************************/
 
 function add_graduationFrame(){
-  draw.select('.graduationFrame').each(function(i,children){
-    this.remove();
-  })
+  if(SVG.get('.graduationFrame_group'))SVG.get('.graduationFrame_group').remove();
+
   let back_num = getPathCirclePos();
-  let frame = draw.path().M({x: -F_WIDTH/2, y: -F_HEIGHT/2}).L({x: F_WIDTH/2,y:-F_HEIGHT/2})
+  let Frame_group = draw.group().id('graduationFrame_group');
+  let frame = Frame_group.path().M({x: -F_WIDTH/2, y: -F_HEIGHT/2}).L({x: F_WIDTH/2,y:-F_HEIGHT/2})
                          .L({x: F_WIDTH/2, y: F_HEIGHT/2}).L({x: -F_WIDTH/2, y:F_HEIGHT/2})
-                         .Z().addClass('graduationFrame').addClass('path');
+                         .Z().addClass('graduationFrame').addClass('path').id('mainFrame');
   for(let i=-F_WIDTH/2; i <= F_WIDTH/2; i += F_WIDTH/4){
-    draw.path().M({x: i, y: -F_HEIGHT/2}).L({x: i , y:-F_HEIGHT/2 - F_SCALE}).addClass('graduationFrame').addClass('path');
-    draw.path().M({x: i, y: F_HEIGHT/2}).L({x: i , y:F_HEIGHT/2 + F_SCALE}).addClass('graduationFrame').addClass('path');
+    Frame_group.path().M({x: i, y: -F_HEIGHT/2}).L({x: i , y:-F_HEIGHT/2 - F_SCALE}).addClass('graduationFrame').addClass('path');
+    Frame_group.path().M({x: i, y: F_HEIGHT/2}).L({x: i , y:F_HEIGHT/2 + F_SCALE}).addClass('graduationFrame').addClass('path');
   }
-  for(let i=-F_HEIGHT/2; i <= F_HEIGHT/2; i += F_HEIGHT/3){
-    draw.path().M({x: -F_WIDTH/2 , y: i}).L({x: -F_WIDTH/2 - F_SCALE , y:i}).addClass('graduationFrame').addClass('path');
-    draw.path().M({x: F_WIDTH/2 , y: i}).L({x: F_WIDTH/2 + F_SCALE , y:i}).addClass('graduationFrame').addClass('path');
+  for(let i=-F_HEIGHT/2; i <= F_HEIGHT/1.5; i += F_HEIGHT/3){
+    Frame_group.path().M({x: -F_WIDTH/2 , y: i}).L({x: -F_WIDTH/2 - F_SCALE , y:i}).addClass('graduationFrame').addClass('path');
+    Frame_group.path().M({x: F_WIDTH/2 , y: i}).L({x: F_WIDTH/2 + F_SCALE , y:i}).addClass('graduationFrame').addClass('path');
   }
 
-  frame.back();
+  Frame_group.back();
   for(let i=0; i< back_num; i++){
-    frame.forward();
+    Frame_group.forward();
   }
   draw.select('.graduationFrame').attr({
     'fill' : 'none',
-    'stroke' : PATH_STROKE_COLOR,
     'stroke-width': PATH_STROKE_WIDTH
   })
 }
@@ -355,12 +354,16 @@ function draw_rect(){
           }
         }
         make_path.attr({'d':''})
-        make_path.M({x: sx, y: sy}).L({x: lx, y: sy}).L({x: lx, y: ly}).L({x: sx, y: ly}).Z();
+        if(lx - sx > 3 && ly - sy > 3) make_path.M({x: sx, y: sy}).L({x: lx, y: sy}).L({x: lx, y: ly}).L({x: sx, y: ly}).Z();
       })
       draw.off('mouseup').on('mouseup', function(e){
         if(e.button===0){
-          cash_svg(); //svgデータのcash
-          draw.off('mousemove');
+          if(make_path.attr('d')===""){
+            make_path.remove();
+          }else{
+            cash_svg(); //svgデータのcash
+            draw.off('mousemove');
+          }
         }
       })
     }
@@ -400,7 +403,10 @@ function add_text(){
       }
     }
     if($('#check_bra').prop('checked')){
-      let dummy_Bra_text = draw.plain(tactileGraphic().convertText($("#Braille").val()));//文字を点字表現に変換
+      let transed_BraText = $("#Braille").val().replace(/[ァ-ン]/g, function(s) {
+        return String.fromCharCode(s.charCodeAt(0) - 0x60);
+      });
+      let dummy_Bra_text = draw.plain(tactileGraphic().convertText(transed_BraText));//文字を点字表現に変換
       let font_family = ($('input[name="braillefont"]:checked').val()==='IBfont') ? 'Ikarashi Braille' : '点字線なし';
       let font_stroke = ($('input[name="braillefont"]:checked').val()==='IBfont') ? String(PATH_STROKE_WIDTH * 0.25) : '';
       dummy_Bra_text.attr({
@@ -409,6 +415,7 @@ function add_text(){
         ,'stroke-width' :  font_stroke,
         'font-family': font_family,
         'font-size': $('#resizeBraille_TextBox').val() * TEXT_CORRECTION,
+        'brailleOriginText' : transed_BraText,
         'cursor':'default'
       })
       bra_id = dummy_Bra_text.attr('id');
