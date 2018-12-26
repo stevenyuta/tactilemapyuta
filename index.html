@@ -460,14 +460,6 @@
         //各機能のラジオボタンの設定
         nowchecked = $('input[name="tg_mode"]:checked').val();
         $('input[name="tg_mode"]:radio').off('click').on('click',function(){
-          /**
-          if($(this).val() == nowchecked){
-            $(this).prop('checked', false);
-            nowchecked = false;
-          }else{
-            nowchecked = $(this).val();
-          }
-          **/
           RadioEvent_set();
         });
         RadioEvent_set();
@@ -513,6 +505,11 @@
         $('#fill_change').hide();  //塗りつぶし変更
         $('#resizeBox_textbox').hide(); //リサイズテキストボックス
         $('#stamp_table').hide();
+
+        if(unredo_flag){
+          editselect_array.length = 0;
+          editpath_array.length = 0;
+        }
 
         /*************************************
         //各モードごとの処理

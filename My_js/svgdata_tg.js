@@ -19,9 +19,6 @@ function undo() { //操作を１つ戻る関数
     defs_set();
 
 
-    editselect_array.length = 0;
-    editpath_array.length = 0;
-
     RadioEvent_set(true);
     checkBox_change();
     js_sleep(100); //100ms待機
