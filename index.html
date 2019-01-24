@@ -416,6 +416,12 @@
         let nowchecked;
 
       $(window).on('load',function () { //window読み込み後
+        let userAgent = window.navigator.userAgent.toLowerCase();
+        if(userAgent.indexOf('chrome') < 0){
+          $('.aplication_area').before('<p style="border: solid #808; padding:5px;">本アプリケーションはGoogle Chromeのみ対応しております<br>お使いのブラウザでは動作しない可能性があります。</p>');
+        }
+
+
         let timer = 0;
         window.onresize = function () {
           if (timer > 0) {
