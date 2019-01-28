@@ -139,11 +139,11 @@ function braillefont_set(){
 function stroke_radio_set(){
   $('input[name="stroke"]:radio').off('change').on('change',function(){ //ラジオボタン変更時の処理
     if($(this).val()==='solid_line'){ //実線の場合
-      draw.select('.edit_select , .fragmented').each(function(i,children){
+      draw.select('.edit_select , .fragmented , .drawing_path').each(function(i,children){
         if(!this.hasClass('ink') && !this.hasClass('braille') && !this.hasClass('image'))  this.attr({'stroke-dasharray': ''});
       })
     }else{ //点線の場合
-      draw.select('.edit_select , .fragmented').each(function(i,children){
+      draw.select('.edit_select , .fragmented , .drawing_path').each(function(i,children){
         if(!this.hasClass('ink') && !this.hasClass('braille') && !this.hasClass('image'))  this.attr({'stroke-dasharray': PS_WIDTH * $('#StrokeWidth_TextBox').val()});
       })
     }

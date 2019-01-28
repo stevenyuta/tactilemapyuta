@@ -346,15 +346,10 @@ function draw_rect(){
       draw.off('mousemove').on('mousemove', function(e){
         lx = getmousepoint('normal',e).x , ly = getmousepoint('normal',e).y //描画領域上でのマウスポイント計算
         if(input_key_buffer[16]){
-          console.log(lx-sx , ly-sy)
-          if(lx - sx > ly - sy){
-            ly = sy + lx - sx;
-          }else{
-            lx = sx + ly - sy;
-          }
+          ((lx-sx) * (ly-sy) < 0) ? lx = sx - (ly - sy) : lx = sx + ly - sy;
         }
         make_path.attr({'d':''})
-        if(lx - sx > 3 && ly - sy > 3) make_path.M({x: sx, y: sy}).L({x: lx, y: sy}).L({x: lx, y: ly}).L({x: sx, y: ly}).Z();
+        if(Math.abs(lx - sx) > 3 && Math.abs(ly - sy) > 3) make_path.M({x: sx, y: sy}).L({x: lx, y: sy}).L({x: lx, y: ly}).L({x: sx, y: ly}).Z();
       })
       draw.off('mouseup').on('mouseup', function(e){
         if(e.button===0){
