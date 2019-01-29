@@ -331,33 +331,99 @@ function pngDownload() {
 
 function legendDownload() {
   let legend_str = "";
-  for(let i=0; i < text_pairs.length; i++){
-    let text_pairs_id = text_pairs[i];
-    let Braille = undefined , Ink = undefined;
+  let brarray = new Array();
+  draw.select('.braille').each(function(i,children){
+    if(brarray.indexOf(this.attr('brailleorigintext'))<0) brarray.push(this.attr('brailleorigintext'));
+  })
 
-    if(text_pairs_id.Braille) Braille = SVG.get("#" + text_pairs_id.Braille);
-    if(text_pairs_id.Ink) Ink = SVG.get("#" + text_pairs_id.Ink);
-
-    if(Braille) legend_str += Braille.attr('brailleOriginText') + ",";//点字要素が入手できた場合
-    if(Ink)legend_str += Ink.text();
-
-    if(Braille){
-      if($('#graduation_frame').prop('checked')){
-        let mainFrame = SVG.get('mainFrame');
-        for(let i=-F_WIDTH/2; i < F_WIDTH/2; i += F_WIDTH/4){
-          if(i <= Braille.x() && Braille.x() < i + F_WIDTH/4) legend_str += ' 目盛り：横は' + String((i + F_WIDTH/2)/(F_WIDTH/4) + 1) + " ";
-        }
-        for(let i=-F_HEIGHT/2; i < F_HEIGHT/2; i += F_HEIGHT/3){
-          if(i <= Braille.y() && Braille.y() < i + F_HEIGHT/3) legend_str += ' 縦は' + String((i + F_HEIGHT/2)/(F_HEIGHT/3) + 1) + " ";
-        }
+  for(let i=0; i < brarray.length; i++){
+    let selector = ".braille[brailleorigintext='" + brarray[i] + "']";
+    draw.select(selector).each(function(j,children){
+      let target_braille = this;
+      if(j === 0){
+        legend_str += this.attr('brailleorigintext') + ","; //点字要素が入手できた場合
+        legend_str += this.attr('ink_text');
       }
-      legend_str += '\r\n';
-    }
+      if($('#graduation_frame').prop('checked')){
+        let scaling = scaling_serch(this);
+        legend_str += ',' + scaling.side;
+        legend_str += ',' + scaling.length;
+      }
+    });
+    legend_str += '\r\n';
   }
+  if(draw.select('.stair').first())legend_str += 'stair';
+  draw.select('.stair').each(function(i,children){
+    let scaling = scaling_serch(this);
+    legend_str += ',' + scaling.side;
+    legend_str += ',' + scaling.length;
+  })
+  if(draw.select('.stair').first())legend_str += '\r\n';
+
+  if(draw.select('.escalator').first())legend_str += 'escalator';
+  draw.select('.escalator').each(function(i,children){
+    let scaling = scaling_serch(this);
+    legend_str += ',' + scaling.side;
+    legend_str += ',' + scaling.length;
+  })
+  if(draw.select('.escalator').first())legend_str += '\r\n';
+
+  if(draw.select('.arrow').first())legend_str += 'arrow';
+  draw.select('.arrow').each(function(i,children){
+    let scaling = scaling_serch(this);
+    legend_str += ',' + scaling.side;
+    legend_str += ',' + scaling.length;
+  })
+  if(draw.select('.arrow').first())legend_str += '\r\n';
+
   let blob = new Blob([ legend_str ], { 'type' : 'text/plain' });
   if (window.navigator.msSaveBlob) {
     window.navigator.msSaveOrOpenBlob(blob, '凡例.csv');
   } else {
     document.getElementById('legend_download').href = window.URL.createObjectURL(blob);
   }
+}
+
+function scaling_serch(target_element){
+  let side_num , length_num;
+  let side_max , side_min , length_max , length_min;
+  if($('input[name="direction_guide"]:checked' ).val()==='horizontal_guide'){
+    side_num = 4 , length_num = 3;
+  }else{
+    side_num = 3 , length_num = 4;
+  }
+  draw.select('.graduation_side').each(function(i,children){
+    if(i===0){
+      side_max = this.x();
+      side_min = this.x();
+    }else{
+      if(side_max < this.x()) side_max = this.x();
+      if(side_min > this.x()) side_min = this.x();
+    }
+  })
+  draw.select('.graduation_length').each(function(i,children){
+    if(i===0){
+      length_max = this.y();
+      length_min = this.y();
+    }else{
+      if(length_max < this.y()) length_max = this.y();
+      if(length_min > this.y()) length_min = this.y();
+    }
+  })
+  let side_interval = (side_max - side_min)/side_num;
+  let length_interval = (length_max - length_min)/length_num;
+  let Braille_x = get_bbox(target_element).min_x;
+  let Braille_y = get_bbox(target_element).min_y;
+  let scaling = new Object();
+  for(let i=side_min; i < side_max; i += side_interval){
+    for(let j=length_min; j < length_max; j += length_interval){
+      if(i <= Braille_x && Braille_x < i + side_interval){
+        if(j <= Braille_y && Braille_y < j + length_interval){
+          scaling.side = String((i - side_min)/side_interval + 1);
+          scaling.length = String((j - length_min)/(length_interval) + 1);
+        }
+      }
+    }
+  }
+  return scaling;
 }

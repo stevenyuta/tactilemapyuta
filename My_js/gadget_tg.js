@@ -288,17 +288,15 @@ function checkbox_set(){
     if(radioval === 'horizontal_guide'){
       draw.select('.A4').transform({rotation:0});
       draw.select('.B4').transform({rotation:0});
-      SVG.get('graduationFrame_group').transform({rotation:0});
     }else{
       draw.select('.A4').transform({rotation:90});
       draw.select('.B4').transform({rotation:90});
-      SVG.get('graduationFrame_group').transform({rotation:90});
     }
+    rotate_graduationFrame();
   })
   $('input[name=direction_guide]').val(['horizontal_guide'])
   draw.select('.A4').transform({rotation:0});
   draw.select('.B4').transform({rotation:0});
-  SVG.get('graduationFrame_group').transform({rotation:0});
 }
 
 function checkBox_change(){

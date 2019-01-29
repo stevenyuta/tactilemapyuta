@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <title>触地図用凡例出力サイト</title>
+  </head>
+  <body>
+    <!-- jquery関連のjsファイル -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-csv/0.8.9/jquery.csv.min.js" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="./css/My_css.css" type="text/css"/>
+
+    <div id ="maincontents">
+      <h1>触地図の説明文を出力できるサイト</h1>
+      <input type="file" id="select" style="display:none;">
+      <div><label>触地図のタイトル：<input type="text" id="TactileMap_Name" placeholder="例：新潟駅構内図2階"></label></div>
+      <input type="button" value="凡例CSVファイルを選択" onClick="$('#select').click();" style="margin:10px 0px;">
+      <div id="result"></div>
+      <span style="margin:0px 10px;">
+        <input type="checkbox" id="scale_frame" name="scaleFrameName">
+        <label for="scale_frame">目盛り線</label>
+      </span>
+
+      <table id="table_braille" style="margin:10px 0px;" border="1">
+        <tr>
+          <th rowspan="2">点字</th>
+          <th rowspan="2">説明</th>
+          <th colspan="4" scope="colgroup">目盛情報</th>
+          <th rowspan="2">欄の削除</th>
+        </tr>
+        <tr>
+          <th scope="col">横</th>
+          <th scope="col">縦</th>
+          <th scope="col">追加</th>
+          <th scope="col">削除</th>
+        </tr>
+
+        <tr align="center"  class="tr_braille main_tr_braille" tr_group="0">
+          <td><input type="text" class="abbreviation" placeholder="例：と"></td>
+          <td><input type="text" class="description" placeholder="例：トイレ"></td>
+          <td><input type="text" id="" class="side_TextBox scale_info" maxlength="1"></td>
+          <td><input type="text" id="" class="length_TextBox scale_info" maxlength="1"></td>
+          <td><input type="button" id="" class="AddScaleButton scale_info" value="追加"></td>
+          <td><input type="button" id="" class="RemoveScaleButton scale_info" value="削除"></td>
+          <td><input type="button" id="" class="RemoveTrBrailleButton" value="欄の削除"></td>
+        </tr>
+        <tr align="center" class="tr_braille main_tr_braille" tr_group="1">
+          <td><input type="text" id="" class="abbreviation" placeholder="例：と"></td>
+          <td><input type="text" id="" class="description" placeholder="例：トイレ"></td>
+          <td><input type="text" id="" class="side_TextBox scale_info" maxlength="1"></td>
+          <td><input type="text" id="" class="length_TextBox scale_info" maxlength="1"></td>
+          <td><input type="button" id="" class="AddScaleButton scale_info" value="追加"></td>
+          <td><input type="button" id="" class="RemoveScaleButton scale_info" value="削除"></td>
+          <td><input type="button" id="" class="RemoveTrBrailleButton" value="欄の削除"></td>
+        </tr>
+        <tr align="center" class="tr_braille main_tr_braille" tr_group="2">
+          <td><input type="text" id="" class="abbreviation" placeholder="例：と"></td>
+          <td><input type="text" id="" class="description" placeholder="例：トイレ"></td>
+          <td><input type="text" id="" class="side_TextBox scale_info" maxlength="1"></td>
+          <td><input type="text" id="" class="length_TextBox scale_info" maxlength="1"></td>
+          <td><input type="button" id="" class="AddScaleButton scale_info" value="追加"></td>
+          <td><input type="button" id="" class="RemoveScaleButton scale_info" value="削除"></td>
+          <td><input type="button" id="" class="RemoveTrBrailleButton" value="欄の削除"></td>
+        </tr>
+      </table>
+
+      <input type="button" id ="add_trbraille_button" value="欄の追加" style="margin:10px 0px;">
+
+      <table id="table_symbol" style="margin:10px 0px;" border="1">
+        <tr>
+          <th rowspan="2">触知記号</th>
+          <th rowspan="2">説明</th>
+          <th colspan="4" scope="colgroup">目盛情報</th>
+        </tr>
+        <tr>
+          <th scope="col" class="scale_info">横</th>
+          <th scope="col" class="scale_info">縦</th>
+          <th scope="col">追加</th>
+          <th scope="col">削除</th>
+        </tr>
+
+        <tr class="tr_symbol main_tr_symbol" tr_group="stair">
+          <td><input type="checkbox" id="checkbox_stair" name="tactile_symbol"><label for="checkbox_stair">階段</label></td>
+          <td><input type="text" class="description" value="とがったほうが上の階" placeholder="説明文が入力できます。"></td>
+          <td><input type="text" id="" class="side_TextBox scale_info" maxlength="1"></td>
+          <td><input type="text" id="" class="length_TextBox scale_info" maxlength="1"></td>
+          <td><input type="button" id="" class="AddScaleButton scale_info" value="追加"></td>
+          <td><input type="button" id="" class="RemoveScaleButton scale_info" value="削除"></td>
+        </tr>
+        <tr class="tr_symbol main_tr_symbol" tr_group="escalator">
+          <td><input type="checkbox" id="checkbox_escalator" name="tactile_symbol"><label for="checkbox_escalator">エスカレータ</label></td>
+          <td><input type="text" class="description" value="とがったほうが上の階" placeholder="説明文が入力できます。"></td>
+          <td><input type="text" id="" class="side_TextBox scale_info" maxlength="1"></td>
+          <td><input type="text" id="" class="length_TextBox scale_info" maxlength="1"></td>
+          <td><input type="button" id="" class="AddScaleButton scale_info" value="追加"></td>
+          <td><input type="button" id="" class="RemoveScaleButton scale_info" value="削除"></td>
+        </tr>
+        <tr class="tr_symbol main_tr_symbol" tr_group="arrow">
+          <td><input type="checkbox" id="checkbox_arrow" name="tactile_symbol"><label for="checkbox_arrow">矢印</label></td>
+          <td><input type="text" id="" class="description"  placeholder="説明文が入力できます。"></td>
+          <td><input type="text" id="" class="side_TextBox scale_info" maxlength="1"></td>
+          <td><input type="text" id="" class="length_TextBox scale_info" maxlength="1"></td>
+          <td><input type="button" id="" class="AddScaleButton scale_info" value="追加"></td>
+          <td><input type="button" id="" class="RemoveScaleButton scale_info" value="削除"></td>
+        </tr>
+        <tr class="tr_symbol main_tr_symbol" tr_group="tiketgate">
+          <td><input type="checkbox" id="checkbox_tiketgate" name="tactile_symbol"><label for="checkbox_tiketgate">改札</label></td>
+          <td><input type="text" id="" class="description" value="改札の記号" placeholder="説明文が入力できます。"></td>
+          <td><input type="text" id="" class="side_TextBox scale_info" maxlength="1"></td>
+          <td><input type="text" id="" class="length_TextBox scale_info" maxlength="1"></td>
+          <td><input type="button" id="" class="AddScaleButton scale_info" value="追加"></td>
+          <td><input type="button" id="" class="RemoveScaleButton scale_info" value="削除"></td>
+        </tr>
+        <tr class="tr_symbol main_tr_symbol" tr_group="scale">
+          <td><input type="checkbox" id="checkbox_scale" name="tactile_symbol"><label for="checkbox_scale">縮尺</label></td>
+          <td><input type="text" id="" class="description" value="地図の縮尺" placeholder="説明文が入力できます。"></td>
+          <td><input type="text" id="" class="side_TextBox scale_info" maxlength="1"></td>
+          <td><input type="text" id="" class="length_TextBox scale_info" maxlength="1"></td>
+          <td><input type="button" id="" class="AddScaleButton scale_info" value="追加"></td>
+          <td><input type="button" id="" class="RemoveScaleButton scale_info" value="削除"></td>
+        </tr>
+      </table>
+
+
+      <p >説明文の出力</p>
+      <a id="download_paperHTML" href="#" download="説明文.html" onclick="output_DescriptPaper()">印刷して読む人用</a>
+    </div>
+
+    <script>
+      $(window).on('load',function () { //window読み込み後
+        brasym_eventSet();
+        $('#add_trbraille_button').click(add_trbraille);
+        $('.scale_info').prop("disabled", true);
+
+        $('#scale_frame').off('change').change( function() {
+          $('#scale_frame').prop('checked') ? $('.scale_info').prop("disabled", false) : $('.scale_info').prop("disabled", true);
+        })
+
+
+        //File API でcsvの読み込み
+        // File APIに対応しているか確認
+        if(window.File) {
+          let result = document.getElementById('result');
+          let select = document.getElementById('select');
+          // ファイルが選択されたとき
+          select.addEventListener('change', function(e) {
+            // 選択されたファイルの情報を取得
+            let fileData = e.target.files[0];
+            let reader = new FileReader();
+            // ファイル読み取りに失敗したとき
+            reader.onerror = function() {
+              alert('ファイル読み取りに失敗しました')
+            }
+            // ファイル読み取りに成功したとき
+            reader.onload = function() {
+              // 行単位で配列にする
+              let lineArr = reader.result.split("\n");
+              // 行と列の二次元配列にする
+              let itemArr = [];
+              for (let i = 0; i < lineArr.length; i++){
+                itemArr[i] = lineArr[i].split(",");
+              }
+              let count = 0;
+              let main_tr_braille_array = $('#table_braille').find(".main_tr_braille");
+              while(count < itemArr.length){
+                switch(itemArr[count][0]) {
+                  case 'symbol':
+                    let symbol_type = itemArr[count][1];
+                    if(symbol_type==='stair')$('#checkbox_stair').prop('checked', true);
+                    if(symbol_type==='escalator')$('#checkbox_escalator').prop('checked', true);
+                    if(symbol_type==='arrow')$('#checkbox_arrow').prop('checked', true);
+                    if(symbol_type==='tiketgate')$('#checkbox_tiketgate').prop('checked', true);
+                    if(symbol_type==='scale')$('#checkbox_scale').prop('checked', true);
+
+                    let main_tr_symbol = $(".main_tr_symbol[tr_group='" + symbol_type + "']");
+                    $(main_tr_symbol).find('.side_TextBox').val(itemArr[count][2]);
+                    $(main_tr_symbol).find('.length_TextBox').val(itemArr[count][3]);
+
+                    if(itemArr[count].length > 2) $('#scale_frame').prop('checked', true).trigger('change');
+
+                    if(itemArr[count].length > 4){
+                      let num = 0;
+                      let selector = ":not(.main_tr_symbol)" +  "[tr_group='"+ symbol_type +"']";
+                      for(let i=4;i<itemArr[count].length; i+=2){
+                        if($('#table_symbol').find(selector)[num]===undefined) $(main_tr_symbol).find(".AddScaleButton").click();
+                        $($('#table_symbol').find(selector)[num]).find('.side_TextBox').val(itemArr[count][i]);
+                        $($('#table_symbol').find(selector)[num]).find('.length_TextBox').val(itemArr[count][i+1]);
+                        num++;
+                      }
+                    }
+                    break;
+                  default:
+                    let main_tr_braille = main_tr_braille_array[count];
+                    if(!main_tr_braille){
+                      add_trbraille();
+                      main_tr_braille = $('#table_braille').find(".main_tr_braille").last();
+                    }
+                    $(main_tr_braille).find('.abbreviation').val(itemArr[count][0]);
+                    $(main_tr_braille).find('.description').val(itemArr[count][1]);
+                    $(main_tr_braille).find('.side_TextBox').val(itemArr[count][2]);
+                    $(main_tr_braille).find('.length_TextBox').val(itemArr[count][3]);
+                    if(itemArr[count].length > 2) $('#scale_frame').prop('checked', true).trigger('change');
+
+                    if(itemArr[count].length > 4){
+                      let tr_group = $(main_tr_braille).attr('tr_group');
+                      let num = 0;
+                      let selector = ":not(.main_tr_braille)" +  "[tr_group='"+ tr_group +"']";
+                      for(let i=4;i<itemArr[count].length; i+=2){
+                        if($('#table_braille').find(selector)[num]===undefined) $(main_tr_braille).find(".AddScaleButton").click();
+                        $($('#table_braille').find(selector)[num]).find('.side_TextBox').val(itemArr[count][i]);
+                        $($('#table_braille').find(selector)[num]).find('.length_TextBox').val(itemArr[count][i+1]);
+                        num++;
+                      }
+                    }
+                    break;
+                }
+                count++;
+              }
+            }
+            // ファイル読み取りを実行
+            reader.readAsText(fileData);
+          }, false);
+        }
+      }) //window.onload終了
+
+      function output_DescriptPaper(){
+        let str = '';
+        str += '<!DOCTYPE html><html lang="ja"><head><title>';
+        ($('#TactileMap_Name').val()) ? str += $('#TactileMap_Name').val()+'の説明文' : str += '触地図説明文';
+        str += '</title>';
+        str += '<meta http-equiv="Content-Type" content="text/htm; charset="UTF-8">';
+        str += '<meta http-equiv="Content-Script-Type" content="text/javascript">';
+        str += '<meta http-equiv="Content-Style-Type" content="text/css">';
+
+        str +='<body>';
+        str += '<table border="1" cellspacing="0" cellpadding="5" bordercolor="#333333">';
+        str += '<tr><th rowspan="2">点字</th><th rowspan="2">読み方</th><th rowspan="2">説明</th><th colspan="2" scope="colgroup">目盛情報</th>';
+        str += '<tr><th scope="col">横</th><th scope="col">縦</th></tr>';
+
+        $('.main_tr_braille').each(function(index){
+          let main_tr_braille = $(this);
+          let abbre = $(this).find('.abbreviation').val();
+          let descri = $(this).find('.description').val();
+          let tr_group =  $(this).attr('tr_group');
+          let rowspan = $(this).find('.description').parent().attr('rowspan');
+          if(!rowspan) rowspan = 1;
+          if(abbre ||  descri){
+            str += '<tr><td rowspan="'+ rowspan +'">' + abbre +'</td><td rowspan="'+ rowspan +'">' + abbre +'</td><td rowspan="'+ rowspan +'">'+ descri + '</td>';
+            $(this).find('.side_TextBox').val() ? str += '<td>'+ $(this).find('.side_TextBox').val()+'</td>' : str += '<td>なし</td>'
+            $(this).find('.length_TextBox').val() ? str += '<td>'+ $(this).find('.length_TextBox').val()+'</td>' : str += '<td>なし</td>'
+          }
+          selector = ":not(.main_tr_braille).tr_braille[tr_group='" + tr_group + "']"
+          $(this).parent().find(selector).each(function(index){
+            let add_side = $(this).find('.side_TextBox').val();
+            let add_length = $(this).find('.length_TextBox').val();
+            str += '<tr><td>'+ add_side +'</td>';
+            str += '<td>'+ add_length +'</td></tr>';
+          })
+
+        });
+        if($('#checkbox_stair').prop('checked')){
+          let tr_main_stair = $('.main_tr_symbol[tr_group="stair"]');
+          let rowspan = tr_main_stair.find('.description').parent().attr('rowspan');
+          if(!rowspan) rowspan = 1;
+          let descri = tr_main_stair.find('.description').val();
+          str += '<tr><td rowspan="'+ rowspan +'">'+'<svg xmlns="http://www.w3.org/2000/svg" width="60" height="50" viewBox="0 0 60 50">'
+          str += '<path stroke-width="5" stroke="#000" fill="#fff" d="M 5 5 L 55 25 L 5 45"></path></svg>';
+          str += '</td><td rowspan="'+ rowspan +'">'+'階段</td><td rowspan="'+ rowspan +'">' + descri + '</td>';
+          let side = tr_main_stair.find('.side_TextBox').val();
+          let length = tr_main_stair.find('.length_TextBox').val();
+          str += '<td>'+ side +'</td>' + '<td>'+ length +'</td>';
+          str += '</tr>';
+
+          selector = ":not(.main_tr_symbol).tr_symbol[tr_group='stair']";
+          tr_main_stair.parent().find(selector).each(function(index){
+            let add_side = $(this).find('.side_TextBox').val();
+            let add_length = $(this).find('.length_TextBox').val();
+            str += '<tr><td>'+ add_side +'</td>';
+            str += '<td>'+ add_length +'</td></tr>';
+          })
+        }
+        if($('#checkbox_escalator').prop('checked')){
+          let tr_main_escalator = $('.main_tr_symbol[tr_group="escalator"]');
+          let rowspan = tr_main_escalator.find('.description').parent().attr('rowspan');
+          if(!rowspan) rowspan = 1;
+          let descri = tr_main_escalator.find('.description').val();
+          str += '<tr><td rowspan="'+ rowspan +'">'+'<svg xmlns="http://www.w3.org/2000/svg" width="60" height="50" viewBox="0 0 60 50">'
+          str += '<path stroke-width="5" stroke="#000" fill="#fff" d="M 5 5 L 55 25 L 5 45 Z"></path></svg>';
+          str += '</td><td rowspan="'+ rowspan +'">'+'エスカレータ</td><td rowspan="'+ rowspan +'">' + descri + '</td>';
+          let side = tr_main_escalator.find('.side_TextBox').val();
+          let length = tr_main_escalator.find('.length_TextBox').val();
+          str += '<td>'+ side +'</td>' + '<td>'+ length +'</td>';
+          str += '</tr>';
+
+          selector = ":not(.main_tr_symbol).tr_symbol[tr_group='escalator']";
+          tr_main_escalator.parent().find(selector).each(function(index){
+            let add_side = $(this).find('.side_TextBox').val();
+            let add_length = $(this).find('.length_TextBox').val();
+            str += '<tr><td>'+ add_side +'</td>';
+            str += '<td>'+ add_length +'</td></tr>';
+          })
+        }
+        if($('#checkbox_arrow').prop('checked')){
+          let tr_main_arrow = $('.main_tr_symbol[tr_group="arrow"]');
+          let rowspan = tr_main_arrow.find('.description').parent().attr('rowspan');
+          if(!rowspan) rowspan = 1;
+          let descri = tr_main_arrow.find('.description').val();
+          str += '<tr><td rowspan="'+ rowspan +'">'+'<svg xmlns="http://www.w3.org/2000/svg" width="60" height="50" viewBox="0 0 60 50">'
+          str += '<path stroke-width="5" stroke="#000" fill="#fff" stroke-linejoin="round" d="M 5 25 L 55 25 L 30 5 L 55 25 L 30 45"></path></svg>';
+          str += '</td><td rowspan="'+ rowspan +'">'+'矢印</td><td rowspan="'+ rowspan +'">' + descri + '</td>';
+          let side = tr_main_arrow.find('.side_TextBox').val();
+          let length = tr_main_arrow.find('.length_TextBox').val();
+          str += '<td>'+ side +'</td>' + '<td>'+ length +'</td>';
+          str += '</tr>';
+
+          selector = ":not(.main_tr_symbol).tr_symbol[tr_group='arrow']";
+          tr_main_arrow.parent().find(selector).each(function(index){
+            let add_side = $(this).find('.side_TextBox').val();
+            let add_length = $(this).find('.length_TextBox').val();
+            str += '<tr><td>'+ add_side +'</td>';
+            str += '<td>'+ add_length +'</td></tr>';
+          })
+        }
+        if($('#checkbox_tiketgate').prop('checked')){
+          let tr_main_tiketgate = $('.main_tr_symbol[tr_group="tiketgate"]');
+          let rowspan = tr_main_tiketgate.find('.description').parent().attr('rowspan');
+          if(!rowspan) rowspan = 1;
+          let descri = tr_main_tiketgate.find('.description').val();
+          str += '<tr><td rowspan="'+ rowspan +'">'+'<svg xmlns="http://www.w3.org/2000/svg" width="100" height="40" viewBox="0 0 100 40">'
+          str += '<path stroke-width="5" stroke="#000" fill="#fff" d="M 0 20 L 25 20"></path>';
+          str += '<path stroke-width="5" stroke="#000" fill="#fff" d="M 25 0 L 25 40"></path>';
+          str += '<path stroke-width="5" stroke="#000" fill="#fff" d="M 50 0 L 50 40"></path>';
+          str += '<path stroke-width="5" stroke="#000" fill="#fff" d="M 75 0 L 75 40"></path>';
+          str += '<path stroke-width="5" stroke="#000" fill="#fff" d="M 75 20 L 100 20"></path></svg>';
+          str += '</td><td rowspan="'+ rowspan +'">'+'改札</td><td rowspan="'+ rowspan +'">' + descri + '</td>';
+          let side = tr_main_tiketgate.find('.side_TextBox').val();
+          let length = tr_main_tiketgate.find('.length_TextBox').val();
+          str += '<td>'+ side +'</td>' + '<td>'+ length +'</td>';
+          str += '</tr>';
+
+          selector = ":not(.main_tr_symbol).tr_symbol[tr_group='tiketgate']";
+          tr_main_tiketgate.parent().find(selector).each(function(index){
+            let add_side = $(this).find('.side_TextBox').val();
+            let add_length = $(this).find('.length_TextBox').val();
+            str += '<tr><td>'+ add_side +'</td>';
+            str += '<td>'+ add_length +'</td></tr>';
+          })
+        }
+        if($('#checkbox_scale').prop('checked')){
+          let tr_main_scale = $('.main_tr_symbol[tr_group="scale"]');
+          let rowspan = tr_main_scale.find('.description').parent().attr('rowspan');
+          if(!rowspan) rowspan = 1;
+          let descri = tr_main_scale.find('.description').val();
+          str += '<tr><td rowspan="'+ rowspan +'">'+'<svg xmlns="http://www.w3.org/2000/svg" width="100" height="40" viewBox="0 0 100 40">'
+          str += '<path stroke-width="5" stroke="#000" fill="#fff" d="M 10 0 L 10 40"></path>';
+          str += '<path stroke-width="5" stroke="#000" fill="#fff" d="M 10 20 L 90 20"></path>';
+          str += '<path stroke-width="5" stroke="#000" fill="#fff" d="M 90 0 L 90 40"></path></svg>';
+          str += '</td><td rowspan="'+ rowspan +'">'+'縮尺</td><td rowspan="'+ rowspan +'">' + descri + '</td>';
+          let side = tr_main_scale.find('.side_TextBox').val();
+          let length = tr_main_scale.find('.length_TextBox').val();
+          str += '<td>'+ side +'</td>' + '<td>'+ length +'</td>';
+          str += '</tr>';
+
+          selector = ":not(.main_tr_symbol).tr_symbol[tr_group='scale']";
+          tr_main_scale.parent().find(selector).each(function(index){
+            let add_side = $(this).find('.side_TextBox').val();
+            let add_length = $(this).find('.length_TextBox').val();
+            str += '<tr><td>'+ add_side +'</td>';
+            str += '<td>'+ add_length +'</td></tr>';
+          })
+        }
+        str += '</table>';
+        str+='</body></html>';
+        let blob = new Blob([ str ], { 'type' : 'text/plain' });
+        if (window.navigator.msSaveBlob) {
+          window.navigator.msSaveOrOpenBlob(blob, '説明文.html');
+        } else {
+          document.getElementById('download_paperHTML').href = window.URL.createObjectURL(blob);
+        }
+
+        var hoge = localStorage["mouri"];
+  console.log(hoge)
+      }
+
+
+      function add_trbraille(){ //凡例を追加する関数
+        let max_tr_group = 0;
+        $('#table_braille').find(".tr_braille").each(function(index){
+          let tr_group = $(this).attr('tr_group');
+          if(max_tr_group < tr_group) max_tr_group = tr_group;
+        })
+        let tr = $(document.createElement('tr')).addClass('tr_braille').addClass('main_tr_braille');
+        tr.attr({'tr_group':Number(max_tr_group)+1});
+        tr.append('<td><input type="text" id="" class="abbreviation" placeholder="例：と"></td>');
+        tr.append('<td><input type="text" id="" class="description" placeholder="例：トイレ"></td>');
+        tr.append('<td><input type="text" id="" class="side_TextBox" maxlength="1"></td>');
+        tr.append('<td><input type="text" id="" class="length_TextBox" maxlength="1"></td>');
+        tr.append('<td><input type="button" id="" class="AddScaleButton" value="追加"></td>');
+        tr.append('<td><input type="button" id="" class="RemoveScaleButton" value="削除"></td>');
+        tr.append('<td><input type="button" id="" class="RemoveTrBrailleButton" value="欄の削除"></td>');
+        $('#table_braille').find(".tr_braille").last().after(tr);
+        brasym_eventSet();
+      }
+
+      function brasym_eventSet(){
+        $(".tr_braille , .tr_symbol").each(function(index){
+          let target_tr = $(this);
+          let button_add = target_tr.find(".AddScaleButton");
+          let button_remove = target_tr.find(".RemoveScaleButton");
+          let RemoveTrBrailleButton = target_tr.find(".RemoveTrBrailleButton");
+          let tr_group = target_tr.attr('tr_group');
+          button_add.off('click').on('click' ,function(){
+            let tr = $(document.createElement('tr')).attr({'tr_group':tr_group});
+            (target_tr.hasClass('tr_braille')) ? tr.addClass('tr_braille') : tr.addClass('tr_symbol');
+            let side_td = $(document.createElement('td'));
+            let length_td = $(document.createElement('td'));
+            let side_input = $(document.createElement('input'));
+            side_input.attr({
+              "type" : "text",
+              "class" : "side_TextBox",
+              "maxlength" : "1"
+            });
+            let length_input = $(document.createElement('input'));
+            length_input.attr({
+              "type" : "text",
+              "class" : "length_TextBox",
+              "maxlength" : "1"
+            });
+            side_td.append(side_input)
+            length_td.append(length_input);
+            tr.append(side_td).append(length_td);
+            $("[tr_group='"+ tr_group +"']").last().after(tr);
+
+            target_tr.find("input").each(function(index){
+              if(!$(this).hasClass('side_TextBox') && !$(this).hasClass('length_TextBox')){
+                let current_rowspan = Number($(this).parent().attr("rowspan"));
+                if(!current_rowspan) current_rowspan = 1;
+                $(this).parent().attr({"rowspan":++current_rowspan})
+              }
+            })
+          })
+          button_remove.off('click').on('click' , function(){
+            let tr_group = target_tr.attr('tr_group');
+            let selector ="";
+            (target_tr.hasClass('tr_braille')) ? selector = ".tr_braille[tr_group='" + tr_group + "']" : selector = ".tr_symbol[tr_group='" + tr_group + "']";
+            let remove_element = undefined;
+
+            target_tr.parent().find(selector).each(function(index){
+              if($(this).find("input[type='button']").length===0)  remove_element = $(this);
+            })
+            if(remove_element){
+              target_tr.parent().find(selector).find('td').each(function(index){
+
+                let rowspan = $(this).attr('rowspan')
+                if(rowspan)$(this).attr({'rowspan':Number(rowspan)-1})
+              })
+              remove_element.remove();
+            }
+          })
+          RemoveTrBrailleButton.off('click').on('click' , function(){
+            let selector = ".tr_braille[tr_group='" + tr_group + "']";
+            target_tr.parent().find(selector).remove();
+          })
+        });
+      }
+
+    </script>
+  </body>
+</html>

@@ -313,23 +313,26 @@ right toolbar
 
 
 /*
-触知記号スタンプ
+触知記号
 */
-#stamp_table{
-  margin: 30px 0px 0px 30px;
+.stamp_table{
+	font-size: 90%;
+	margin: 30px 0px 0px 0px;
   border-collapse: separate;
-  border-spacing: 0px 15px;
+  border-spacing: 15px 10px;
 }
 
-#stamp_table input[type="radio"] + label{
+.stamp_table input[type="radio"] + label{
   padding: 5px 15px; 	/* ボックス内左側の余白を指定する */
   border: 2px solid #003300;/* ボックスの境界線を実線で指定する */
 }
 
-#stamp_table input[type="radio"]:checked + label {
+.stamp_table input[type="radio"]:checked + label {
 	background: #009933;/* マウス選択時の背景色を指定する */
 	color: #ffffff; 	/* マウス選択時のフォント色を指定する */
 }
+
+
 
 /*
 レイヤ移動ボタン

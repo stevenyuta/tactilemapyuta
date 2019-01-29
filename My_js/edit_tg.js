@@ -78,7 +78,9 @@ function edit_mousedown_up(mode){
           draw.select(selector).each(function(i, children) {
             if(this.visible()){
               var InArea = true;  //範囲内に入っているかの判定
-              var bbox = get_bbox(this);
+              let that = this;
+              if(this.hasClass('marker'))that = this.parent().select('path').first();
+              var bbox = get_bbox(that);
               var pmin_x = bbox.min_x , pmax_x = bbox.max_x;
               var pmin_y = bbox.min_y , pmax_y = bbox.max_y;
 
@@ -87,9 +89,11 @@ function edit_mousedown_up(mode){
               if(pmax_x < sr_min_x || pmax_x > sr_max_x) InArea = false;
               if(pmax_y < sr_min_y || pmax_y > sr_max_y) InArea = false;
               if(InArea){
-                if(!this.hasClass('image')) this.attr({'stroke': PATH_SELECT_COLOR });
-                this.addClass('edit_select');
-                editselect_array.push(this.attr('id'));
+                if(!that.hasClass('image')) that.attr({'stroke': PATH_SELECT_COLOR });
+                if(that.hasClass('marker'))that.parent().select('path').attr({ 'stroke': PATH_SELECT_COLOR}).addClass('edit_select');
+                if(this.id()==='graduationFrame_group')this.select('path').attr({ 'stroke': PATH_SELECT_COLOR}).addClass('edit_select');;
+                if(this.id()!=='graduationFrame_group')that.addClass('edit_select');
+                editselect_array.push(that.attr('id'));
               }
             }
           })
@@ -134,15 +138,18 @@ function edit_hover(mode){
             'transform' : this.transform('matrix')
           }).addClass('image_FrameRect');
         }else{
-          this.attr({ stroke: PATH_SELECT_COLOR});
+          if(this.id()!=='graduationFrame_group')this.attr({ 'stroke': PATH_SELECT_COLOR});
+          if(this.hasClass('marker'))this.parent().select('path').attr({'stroke': PATH_SELECT_COLOR});
+          if(this.id()==='graduationFrame_group')this.select('path').attr({ 'stroke': PATH_SELECT_COLOR});
         }
         this.off('mousedown').mousedown(function(){
           draw.select('.image_FrameRect').each(function(i,children){
             this.remove();
           })
           if(!input_key_buffer[16]) edit_clear();
-          //this.attr({ stroke: PATH_SELECT_COLOR})
-          this.addClass('edit_select');
+          if(this.id()!=='graduationFrame_group')this.addClass('edit_select');
+          if(this.hasClass('marker'))this.parent().select('path').addClass('edit_select');
+          if(this.id()==='graduationFrame_group')this.select('path').addClass('edit_select');
           editselect_array.push(this.attr('id'));
           upload_handle();
           set_textsize();
@@ -174,7 +181,9 @@ function edit_hover(mode){
             'stroke-width': font_strokewidth
           });
         }else{
-          this.attr({'stroke': PATH_STROKE_COLOR});
+          if(this.id()!=='graduationFrame_group')this.attr({'stroke': PATH_STROKE_COLOR});
+          if(this.hasClass('marker'))this.parent().select('path').attr({ 'stroke': PATH_STROKE_COLOR});
+          if(this.id()==='graduationFrame_group')this.select('path').attr({ 'stroke': PATH_STROKE_COLOR});
         }
         this.off('mousedown');
         this.attr({'cursor':'default'});
@@ -199,7 +208,9 @@ function edit_clear(clear_flag){
     }else if(this.hasClass('braille')){  //text要素の場合
       this.attr({'stroke' : '#000000'});
     }else{
-      this.attr({'stroke': PATH_STROKE_COLOR});
+      if(this.id()!=='graduationFrame_group')this.attr({'stroke': PATH_STROKE_COLOR});
+      if(this.hasClass('marker'))this.parent().select('path').attr({ 'stroke': PATH_STROKE_COLOR});
+      if(this.id()==='graduationFrame_group')this.select('path').attr({ 'stroke': PATH_STROKE_COLOR});
     }
     this.removeClass('edit_select'); //edit_selectクラスを取り除く
     if(!clear_flag) editselect_array.length = 0;
@@ -227,8 +238,6 @@ function upload_handle(){
     $('#layer_select').show();
     $('#fill_change').hide();
     if(draw.select('.edit_select.connected , .edit_select.circle').first()) $('#fill_change').show();
-
-
 
     var point1 = new Array() , point2 = new Array();  //affin変換行列作成に使う行列
     for(var i=0;i<3;i++){
@@ -690,18 +699,20 @@ function update_editgroup(affin_mat,scale){
         'd': trans_matrix[1][1],'e': trans_matrix[0][2],'f': trans_matrix[1][2]
       })
     }else{//path要素の場合
-      var dpoint_array = this.clear().array().settle(); //pathのdpoint配列を取得
-      var new_dpoint = "";
-      for(var j=0;j<dpoint_array.length; j++){
-        if(dpoint_array[j][0]!=="Z"){  //属性がZ以外の場合
-          var pos1 = [ [ dpoint_array[j][1] ],[ dpoint_array[j][2] ],[1]]; //pathの座標を格納
-          var trans_matrix = math.multiply(affin_mat,pos1) //pathの座標をAffin変換
-          new_dpoint += dpoint_array[j][0]+" "+trans_matrix[0][0]+" "+trans_matrix[1][0]; //新しい座標として格納
-        }else{
-          new_dpoint += dpoint_array[j][0];
+      if(scale!=='rot' || !this.hasClass('graduationFrame')){
+        var dpoint_array = this.clear().array().settle(); //pathのdpoint配列を取得
+        var new_dpoint = "";
+        for(var j=0;j<dpoint_array.length; j++){
+          if(dpoint_array[j][0]!=="Z"){  //属性がZ以外の場合
+            var pos1 = [ [ dpoint_array[j][1] ],[ dpoint_array[j][2] ],[1]]; //pathの座標を格納
+            var trans_matrix = math.multiply(affin_mat,pos1) //pathの座標をAffin変換
+            new_dpoint += dpoint_array[j][0]+" "+trans_matrix[0][0]+" "+trans_matrix[1][0]; //新しい座標として格納
+          }else{
+            new_dpoint += dpoint_array[j][0];
+          }
         }
+        this.attr({'d':new_dpoint});
       }
-      this.attr({'d':new_dpoint});
     }
   })
   let pos_gXY = [ [ change_gX ],[ change_gY ],[1]]; //座標(gX , gY)
@@ -833,6 +844,12 @@ function get_bbox(tg_element){
     pmax_x = Number(tg_element.attr('x')) + Number(tg_element.bbox().width);
     pmin_y = Number(tg_element.attr('y'));
     pmax_y = Number(tg_element.attr('y')) + Number(tg_element.bbox().height);
+  }else if(tg_element.id()==='graduationFrame_group'){
+    let mainFrame = SVG.get('mainFrame');
+    pmin_x = Number(mainFrame.x());
+    pmax_x = Number(mainFrame.x()) + Number(mainFrame.width());
+    pmin_y = Number(mainFrame.y());
+    pmax_y = Number(mainFrame.y()) + Number(mainFrame.height());
 
   }else{
     pmin_x = Number(tg_element.attr('x'));
