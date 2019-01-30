@@ -33,9 +33,20 @@ function set_key_down_up(){
         case 39: // → key
         case 40: // ↓ key
           e.preventDefault();
-          if(current_mode === 'Edit'){
+          if(current_mode === 'Edit' || current_mode === "EditImage"){
             draw.select('.edit_select').each(function(i, children){
-              if(this.hasClass('ink') || this.hasClass('braille') || this.hasClass('image')){  //text、image要素の場合
+              if(this.hasClass('image')){
+                let matrix = this.transform('matrix');
+                let new_matrix_e = Number(matrix.e) , new_matrix_f = Number(matrix.f);
+                if(e.keyCode===37)new_matrix_e = new_matrix_e-CURSOR_KEY_MOVE;
+                if(e.keyCode===38)new_matrix_f = new_matrix_f-CURSOR_KEY_MOVE;
+                if(e.keyCode===39)new_matrix_e = new_matrix_e+CURSOR_KEY_MOVE;
+                if(e.keyCode===40)new_matrix_f = new_matrix_f+CURSOR_KEY_MOVE;
+                this.transform({
+                  'a': matrix.a,'b': matrix.b,'c': matrix.c,
+                  'd': matrix.d,'e': new_matrix_e,'f': new_matrix_f
+                })
+              }else if(this.hasClass('ink') || this.hasClass('braille')){  //text、image要素の場合
                 var px = Number(this.attr('x')),py = Number(this.attr('y')); //テキストの座標位置
                 if(e.keyCode===37)this.attr('x',px-CURSOR_KEY_MOVE);
                 if(e.keyCode===38)this.attr('y',py-CURSOR_KEY_MOVE);
@@ -82,7 +93,7 @@ function set_key_down_up(){
                 if(e.keyCode===40) x1 = dpoint[0][1] , y1 = dpoint[0][2] + CURSOR_KEY_MOVE , x2 = dpoint[1][1] , y2 = dpoint[1][2] + CURSOR_KEY_MOVE;
                 this.attr({'d':''}).M({x: x1, y: y1}).L({x: x2, y: y2});
                 let nears = getSimultaneouslyEdit_element(this);
-                
+
                 if(nears.beforeRect) nears.beforeRect.attr({'x': x1 - nears.beforeRect.width()/2,'y':y1 - nears.beforeRect.height()/2});
                 if(nears.afterRect) nears.afterRect.attr({'x':x2 - nears.afterRect.width()/2,'y':y2 - nears.afterRect.height()/2});
                 if(nears.beforePath){
