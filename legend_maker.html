@@ -136,6 +136,8 @@
         $('#scale_frame').off('change').change( function() {
           $('#scale_frame').prop('checked') ? $('.scale_info').prop("disabled", false) : $('.scale_info').prop("disabled", true);
         })
+        let legend_data = localStorage['legend_data'];
+        if(legend_data!=='') display_legendDate(legend_data);
 
 
         //File API でcsvの読み込み
@@ -154,75 +156,79 @@
             }
             // ファイル読み取りに成功したとき
             reader.onload = function() {
-              // 行単位で配列にする
-              let lineArr = reader.result.split("\n");
-              // 行と列の二次元配列にする
-              let itemArr = [];
-              for (let i = 0; i < lineArr.length; i++){
-                itemArr[i] = lineArr[i].split(",");
-              }
-              let count = 0;
-              let main_tr_braille_array = $('#table_braille').find(".main_tr_braille");
-              while(count < itemArr.length){
-                switch(itemArr[count][0]) {
-                  case 'symbol':
-                    let symbol_type = itemArr[count][1];
-                    if(symbol_type==='stair')$('#checkbox_stair').prop('checked', true);
-                    if(symbol_type==='escalator')$('#checkbox_escalator').prop('checked', true);
-                    if(symbol_type==='arrow')$('#checkbox_arrow').prop('checked', true);
-                    if(symbol_type==='tiketgate')$('#checkbox_tiketgate').prop('checked', true);
-                    if(symbol_type==='scale')$('#checkbox_scale').prop('checked', true);
-
-                    let main_tr_symbol = $(".main_tr_symbol[tr_group='" + symbol_type + "']");
-                    $(main_tr_symbol).find('.side_TextBox').val(itemArr[count][2]);
-                    $(main_tr_symbol).find('.length_TextBox').val(itemArr[count][3]);
-
-                    if(itemArr[count].length > 2) $('#scale_frame').prop('checked', true).trigger('change');
-
-                    if(itemArr[count].length > 4){
-                      let num = 0;
-                      let selector = ":not(.main_tr_symbol)" +  "[tr_group='"+ symbol_type +"']";
-                      for(let i=4;i<itemArr[count].length; i+=2){
-                        if($('#table_symbol').find(selector)[num]===undefined) $(main_tr_symbol).find(".AddScaleButton").click();
-                        $($('#table_symbol').find(selector)[num]).find('.side_TextBox').val(itemArr[count][i]);
-                        $($('#table_symbol').find(selector)[num]).find('.length_TextBox').val(itemArr[count][i+1]);
-                        num++;
-                      }
-                    }
-                    break;
-                  default:
-                    let main_tr_braille = main_tr_braille_array[count];
-                    if(!main_tr_braille){
-                      add_trbraille();
-                      main_tr_braille = $('#table_braille').find(".main_tr_braille").last();
-                    }
-                    $(main_tr_braille).find('.abbreviation').val(itemArr[count][0]);
-                    $(main_tr_braille).find('.description').val(itemArr[count][1]);
-                    $(main_tr_braille).find('.side_TextBox').val(itemArr[count][2]);
-                    $(main_tr_braille).find('.length_TextBox').val(itemArr[count][3]);
-                    if(itemArr[count].length > 2) $('#scale_frame').prop('checked', true).trigger('change');
-
-                    if(itemArr[count].length > 4){
-                      let tr_group = $(main_tr_braille).attr('tr_group');
-                      let num = 0;
-                      let selector = ":not(.main_tr_braille)" +  "[tr_group='"+ tr_group +"']";
-                      for(let i=4;i<itemArr[count].length; i+=2){
-                        if($('#table_braille').find(selector)[num]===undefined) $(main_tr_braille).find(".AddScaleButton").click();
-                        $($('#table_braille').find(selector)[num]).find('.side_TextBox').val(itemArr[count][i]);
-                        $($('#table_braille').find(selector)[num]).find('.length_TextBox').val(itemArr[count][i+1]);
-                        num++;
-                      }
-                    }
-                    break;
-                }
-                count++;
-              }
+              display_legendDate(reader.result);
             }
             // ファイル読み取りを実行
             reader.readAsText(fileData);
           }, false);
         }
       }) //window.onload終了
+
+      function display_legendDate(legend_str){
+        // 行単位で配列にする
+        let lineArr = legend_str.split("\n");
+        // 行と列の二次元配列にする
+        let itemArr = [];
+        for (let i = 0; i < lineArr.length; i++){
+          itemArr[i] = lineArr[i].split(",");
+        }
+        let count = 0;
+        let main_tr_braille_array = $('#table_braille').find(".main_tr_braille");
+        while(count < itemArr.length){
+          switch(itemArr[count][0]) {
+            case 'symbol':
+              let symbol_type = itemArr[count][1];
+              if(symbol_type==='stair')$('#checkbox_stair').prop('checked', true);
+              if(symbol_type==='escalator')$('#checkbox_escalator').prop('checked', true);
+              if(symbol_type==='arrow')$('#checkbox_arrow').prop('checked', true);
+              if(symbol_type==='tiketgate')$('#checkbox_tiketgate').prop('checked', true);
+              if(symbol_type==='scale')$('#checkbox_scale').prop('checked', true);
+
+              let main_tr_symbol = $(".main_tr_symbol[tr_group='" + symbol_type + "']");
+              $(main_tr_symbol).find('.side_TextBox').val(itemArr[count][2]);
+              $(main_tr_symbol).find('.length_TextBox').val(itemArr[count][3]);
+
+              if(itemArr[count].length > 2) $('#scale_frame').prop('checked', true).trigger('change');
+
+              if(itemArr[count].length > 4){
+                let num = 0;
+                let selector = ":not(.main_tr_symbol)" +  "[tr_group='"+ symbol_type +"']";
+                for(let i=4;i<itemArr[count].length; i+=2){
+                  if($('#table_symbol').find(selector)[num]===undefined) $(main_tr_symbol).find(".AddScaleButton").click();
+                  $($('#table_symbol').find(selector)[num]).find('.side_TextBox').val(itemArr[count][i]);
+                  $($('#table_symbol').find(selector)[num]).find('.length_TextBox').val(itemArr[count][i+1]);
+                  num++;
+                }
+              }
+              break;
+            default:
+              let main_tr_braille = main_tr_braille_array[count];
+              if(!main_tr_braille){
+                add_trbraille();
+                main_tr_braille = $('#table_braille').find(".main_tr_braille").last();
+              }
+              $(main_tr_braille).find('.abbreviation').val(itemArr[count][0]);
+              $(main_tr_braille).find('.description').val(itemArr[count][1]);
+              $(main_tr_braille).find('.side_TextBox').val(itemArr[count][2]);
+              $(main_tr_braille).find('.length_TextBox').val(itemArr[count][3]);
+              if(itemArr[count].length > 2) $('#scale_frame').prop('checked', true).trigger('change');
+
+              if(itemArr[count].length > 4){
+                let tr_group = $(main_tr_braille).attr('tr_group');
+                let num = 0;
+                let selector = ":not(.main_tr_braille)" +  "[tr_group='"+ tr_group +"']";
+                for(let i=4;i<itemArr[count].length; i+=2){
+                  if($('#table_braille').find(selector)[num]===undefined) $(main_tr_braille).find(".AddScaleButton").click();
+                  $($('#table_braille').find(selector)[num]).find('.side_TextBox').val(itemArr[count][i]);
+                  $($('#table_braille').find(selector)[num]).find('.length_TextBox').val(itemArr[count][i+1]);
+                  num++;
+                }
+              }
+              break;
+          }
+          count++;
+        }
+      }
 
       function output_DescriptPaper(){
         let str = '';
@@ -378,9 +384,6 @@
         } else {
           document.getElementById('download_paperHTML').href = window.URL.createObjectURL(blob);
         }
-
-        var hoge = localStorage["mouri"];
-  console.log(hoge)
       }
 
 

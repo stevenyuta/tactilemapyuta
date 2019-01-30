@@ -346,42 +346,44 @@ function legendDownload() {
       }
       if($('#graduation_frame').prop('checked')){
         let scaling = scaling_serch(this);
-        legend_str += ',' + scaling.side;
-        legend_str += ',' + scaling.length;
+        if(scaling.side)legend_str += ',' + scaling.side;
+        if(scaling.length)legend_str += ',' + scaling.length;
       }
     });
     legend_str += '\r\n';
   }
-  if(draw.select('.stair').first())legend_str += 'stair';
+  if(draw.select('.stair').first())legend_str += 'symbol,stair';
   draw.select('.stair').each(function(i,children){
     let scaling = scaling_serch(this);
-    legend_str += ',' + scaling.side;
-    legend_str += ',' + scaling.length;
+    if(scaling.side)legend_str += ',' + scaling.side;
+    if(scaling.length)legend_str += ',' + scaling.length;
   })
   if(draw.select('.stair').first())legend_str += '\r\n';
 
-  if(draw.select('.escalator').first())legend_str += 'escalator';
+  if(draw.select('.escalator').first())legend_str += 'symbol,escalator';
   draw.select('.escalator').each(function(i,children){
     let scaling = scaling_serch(this);
-    legend_str += ',' + scaling.side;
-    legend_str += ',' + scaling.length;
+    if(scaling.side)legend_str += ',' + scaling.side;
+    if(scaling.length)legend_str += ',' + scaling.length;
   })
   if(draw.select('.escalator').first())legend_str += '\r\n';
 
-  if(draw.select('.arrow').first())legend_str += 'arrow';
+  if(draw.select('.arrow').first())legend_str += 'symbol,arrow';
   draw.select('.arrow').each(function(i,children){
     let scaling = scaling_serch(this);
-    legend_str += ',' + scaling.side;
-    legend_str += ',' + scaling.length;
+    if(scaling.side)legend_str += ',' + scaling.side;
+    if(scaling.length)legend_str += ',' + scaling.length;
   })
   if(draw.select('.arrow').first())legend_str += '\r\n';
-
+/**
   let blob = new Blob([ legend_str ], { 'type' : 'text/plain' });
   if (window.navigator.msSaveBlob) {
     window.navigator.msSaveOrOpenBlob(blob, '凡例.csv');
   } else {
     document.getElementById('legend_download').href = window.URL.createObjectURL(blob);
   }
+  **/
+  localStorage['legend_data'] = legend_str;
 }
 
 function scaling_serch(target_element){
@@ -415,6 +417,7 @@ function scaling_serch(target_element){
   let Braille_x = get_bbox(target_element).min_x;
   let Braille_y = get_bbox(target_element).min_y;
   let scaling = new Object();
+  scaling.side = undefined , scaling.length = undefined;
   for(let i=side_min; i < side_max; i += side_interval){
     for(let j=length_min; j < length_max; j += length_interval){
       if(i <= Braille_x && Braille_x < i + side_interval){

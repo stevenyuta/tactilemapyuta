@@ -255,7 +255,7 @@ function checkbox_set(){
   /**************************************************
   //目盛り枠の表示、非表示
   ***************************************************/
-  $('#graduation_frame').off('change').change( function() {
+  $('#graduation_frame').off('change').change(function(){
     if(!SVG.get('graduationFrame_group')) add_graduationFrame();
     if($('#graduation_frame').prop('checked')){
       SVG.get('graduationFrame_group').show();

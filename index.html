@@ -79,7 +79,7 @@
         <span id="downloader">
           <a id="svg_download" href="#" download="SVG_output.svg" onclick="svgDownload()">SVG</a>
           <a id="png_download" href="#" onclick="pngDownload()">PNG</a>
-          <a id="legend_download"  href="#" download="凡例.csv" onclick="legendDownload()">凡例</a>
+          <a id="legend_download"  href="./legend_maker.html" target="_blank" onclick="legendDownload()">凡例</a>
           <a href="manual.pdf" target="_blank">取扱説明書</a>
         </span>
       </div>
@@ -243,79 +243,28 @@
             <tr align="center"><td>
               <input  type="radio" name="tactileSymbol" value="Stair" id="Stair">
               <label for="Stair">階段</label>
-            </td>
-            <td>
+            </td></tr>
+            <tr align="center"><td>
               <input  type="radio" name="tactileSymbol" value="Arrow" id="Arrow">
               <label for="Arrow">矢印</label>
             </td></tr>
             <tr align="center"><td>
               <input  type="radio" name="tactileSymbol" value="Tiket_gate" id="Tiket_gate">
               <label for="Tiket_gate">改札</label>
-            </td>
-            <td>
+            </td></tr>
+            <tr align="center"><td>
               <input  type="radio" name="tactileSymbol" value="Reducescale" id="Reducescale">
               <label for="Reducescale">縮尺</label>
-            </td>
-            <tr align="center"><td align="center">
+            </td></tr>
+            <tr align="center"><td>
               <input  type="radio" name="tactileSymbol" value="Escalator" id="Escalator">
-              <label for="Escalator" >エスカ<br>レータ</label>
-            </td>
-            <td>
+              <label for="Escalator" >エスカレータ</label>
+            </td></tr>
+            <tr align="center"><td>
               <input  type="radio" name="tactileSymbol" value="Room" id="Room">
               <label for="Room">部屋</label>
             </td></tr>
 
-          </table>
-
-          <table id="tactileMarker_table" class="stamp_table">
-            <tr align="center"><td>
-              <input  type="radio" name="tactileSymbol" value="double_circle" id="double_circle">
-              <label for="double_circle">
-                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30">
-                  <path stroke-width="5" stroke="#000" fill="#fff" d="M 0 0 L 30 0 L 30 30 L 0 30 Z"></path>
-                  <path stroke-width="5" stroke="#000" fill="#333" d="M 10 10 L 20 10 L 20 20 L 10 20 Z"></path>
-                </svg>
-              </label>
-            </td>
-            <td>
-              <input  type="radio" name="tactileSymbol" value="diagonal_mark" id="diagonal_mark">
-              <label for="diagonal_mark">
-                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30">
-                  <path stroke-width="5" stroke="#000" fill="url(#diagonal-texture_Icon)" d="M 0 0 L 30 0 L 30 30 L 0 30 Z"></path>
-                  <defs id="SvgjsDefs1007">
-                    <pattern id="diagonal-texture_Icon" x="0" y="0" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)" class="pattern">
-                      <rect id="SvgjsRect1009" width="8" height="8" fill="#ffffff"></rect>
-                      <line id="SvgjsLine1010" x1="5" y1="0" x2="5" y2="6" stroke="#000000" stroke-width="1"></line>
-                    </pattern>
-                  </defs>
-                </svg>
-              </label>
-            </td></tr>
-            <tr align="center"><td>
-              <input  type="radio" name="tactileSymbol" value="polkadot_mark" id="polkadot_mark">
-              <label for="polkadot_mark">
-                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30">
-                  <path stroke-width="5" stroke="#000" fill="url(#polkadot-texture_Icon)" d="M 0 0 L 30 0 L 30 30 L 0 30 Z"></path>
-                  <defs>
-                    <pattern id="polkadot-texture_Icon" x="0" y="0" width="5" height="10" patternUnits="userSpaceOnUse" class="pattern">
-                      <rect id="SvgjsRect1012" width="5" height="10" fill="#ffffff"></rect>
-                      <circle id="SvgjsCircle1013" r="1.25" cx="2.5" cy="0" fill="#000000"></circle>
-                      <circle id="SvgjsCircle1014" r="1.25" cx="0" cy="5" fill="#000000"></circle>
-                      <circle id="SvgjsCircle1015" r="1.25" cx="5" cy="5" fill="#000000"></circle>
-                      <circle id="SvgjsCircle1016" r="1.25" cx="2.5" cy="10" fill="#000000">  </circle>
-                    </pattern>
-                  </defs>
-                </svg>
-              </label>
-            </td>
-            <td>
-              <input  type="radio" name="tactileSymbol" value="gray_mark" id="gray_mark">
-              <label for="gray_mark">
-                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30">
-                  <path stroke-width="5" stroke="#000" fill="#333" d="M 0 0 L 30 0 L 30 30 L 0 30 Z"></path>
-                </svg>
-              </label>
-            </td></tr>
           </table>
 
           <table id="text_table" class="stamp_table">

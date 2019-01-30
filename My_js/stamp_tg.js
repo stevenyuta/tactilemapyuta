@@ -258,18 +258,18 @@ function add_reducescale(){
 function add_graduationFrame(){
   if(SVG.get('graduationFrame_group'))SVG.get('graduationFrame_group').remove();
   let back_num = getPathCirclePos();
-  let Frame_group = draw.group().id('graduationFrame_group').addClass('SVG_Element');
+  let Frame_group = draw.group().id('graduationFrame_group');
 
   let frame = Frame_group.path().M({x: -F_WIDTH/2, y: -F_HEIGHT/2}).L({x: F_WIDTH/2,y:-F_HEIGHT/2})
                                 .L({x: F_WIDTH/2, y: F_HEIGHT/2}).L({x: -F_WIDTH/2, y:F_HEIGHT/2})
-                                .Z().addClass('graduationFrame').addClass('path').id('mainFrame');
+                                .Z().addClass('graduationFrame').addClass('path').id('mainFrame').addClass('SVG_Element');
   for(let i=-F_WIDTH/2; i <= F_WIDTH/2; i += F_WIDTH/4){
-    Frame_group.path().M({x: i, y: -F_HEIGHT/2}).L({x: i , y:-F_HEIGHT/2 - F_SCALE}).addClass('graduationFrame').addClass('path').addClass('graduation_side');
-    Frame_group.path().M({x: i, y: F_HEIGHT/2}).L({x: i , y:F_HEIGHT/2 + F_SCALE}).addClass('graduationFrame').addClass('path');
+    Frame_group.path().M({x: i, y: -F_HEIGHT/2}).L({x: i , y:-F_HEIGHT/2 - F_SCALE}).addClass('graduationFrame').addClass('path').addClass('graduation_side').addClass('SVG_Element');
+    Frame_group.path().M({x: i, y: F_HEIGHT/2}).L({x: i , y:F_HEIGHT/2 + F_SCALE}).addClass('graduationFrame').addClass('path').addClass('SVG_Element');
   }
   for(let i=-F_HEIGHT/2; i <= F_HEIGHT/1.5; i += F_HEIGHT/3){
-    Frame_group.path().M({x: -F_WIDTH/2 , y: i}).L({x: -F_WIDTH/2 - F_SCALE , y:i}).addClass('graduationFrame').addClass('path').addClass('graduation_length');
-    Frame_group.path().M({x: F_WIDTH/2 , y: i}).L({x: F_WIDTH/2 + F_SCALE , y:i}).addClass('graduationFrame').addClass('path');
+    Frame_group.path().M({x: -F_WIDTH/2 , y: i}).L({x: -F_WIDTH/2 - F_SCALE , y:i}).addClass('graduationFrame').addClass('path').addClass('graduation_length').addClass('SVG_Element');
+    Frame_group.path().M({x: F_WIDTH/2 , y: i}).L({x: F_WIDTH/2 + F_SCALE , y:i}).addClass('graduationFrame').addClass('path').addClass('SVG_Element');
   }
   Frame_group.back();
   for(let i=0; i< back_num; i++){
@@ -279,39 +279,42 @@ function add_graduationFrame(){
     'fill' : 'none',
     'stroke-width': PATH_STROKE_WIDTH
   })
+  if($('input[name="direction_guide"]:checked' ).val()==='vertical_guide') rotate_graduationFrame();
 }
 
 function rotate_graduationFrame(){
   let affin_mat = new Array();
   let mainFrame = SVG.get('#mainFrame');
-  let cx = mainFrame.x() + mainFrame.width()/2;
-  let cy = mainFrame.y() + mainFrame.height()/2;
-  let theta;
-  $('input[name="direction_guide"]:checked' ).val()==='vertical_guide' ? theta = 90*Math.PI/180 : theta = -90*Math.PI/180
+  if(mainFrame){
+    let cx = mainFrame.x() + mainFrame.width()/2;
+    let cy = mainFrame.y() + mainFrame.height()/2;
+    let theta;
+    $('input[name="direction_guide"]:checked' ).val()==='vertical_guide' ? theta = 90*Math.PI/180 : theta = -90*Math.PI/180
 
-  affin_mat[0]=[Math.cos(theta),-Math.sin(theta),cx-cx*Math.cos(theta)+cy*Math.sin(theta)];
-  affin_mat[1]=[Math.sin(theta),Math.cos(theta),cy-cx*Math.sin(theta)-cy*Math.cos(theta)];
-  affin_mat[2]=[0,0,1];
+    affin_mat[0]=[Math.cos(theta),-Math.sin(theta),cx-cx*Math.cos(theta)+cy*Math.sin(theta)];
+    affin_mat[1]=[Math.sin(theta),Math.cos(theta),cy-cx*Math.sin(theta)-cy*Math.cos(theta)];
+    affin_mat[2]=[0,0,1];
 
-  draw.select('.graduationFrame').each(function(i,children){
-    let dpoint = this.clear().array().settle(); //pathのdpoint配列を取得
-    let new_dpoint = "";
-    for(var j=0;j<dpoint.length; j++){
-      if(dpoint[j][0]!=="Z"){  //属性がZ以外の場合
-        let pos = [ [ dpoint[j][1] ],[ dpoint[j][2] ],[1]]; //pathの座標を格納
-        var trans_matrix = math.multiply(affin_mat,pos) //pathの座標をAffin変換
-        new_dpoint += dpoint[j][0]+" "+trans_matrix[0][0]+" "+trans_matrix[1][0]; //新しい座標として格納
-      }else{
-        new_dpoint += dpoint[j][0];
+    draw.select('.graduationFrame').each(function(i,children){
+      let dpoint = this.clear().array().settle(); //pathのdpoint配列を取得
+      let new_dpoint = "";
+      for(var j=0;j<dpoint.length; j++){
+        if(dpoint[j][0]!=="Z"){  //属性がZ以外の場合
+          let pos = [ [ dpoint[j][1] ],[ dpoint[j][2] ],[1]]; //pathの座標を格納
+          var trans_matrix = math.multiply(affin_mat,pos) //pathの座標をAffin変換
+          new_dpoint += dpoint[j][0]+" "+trans_matrix[0][0]+" "+trans_matrix[1][0]; //新しい座標として格納
+        }else{
+          new_dpoint += dpoint[j][0];
+        }
       }
-    }
-    this.attr({'d':new_dpoint});
-    if(this.hasClass('graduation_side')){
-      this.addClass('graduation_length').removeClass('graduation_side');
-    }else if(this.hasClass('graduation_length')){
-      this.addClass('graduation_side').removeClass('graduation_length');
-    }
-  })
+      this.attr({'d':new_dpoint});
+      if(this.hasClass('graduation_side')){
+        this.addClass('graduation_length').removeClass('graduation_side');
+      }else if(this.hasClass('graduation_length')){
+        this.addClass('graduation_side').removeClass('graduation_length');
+      }
+    })
+  }
   /**
   update_editgroup(affin_mat,"rot");
   **/
@@ -350,52 +353,6 @@ function add_Room(){
       for(let i=0; i < symbol_id.length; i++){
         let real_room = SVG.get('#' + symbol_id[i]).removeClass('dummy');
         if(real_room)real_room.addClass('connected').addClass('SVG_Element').addClass('path');
-      }
-      cash_svg(); //svgデータのcash
-    }
-  })
-}
-
-
-/******************************************************
-//マーカーを追加する関数
-******************************************************/
-function add_Marker(Marker_mode){
-  let back_num = getPathCirclePos();
-  let symbol_id = new Array();
-  draw.off('mousemove').mousemove(function(e){
-    dummy_delete();
-    let mx = getmousepoint('normal',e).x , my = getmousepoint('normal',e).y; //描画領域上でのマウスポイント計算
-    let back_num = getPathCirclePos();
-    let marker_group = draw.group().addClass('marker_group').addClass('dummy').back();
-    if(Marker_mode==='double_circle'){
-      marker_group.path().M({x: mx-20, y: my-20}).L({x: mx+20,y:my-20}).L({x: mx+20,y:my+20}).L({x: mx-20,y:my+20}).Z().attr({'fill' : '#fff'});
-      marker_group.path().M({x: mx-10, y: my-10}).L({x: mx+10,y:my-10}).L({x: mx+10,y:my+10}).L({x: mx-10,y:my+10}).Z().attr({'fill' : '#333'});
-    }else if(Marker_mode==='diagonal_mark'){
-      marker_group.path().M({x: mx-20, y: my-20}).L({x: mx+20,y:my-20}).L({x: mx+20,y:my+20}).L({x: mx-20,y:my+20}).Z().fill('url(#diagonal-texture)')
-    }else if(Marker_mode==='polkadot_mark'){
-      marker_group.path().M({x: mx-20, y: my-20}).L({x: mx+20,y:my-20}).L({x: mx+20,y:my+20}).L({x: mx-20,y:my+20}).Z().fill('url(#polkadot-texture)')
-    }else if(Marker_mode==='gray_mark'){
-      marker_group.path().M({x: mx-20, y: my-20}).L({x: mx+20,y:my-20}).L({x: mx+20,y:my+20}).L({x: mx-20,y:my+20}).Z().fill('#333');
-    }
-
-
-    symbol_id[0] = marker_group.attr('id');
-
-    for(let i=0; i< back_num; i++){
-      marker_group.forward();
-    }
-    marker_group.select('path').attr({
-      'stroke': PATH_STROKE_COLOR,
-      'stroke-width' : PATH_STROKE_WIDTH*$('#StrokeWidth_TextBox').val(),
-    })
-  })
-
-  draw.off('mousedown').mousedown(function(e){
-    if(e.button===0){
-      for(let i=0; i < symbol_id.length; i++){
-        let marker_group = SVG.get('#' + symbol_id[i]).removeClass('dummy');
-        if(marker_group)marker_group.select('path').addClass('marker').addClass('symbol').addClass('SVG_Element').addClass('path');
       }
       cash_svg(); //svgデータのcash
     }
