@@ -480,7 +480,7 @@ function getInkPos(){
     if(position <= this.position() || position === undefined) position = this.position() + 1;
   })
   draw.select(".image").each(function(i , children){
-    if(position < this.position() || position === undefined) position = this.position() + 1;
+    if(position <= this.position() || position === undefined) position = this.position() + 1;
   })
   if(position === undefined){
     return 0;
