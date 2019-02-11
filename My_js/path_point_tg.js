@@ -678,3 +678,42 @@ function fig_connect(){
     }
   })
 }
+
+function fig_pathUpload(){
+  //描画中の線の更新
+  if(draw.select('.drawing_path').first()){
+    drawing_path = draw.select('.drawing_path').first();
+    let dpoint = drawing_path.clear().array().settle();
+    current_x = dpoint[dpoint.length-1][1];
+    current_y = dpoint[dpoint.length-1][2];
+    drawing_path_dpoint="";
+    for(let i=0; i < dpoint.length-1; i++){
+      drawing_path_dpoint += dpoint[i][0] +" "+ dpoint[i][1] + " " + dpoint[i][2];
+    }
+    set_closePathNode();
+  }
+  //線の詳細編集の更新
+  draw.select('.fragmented_PathGroup').each(function(i,children){
+    let fragmented_Group_Number = this.attr('fragmented_Group_Number');
+    let closed;
+    this.hasClass('closed_path') ? closed = true : closed = false;
+    this.each(function(j,children){
+      let assignment_Number = Number(this.attr('assignment_Number'));
+      let dpoint = this.clear().array().settle();
+      let rect_id = 'rect_' + fragmented_Group_Number + '_' + assignment_Number;
+      let rect = SVG.get(rect_id);
+      rect.attr({
+        'x' : dpoint[0][1] - rect.width()/2,
+        'y' : dpoint[0][2] - rect.height()/2
+      })
+      if(!closed){ //閉じていないpathの場合
+        let rect_id = 'rect_' + fragmented_Group_Number + '_' + (assignment_Number + 1);
+        let rect = SVG.get(rect_id);
+        rect.attr({
+          'x' : dpoint[1][1] - rect.width()/2,
+          'y' : dpoint[1][2] - rect.height()/2
+        })
+      }
+    })
+  })
+}

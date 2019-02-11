@@ -115,6 +115,7 @@ function set_key_down_up(){
         if(current_mode === 'Edit' || current_mode === 'EditImage'){
           if($('#rb_width').is(':focus')) update_widthBox();
           if($('#rb_height').is(':focus')) update_heightBox();
+          if($('#textInfo_TextBox').is(':focus')) update_TextInfoBox();
         }
         if($('#StrokeWidth_TextBox').is(':focus')) update_StrokeWidth_TextBox();
         if($('#resizeInk_TextBox').is(':focus')) update_resizeInk_TextBox();

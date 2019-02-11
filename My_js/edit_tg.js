@@ -136,7 +136,7 @@ function edit_hover(mode){
         }else{
           this.attr({ stroke: PATH_SELECT_COLOR});
         }
-        this.off('mousedown').mousedown(function(){
+        this.off('mousedown').mousedown(function(e){
           draw.select('.image_FrameRect').each(function(i,children){
             this.remove();
           })
@@ -150,6 +150,17 @@ function edit_hover(mode){
           set_imageOpacity()
           this.off('mousedown');
           edit_hover();
+
+          //クリック移動
+          anchorX = getmousepoint('normal',e).x , anchorY = getmousepoint('normal',e).y;
+          let click_dTx = 0 , click_dTy = 0;
+          $(document).off('mousemove').mousemove(function(e){
+            let affin_info = get_affinmat('drag',e,gX,gY,gWidth,gHeight,anchorX,anchorY,click_dTx,click_dTy);
+            let affin_mat = affin_info.affine_mat;
+            click_dTx = affin_info.dTx;
+            click_dTy = affin_info.dTy;
+            update_editgroup(affin_mat , "drag");
+          });
         })
         this.attr({'cursor':'pointer'});
       }
@@ -193,6 +204,7 @@ function edit_clear(clear_flag){
   SVG.get('handle_group').hide();
   if($('#rb_width').is(':focus')) update_widthBox();
   if($('#rb_height').is(':focus')) update_heightBox();
+  if($('#textInfo_TextBox').is(':focus')) update_TextInfoBox();
   draw.select('.edit_select').each(function(i, children) {
     if(this.hasClass('ink')){  //text要素の場合
       this.attr({'stroke': 'none'});
@@ -209,12 +221,25 @@ function edit_clear(clear_flag){
 function upload_handle(){
   $('#rb_width').off('focusout').on('focusout' , update_widthBox);
   $('#rb_height').off('focusout').on('focusout' , update_heightBox);
+  $('#textInfo_TextBox').off('focusout').on('focusout' , update_TextInfoBox);
 
   (draw.select('.edit_select.ink').first()!==undefined) ? $('.resizeInk_gadget').show() : $('.resizeInk_gadget').hide();
   (draw.select('.edit_select.braille').first()!==undefined) ? $('.resizeBraille_gadget').show() : $('.resizeBraille_gadget').hide();
   (draw.select('.edit_select.path , .edit_select.circle').first()!==undefined) ? $('.strokewidth_gadget').show() : $('.strokewidth_gadget').hide();
   (draw.select('.edit_select.path , .edit_select.circle').first()!==undefined) ? $('#stroke_style').show() : $('#stroke_style').hide();
   (draw.select('.edit_select.image').first()!==undefined) ? $('.gadget_imageOpacity').show() : $('.gadget_imageOpacity').hide();
+
+  //文字の内容変更用
+  if(draw.select('.edit_select.ink,.edit_select.braille').members.length===1){
+    $('.textInfo_gadget').show();
+    let text = draw.select('.edit_select.ink,.edit_select.braille').first();
+    let text_type , text_value;
+    text.hasClass('ink') ? text_type = 'ink' : text_type = 'braille';
+    text.hasClass('ink') ? text_value = text.text() : text_value = text.attr('brailleoriginText');
+    $('#textInfo_TextBox').val(text_value);
+  }else{
+    $('.textInfo_gadget').hide();
+  }
 
   if(draw.select('.edit_select').first()===undefined){
     SVG.get('handle_group').hide();　//移動、サイズ変更、回転用のハンドルを非表示
@@ -335,142 +360,264 @@ function upload_handle(){
     //box_resizeのマウスドラッグでの平行移動
     box_resize.off('mousedown').mousedown(function(e){
       if(e.button===0){
-        $(document).off('mousemove').mousemove(drag);
         anchorX = getmousepoint('normal',e).x , anchorY = getmousepoint('normal',e).y;
-        now_movingFlag = true;
+        $(document).off('mousemove').mousemove(function(e){
+          let affin_info = get_affinmat('drag',e,gX,gY,gWidth,gHeight,anchorX,anchorY,dTx,dTy);
+          let affin_mat = affin_info.affine_mat;
+          dTx = affin_info.dTx;
+          dTy = affin_info.dTy;
+          update_editgroup(affin_mat , "drag");
+        });
       }
     });
-    function drag(e) {
+
+    //top handle
+    t_resize.off('mousedown').mousedown(function(e){
+      if(e.button===0){
+        anchorX = getmousepoint('normal',e).x , anchorY = getmousepoint('normal',e).y;
+        $(document).off('mousemove').mousemove(function(e){
+          let affin_info = get_affinmat('top',e,gX,gY,gWidth,gHeight,anchorX,anchorY,dTx,dTy);
+          let affin_mat = affin_info.affine_mat;
+          dTx = affin_info.dTx;
+          dTy = affin_info.dTy;
+          update_editgroup(affin_mat , 'top');
+        });
+      }
+    });
+
+    //left handle
+    l_resize.off('mousedown').mousedown(function(e){
+      if(e.button===0){
+        anchorX = getmousepoint('normal',e).x , anchorY = getmousepoint('normal',e).y;
+        $(document).off('mousemove').mousemove(function(e){
+          let affin_info = get_affinmat('left',e,gX,gY,gWidth,gHeight,anchorX,anchorY,dTx,dTy);
+          let affin_mat = affin_info.affine_mat;
+          dTx = affin_info.dTx;
+          dTy = affin_info.dTy;
+          update_editgroup(affin_mat , 'left');
+        });
+      }
+    });
+
+    //bottom handle
+    b_resize.off('mousedown').mousedown(function(e){
+      if(e.button===0){
+        anchorX = getmousepoint('normal',e).x , anchorY = getmousepoint('normal',e).y;
+        $(document).off('mousemove').mousemove(function(e){
+          let affin_info = get_affinmat('bottom',e,gX,gY,gWidth,gHeight,anchorX,anchorY,dTx,dTy);
+          let affin_mat = affin_info.affine_mat;
+          dTx = affin_info.dTx;
+          dTy = affin_info.dTy;
+          update_editgroup(affin_mat , 'bottom');
+        });
+      }
+    });
+
+    //right handle
+    r_resize.off('mousedown').mousedown(function(e){
+      if(e.button===0){
+        anchorX = getmousepoint('normal',e).x , anchorY = getmousepoint('normal',e).y;
+        $(document).off('mousemove').mousemove(function(e){
+          let affin_info = get_affinmat('right',e,gX,gY,gWidth,gHeight,anchorX,anchorY,dTx,dTy);
+          let affin_mat = affin_info.affine_mat;
+          dTx = affin_info.dTx;
+          dTy = affin_info.dTy;
+          update_editgroup(affin_mat , 'right');
+        });
+      }
+    });
+
+    //left-top handle
+    lt_resize.off('mousedown').mousedown(function(e){
+      if(e.button===0){
+        anchorX = getmousepoint('normal',e).x , anchorY = getmousepoint('normal',e).y;
+        $(document).off('mousemove').mousemove(function(e){
+          let affin_info = get_affinmat('left_top',e,gX,gY,gWidth,gHeight,anchorX,anchorY,dTx,dTy);
+          let affin_mat = affin_info.affine_mat;
+          dTx = affin_info.dTx;
+          dTy = affin_info.dTy;
+          update_editgroup(affin_mat , 'left_top');
+        });
+      }
+    });
+
+    //right-top handle
+    rt_resize.off('mousedown').mousedown(function(e){
+      if(e.button===0){
+        anchorX = getmousepoint('normal',e).x , anchorY = getmousepoint('normal',e).y;
+        $(document).off('mousemove').mousemove(function(e){
+          let affin_info = get_affinmat('right_top',e,gX,gY,gWidth,gHeight,anchorX,anchorY,dTx,dTy);
+          let affin_mat = affin_info.affine_mat;
+          dTx = affin_info.dTx;
+          dTy = affin_info.dTy;
+          update_editgroup(affin_mat , 'right_top');
+        });
+      }
+    });
+
+    //left-bottom handle
+    lb_resize.off('mousedown').mousedown(function(e){
+      if(e.button===0){
+        anchorX = getmousepoint('normal',e).x , anchorY = getmousepoint('normal',e).y;
+        $(document).off('mousemove').mousemove(function(e){
+          let affin_info = get_affinmat('left_bottom',e,gX,gY,gWidth,gHeight,anchorX,anchorY,dTx,dTy);
+          let affin_mat = affin_info.affine_mat;
+          dTx = affin_info.dTx;
+          dTy = affin_info.dTy;
+          update_editgroup(affin_mat , 'left_bottom');
+        });
+      }
+    });
+
+    //right-bottom handle
+    rb_resize.off('mousedown').mousedown(function(e){
+      if(e.button===0){
+        anchorX = getmousepoint('normal',e).x , anchorY = getmousepoint('normal',e).y;
+        $(document).off('mousemove').mousemove(function(e){
+          let affin_info = get_affinmat('right_bottom',e,gX,gY,gWidth,gHeight,anchorX,anchorY,dTx,dTy);
+          let affin_mat = affin_info.affine_mat;
+          dTx = affin_info.dTx;
+          dTy = affin_info.dTy;
+          update_editgroup(affin_mat , 'right_bottom');
+        });
+      }
+    });
+
+    //rot handle
+    rot_resize.off('mousedown').mousedown(function(e){
+      if(e.button===0){
+        cx = Number($('#box_resize').attr("x")) + Number($('#box_resize').attr("width"))/2;
+        cy = Number($('#box_resize').attr("y")) + Number($('#box_resize').attr("height"))/2;
+        $(document).off('mousemove').mousemove(function(e){
+          let affin_info = get_affinmat('rot',e,gX,gY,gWidth,gHeight,cx,cy,rad);
+          let affin_mat = affin_info.affine_mat;
+          rad = affin_info.rad;
+          deg = affin_info.deg;
+          update_editgroup(affin_mat , 'rot');
+        });
+      }
+    });
+  }
+}
+
+function get_affinmat(type,event,gX,gY,gWidth,gHeight,anchorX,anchorY,dTx,dTy){
+  now_movingFlag = true;
+  let obj = new Object();
+  var point1 = new Array() , point2 = new Array(); //affin変換行列作成に使う行列
+  for(var i=0;i<3;i++){
+    point1[i] = new Array();
+    point2[i] = new Array();
+  }
+
+  if(type==='rot'){
+    let cx = anchorX , cy = anchorY;
+    let rad = dTx;
+    var px1 = (gX - cx)*Math.cos(rad) - (gY - cy)*Math.sin(rad) + cx;
+    var py1 = (gX - cx)*Math.sin(rad) + (gY - cy)*Math.cos(rad) + cy;
+    var px2 = (gX + gWidth - cx)*Math.cos(rad) - (gY - cy)*Math.sin(rad) + cx;
+    var py2 = (gX + gWidth - cx)*Math.sin(rad) + (gY - cy)*Math.cos(rad) + cy;
+    var px3 = (gX - cx)*Math.cos(rad) - (gY + gHeight- cy)*Math.sin(rad) + cx;
+    var py3 = (gX - cx)*Math.sin(rad) + (gY + gHeight - cy)*Math.cos(rad) + cy;
+    //変換前の3座標の入力
+    point1[0]=[px1,px2,px3];
+    point1[1]=[py1,py2,py3];
+    point1[2]=[1,1,1];
+
+    mx = getmousepoint('normal',event).x; //描画領域上でのマウスポイント計算
+    my = getmousepoint('normal',event).y;
+    rad = Math.atan(( Number(my)-cy )/( Number(mx)-cx ));
+    if(Number(mx)-cx<0)rad=Math.PI+rad;
+    if(input_key_buffer[17]){
+      rad = Math.PI/2+Math.round(rad / (Math.PI/6)) * Math.PI/6
+    }else{
+      rad = Math.PI/2+Math.round(rad / (Math.PI/90)) * Math.PI/90
+    }
+    deg =  rad*180/Math.PI;
+
+    px1 = (gX - cx)*Math.cos(rad) - (gY - cy)*Math.sin(rad) + cx;
+    py1 = (gX - cx)*Math.sin(rad) + (gY - cy)*Math.cos(rad) + cy;
+    px2 = (gX + gWidth - cx)*Math.cos(rad) - (gY - cy)*Math.sin(rad) + cx;
+    py2 = (gX + gWidth - cx)*Math.sin(rad) + (gY - cy)*Math.cos(rad) + cy;
+    px3 = (gX - cx)*Math.cos(rad) - (gY + gHeight- cy)*Math.sin(rad) + cx;
+    py3 = (gX - cx)*Math.sin(rad) + (gY + gHeight - cy)*Math.cos(rad) + cy;
+
+    //変換後の3座標の入力
+    point2[0]=[px1,px2,px3];
+    point2[1]=[py1,py2,py3];
+    point2[2]=[1,1,1];
+    obj.affine_mat = math.multiply(point2 , math.inv(point1));
+    obj.rad = rad;
+    obj.deg = deg;
+    return obj
+
+  }else{
+    if(type==='drag'){
       //変換前の3座標の入力
       point1[0]=[gX + dTx , gX + gWidth + dTx , gX + dTx];
       point1[1]=[gY + dTy, gY + dTy , gY + gHeight + dTy];
       point1[2]=[1,1,1];
 
-      dTx = getmousepoint('normal',e).x - anchorX;
-      dTy = getmousepoint('normal',e).y - anchorY;
-
+      dTx = getmousepoint('normal',event).x - anchorX;
+      dTy = getmousepoint('normal',event).y - anchorY;
       //変換後の3座標の入力
       point2[0]=[gX + dTx , gX + gWidth + dTx , gX + dTx];
       point2[1]=[gY + dTy, gY + dTy , gY + gHeight + dTy];
       point2[2]=[1,1,1];
-      var affin_mat = math.multiply(point2 , math.inv(point1))
-      update_editgroup(affin_mat , "drag");
-    }
-
-    //top handle
-    t_resize.off('mousedown').mousedown(function(e){
-      if(e.button===0){
-        $(document).off('mousemove').mousemove(top);
-        anchorX = getmousepoint('normal',e).x , anchorY = getmousepoint('normal',e).y;
-        now_movingFlag = true;
-      }
-    });
-    function top(e) {
+    }else if(type==='top'){
+      //変換前の3座標の入力
       point1[0]=[gX , gX + gWidth, gX];
       point1[1]=[gY + dTy, gY + dTy , gY + gHeight];
       point1[2]=[1,1,1];
 
-      dTy = getmousepoint('normal',e).y - anchorY;
+      dTy = getmousepoint('normal',event).y - anchorY;
       if(gHeight <= dTy) dTy = gHeight - 10; //10という数字に大きな意味はなし
 
       point2[0]=[gX , gX + gWidth, gX];
       point2[1]=[gY + dTy, gY + dTy , gY + gHeight];
       point2[2]=[1,1,1];
-
-      var affin_mat = math.multiply(point2 , math.inv(point1));
-      update_editgroup(affin_mat, "top");
-    }
-
-    //left handle
-    l_resize.off('mousedown').mousedown(function(e){
-      if(e.button===0){
-        $(document).off('mousemove').mousemove(left);
-        anchorX = getmousepoint('normal',e).x , anchorY = getmousepoint('normal',e).y;
-        now_movingFlag = true;
-      }
-    });
-    function left(e) {
+    }else if(type==='left'){
       point1[0]=[gX + dTx , gX + gWidth, gX + dTx];
       point1[1]=[gY, gY , gY + gHeight];
       point1[2]=[1,1,1];
 
-      dTx = getmousepoint('normal',e).x - anchorX;
+      dTx = getmousepoint('normal',event).x - anchorX;
       if(gWidth <= dTx) dTx = gWidth - 10; //10という数字に大きな意味はなし
 
       //変換後の3座標の入力
       point2[0]=[gX + dTx , gX + gWidth, gX + dTx];
       point2[1]=[gY, gY , gY + gHeight];
       point2[2]=[1,1,1];
-
-      var affin_mat = math.multiply(point2 , math.inv(point1))
-      update_editgroup(affin_mat,"left");
-    }
-
-    //bottom handle
-    b_resize.off('mousedown').mousedown(function(e){
-      if(e.button===0){
-        $(document).off('mousemove').mousemove(bottom);
-        anchorX = getmousepoint('normal',e).x , anchorY = getmousepoint('normal',e).y;
-        now_movingFlag = true;
-      }
-    });
-    function bottom(e) {
+    }else if(type==='bottom'){
       point1[0]=[gX , gX + gWidth, gX];
       point1[1]=[gY, gY , gY + gHeight + dTy];
       point1[2]=[1,1,1];
 
-      dTy = getmousepoint('normal',e).y - anchorY;
+      dTy = getmousepoint('normal',event).y - anchorY;
       if(gHeight + dTy <=  0 ) dTy = -gHeight + 10; //10という数字に大きな意味はなし
 
       //変換後の3座標の入力
       point2[0]=[gX , gX + gWidth, gX];
       point2[1]=[gY, gY , gY + gHeight + dTy];
       point2[2]=[1,1,1];
-      var affin_mat = math.multiply(point2 , math.inv(point1))
-      update_editgroup(affin_mat,"bottom");
-    }
-
-    //right handle
-    r_resize.off('mousedown').mousedown(function(e){
-      if(e.button===0){
-        $(document).off('mousemove').mousemove(right);
-        anchorX = getmousepoint('normal',e).x , anchorY = getmousepoint('normal',e).y;
-        now_movingFlag = true;
-      }
-    });
-    function right(e) {
+    }else if(type==='right'){
       point1[0]=[gX , gX + gWidth + dTx, gX];
       point1[1]=[gY, gY , gY + gHeight];
       point1[2]=[1,1,1];
 
-      dTx = getmousepoint('normal',e).x - anchorX;
+      dTx = getmousepoint('normal',event).x - anchorX;
       if(gWidth + dTx <= 0) dTx = -gWidth + 10; //10という数字に大きな意味はなし
 
       //変換後の3座標の入力
       point2[0]=[gX , gX + gWidth + dTx, gX];
       point2[1]=[gY, gY , gY + gHeight];
       point2[2]=[1,1,1];
-
-      var affin_mat = math.multiply(point2 , math.inv(point1))
-      update_editgroup(affin_mat,"right");
-    }
-
-    //left-top handle
-    lt_resize.off('mousedown').mousedown(function(e){
-      if(e.button===0){
-        $(document).off('mousemove').mousemove(left_top);
-        anchorX = getmousepoint('normal',e).x , anchorY = getmousepoint('normal',e).y;
-        now_movingFlag = true;
-      }
-    });
-    function left_top(e) {
-
+    }else if(type==='left_top'){
       point1[0]=[gX + dTx , gX + gWidth, gX + dTx];
       point1[1]=[gY + dTy , gY + dTy, gY + gHeight];
       point1[2]=[1,1,1];
 
-      dTx = getmousepoint('normal',e).x - anchorX; //描画領域上でのマウスポイント計算
-      dTy = getmousepoint('normal',e).y - anchorY;
+      dTx = getmousepoint('normal',event).x - anchorX; //描画領域上でのマウスポイント計算
+      dTy = getmousepoint('normal',event).y - anchorY;
 
       if(gWidth <= dTx) dTx = gWidth - 10; //10という数字に大きな意味はなし
       if(gHeight <= dTy) dTy = gHeight - 10; //10という数字に大きな意味はなし
@@ -486,25 +633,13 @@ function upload_handle(){
       point2[1]=[gY + dTy , gY + dTy, gY + gHeight];
       point2[2]=[1,1,1];
 
-      var affin_mat = math.multiply(point2 , math.inv(point1))
-      update_editgroup(affin_mat,"left_top");
-    }
-
-    //right-top handle
-    rt_resize.off('mousedown').mousedown(function(e){
-      if(e.button===0){
-        $(document).off('mousemove').mousemove(right_top);
-        anchorX = getmousepoint('normal',e).x , anchorY = getmousepoint('normal',e).y;
-        now_movingFlag = true;
-      }
-    });
-    function right_top(e) {
+    }else if(type==='right_top'){
       point1[0]=[gX , gX + gWidth + dTx, gX];
       point1[1]=[gY + dTy , gY + dTy, gY + gHeight];
       point1[2]=[1,1,1];
 
-      dTx = getmousepoint('normal',e).x - anchorX; //描画領域上でのマウスポイント計算
-      dTy = getmousepoint('normal',e).y - anchorY;
+      dTx = getmousepoint('normal',event).x - anchorX; //描画領域上でのマウスポイント計算
+      dTy = getmousepoint('normal',event).y - anchorY;
 
       if(gWidth + dTx <= 0) dTx = -gWidth + 10; //10という数字に大きな意味はなし
       if(gHeight <= dTy) dTy = gHeight - 10; //10という数字に大きな意味はなし
@@ -520,25 +655,13 @@ function upload_handle(){
       point2[1]=[gY + dTy , gY + dTy, gY + gHeight];
       point2[2]=[1,1,1];
 
-      var affin_mat = math.multiply(point2 , math.inv(point1))
-      update_editgroup(affin_mat,"right_top");
-    }
-
-    //left-bottom handle
-    lb_resize.off('mousedown').mousedown(function(e){
-      if(e.button===0){
-        $(document).off('mousemove').mousemove(left_bottom);
-        anchorX = getmousepoint('normal',e).x , anchorY = getmousepoint('normal',e).y;
-        now_movingFlag = true;
-      }
-    });
-    function left_bottom(e) {
+    }else if(type==='left_bottom'){
       point1[0]=[gX + dTx , gX + gWidth, gX + dTx];
       point1[1]=[gY , gY, gY + gHeight + dTy];
       point1[2]=[1,1,1];
 
-      dTx = getmousepoint('normal',e).x - anchorX; //描画領域上でのマウスポイント計算
-      dTy = getmousepoint('normal',e).y - anchorY;
+      dTx = getmousepoint('normal',event).x - anchorX; //描画領域上でのマウスポイント計算
+      dTy = getmousepoint('normal',event).y - anchorY;
 
       if(gWidth <= dTx) dTx = gWidth - 10; //10という数字に大きな意味はなし
       if(gHeight + dTy <= 0) dTy = -gHeight + 10; //10という数字に大きな意味はなし
@@ -554,25 +677,13 @@ function upload_handle(){
       point2[1]=[gY , gY, gY + gHeight + dTy];
       point2[2]=[1,1,1];
 
-      var affin_mat = math.multiply(point2 , math.inv(point1))
-      update_editgroup(affin_mat,"left_bottom");
-    }
-
-    //right-bottom handle
-    rb_resize.off('mousedown').mousedown(function(e){
-      if(e.button===0){
-        $(document).off('mousemove').mousemove(right_bottom);
-        anchorX = getmousepoint('normal',e).x , anchorY = getmousepoint('normal',e).y;
-        now_movingFlag = true;
-      }
-    });
-    function right_bottom(e) {
+    }else if(type==='right_bottom'){
       point1[0]=[gX , gX + gWidth + dTx , gX];
       point1[1]=[gY , gY, gY + gHeight + dTy];
       point1[2]=[1,1,1];
 
-      dTx = getmousepoint('normal',e).x - anchorX; //描画領域上でのマウスポイント計算
-      dTy = getmousepoint('normal',e).y - anchorY;
+      dTx = getmousepoint('normal',event).x - anchorX; //描画領域上でのマウスポイント計算
+      dTy = getmousepoint('normal',event).y - anchorY;
 
       if(gWidth + dTx <= 0) dTx = -gWidth + 10; //10という数字に大きな意味はなし
       if(gHeight + dTy <= 0) dTy = -gHeight + 10; //10という数字に大きな意味はなし
@@ -587,59 +698,15 @@ function upload_handle(){
       point2[0]=[gX , gX + gWidth + dTx , gX];
       point2[1]=[gY , gY, gY + gHeight + dTy];
       point2[2]=[1,1,1];
-
-      var affin_mat = math.multiply(point2 , math.inv(point1));
-      update_editgroup(affin_mat,"right_bottom");
     }
-
-    //rot handle
-    rot_resize.off('mousedown').mousedown(function(e){
-      if(e.button===0){
-        $(document).off('mousemove').mousemove(rot);
-        cx = Number($('#box_resize').attr("x")) + Number($('#box_resize').attr("width"))/2;
-        cy = Number($('#box_resize').attr("y")) + Number($('#box_resize').attr("height"))/2;
-        now_movingFlag = true;
-      }
-    });
-    function rot(e) {
-      var px1 = (gX - cx)*Math.cos(rad) - (gY - cy)*Math.sin(rad) + cx;
-      var py1 = (gX - cx)*Math.sin(rad) + (gY - cy)*Math.cos(rad) + cy;
-      var px2 = (gX + gWidth - cx)*Math.cos(rad) - (gY - cy)*Math.sin(rad) + cx;
-      var py2 = (gX + gWidth - cx)*Math.sin(rad) + (gY - cy)*Math.cos(rad) + cy;
-      var px3 = (gX - cx)*Math.cos(rad) - (gY + gHeight- cy)*Math.sin(rad) + cx;
-      var py3 = (gX - cx)*Math.sin(rad) + (gY + gHeight - cy)*Math.cos(rad) + cy;
-      //変換前の3座標の入力
-      point1[0]=[px1,px2,px3];
-      point1[1]=[py1,py2,py3];
-      point1[2]=[1,1,1];
-
-      mx = getmousepoint('normal',e).x; //描画領域上でのマウスポイント計算
-      my = getmousepoint('normal',e).y;
-      rad = Math.atan(( Number(my)-cy )/( Number(mx)-cx ));
-      if(Number(mx)-cx<0)rad=Math.PI+rad;
-      if(input_key_buffer[17]){
-        rad = Math.PI/2+Math.round(rad / (Math.PI/6)) * Math.PI/6
-      }else{
-        rad = Math.PI/2+Math.round(rad / (Math.PI/90)) * Math.PI/90
-      }
-      deg =  rad*180/Math.PI;
-
-      px1 = (gX - cx)*Math.cos(rad) - (gY - cy)*Math.sin(rad) + cx;
-      py1 = (gX - cx)*Math.sin(rad) + (gY - cy)*Math.cos(rad) + cy;
-      px2 = (gX + gWidth - cx)*Math.cos(rad) - (gY - cy)*Math.sin(rad) + cx;
-      py2 = (gX + gWidth - cx)*Math.sin(rad) + (gY - cy)*Math.cos(rad) + cy;
-      px3 = (gX - cx)*Math.cos(rad) - (gY + gHeight- cy)*Math.sin(rad) + cx;
-      py3 = (gX - cx)*Math.sin(rad) + (gY + gHeight - cy)*Math.cos(rad) + cy;
-
-      //変換後の3座標の入力
-      point2[0]=[px1,px2,px3];
-      point2[1]=[py1,py2,py3];
-      point2[2]=[1,1,1];
-      var affin_mat = math.multiply(point2 , math.inv(point1))
-      update_editgroup(affin_mat,"rot");
-    }
+    obj.affine_mat = math.multiply(point2 , math.inv(point1));
+    obj.dTx = dTx;
+    obj.dTy = dTy;
+    return obj
   }
 }
+
+
 //アフィン変換によるtarget_group内の要素の座標変換
 function update_editgroup(affin_mat,scale){
   //SVG.get('handle_group').hide();
@@ -790,6 +857,27 @@ function update_heightBox(){
     var affin_mat = math.multiply(point2 , math.inv(point1));
     update_editgroup(affin_mat,"left_top");
     upload_handle();
+  }
+}
+
+function update_TextInfoBox(){
+  if(draw.select('.edit_select.ink,.edit_select.braille').members.length===1){
+    let text = draw.select('.edit_select.ink,.edit_select.braille').first();
+    let text_type , text_value = $('#textInfo_TextBox').val();
+    text.hasClass('ink') ? text_type = 'ink' : text_type = 'braille';
+    if(text.hasClass('ink')){
+      text.plain(text_value);
+    }else{
+      let transed_BraText = text_value.replace(/[ァ-ン]/g, function(s) {
+        return String.fromCharCode(s.charCodeAt(0) - 0x60);
+      });
+      if(tactileGraphic().convertText(transed_BraText).match(/[^あ-んー濁小大半斜数拗１２３４５６７８９1-9＿\s]/)){
+        //alert("点字に使用できない文字が含まれています。");
+      }else{
+        text.plain(tactileGraphic().convertText(transed_BraText));//文字を点字表現に変換
+        text.attr({'brailleoriginText' : transed_BraText});
+      }
+    }
   }
 }
 

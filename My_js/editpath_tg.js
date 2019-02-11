@@ -22,6 +22,7 @@ function editpath(){
     if(now_movingFlag) cash_svg();
     now_movingFlag = false;
     editpath_hover(true);
+    editpath_mousemove('normal');
   })
   set_contextMenu();
   var mx = 0 , my = 0;

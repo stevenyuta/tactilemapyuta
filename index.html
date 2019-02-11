@@ -50,7 +50,7 @@
       <div id="top_contents">
         <span>
           <input type="file" id="fileAPI_continue">
-          <input type="button" value="続きから開始" onClick="$('#fileAPI_continue').click();" >
+          <input type="button" value="ファイルを選択" onClick="$('#fileAPI_continue').click();" >
           <input type="file" id="fileAPI_img">
           <input type="button" value="画像ファイル選択" onClick="$('#fileAPI_img').click();" >
         </span>
@@ -123,7 +123,7 @@
 
           <div id="left_toolbar_button">
             <div><input type="button" id="node_connect" value="端点のノードを結合" style="display:none;" disabled></div>
-            <div><input type="button" id="straight_connect_button" style="" value="直線接続変換"></div>
+            <div><input type="button" id="straight_connect_button" style="" value="線の自動補正"></div>
             <div><input type="button" id="distance_check_button" value="距離間チェック"></div>
             <div><input type="button" style = "display:none;" id="trans" value="平面図変換"></div>
           </div>
@@ -200,6 +200,12 @@
             <tr class="resizeBraille_gadget"><td colspan="4">
               <div class="slider" id="resizeBraille_Slider"></div>
             </td></tr>
+            <tr class="textInfo_gadget">
+              <td colspan="1" align="center">文字内容</td>
+              <td colspan="3">
+                <input type="text" id="textInfo_TextBox" oncopy="return false" onpaste="return false" oncontextmenu="return false" style="width:120px; height:30px;">
+              </td>
+            </tr>
             <tr class="gadget_imageOpacity">
               <td>画像透過度</td>
               <td><input type="text" id="ImageOpacity_TextBox" oncopy="return false" onpaste="return false" oncontextmenu="return false"></td>
@@ -406,8 +412,8 @@
         let arrIntervalCnt = new Array() //タイマー処理のリセット用
         let copy_elements =  new Array() //要素のコピー機能用
         let text_pairs = new Array();　//凡例機能用
-        let editselect_array = new Array();
-        let editpath_array = new Array();
+        let editselect_array = new Array(); //選択機能で選択状態のものの一時記憶用
+        let editpath_array = new Array(); //線の編集機能で選択状態のものの一時記憶用
         let viewbox_x = -DRAW_AREA_WIDTH , viewbox_y = -DRAW_AREA_HEIGHT; //現在のviewboxのx,yの値
         let widthScrollBar_ratio , widthScrollBar_center;
         let heightScrollBar_ratio , heightScrollBar_center;
@@ -416,12 +422,13 @@
         let nowchecked;
 
       $(window).on('load',function () { //window読み込み後
+        //chrome以外のブラウザで表示
         let userAgent = window.navigator.userAgent.toLowerCase();
         if(userAgent.indexOf('chrome') < 0){
-          $('.aplication_area').before('<p style="border: solid #808; padding:5px;">本アプリケーションはGoogle Chromeのみ対応しております<br>お使いのブラウザでは動作しない可能性があります。</p>');
+          $('.aplication_area').before('<p style="border: solid #808; padding:5px;">本アプリケーションはGoogle Chromeのみ対応しております<br>お使いのブラウザでは動作しません。</p>');
         }
 
-
+        //ウィンドウサイズ変更とアプリの余白を変更
         let timer = 0;
         window.onresize = function () {
           if (timer > 0) {
@@ -450,10 +457,11 @@
         $('#trans').click(fig_trans); //平面図変換ボタンクリック時に起動する関数を設定
         $('#distance_check_button').click(distance_check); //距離間チェックボタンクリック時に起動する関数を設定
         $('#straight_connect_button').click(function(){
-          RadioEvent_set(true);
+          //RadioEvent_set(true);
           fig_connect();
           fig_straight();
           fig_connect();
+          fig_pathUpload();
           if(draw.select('.connected').first()) cash_svg();
         })
 

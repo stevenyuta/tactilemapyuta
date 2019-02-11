@@ -124,12 +124,12 @@ function download_setSVG(original_draw) { //ダウンロード時に出力svgフ
 
   dummy_delete();
   edit_clear();
-  toConnected();
-  select_rect_delete(); //select_rectの全削除
+  //toConnected();
+  //select_rect_delete(); //select_rectの全削除
   draw.select('.image_FrameRect').each(function(i,children){
     this.remove();
   })
-  rect_delete();
+  //rect_delete();
   //不要なグループの削除
   SVG.get('gridline_group').remove();
   SVG.get('handle_group').remove();
@@ -338,7 +338,7 @@ function legendDownload() {
     if(text_pairs_id.Braille) Braille = SVG.get("#" + text_pairs_id.Braille);
     if(text_pairs_id.Ink) Ink = SVG.get("#" + text_pairs_id.Ink);
 
-    if(Braille) legend_str += Braille.attr('brailleOriginText') + ",";//点字要素が入手できた場合
+    if(Braille) legend_str += Braille.attr('brailleoriginText') + ",";//点字要素が入手できた場合
     if(Ink)legend_str += Ink.text();
 
     if(Braille){
