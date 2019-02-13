@@ -272,9 +272,39 @@ function upload_handle(){
       if(gmax_x < bbox.max_x) gmax_x = bbox.max_x;
       if(gmax_y < bbox.max_y) gmax_y = bbox.max_y;
     })
+
+    //各ハンドルとなる要素を取得
+    // box: 移動 , t : 上部 , l:左部 , b:下部 , r:右部
+    // lt : 上左部 , rt:上右部 , lb:下左部 , rb:下右部  , rot:回転
+    var box_resize = SVG.get('box_resize').show();
+    var t_resize = SVG.get('t_resize').show(); //t:
+    var l_resize = SVG.get('l_resize').show();
+    var b_resize = SVG.get('b_resize').show();
+    var r_resize = SVG.get('r_resize').show();
+    var lt_resize = SVG.get('lt_resize').show();
+    var rt_resize = SVG.get('rt_resize').show();
+    var lb_resize = SVG.get('lb_resize').show();
+    var rb_resize = SVG.get('rb_resize').show();
+    var rot_resize = SVG.get('rot_resize').show();
+
     //ハンドル位置の4隅の座標を決定
     gX = gmin_x　, gY = gmin_y;
     gWidth = gmax_x-gmin_x , gHeight = gmax_y-gmin_y;
+    if(gWidth < 0.001 || gHeight < 0.001){
+      lt_resize.hide();
+      rt_resize.hide();
+      lb_resize.hide();
+      rb_resize.hide();
+    }
+    if(gWidth<0.001){
+      gX = gX -2.5;
+      gWidth = 5;
+    }
+    if(gHeight<0.001){
+      gY = gY -2.5;
+      gHeight = 5;
+    }
+
 
     change_gX = gmin_x　, change_gY = gmin_y;
     change_gWidth = gmax_x-gmin_x , change_gHeight = gmax_y-gmin_y;
@@ -283,20 +313,6 @@ function upload_handle(){
     var cx = 0 , cy = 0;
     var anchorX = 0 , anchorY = 0;
     var rad = 0 , deg = 0; //回転操作時の角度
-
-    //各ハンドルとなる要素を取得
-    // box: 移動 , t : 上部 , l:左部 , b:下部 , r:右部
-    // lt : 上左部 , rt:上右部 , lb:下左部 , rb:下右部  , rot:回転
-    var box_resize = SVG.get('box_resize');
-    var t_resize = SVG.get('t_resize'); //t:
-    var l_resize = SVG.get('l_resize');
-    var b_resize = SVG.get('b_resize');
-    var r_resize = SVG.get('r_resize');
-    var lt_resize = SVG.get('lt_resize');
-    var rt_resize = SVG.get('rt_resize');
-    var lb_resize = SVG.get('lb_resize');
-    var rb_resize = SVG.get('rb_resize');
-    var rot_resize = SVG.get('rot_resize');
 
     //ハンドル位置の更新
     SVG.get('handle_group').attr({'transform' : ''});
@@ -352,6 +368,7 @@ function upload_handle(){
       'cy' : gY - 15/draw.viewbox().zoom,
       'r' : HANDLE_CIRCLE_RADIUS/(2*draw.viewbox().zoom)
     })
+
 
     //幅、高さのテキストボックスに値を入力
     $('#rb_width').val(Math.round( gWidth/SVG_RATIO * Math.pow( 10 , 2 ) ) / (Math.pow( 10 , 2 ) ) );
@@ -561,7 +578,7 @@ function get_affinmat(type,event,gX,gY,gWidth,gHeight,anchorX,anchorY,dTx,dTy){
       dTy = getmousepoint('normal',event).y - anchorY;
       //変換後の3座標の入力
       point2[0]=[gX + dTx , gX + gWidth + dTx , gX + dTx];
-      point2[1]=[gY + dTy, gY + dTy , gY + gHeight + dTy];
+      point2[1]=[gY + dTy, gY +dTy , gY + gHeight + dTy];
       point2[2]=[1,1,1];
     }else if(type==='top'){
       //変換前の3座標の入力
@@ -778,6 +795,14 @@ function update_editgroup(affin_mat,scale){
 
   change_gX = Number(pos_gXY[0][0]), change_gY = Number(pos_gXY[1][0]);
   change_gWidth = Number(pos_gWidHei[0][0]) - change_gX , change_gHeight = Number(pos_gWidHei[1][0]) - change_gY;
+  if(change_gWidth<0.001){
+    change_gX = change_gX -2.5;
+    change_gWidth = 5;
+  }
+  if(change_gHeight<0.001){
+    change_gY = change_gY -2.5;
+    change_gHeight = 5;
+  }
 
   //ハンドル位置の更新
   if(scale === "rot"){
