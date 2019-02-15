@@ -7,7 +7,7 @@ function set_key_down_up(){
     }
     if(focus_flag){
       if(e.ctrlKey){ //ctrlキー
-        if(!input_key_buffer[e.keyCode] && current_mode === 'EditPath') editpath_mousemove('90degree', mx, my);
+        if(!input_key_buffer[17] && current_mode === 'EditPath') editpath_mousemove('90degree', mx, my);
         if(e.keyCode === 90) undo(); //90 : Zキー
         if(e.keyCode === 89) redo(); //89 : Yキー
         if(e.keyCode === 67) copy_select(); //67 : Cキー

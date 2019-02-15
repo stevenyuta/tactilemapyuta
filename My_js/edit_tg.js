@@ -140,7 +140,7 @@ function edit_hover(mode){
           draw.select('.image_FrameRect').each(function(i,children){
             this.remove();
           })
-          if(!input_key_buffer[16]) edit_clear();
+          if(!(input_key_buffer[16] || input_key_buffer[17])) edit_clear();
           //this.attr({ stroke: PATH_SELECT_COLOR})
           this.addClass('edit_select');
           editselect_array.push(this.attr('id'));
@@ -544,7 +544,7 @@ function get_affinmat(type,event,gX,gY,gWidth,gHeight,anchorX,anchorY,dTx,dTy){
     my = getmousepoint('normal',event).y;
     rad = Math.atan(( Number(my)-cy )/( Number(mx)-cx ));
     if(Number(mx)-cx<0)rad=Math.PI+rad;
-    if(input_key_buffer[17]){
+    if(input_key_buffer[16] || input_key_buffer[17]){
       rad = Math.PI/2+Math.round(rad / (Math.PI/6)) * Math.PI/6
     }else{
       rad = Math.PI/2+Math.round(rad / (Math.PI/90)) * Math.PI/90

@@ -345,7 +345,7 @@ function draw_rect(){
       }
       draw.off('mousemove').on('mousemove', function(e){
         lx = getmousepoint('normal',e).x , ly = getmousepoint('normal',e).y //描画領域上でのマウスポイント計算
-        if(input_key_buffer[16]){
+        if(input_key_buffer[16] || input_key_buffer[17]){
           ((lx-sx) * (ly-sy) < 0) ? lx = sx - (ly - sy) : lx = sx + ly - sy;
         }
         make_path.attr({'d':''})

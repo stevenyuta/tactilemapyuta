@@ -29,7 +29,7 @@ function draw_line(){
   ***********************************/
   function draw_mousemove(){
     draw.off('mousemove').mousemove(function(e){
-      if(input_key_buffer[17]){ //ctrlキーを押しているとき
+      if(input_key_buffer[16] || input_key_buffer[17]){ //ctrlキーを押しているとき
         mx = getmousepoint('15degree',e,current_x,current_y).x , my = getmousepoint('15degree',e,current_x,current_y).y;
       }else{
         mx = getmousepoint('connect',e).x , my = getmousepoint('connect',e).y;
