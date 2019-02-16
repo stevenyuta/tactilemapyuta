@@ -716,4 +716,5 @@ function fig_pathUpload(){
       }
     })
   })
+  update_ghostPath();
 }
