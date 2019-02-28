@@ -182,6 +182,7 @@ function layer_change(e){
     $("#fillnone_button").click(change_fill)
     $("#white_button").click(change_fill)
     $("#gray_button").click(change_fill)
+    $("#black_button").click(change_fill)
     $("#diagonal_button").click(change_fill)
     $("#polkadot_button").click(change_fill)
     $("#polkadot_water_button").click(change_fill)
@@ -227,6 +228,15 @@ function layer_change(e){
                   this.attr({'fill_tmp': '#333'});
                 }else{
                   this.fill('#333')
+                }
+                break;
+
+              case 'black_button':
+                if(this.hasClass('fragmented_PathGroup')){
+                  SVG.get('#ghost_path_' + this.attr('fragmented_Group_Number')).attr({'fill' : '#000'});
+                  this.attr({'fill_tmp': '#000'});
+                }else{
+                  this.fill('#000')
                 }
                 break;
 

@@ -302,6 +302,10 @@ right toolbar
   background-image: url('../images/gray.png');
 }
 
+#draw_fill_black + label{
+  background-image: url('../images/black.png');
+}
+
 #draw_fill_polkadot + label{
   background-image: url('../images/polkadot.png');
 }
@@ -405,6 +409,10 @@ right toolbar
 
 #fill_change #gray_button{
   background-image: url('../images/gray.png');
+}
+
+#fill_change #black_button{
+  background-image: url('../images/black.png');
 }
 
 #fill_change #polkadot_button{
