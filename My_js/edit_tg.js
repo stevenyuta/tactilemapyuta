@@ -896,7 +896,7 @@ function update_TextInfoBox(){
       let transed_BraText = text_value.replace(/[ァ-ン]/g, function(s) {
         return String.fromCharCode(s.charCodeAt(0) - 0x60);
       });
-      if(tactileGraphic().convertText(transed_BraText).match(/[^あ-んー濁小大半斜数拗１２３４５６７８９1-9＿\s]/)){
+      if(tactileGraphic().convertText(transed_BraText).match(/[^あ-んー濁小大半斜数拗拡｜|＋+.。？?１２３４５６７８９1-9＿\s]/)){
         //alert("点字に使用できない文字が含まれています。");
       }else{
         text.plain(tactileGraphic().convertText(transed_BraText));//文字を点字表現に変換
