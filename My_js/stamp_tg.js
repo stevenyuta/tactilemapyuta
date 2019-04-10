@@ -429,11 +429,6 @@ function add_text(){
         }
       }
       if(real_Bra_text){
-        if(real_Bra_text.text().match(/[^あ-んー濁小大半斜数拗拡｜|＋+.。？?１２３４５６７８９1-9＿\s]/)){
-          alert("点字に使用できない文字が含まれています。");
-          dummy_delete();
-          return;
-        }
         if( real_Bra_text.text() ==="" ){
           alert("点字に何か入力してください。");
           dummy_delete();
