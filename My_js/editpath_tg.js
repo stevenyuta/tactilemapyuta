@@ -683,12 +683,12 @@ function verhor_fragmentedPath(){
 *****************************************************/
 function checkEditPath_gadget(){
   $('#stroke_style').hide();
-  $('.strokewidth_gadget').hide();
+  $('.stroke_option').hide();
   $('#layer_select').hide();
   $('#fill_change').hide();
   if(draw.select('.fragmented_PathGroup').first()!==undefined){
     $('#stroke_style').show();
-    $('.strokewidth_gadget').show();
+    $('.stroke_option').show();
     $('#layer_select').show();
     $('#fill_change').show();
   }

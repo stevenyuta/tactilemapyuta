@@ -152,7 +152,8 @@ function stroke_radio_set(){
 
   $("#stroke_color").off('change').on("change", function(){
      let stroke_color = $("#stroke_color").val();
-     draw.select('.edit_select.path , .edit_select.circle').attr({'stroke' : stroke_color});
+     draw.select('.edit_select.path , .edit_select.circle , .fragmented').attr({'stroke' : stroke_color});
+     draw.select('.fragmented_PathGroup').attr({'stroke_tmp' : stroke_color});
      draw.select('.drawing_path').attr({'stroke' : stroke_color});
   });
 
