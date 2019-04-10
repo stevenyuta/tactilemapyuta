@@ -11,7 +11,7 @@ function edit(){
     if(select_element){
       if(current_mode === 'Edit'){
         if(!select_element.hasClass('image')){
-          select_element.attr({'stroke': PATH_SELECT_COLOR }).addClass('edit_select');
+          select_element.addClass('edit_select');
           editselect_array_tmp.push(select_element.attr('id'));
           if(select_element.hasClass('path')){
             if(select_element.clear().array().settle().length < 2) select_element.remove();
@@ -87,7 +87,6 @@ function edit_mousedown_up(mode){
               if(pmax_x < sr_min_x || pmax_x > sr_max_x) InArea = false;
               if(pmax_y < sr_min_y || pmax_y > sr_max_y) InArea = false;
               if(InArea){
-                if(!this.hasClass('image')) this.attr({'stroke': PATH_SELECT_COLOR });
                 this.addClass('edit_select');
                 editselect_array.push(this.attr('id'));
               }
@@ -95,6 +94,7 @@ function edit_mousedown_up(mode){
           })
           set_textsize();
           set_strokewidth();
+          set_strokecolor();
           set_imageOpacity();
           edit_hover();
           edit_mousedown_up();
@@ -133,8 +133,6 @@ function edit_hover(mode){
             'stroke-dasharray': SELECT_RECT_STROKEDOTT, //点線に
             'transform' : this.transform('matrix')
           }).addClass('image_FrameRect');
-        }else{
-          this.attr({ stroke: PATH_SELECT_COLOR});
         }
         this.off('mousedown').mousedown(function(e){
           draw.select('.image_FrameRect').each(function(i,children){
@@ -147,6 +145,7 @@ function edit_hover(mode){
           upload_handle();
           set_textsize();
           set_strokewidth();
+          set_strokecolor();
           set_imageOpacity()
           this.off('mousedown');
           edit_hover();
@@ -177,15 +176,10 @@ function edit_hover(mode){
           draw.select('.image_FrameRect').each(function(i,children){
             this.remove();
           })
-        }else if(this.hasClass('ink')){  //text要素の場合
-          this.attr({'stroke' : 'none'});
         }else if(this.hasClass('braille')){  //text要素の場合
           this.attr({
-            'stroke': font_strokecolor,
             'stroke-width': font_strokewidth
           });
-        }else{
-          this.attr({'stroke': PATH_STROKE_COLOR});
         }
         this.off('mousedown');
         this.attr({'cursor':'default'});
@@ -206,13 +200,6 @@ function edit_clear(clear_flag){
   if($('#rb_height').is(':focus')) update_heightBox();
   if($('#textInfo_TextBox').is(':focus')) update_TextInfoBox();
   draw.select('.edit_select').each(function(i, children) {
-    if(this.hasClass('ink')){  //text要素の場合
-      this.attr({'stroke': 'none'});
-    }else if(this.hasClass('braille')){  //text要素の場合
-      this.attr({'stroke' : '#000000'});
-    }else{
-      this.attr({'stroke': PATH_STROKE_COLOR});
-    }
     this.removeClass('edit_select'); //edit_selectクラスを取り除く
     if(!clear_flag) editselect_array.length = 0;
   })
@@ -225,7 +212,7 @@ function upload_handle(){
 
   (draw.select('.edit_select.ink').first()!==undefined) ? $('.resizeInk_gadget').show() : $('.resizeInk_gadget').hide();
   (draw.select('.edit_select.braille').first()!==undefined) ? $('.resizeBraille_gadget').show() : $('.resizeBraille_gadget').hide();
-  (draw.select('.edit_select.path , .edit_select.circle').first()!==undefined) ? $('.strokewidth_gadget').show() : $('.strokewidth_gadget').hide();
+  (draw.select('.edit_select.path , .edit_select.circle').first()!==undefined) ? $('.stroke_option').show() : $('.stroke_option').hide();
   (draw.select('.edit_select.path , .edit_select.circle').first()!==undefined) ? $('#stroke_style').show() : $('#stroke_style').hide();
   (draw.select('.edit_select.image').first()!==undefined) ? $('.gadget_imageOpacity').show() : $('.gadget_imageOpacity').hide();
 
@@ -236,7 +223,6 @@ function upload_handle(){
     let text_type , text_value;
     text.hasClass('ink') ? text_type = 'ink' : text_type = 'braille';
     text.hasClass('ink') ? text_value = text.text() : text_value = text.attr('brailleorigintext');
-    console.log(text_value)
     $('#textInfo_TextBox').val(text_value);
   }else{
     $('.textInfo_gadget').hide();
@@ -998,6 +984,7 @@ function paste_select(){
       upload_handle();
       set_textsize();
       set_strokewidth();
+      set_strokecolor();
       set_imageOpacity();
     }else{
       draw.select('.edit_select').removeClass('edit_select');

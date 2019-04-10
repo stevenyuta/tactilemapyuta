@@ -149,6 +149,13 @@ function stroke_radio_set(){
     }
   })
   $("#solid_line").prop('checked', true).change();//初期状態は実線にチェックを入れておく
+
+  $("#stroke_color").off('change').on("change", function(){
+     let stroke_color = $("#stroke_color").val();
+     draw.select('.edit_select.path , .edit_select.circle').attr({'stroke' : stroke_color});
+     draw.select('.drawing_path').attr({'stroke' : stroke_color});
+  });
+
 }
 
 /******************************************************

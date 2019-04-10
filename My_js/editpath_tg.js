@@ -59,14 +59,12 @@ function editpath_hover(mode){
   if(mode){
     draw.select('.connected').mouseover(function() {
       this.attr({
-        'stroke' : PATH_SELECT_COLOR,
         'cursor' : 'pointer'
       });
       this.off('mousedown',editpath_mousedown).mousedown(editpath_mousedown);
     })
     draw.select('.connected').mouseout(function() {
       this.attr({
-        'stroke' : PATH_STROKE_COLOR,
         'cursor':'default'
       });
       this.off('mousedown',editpath_mousedown);
@@ -79,7 +77,7 @@ function editpath_hover(mode){
     })
     draw.select('.fragmented:not(.editing_target)').mouseout(function() {
       this.attr({
-        'stroke': PATH_SELECT_COLOR,
+        'stroke': this.parent().attr('stroke_tmp'),
         'cursor':'default'
       });
     })
@@ -123,7 +121,7 @@ function toFragmented(connectedPath){
     'id' : 'fragmented_PathGroup_' + String(max_frag_num + 1),
     'fragmented_Group_Number' : String(max_frag_num + 1),
     'connected_id' : connectedPath.attr('id'),
-    'fill_tmp': connectedPath.attr('fill')
+    'fill_tmp': connectedPath.attr('fill') , 'stroke_tmp': connectedPath.attr('stroke')
   })
   fragmented_RectGroup.attr({
     'id' : 'fragmented_RectGroup_' + String(max_frag_num + 1),
@@ -138,8 +136,7 @@ function toFragmented(connectedPath){
     let fragmentedPath = fragmented_PathGroup.path().addClass('fragmented').addClass('SVG_Element').addClass('path');
     let rect = fragmented_RectGroup.rect(RECT_WIDTH/(1.5*draw.zoom()) , RECT_HEIGHT/(1.5*draw.zoom())).addClass('edit_rect').front(); ////重ね順を一番前に
     fragmentedPath.attr({
-      'fill' : 'none',
-      'stroke' : PATH_SELECT_COLOR,
+      'fill' : 'none', 'stroke' : connectedPath.attr('stroke'),
       'stroke-width': connectedPath.attr('stroke-width'),
       'stroke-dasharray' : connectedPath.attr('stroke-dasharray'),
     })
@@ -251,14 +248,12 @@ function fragmentedPath_EventSet(){
         let fragmentedPath2 = draw.path().M({x: mx, y: my}).L({x: dpoint[1][1], y: dpoint[1][2] }).addClass('fragmented').addClass('SVG_Element').addClass('path');
         let rect = SVG.get('#fragmented_RectGroup_' + String(this.parent().attr('fragmented_Group_Number'))).rect(RECT_WIDTH/(1.5*draw.zoom()) , RECT_HEIGHT/(1.5*draw.zoom())).addClass('edit_rect').back();
         fragmentedPath1.attr({
-          'fill' : 'none',
-          'stroke' : PATH_SELECT_COLOR,
+          'fill' : 'none', 'stroke' : this.parent().attr('stroke_tmp'),
           'stroke-width': this.attr('stroke-width'),
           'stroke-dasharray': this.attr('stroke-dasharray'),
         })
         fragmentedPath2.attr({
-          'fill' : 'none',
-          'stroke' : PATH_SELECT_COLOR,
+          'fill' : 'none', 'stroke' : this.parent().attr('stroke_tmp'),
           'stroke-width': this.attr('stroke-width'),
           'stroke-dasharray': this.attr('stroke-dasharray'),
         })
@@ -392,8 +387,7 @@ function delete_editpath_rect(editing_target){
     new_fragmentedPath = draw.path().M({x: beforePath_dpoint[0][1], y: beforePath_dpoint[0][2]}).L({x: afterPath_dpoint[1][1], y: afterPath_dpoint[1][2]});
     new_fragmentedPath.addClass('fragmented').addClass('SVG_Element').addClass('path');
     new_fragmentedPath.attr({
-      'fill' : 'none',
-      'stroke' : PATH_SELECT_COLOR,
+      'fill' : 'none','stroke' : nears.beforePath.parent().attr('stroke_tmp'),
       'stroke-width': nears.beforePath.attr('stroke-width'),
       'stroke-dasharray': nears.beforePath.attr('stroke-dasharray'),
     })
@@ -422,7 +416,7 @@ function delete_editpath_fragmentedPath(editing_target){
       'id' : 'fragmented_PathGroup_' + String(max_fragmented_Group_Number + 1),
       'fragmented_Group_Number' : String(max_fragmented_Group_Number + 1),
       'connected_id' : editing_target.parent().attr('connected_id'),
-      'fill_tmp': editing_target.parent().attr('fill_tmp')
+      'fill_tmp': editing_target.parent().attr('fill_tmp') , 'stroke_tmp' : editing_target.parent().attr('stroke_tmp')
     })
     let ghost_path = draw.path().attr({
       'id' : 'ghost_path_' + String(max_fragmented_Group_Number + 1),
@@ -477,8 +471,7 @@ function node_connect_function(){
     }
     let new_path = draw.path().addClass('fragmented').addClass('SVG_Element').addClass('path');
     new_path.attr({
-      'fill' : 'none',
-      'stroke' : PATH_SELECT_COLOR,
+      'fill' : 'none','stroke' : fragmented_PathGroup1.attr('stroke_tmp'),
       'stroke-width': fragmented_PathGroup1.first().attr('stroke-width'),
       'stroke-dasharray': fragmented_PathGroup1.first().attr('stroke-dasharray'),
     })
@@ -728,7 +721,7 @@ function reset_editing_target(){
     if(this.hasClass('edit_rect')){
       this.attr({ 'fill' : CIRCLE_COLOR});
     }else{
-      this.attr({ 'stroke' : PATH_SELECT_COLOR});
+      this.attr({ 'stroke' : this.parent().attr('stroke_tmp')});
     }
   })
 }

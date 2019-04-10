@@ -75,7 +75,7 @@ function add_stair(){
     }
     dummy_stair.attr({
       'fill': 'none',
-      'stroke': PATH_STROKE_COLOR,
+      'stroke': $('#stroke_color').val(),
       'stroke-width' : PATH_STROKE_WIDTH*$('#StrokeWidth_TextBox').val(),
     })
   })
@@ -110,7 +110,7 @@ function add_escalator(){
     }
     dummy_escalator.attr({
       'fill': 'none',
-      'stroke': PATH_STROKE_COLOR,
+      'stroke': $('#stroke_color').val(),
       'stroke-width' : PATH_STROKE_WIDTH*$('#StrokeWidth_TextBox').val(),
     })
   })
@@ -141,7 +141,7 @@ function add_arrow(){
     }
     dummy_arrow.attr({
       'fill': 'none',
-      'stroke': PATH_STROKE_COLOR,
+      'stroke': $('#stroke_color').val(),
       'stroke-width' : PATH_STROKE_WIDTH*$('#StrokeWidth_TextBox').val(),
     })
   })
@@ -184,7 +184,7 @@ function add_Tiket_gate(){
     }
     draw.select('.dummy').attr({
       'fill': 'none',
-      'stroke': PATH_STROKE_COLOR,
+      'stroke': $('#stroke_color').val(),
       'stroke-width' : PATH_STROKE_WIDTH*$('#StrokeWidth_TextBox').val(),
     })
   })
@@ -220,7 +220,7 @@ function add_reducescale(){
     }
     dummy_scale.attr({
       'fill': 'none',
-      'stroke': PATH_STROKE_COLOR,
+      'stroke': $('#stroke_color').val(),
       'stroke-width' : PATH_STROKE_WIDTH*$('#StrokeWidth_TextBox').val(),
     })
   })
@@ -285,7 +285,7 @@ function draw_circle(){
         'cy' : sy,
         'fill': $('input[name="draw_line_fillRadio"]:checked').val(),
         'stroke-width' : PATH_STROKE_WIDTH * $('#StrokeWidth_TextBox').val(),
-        'stroke' : '#000000'
+        'stroke' : $('#stroke_color').val()
       })
       if($('input[name="stroke"]:checked').val()==='dotted_line'){
         make_circle.attr({ 'stroke-dasharray': PATH_STROKE_WIDTH*$('#StrokeWidth_TextBox').val() })
@@ -334,7 +334,7 @@ function draw_rect(){
       make_path = draw.path().attr({
         'fill': $('input[name="draw_line_fillRadio"]:checked').val(),
         'stroke-width' : PATH_STROKE_WIDTH * $('#StrokeWidth_TextBox').val(),
-        'stroke' : '#000000'
+        'stroke' : $('#stroke_color').val()
       })
       if($('input[name="stroke"]:checked').val()==='dotted_line'){
         make_path.attr({ 'stroke-dasharray': PATH_STROKE_WIDTH*$('#StrokeWidth_TextBox').val() })

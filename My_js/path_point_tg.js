@@ -17,7 +17,6 @@ function toConnected(){
       if(j===0){
         new_path.M({x: dpoint[0][1], y: dpoint[0][2]});
         new_path.attr({ //線属性の指定
-          'stroke': PATH_STROKE_COLOR,
           'stroke-width': this.attr('stroke-width'),
           'stroke-dasharray': this.attr('stroke-dasharray'),
         })
@@ -31,7 +30,7 @@ function toConnected(){
       }
       if(!self.hasClass('closed_path') && j===self.children().length - 1) new_path.L({x: dpoint[1][1], y: dpoint[1][2]});
     })
-
+    new_path.attr({'stroke' : this.attr('stroke_tmp')});
     new_path.attr({'fill' : this.attr('fill_tmp')});
     if(this.hasClass('closed_path'))  new_path.Z();
     this.remove();
