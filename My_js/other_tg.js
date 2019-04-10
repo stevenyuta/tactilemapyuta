@@ -122,6 +122,7 @@ function getmousepoint(mode,mouseevent,param1,param2,param3,param4){
 //layerを操作する関数
 ******************************************************/
 function layer_change(e){
+  let base;
  switch(this.id){
      case 'front_button': // ← key
        draw.select('.edit_select, .fragmented_PathGroup').each(function(i , children){
@@ -132,21 +133,42 @@ function layer_change(e){
        break;
      case 'forward_button': // ← key
        draw.select('.edit_select, .fragmented_PathGroup').each(function(i , children){
-         this.forward();
+         if(i===0){
+           base = this;
+           this.forward();
+           if(this.previous()){
+             if(this.previous().hasClass('frame_line')) this.forward();
+           }
+         }else{
+           base.before(this);
+         }
          let ghost_path = SVG.get('#ghost_path_' + this.attr('fragmented_Group_Number'));
          if(ghost_path) this.before(ghost_path);
        })
        break;
      case 'backward_button': // ← key
        draw.select('.edit_select, .fragmented_PathGroup').each(function(i , children){
-         this.backward();
+         if(i===0){
+           base = this;
+           this.backward();
+           if(this.previous()){
+             if(this.previous().hasClass('frame_line')) this.backward();
+           }
+         }else{
+           base.after(this);
+         }
          let ghost_path = SVG.get('#ghost_path_' + this.attr('fragmented_Group_Number'));
          if(ghost_path) this.before(ghost_path);
        })
        break;
      case 'back_button': // ← key
        draw.select('.edit_select, .fragmented_PathGroup').each(function(i , children){
-         this.back();
+         if(i===0){
+           base = this;
+           this.back();
+         }else{
+           base.after(this);
+         }
          let ghost_path = SVG.get('#ghost_path_' + this.attr('fragmented_Group_Number'));
          if(ghost_path) this.before(ghost_path);
        })
