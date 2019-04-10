@@ -338,7 +338,7 @@ function legendDownload() {
     if(text_pairs_id.Braille) Braille = SVG.get("#" + text_pairs_id.Braille);
     if(text_pairs_id.Ink) Ink = SVG.get("#" + text_pairs_id.Ink);
 
-    if(Braille) legend_str += Braille.attr('brailleoriginText') + ",";//点字要素が入手できた場合
+    if(Braille) legend_str += Braille.attr('brailleorigintext') + ",";//点字要素が入手できた場合
     if(Ink)legend_str += Ink.text();
 
     if(Braille){

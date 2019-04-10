@@ -235,7 +235,8 @@ function upload_handle(){
     let text = draw.select('.edit_select.ink,.edit_select.braille').first();
     let text_type , text_value;
     text.hasClass('ink') ? text_type = 'ink' : text_type = 'braille';
-    text.hasClass('ink') ? text_value = text.text() : text_value = text.attr('brailleoriginText');
+    text.hasClass('ink') ? text_value = text.text() : text_value = text.attr('brailleorigintext');
+    console.log(text_value)
     $('#textInfo_TextBox').val(text_value);
   }else{
     $('.textInfo_gadget').hide();
@@ -897,7 +898,7 @@ function update_TextInfoBox(){
         return String.fromCharCode(s.charCodeAt(0) - 0x60);
       });
       text.plain(tactileGraphic().convertText(transed_BraText));//文字を点字表現に変換
-      text.attr({'brailleoriginText' : transed_BraText});
+      text.attr({'brailleorigintext' : transed_BraText});
     }
   }
 }

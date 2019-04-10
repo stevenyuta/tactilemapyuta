@@ -410,7 +410,7 @@ function add_text(){
         ,'stroke-width' :  font_stroke,
         'font-family': font_family,
         'font-size': $('#resizeBraille_TextBox').val() * TEXT_CORRECTION,
-        'brailleoriginText' : transed_BraText,
+        'brailleorigintext' : transed_BraText,
         'cursor':'default'
       })
       bra_id = dummy_Bra_text.attr('id');
