@@ -94,26 +94,26 @@ function distance_check(){
 
             if(distance1 < THRE_DISTANCE){
               if(b1x < relativeXY.max_x && b1x > relativeXY.min_x && b1y < relativeXY.max_y && b1y > relativeXY.min_y){
-                this.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
-                if(self.hasClass('symbol'))self.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+                this.addClass('distance_check');
+                if(self.hasClass('symbol'))self.addClass('distance_check');
               }
             }
             if(distance2 < THRE_DISTANCE){
               if(b2x < relativeXY.max_x && b2x > relativeXY.min_x && b2y < relativeXY.max_y && b2y > relativeXY.min_y){
-                this.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
-                if(self.hasClass('symbol'))self.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+                this.addClass('distance_check');
+                if(self.hasClass('symbol'))self.addClass('distance_check');
               }
             }
             if(distance3 < THRE_DISTANCE){
               if(b3x < relativeXY.max_x && b3x > relativeXY.min_x && b3y < relativeXY.max_y && b3y > relativeXY.min_y){
-                this.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
-                if(self.hasClass('symbol'))self.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+                this.addClass('distance_check');
+                if(self.hasClass('symbol'))self.addClass('distance_check');
               }
             }
             if(distance4 < THRE_DISTANCE){
               if(b4x < relativeXY.max_x && b4x > relativeXY.min_x && b4y < relativeXY.max_y && b4y > relativeXY.min_y){
-                this.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
-                if(self.hasClass('symbol'))self.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+                this.addClass('distance_check');
+                if(self.hasClass('symbol'))self.addClass('distance_check');
               }
             }
           })
@@ -138,26 +138,26 @@ function distance_check(){
 
                 if(distance1 < THRE_DISTANCE){
                   if(b1x < relativeXY.max_x && b1x > relativeXY.min_x && b1y < relativeXY.max_y && b1y > relativeXY.min_y){
-                    this.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
-                    if(self.hasClass('symbol'))self.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+                    this.addClass('distance_check');
+                    if(self.hasClass('symbol'))self.addClass('distance_check');
                   }
                 }
                 if(distance2 < THRE_DISTANCE){
                   if(b2x < relativeXY.max_x && b2x > relativeXY.min_x && b2y < relativeXY.max_y && b2y > relativeXY.min_y){
-                    this.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
-                    if(self.hasClass('symbol'))self.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+                    this.addClass('distance_check');
+                    if(self.hasClass('symbol'))self.addClass('distance_check');
                   }
                 }
                 if(distance3 < THRE_DISTANCE){
                   if(b3x < relativeXY.max_x && b3x > relativeXY.min_x && b3y < relativeXY.max_y && b3y > relativeXY.min_y){
-                    this.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
-                    if(self.hasClass('symbol'))self.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+                    this.addClass('distance_check');
+                    if(self.hasClass('symbol'))self.addClass('distance_check');
                   }
                 }
                 if(distance4 < THRE_DISTANCE){
                   if(b4x < relativeXY.max_x && b4x > relativeXY.min_x && b4y < relativeXY.max_y && b4y > relativeXY.min_y){
-                    this.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
-                    if(self.hasClass('symbol'))self.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+                    this.addClass('distance_check');
+                    if(self.hasClass('symbol'))self.addClass('distance_check');
                   }
                 }
               }
@@ -185,17 +185,17 @@ function distance_check(){
 
               if(distance1 < THRE_DISTANCE){
                 if(b1x < relativeXY.max_x && b1x > relativeXY.min_x && b1y < relativeXY.max_y && b1y > relativeXY.min_y){
-                  this.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
-                  if(self.hasClass('symbol'))self.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+                  this.addClass('distance_check');
+                  if(self.hasClass('symbol'))self.addClass('distance_check');
                 }
               }
               if(distance2 < THRE_DISTANCE){
-                this.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
-                if(self.hasClass('symbol'))self.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+                this.addClass('distance_check');
+                if(self.hasClass('symbol'))self.addClass('distance_check');
               }
               if(distance3 < THRE_DISTANCE){
-                this.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
-                if(self.hasClass('symbol'))self.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+                this.addClass('distance_check');
+                if(self.hasClass('symbol'))self.addClass('distance_check');
               }
             }
           })
@@ -248,26 +248,26 @@ function distance_check(){
 
             if(distance1 < THRE_DISTANCE){
               if(b1x < relativeXY.max_x && b1x > relativeXY.min_x && b1y < relativeXY.max_y && b1y > relativeXY.min_y){
-                this.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
-                self.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+                this.addClass('distance_check');
+                self.addClass('distance_check');
               }
             }
             if(distance2 < THRE_DISTANCE){
               if(b2x < relativeXY.max_x && b2x > relativeXY.min_x && b2y < relativeXY.max_y && b2y > relativeXY.min_y){
-                this.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
-                self.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+                this.addClass('distance_check');
+                self.addClass('distance_check');
               }
             }
             if(distance3 < THRE_DISTANCE){
               if(b3x < relativeXY.max_x && b3x > relativeXY.min_x && b3y < relativeXY.max_y && b3y > relativeXY.min_y){
-                this.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
-                self.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+                this.addClass('distance_check');
+                self.addClass('distance_check');
               }
             }
             if(distance4 < THRE_DISTANCE){
               if(b4x < relativeXY.max_x && b4x > relativeXY.min_x && b4y < relativeXY.max_y && b4y > relativeXY.min_y){
-                this.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
-                self.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+                this.addClass('distance_check');
+                self.addClass('distance_check');
               }
             }
           }
@@ -295,17 +295,17 @@ function distance_check(){
 
             if(distance1 < THRE_DISTANCE){
               if(b1x < relativeXY.max_x && b1x > relativeXY.min_x && b1y < relativeXY.max_y && b1y > relativeXY.min_y){
-                this.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
-                self.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+                this.addClass('distance_check');
+                self.addClass('distance_check');
               }
             }
             if(distance2 < THRE_DISTANCE){
-              this.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
-              self.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+              this.addClass('distance_check');
+              self.addClass('distance_check');
             }
             if(distance3 < THRE_DISTANCE){
-              this.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
-              self.addClass('distance_check').attr({'stroke': PATH_SELECT_COLOR });
+              this.addClass('distance_check');
+              self.addClass('distance_check');
             }
           }
         })

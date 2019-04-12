@@ -196,18 +196,23 @@ function layer_change(e){
 
     /*線モードでのfillボタン*/
     $('input[name="draw_line_fillRadio"]:radio').off('change').on('change',function(){
-      draw.select('.drawing_path').fill($('input[name="draw_line_fillRadio"]:checked').val())
+      draw.select('.drawing_path').fill($('input[name="draw_line_fillRadio"]:checked').val());
+      if($('input[name="draw_line_fillRadio"]:checked').val()==='custom') draw.select('.drawing_path').fill($('#draw_fill_color').val());
+    });
+    $("#draw_fill_color").off('change').on("change", function(){
+       draw.select('.drawing_path').fill($('#draw_fill_color').val());
+       $('#fill_color').val($('#draw_fill_color').val());
+       $("#draw_fill_custom").prop('checked', true);
     });
 
 
     /**選択モードでのfillボタン*/
-    $("#fillnone_button").click(change_fill)
-    $("#white_button").click(change_fill)
-    $("#gray_button").click(change_fill)
-    $("#black_button").click(change_fill)
-    $("#diagonal_button").click(change_fill)
-    $("#polkadot_button").click(change_fill)
-    $("#polkadot_water_button").click(change_fill)
+    $("#fillnone_button").click(change_fill);
+    $("#gray_button").click(change_fill);
+    $("#diagonal_button").click(change_fill);
+    $("#polkadot_button").click(change_fill);
+    $("#polkadot_water_button").click(change_fill);
+    $("#fill_color").on('change',change_fill);
 
 
     function change_fill(){
@@ -235,13 +240,14 @@ function layer_change(e){
               }
               break;
 
-              case 'white_button': // ← key
+              case 'fill_color':
                 if(this.hasClass('fragmented_PathGroup')){
-                  SVG.get('#ghost_path_' + this.attr('fragmented_Group_Number')).attr({'fill' : '#fff'});
-                  this.attr({'fill_tmp': '#fff'});
+                  SVG.get('#ghost_path_' + this.attr('fragmented_Group_Number')).attr({'fill' : $('#fill_color').val()});
+                  this.attr({'fill_tmp': $('#fill_color').val()});
                 }else{
-                  this.fill('#fff');
+                  this.fill($('#fill_color').val());
                 }
+                $('#draw_fill_color').val($('#fill_color').val());
                 break;
 
               case 'gray_button': // ← key
@@ -250,15 +256,6 @@ function layer_change(e){
                   this.attr({'fill_tmp': '#333'});
                 }else{
                   this.fill('#333')
-                }
-                break;
-
-              case 'black_button':
-                if(this.hasClass('fragmented_PathGroup')){
-                  SVG.get('#ghost_path_' + this.attr('fragmented_Group_Number')).attr({'fill' : '#000'});
-                  this.attr({'fill_tmp': '#000'});
-                }else{
-                  this.fill('#000')
                 }
                 break;
 

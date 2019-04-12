@@ -238,23 +238,20 @@
               <label for="draw_fill_diagonal"></label>
             </td></tr>
             <tr><td>
-              <input type="radio" id="draw_fill_white" name="draw_line_fillRadio" value="#fff"/>
-              <label for="draw_fill_white"></label>
+              <input type="radio" id="draw_fill_polkadot_water" name="draw_line_fillRadio" value="url(#polkadot_water-texture)"/>
+              <label for="draw_fill_polkadot_water"></label>
             </td><td>
-              <input type="radio" id="draw_fill_gray" name="draw_line_fillRadio" value="#333"/>
-              <label for="draw_fill_gray"></label>
-            </td></tr>
-            <tr><td>
               <input type="radio" id="draw_fill_polkadot" name="draw_line_fillRadio" value="url(#polkadot-texture)"/>
               <label for="draw_fill_polkadot"></label>
-            </td><td>
-              <input type="radio" id="draw_fill_black" name="draw_line_fillRadio" value="#000"/>
-              <label for="draw_fill_black"></label>
             </td></tr>
-          <tr><td>
-            <input type="radio" id="draw_fill_polkadot_water" name="draw_line_fillRadio" value="url(#polkadot_water-texture)"/>
-            <label for="draw_fill_polkadot_water"></label>
-          </td></tr>
+            <tr><td>
+              <input type="radio" id="draw_fill_gray" name="draw_line_fillRadio" value="#333"/>
+              <label for="draw_fill_gray"></label>
+            </td><td align="center">
+              <input type="radio" id="draw_fill_custom" name="draw_line_fillRadio" value="custom"/>
+              <label for="draw_fill_custom">なんでも</label><br>
+              <input type="color" id="draw_fill_color" name="draw_filcolor" value="#FFFFFF" style="width:80px; height:20px">
+            </td></tr>
           </table>
 
           <table id="stamp_table">
@@ -319,14 +316,13 @@
               <td><button id="diagonal_button"></button></td>
             </tr>
             <tr>
-              <td><button id="white_button"></button></td>
-              <td><button id="gray_button"></button></td>
+              <td><button id="polkadot_button" ></button></td>
+              <td><button id="polkadot_water_button"></button></td>
             </tr>
             <tr>
-              <td><button id="polkadot_button" ></button></td>
-              <td><button id="black_button"></button></td>
+              <td><button id="gray_button"></button></td>
+              <td><input type="color" id="fill_color" name="filcolor" value="#FFFFFF" style="width:80px; height:30px"></td>
             </tr>
-            <tr><td><button id="polkadot_water_button"></button></td></tr>
           </table>
 
           <table id="resizeBox_textbox">

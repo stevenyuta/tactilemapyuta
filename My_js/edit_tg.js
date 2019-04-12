@@ -95,6 +95,7 @@ function edit_mousedown_up(mode){
           set_textsize();
           set_strokewidth();
           set_strokecolor();
+          set_fillcolor();
           set_imageOpacity();
           edit_hover();
           edit_mousedown_up();
@@ -146,7 +147,8 @@ function edit_hover(mode){
           set_textsize();
           set_strokewidth();
           set_strokecolor();
-          set_imageOpacity()
+          set_fillcolor();
+          set_imageOpacity();
           this.off('mousedown');
           edit_hover();
 
@@ -972,10 +974,7 @@ function paste_select(){
   for(let i=0;i < copy_elements.length; i++){
     let clone = copy_elements[i].clone().addClass('edit_select');
     clone.dmove(100);
-    if($('input[name="tg_mode"]:checked').val()==='Edit'){
-      clone.attr({ 'stroke' : PATH_SELECT_COLOR });
-      clone.off('mousedown');
-    }
+    if($('input[name="tg_mode"]:checked').val()==='Edit') clone.off('mousedown');
   }
   if(copy_elements.length > 0){
     copy_select();
@@ -985,6 +984,7 @@ function paste_select(){
       set_textsize();
       set_strokewidth();
       set_strokecolor();
+      set_fillcolor();
       set_imageOpacity();
     }else{
       draw.select('.edit_select').removeClass('edit_select');

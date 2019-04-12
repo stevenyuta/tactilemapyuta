@@ -89,6 +89,7 @@ function draw_line(){
               'fill': $('input[name="draw_line_fillRadio"]:checked').val(), 'stroke': $('#stroke_color').val(),
               'stroke-width': PS_WIDTH*$('#StrokeWidth_TextBox').val()
             })
+            if($('input[name="draw_line_fillRadio"]:checked').val()==='custom') drawing_path.fill($('#draw_fill_color').val());
             if($('input[name="stroke"]:checked').val()==='dotted_line'){
               drawing_path.attr({ 'stroke-dasharray': PS_WIDTH*$('#StrokeWidth_TextBox').val() })
             }
@@ -275,6 +276,34 @@ function set_strokecolor(){
       if(strokecolor===false){
       }else{
         $('#stroke_color').val(strokecolor);
+      }
+    }
+  }
+}
+
+/**************************************************************************************
+//選択状態のpathの色を取得して色変更ガジェットを変更する関数
+//選択状態のpathが存在しない場合は変更なし、または複数存在する場合はも何もしない
+**********************************************************************************/
+function set_fillcolor(){
+  if(draw.select('.edit_select').first()){
+    let fillcolor_flag = false;  //true: 選択状態のパスあり false: なし
+    let fillcolor = false  // strokewidth属性の値を格納、 false: strokewitdhが違うpathが2つ以上ある場合
+
+    draw.select('.edit_select').each(function(i,children){
+      if(!this.hasClass('ink') && !this.hasClass('braille') && !this.hasClass('image')){
+        if(!fillcolor_flag){
+          fillcolor = this.attr('fill');
+          fillcolor_flag = true;
+        }else if(fillcolor !== this.attr('fill')){
+          fillcolor = false;
+        }
+      }
+    })
+    if(fillcolor_flag){
+      if(!fillcolor===false){
+        $('#fill_color').val(fillcolor);
+        $('#draw_fill_color').val(fillcolor);
       }
     }
   }

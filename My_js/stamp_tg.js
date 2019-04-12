@@ -287,6 +287,7 @@ function draw_circle(){
         'stroke-width' : PATH_STROKE_WIDTH * $('#StrokeWidth_TextBox').val(),
         'stroke' : $('#stroke_color').val()
       })
+      if($('input[name="draw_line_fillRadio"]:checked').val()==='custom') make_circle.fill($('#draw_fill_color').val());
       if($('input[name="stroke"]:checked').val()==='dotted_line'){
         make_circle.attr({ 'stroke-dasharray': PATH_STROKE_WIDTH*$('#StrokeWidth_TextBox').val() })
       }
@@ -336,6 +337,7 @@ function draw_rect(){
         'stroke-width' : PATH_STROKE_WIDTH * $('#StrokeWidth_TextBox').val(),
         'stroke' : $('#stroke_color').val()
       })
+      if($('input[name="draw_line_fillRadio"]:checked').val()==='custom') make_path.fill($('#draw_fill_color').val());
       if($('input[name="stroke"]:checked').val()==='dotted_line'){
         make_path.attr({ 'stroke-dasharray': PATH_STROKE_WIDTH*$('#StrokeWidth_TextBox').val() })
       }
