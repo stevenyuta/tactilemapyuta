@@ -167,7 +167,7 @@ function download_setSVG(original_draw) { //ダウンロード時に出力svgフ
 function download_setPNG(original_draw) { //ダウンロード時に出力pngファイルをフォーマットする関数
   var viewbox = draw.viewbox();
   if(draw.select('.A4').first().style('display')!=='none'){
-    var rotation = draw.select('.A4').first().transform('rotation')
+    let rotation = draw.select('.A4').first().transform('rotation')
     if(Math.abs(rotation) === 90){
       draw.viewbox(-367.5 , -519.75 , 735 , 1039.5 )
       draw.attr('width' , '2205').attr('height' , '3118.5')
@@ -175,14 +175,23 @@ function download_setPNG(original_draw) { //ダウンロード時に出力pngフ
       draw.viewbox(-519.75 , -367.5 ,1039.5 , 735)
       draw.attr('width' , '3118.5').attr('height' , '2205')
     }
-  }else{
-    var rotation = draw.select('.B4').first().transform('rotation')
+  }else if(draw.select('.B4').first().style('display')!=='none'){
+    let rotation = draw.select('.B4').first().transform('rotation')
     if(Math.abs(rotation) === 90){
       draw.viewbox( -899/2, -1274/2 , 899 ,1274 )
       draw.attr('width' , '2697').attr('height' , '3822')
     }else{
       draw.viewbox(-1274/2, -899/2 ,1274 , 899)
       draw.attr('width' , '3822').attr('height' , '2697')
+    }
+  }else{
+    let rotation = draw.select('.A3').first().transform('rotation')
+    if(Math.abs(rotation) === 90){
+      draw.viewbox( -1039.5/2, -1470/2 , 1039.5 , 1470)
+      draw.attr('width' , '3118.5').attr('height' , '4410')
+    }else{
+      draw.viewbox(-1470/2, -1039.5/2 ,1470 , 1039.5)
+      draw.attr('width' , '4410').attr('height' , '3118.5')
     }
   }
   draw.rect(1274, 1274).addClass('background_rect').back().move(-1274/2 , -1274/2).attr({'fill' : '#ffffff'})
@@ -284,18 +293,25 @@ function svgDownload() {
 function pngDownload() {
   var png_str = download_setPNG(draw)
   if(draw.select('.A4').first().style('display')!=='none'){
-    var rotation = draw.select('.A4').first().transform('rotation')
+    let rotation = draw.select('.A4').first().transform('rotation')
     if(Math.abs(rotation) === 90){
       $("body").append("<canvas id='canvas1' visibility='hidden' width='2205' height='3118.5'></canvas>")
     }else{
       $("body").append("<canvas id='canvas1' visibility='hidden' width='3118.5' height='2205'></canvas>")
     }
-  }else{
-    var rotation = draw.select('.B4').first().transform('rotation')
+  }else if(draw.select('.B4').first().style('display')!=='none'){
+    let rotation = draw.select('.B4').first().transform('rotation')
     if(Math.abs(rotation) === 90){
       $("body").append("<canvas id='canvas1' visibility='hidden' width='2697' height='3822'></canvas>")
     }else{
       $("body").append("<canvas id='canvas1' visibility='hidden' width='3822' height='2697'></canvas>")
+    }
+  }else{
+    let rotation = draw.select('.A3').first().transform('rotation')
+    if(Math.abs(rotation) === 90){
+      $("body").append("<canvas id='canvas1' visibility='hidden' width='3118.5' height='4410'></canvas>")
+    }else{
+      $("body").append("<canvas id='canvas1' visibility='hidden' width='4410' height='3118.5'></canvas>")
     }
   }
   var canvas = $("#canvas1")[0]

@@ -199,20 +199,31 @@ function draw_guiderect(){
       'fill':'none', 'stroke': GUIDE_STROKE_COLOR_B4, 'stroke-width': GUIDE_STROKE_WIDTH
     });
     guiderect_group.add(guiderectB4);
+
+    let guiderectA3 = draw.rect(GUIDE_WIDTH_A3 + 2 * GUIDE_STROKE_WIDTH , GUIDE_HEIGHT_A3 + 2 * GUIDE_STROKE_WIDTH);
+    guiderectA3.addClass('guiderect').addClass('A3').front();
+    guiderectA3.attr({
+      'x': -GUIDE_WIDTH_A3 / 2 - GUIDE_STROKE_WIDTH,
+      'y': -GUIDE_HEIGHT_A3 / 2 - GUIDE_STROKE_WIDTH, //x,y座標の設定
+      'fill':'none', 'stroke': GUIDE_STROKE_COLOR_A3, 'stroke-width': GUIDE_STROKE_WIDTH
+    });
+    guiderect_group.add(guiderectA3);
+
   }
   if($( 'input[name="guiderect"]:checked' ).val() === 'guiderect_A4'){
       draw.select('.A4').show();
-      draw.select('.B4').hide();
+      draw.select('.B4 , .A3').hide();
+  }else if($('input[name="guiderect"]:checked').val()==='guiderect_B4'){
+    draw.select('.A4 , .A3').hide();
+    draw.select('.B4').show();
   }else{
-      draw.select('.A4').show();
-      draw.select('.B4').hide();
+    draw.select('.A4 , .B4').hide();
+    draw.select('.A3').show();
   }
   if($( 'input[name="direction_guide"]:checked' ).val() === 'horizontal_guide'){
-    draw.select('.A4').transform({rotation:0});
-    draw.select('.B4').transform({rotation:0});
+    draw.select('.A4, .B4 , .A3').transform({rotation:0});
   }else{
-    draw.select('.A4').transform({rotation:90});
-    draw.select('.B4').transform({rotation:90});
+    draw.select('.A4 , .B4 , .A3').transform({rotation:90});
   }
 }
 
@@ -280,32 +291,32 @@ function checkbox_set(){
     var radioval = $(this).val();
     if(radioval === 'guiderect_A4'){
       draw.select('.A4').show();
-      draw.select('.B4').hide();
-    }else{
+      draw.select('.B4 , .A3').hide();
+    }else if(radioval === 'guiderect_B4'){
       draw.select('.B4').show();
-      draw.select('.A4').hide();
+      draw.select('.A4 , .A3').hide();
+    }else{
+      draw.select('.A3').show();
+      draw.select('.A4 , .B4').hide();
     }
   })
 
   $('input[name=guiderect]').val(['guiderect_A4']);
   draw.select('.A4').show();
-  draw.select('.B4').hide();
+  draw.select('.B4 , .A3').hide();
 
   $( 'input[name="direction_guide"]:radio' ).change( function() {
     var radioval = $(this).val();
     if(radioval === 'horizontal_guide'){
-      draw.select('.A4').transform({rotation:0});
-      draw.select('.B4').transform({rotation:0});
+      draw.select('.A4 , .B4 , .A3').transform({rotation:0});
       SVG.get('graduationFrame_group').transform({rotation:0});
     }else{
-      draw.select('.A4').transform({rotation:90});
-      draw.select('.B4').transform({rotation:90});
+      draw.select('.A4 , .B4 , .A3').transform({rotation:90});
       SVG.get('graduationFrame_group').transform({rotation:90});
     }
   })
   $('input[name=direction_guide]').val(['horizontal_guide'])
-  draw.select('.A4').transform({rotation:0});
-  draw.select('.B4').transform({rotation:0});
+  draw.select('.A4 , .B4 , .A3').transform({rotation:0});
   SVG.get('graduationFrame_group').transform({rotation:0});
 }
 
@@ -332,19 +343,20 @@ function checkBox_change(){
   var radioval = $( 'input[name="guiderect"]:checked' ).val();
   if(radioval === 'guiderect_A4'){
     draw.select('.A4').show();
-    draw.select('.B4').hide();
-  }else{
+    draw.select('.B4 ,.A3').hide();
+  }else if(radioval === 'guiderect_B4'){
     draw.select('.B4').show();
-    draw.select('.A4').hide();
+    draw.select('.A4 , .A3').hide();
+  }else{
+    draw.select('.A3').show();
+    draw.select('.A4 , .B4').hide();
   }
   //ガイドの四角形が横か縦か
   var radioval = $( 'input[name="direction_guide"]:checked' ).val()
   if(radioval === 'horizontal_guide'){
-    draw.select('.A4').transform({rotation:0});
-    draw.select('.B4').transform({rotation:0});
+    draw.select('.A4 , .B4 , .A3').transform({rotation:0});
   }else{
-    draw.select('.A4').transform({rotation:90});
-    draw.select('.B4').transform({rotation:90});
+    draw.select('.A4 , .B4 , .A3').transform({rotation:90});
   }
 }
 

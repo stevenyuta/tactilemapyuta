@@ -60,6 +60,8 @@
           <label for="guiderect_A4">A4</label>
           <input type="radio" id="guiderect_B4" name="guiderect" value="guiderect_B4" />
           <label for="guiderect_B4">B4</label>
+          <input type="radio" id="guiderect_A3" name="guiderect" value="guiderect_A3" />
+          <label for="guiderect_A3">A3</label>
         </span>
 
         <span>
@@ -382,9 +384,12 @@
         const GUIDE_HEIGHT_A4 = DRAW_AREA_HEIGHT;
         const GUIDE_WIDTH_B4 = DRAW_AREA_WIDTH * 364/297;
         const GUIDE_HEIGHT_B4 = DRAW_AREA_HEIGHT * 257/210;
+        const GUIDE_WIDTH_A3 = DRAW_AREA_WIDTH * 420/297;
+        const GUIDE_HEIGHT_A3 = DRAW_AREA_HEIGHT * 297/210;
 
         const GUIDE_STROKE_COLOR_A4 = '#f0f'; //A4ガイドの線の色
         const GUIDE_STROKE_COLOR_B4 = '#006400'; //B4ガイドの線の色
+        const GUIDE_STROKE_COLOR_A3 = '#AA6400'; //A3ガイドの線の色
         const GUIDE_STROKE_WIDTH = 2; //ガイドの線の太さ
 
         //範囲指定用四角形
