@@ -215,7 +215,6 @@ function upload_handle(){
   (draw.select('.edit_select.ink').first()!==undefined) ? $('.resizeInk_gadget').show() : $('.resizeInk_gadget').hide();
   (draw.select('.edit_select.braille').first()!==undefined) ? $('.resizeBraille_gadget').show() : $('.resizeBraille_gadget').hide();
   (draw.select('.edit_select.path , .edit_select.circle').first()!==undefined) ? $('.stroke_option').show() : $('.stroke_option').hide();
-  (draw.select('.edit_select.path , .edit_select.circle').first()!==undefined) ? $('#stroke_style').show() : $('#stroke_style').hide();
   (draw.select('.edit_select.image').first()!==undefined) ? $('.gadget_imageOpacity').show() : $('.gadget_imageOpacity').hide();
 
   //文字の内容変更用

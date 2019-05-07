@@ -163,24 +163,16 @@
             <button id="redo"><i class="fa fa-repeat"></i></button> <!-- redo ボタン-->
           </span>
 
-          <!-- 線種変更ラジオボタン -->
-          <table id="stroke_style">
-            <tr><td>
+          <table id = "rightUI_table">
+            <tr class="stroke_option stroke_style"><td colspan="2">
               <input type="radio" id="solid_line" name="stroke" value="solid_line"/>
               <label for="solid_line">実線</label>
-            </td><td>
+            </td><td colspan="2">
               <input type="radio" id="dotted_line" name="stroke" value="dotted_line"/>
               <label for="dotted_line">点線</label>
             </td></tr>
-          </table>
-
-          <table>
-
-          </table>
-
-          <table id = "rightUI_table">
             <tr class="stroke_option">
-              <td align="center">線色</td>
+              <td align="center" colspan="1">線色</td>
               <td align="center" colspan="3"><input type="color" id="stroke_color" name="scolor" value="#000000" style="width:100px;"></td>
             </tr>
             <tr class="strokewidth_gadget stroke_option">
@@ -496,17 +488,16 @@
 
 
       function RadioEvent_set(unredo_flag){
-        nowchecked = $('input[name="tg_mode"]:checked').val();
-        let Image_radio = $('#EditImage_div');
-        (draw.select('.image').first()) ? Image_radio.show() : Image_radio.hide();
         /*************************************
         //モードを変更したときに必ず行う処理
         *************************************/
-        $(document).off(); //ページ上のイベントの削
-        draw.off(); //drawのイベント解除
-        draw.select('.SVG_Element , .image').off(); //SVG_Elementのイベント解除
-        draw.select('.SVG_Element , .image').attr({'cursor':'default'});
-        $('#rb_width , #rb_height').off();
+        nowchecked = $('input[name="tg_mode"]:checked').val();
+        let Image_radio = $('#EditImage_div');
+        (draw.select('.image').first()) ? Image_radio.show() : Image_radio.hide();
+        $(document).off(); //ページ上のイベントの削除
+        draw.off(); //描画領域のイベント削除
+        draw.select('.SVG_Element , .image').off().attr({'cursor':'default'});; //SVG_Element、画像のイベント解除とマウスカーソルのデフォルト化
+        $('#rb_width , #rb_height').off(); //幅と高さのテキストボックスのイベント解除
         draw.select('.connected').each(function(i,children){
           if(this.clear().array().settle().length < 2) this.remove();
         })
@@ -522,8 +513,7 @@
         get_node_connectRect();
 
         /** 右メニューを全て一旦隠す**/
-        $('#stroke_style').hide(); //線種変更
-        $('.stroke_option').hide(); //線種変更
+        $('.stroke_option').hide(); //線の太さ、色変更
         $('.resizeInk_gadget').hide(); //墨字サイズ変更
         $('.resizeBraille_gadget').hide(); //点字サイズ変更
         $('.gadget_imageOpacity').hide(); //画像透過度変更
@@ -543,7 +533,6 @@
         *************************************/
         switch(nowchecked){
           case 'Draw':
-            $('#stroke_style').show(); //線種変更
             $('.stroke_option').show(); //線種変更
             $('#draw_line_fill_table').show();
             draw_line(); //線の描画モード
@@ -558,7 +547,6 @@
             editpath();//線の詳細編集モード
             break;
           case 'DrawRect':
-            $('#stroke_style').show(); //線種変更
             $('.stroke_option').show(); //線種変更
             $('#draw_line_fill_table').show();
             draw_rect();//矩形描画モード
@@ -571,9 +559,7 @@
           case 'TrimBase64':
             trim_start();
             break;
-
           case 'DrawCircle':
-            $('#stroke_style').show(); //線種変更
             $('.stroke_option').show(); //線種変更
             $('#draw_line_fill_table').show();
             draw_circle();

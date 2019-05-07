@@ -11,10 +11,8 @@ function set_Stampmode(){
   let stamp_checked = $('input[name="tactileSymbol"]:checked').val();
 
   /** 右メニューを全て一旦隠す**/
-  $('#stroke_style').hide(); //線種変更
   $('.strokewidth_gadget').hide(); //線種変更
-  $('.resizeInk_gadget').hide(); //墨字サイズ変更
-  $('.resizeBraille_gadget').hide(); //点字サイズ変更
+  $('.resizeInk_gadget , .resizeBraille_gadget').hide(); //墨字点字サイズ変更
   $('.gadget_imageOpacity').hide(); //画像透過度変更
   $('#layer_select').hide(); //レイヤ変更
   $('#fill_change').hide();  //塗りつぶし変更
@@ -27,27 +25,22 @@ function set_Stampmode(){
       add_text(); //点字、墨字追加モード
       break;
     case 'Stair':
-      $('#stroke_style').show(); //線種変更
       $('.strokewidth_gadget').show(); //線種変更
       add_stair();
       break;
     case 'Escalator':
-      $('#stroke_style').show(); //線種変更
       $('.strokewidth_gadget').show(); //線種変更
       add_escalator();
       break;
     case 'Arrow':
-      $('#stroke_style').show(); //線種変更
       $('.strokewidth_gadget').show(); //線種変更
       add_arrow();
       break;
     case 'Tiket_gate':
-      $('#stroke_style').show(); //線種変更
       $('.strokewidth_gadget').show(); //線種変更
       add_Tiket_gate();
       break;
     case 'Reducescale':
-      $('#stroke_style').show(); //線種変更
       $('.strokewidth_gadget').show(); //線種変更
       add_reducescale();
       break;

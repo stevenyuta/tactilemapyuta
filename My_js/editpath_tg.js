@@ -682,12 +682,10 @@ function verhor_fragmentedPath(){
 //レイヤー変更ボタン、塗りつぶしボタンを表示すべきか判定
 *****************************************************/
 function checkEditPath_gadget(){
-  $('#stroke_style').hide();
   $('.stroke_option').hide();
   $('#layer_select').hide();
   $('#fill_change').hide();
   if(draw.select('.fragmented_PathGroup').first()!==undefined){
-    $('#stroke_style').show();
     $('.stroke_option').show();
     $('#layer_select').show();
     $('#fill_change').show();

@@ -214,16 +214,13 @@ right toolbar
 /********************
 線種変更ラジオボタン
 ********************/
-#stroke_style{
-	margin : 0px 0px 10px 10px;
-}
 
-#stroke_style label{
-  padding: 0px 25px;	/* ボックス内左側の余白を指定する */
+.stroke_style label{
+  padding: 0px 20px;	/* ボックス内左側の余白を指定する */
   border: 2px solid #006DD9;/* ボックスの境界線を実線で指定する */
 }
 
-#stroke_style input[type="radio"]:checked + label {
+.stroke_style input[type="radio"]:checked + label {
 	background: #31A9EE;/* マウス選択時の背景色を指定する */
 	color: #ffffff; 	/* マウス選択時のフォント色を指定する */
 }
