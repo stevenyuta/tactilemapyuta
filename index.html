@@ -117,14 +117,9 @@
               <input  type="radio" name="tg_mode" value="EditImage" id="EditImage">
               <label for="EditImage">画像選択</label>
             </div>
-            <div id = "TrimBase64_div" style="display:none;">
-              <input  type="radio" name="tg_mode" value="TrimBase64" id="TrimBase64">
-              <label for="TrimBase64">画像切り取り</label>
-            </div>
           </div>
 
           <div id="left_toolbar_button">
-            <div><input type="button" id="node_connect" value="端点のノードを結合" style="display:none;" disabled></div>
             <div><input type="button" id="straight_connect_button" style="" value="線の自動補正"></div>
             <div><input type="button" id="distance_check_button" value="距離間チェック"></div>
             <div><input type="button" style = "display:none;" id="trans" value="平面図変換"></div>
@@ -555,9 +550,6 @@
             $('#layer_select').show();
             $('#resizeBox_textbox').show();
             edit();//原図の移動モード
-            break;
-          case 'TrimBase64':
-            trim_start();
             break;
           case 'DrawCircle':
             $('.stroke_option').show(); //線種変更

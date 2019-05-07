@@ -14,14 +14,11 @@ function set_Stampmode(){
   $('.strokewidth_gadget').hide(); //線種変更
   $('.resizeInk_gadget , .resizeBraille_gadget').hide(); //墨字点字サイズ変更
   $('.gadget_imageOpacity').hide(); //画像透過度変更
-  $('#layer_select').hide(); //レイヤ変更
-  $('#fill_change').hide();  //塗りつぶし変更
-  $('#resizeBox_textbox').hide(); //リサイズテキストボックス
+  $('#layer_select , #fill_change , #resizeBox_textbox').hide(); //レイヤ、塗りつぶし、リサイズ用テキストボックス変更
 
   switch(stamp_checked){
     case 'Text':
-      $('.resizeInk_gadget').show(); //墨字サイズ変更
-      $('.resizeBraille_gadget').show(); //点字サイズ変更
+      $('.resizeInk_gadget , .resizeBraille_gadget').show(); //墨字サイズ変更
       add_text(); //点字、墨字追加モード
       break;
     case 'Stair':

@@ -3,22 +3,17 @@
 ******************************************************/
 function undo() { //操作を１つ戻る関数
   if(cash_array.length > cash_pointer + 1){  //cash_arrayにデータがある場合
-    var current_mode =  $('input[name="tg_mode"]:checked'); //現在のモードを記憶
-    var vx = draw.viewbox().x , vy = draw.viewbox().y;
-    var vwidth = draw.viewbox().width , vheight = draw.viewbox().height;
+    let current_mode =  $('input[name="tg_mode"]:checked'); //現在のモードを記憶
+    let vx = draw.viewbox().x , vy = draw.viewbox().y;
+    let vwidth = draw.viewbox().width , vheight = draw.viewbox().height;
 
     $('#draw_area').remove(); //draw_areaの削除
-    var draw_area = $('<div id="draw_area"></div>'); //新規作成
-    $("#draw_include").append(draw_area);
-
+    $("#draw_include").append($('<div id="draw_area"></div>'));
     draw = SVG('draw_area').size(DRAW_AREA_WIDTH,DRAW_AREA_HEIGHT).attr('id','svg_draw_area');
     draw.viewbox(vx, vy, vwidth, vheight);
     draw.svg(cash_array[++cash_pointer]);
-
     draw_gridline(3000,3000,50,50); //グリッド線の描画
     defs_set();
-
-
     RadioEvent_set(true);
     checkBox_change();
     js_sleep(100); //100ms待機
@@ -31,15 +26,14 @@ function undo() { //操作を１つ戻る関数
 ******************************************************/
 function redo(e) { //操作を１つ戻る関数
   if(cash_pointer > 0){  //cash_arrayにデータがある場合
-    var current_mode =  $('input[name="tg_mode"]:checked'); //現在のモードを記憶
+    let current_mode =  $('input[name="tg_mode"]:checked'); //現在のモードを記憶
     //現在のviewBox情報を取得
-    var vx = draw.viewbox().x , vy = draw.viewbox().y;
-    var vwidth = draw.viewbox().width , vheight = draw.viewbox().height;
+    let vx = draw.viewbox().x , vy = draw.viewbox().y;
+    let vwidth = draw.viewbox().width , vheight = draw.viewbox().height;
 
     //draw_areaの削除と新規作成
     $('#draw_area').remove();
-    var draw_area = $('<div id="draw_area"></div>');
-    $("#draw_include").append(draw_area);
+    $("#draw_include").append($('<div id="draw_area"></div>'));
 
     draw = SVG('draw_area').size(DRAW_AREA_WIDTH,DRAW_AREA_HEIGHT).attr('id','svg_draw_area');
     draw.viewbox(vx, vy, vwidth, vheight);
