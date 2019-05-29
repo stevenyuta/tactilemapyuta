@@ -275,11 +275,27 @@ function set_fileAPI_continue(){
 
 //ダウンロードリンク
 function svgDownload() {
-  var svg_str = download_setSVG(draw)
-  var blob = new Blob([ svg_str ], { 'type' : 'text/plain' });
+  let svg_str = download_setSVG(draw);
+  let blob = new Blob([ svg_str ], { 'type' : 'text/plain' });
+  //現在の年月日、時刻データを取得し、ファイ名にする
+  let current_data = new Date();
+  let year = current_data.getFullYear();
+  let month = current_data.getMonth()+1;
+  if(month < 10) month = '0' + month;
+  let day = current_data.getDate();
+  if(day < 10) day = '0' + day;
+  let hour = current_data.getHours();
+  if(hour < 10) hour = '0' + hour;
+  let minute = current_data.getMinutes();
+  if(minute < 10) minute = '0' + minute;
+  let second = current_data.getSeconds();
+  if(second < 10) second = '0' + second;
+
+  let file_name = year +'_'+ month + day + '_' +hour + minute + second +'.svg';
   if (window.navigator.msSaveBlob) {
-    window.navigator.msSaveOrOpenBlob(blob, 'SVG_output.svg');
+    window.navigator.msSaveOrOpenBlob(blob, file_name);
   } else {
+    document.getElementById('svg_download').download = file_name;
     document.getElementById('svg_download').href = window.URL.createObjectURL(blob);
   }
 }
@@ -327,9 +343,27 @@ function pngDownload() {
     var blob = new Blob([buffer.buffer], {type: "image/png"});
     var url = window.URL.createObjectURL(blob);
     ctx.drawImage(image, 0, 0);
+
+    //現在の年月日、時刻データを取得し、ファイ名にする
+    let current_data = new Date();
+    let year = current_data.getFullYear();
+    let month = current_data.getMonth()+1;
+    if(month < 10) month = '0' + month;
+    let day = current_data.getDate();
+    if(day < 10) day = '0' + day;
+    let hour = current_data.getHours();
+    if(hour < 10) hour = '0' + hour;
+    let minute = current_data.getMinutes();
+    if(minute < 10) minute = '0' + minute;
+    let second = current_data.getSeconds();
+    if(second < 10) second = '0' + second;
+
+    let file_name = year +'_'+ month + day + '_' +hour + minute + second +'.png';
+
+    // Optional: 自動でダウンロードさせる場合
     // Optional: 自動でダウンロードさせる場合
     $("body").append("<a id='image-file' class='hidden' type='application/octet-stream' href='"
-                     + url + "' download='PNG_output.png'>Donload Image</a>");
+                     + url + "' download='" + file_name + "'>Donload Image</a>");
     $("#image-file")[0].click();
     // 後処理
     $("#canvas1").remove();
