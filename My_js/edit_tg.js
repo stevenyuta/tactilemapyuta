@@ -2,36 +2,11 @@
 //要素の移動を行う機能
 ******************************************************/
 function edit(){
-  let editselect_array_tmp = new Array();
   let gX , gY , gWidth , gHeight;
-  let change_gX , change_gY , change_gWidth , change_gHeight;
-  let current_mode = $('input[name="tg_mode"]:checked').val();
-  for(let i=0; i<editselect_array.length; i++){
-    let select_element = SVG.get(editselect_array[i]);
-    if(select_element){
-      if(current_mode === 'Edit'){
-        if(!select_element.hasClass('image')){
-          select_element.addClass('edit_select');
-          editselect_array_tmp.push(select_element.attr('id'));
-          if(select_element.hasClass('path')){
-            if(select_element.clear().array().settle().length < 2) select_element.remove();
-          }
-        }
-      }else{
-        if(select_element.hasClass('image')){
-          draw.rect(select_element.width() , select_element.height()).attr({
-            'fill' : 'none',
-            'stroke' : '#f00',
-            'stroke-width' : SELECT_RECT_STROKEWIDTH * 1.5,
-            'stroke-dasharray': SELECT_RECT_STROKEDOTT, //点線に
-            'transform' : select_element.transform('matrix')
-          }).addClass('image_FrameRect');
-          editselect_array_tmp.push(select_element.attr('id'));
-        }
-      }
-    }
-  }
-  editselect_array = editselect_array_tmp;
+  $('#rb_width').off('focusout').on('focusout' , function(){update_resizeBox('width')});
+  $('#rb_height').off('focusout').on('focusout' , function(){update_resizeBox('height')});
+  $('#textInfo_TextBox').off('focusout').on('focusout' , update_TextInfoBox);
+
   edit_mousedown_up();
   edit_hover();
   upload_handle();
@@ -46,14 +21,40 @@ function edit(){
   })
 }
 
-/*********************************************
-//マウスをmousedown_upしたときに起動する関数
-//mode = off : イベントの全削除
-**********************************************/
+/****************************************
+マウスをmousedown_upしたときに起動する関数
+mode = off : イベントの全削除
+*****************************************/
 function edit_mousedown_up(mode){
   draw.off('mousedown').off('mouseup');
   if(mode!=="off"){
-    if(draw.select('.edit_select').first()===undefined){ //選択状態の要素が何もない場合
+    if(draw.select('.select_hover').first()){
+      let target = draw.select('.select_hover').first();
+      target.on('mousedown', function(e){
+        //shiftキーを押していなければ複数選択しないので、一度edit_clearする
+        if(!(input_key_buffer[16] || input_key_buffer[17])) edit_clear();
+        //edit_selectクラスを追加し、選択状態であることを示す
+        this.addClass('edit_select');
+        //選択状態の要素のパラメータ更新
+        set_SelectElement_Param();
+        //選択ハンドルのイベントを再設定
+        upload_handle();
+        this.off('mousedown');
+        this.removeClass('select_hover');
+        edit_hover();
+        //↓選択と同時に移動できるようにした(先生からの要望)
+        let anchorX = getmousepoint('normal',e).x , anchorY = getmousepoint('normal',e).y;
+        let click_dTx = 0 , click_dTy = 0;
+        $(document).off('mousemove').mousemove(function(e){
+          let affin_info = get_affinmat('drag',e,gX,gY,gWidth,gHeight,anchorX,anchorY,click_dTx,click_dTy);
+          let affin_mat = affin_info.affine_mat;
+          click_dTx = affin_info.dTx;
+          click_dTy = affin_info.dTy;
+          update_editgroup(affin_mat , "drag");
+        });
+      });
+
+    }else if(draw.select('.edit_select').first()===undefined){ //選択状態の要素が何もない場合
       let select_rect = draw.rect().addClass('select_rect');
       select_rect.attr({  //範囲指定用四角形
         'fill' : 'none',
@@ -61,42 +62,42 @@ function edit_mousedown_up(mode){
         'stroke-width': SELECT_RECT_STROKEWIDTH,
         'stroke-dasharray': SELECT_RECT_STROKEDOTT //点線に
       })
-      draw.on('mousedown', function(event){ //mousedown時：始点指定
+      //mousedown時はマウスを押し込んだ時の処理。範囲選択の四角形の始点を指定する。
+      draw.on('mousedown', function(event){
         if(event.button===0){
+          //始点の指定。詳しくはsvg.jsの公式を探してくれ
           select_rect.draw(event);
+          //ホバーしたときの処理は全てoffにしておく
           edit_hover("off");
         }
       });
       draw.on('mouseup', function(event){  //mouseup時：終点指定
         if(event.button===0){
+          //終点の指定
           select_rect.draw(event);
-          var sr_min_x =  Number(select_rect.attr('x')) , sr_min_y =  Number(select_rect.attr('y'));
-          var sr_max_x =  sr_min_x + Number(select_rect.attr('width')) , sr_max_y =  sr_min_y + Number(select_rect.attr('height'));
-          let current_mode = $('input[name="tg_mode"]:checked').val();
-          let selector = ( current_mode == "Edit" ) ? '.SVG_Element' : '.image';
-
+          //描画した四角形（範囲選択を示す）の各頂点座標を表現する４つのパラメータを指定する
+          let sr_min_x =  Number(select_rect.attr('x')) , sr_min_y =  Number(select_rect.attr('y'));
+          let sr_max_x =  sr_min_x + Number(select_rect.attr('width')) , sr_max_y =  sr_min_y + Number(select_rect.attr('height'));
+          //選択モード時は対象はSVG_element。画像選択モード時は画像が選択の対象になる
+          let selector = ( $('input[name="tg_mode"]:checked').val() == "Edit" ) ? '.SVG_Element' : '.image';
+          //四角形の範囲に含まれる要素を範囲する
+          //もし範囲に含まれていればedit_selectクラスを付与して選択状態にする
           draw.select(selector).each(function(i, children) {
+            //要素が非表示だった場合は判定外にする
             if(this.visible()){
-              var InArea = true;  //範囲内に入っているかの判定
-              var bbox = get_bbox(this);
-              var pmin_x = bbox.min_x , pmax_x = bbox.max_x;
-              var pmin_y = bbox.min_y , pmax_y = bbox.max_y;
+              let InArea = true;  //範囲内に入っているかの判定：trueは範囲内、flaseは範囲外
+              let bbox = get_bbox(this);
+              let pmin_x = bbox.min_x , pmax_x = bbox.max_x;
+              let pmin_y = bbox.min_y , pmax_y = bbox.max_y;
 
               if(pmin_x < sr_min_x || pmin_x > sr_max_x) InArea = false;
               if(pmin_y < sr_min_y || pmin_y > sr_max_y) InArea = false;
               if(pmax_x < sr_min_x || pmax_x > sr_max_x) InArea = false;
               if(pmax_y < sr_min_y || pmax_y > sr_max_y) InArea = false;
-              if(InArea){
-                this.addClass('edit_select');
-                editselect_array.push(this.attr('id'));
-              }
+              if(InArea) this.addClass('edit_select');
             }
           })
-          set_textsize();
-          set_strokewidth();
-          set_strokecolor();
-          set_fillcolor();
-          set_imageOpacity();
+          set_SelectElement_Param();
           edit_hover();
           edit_mousedown_up();
           select_rect.remove();
@@ -114,78 +115,27 @@ function edit_mousedown_up(mode){
   }
 }
 
-/******************************************************
-//マウスをhoverしたときに起動する関数
-******************************************************/
+/***************************************
+//hoverイベントを設定または再設定する関数
+***************************************/
 function edit_hover(mode){
-  let current_mode = $('input[name="tg_mode"]:checked').val();
-  let selector = ( current_mode == "Edit" ) ? '.SVG_Element' : '.image';
+  //選択モードまたは画像選択モードに関係する要素のhoverイベントをすべてoffにしておく
+  let selector = (nowchecked == "Edit" ) ? '.SVG_Element' : '.image';
   draw.select(selector).off('mouseover').off('mouseout');
   SVG.get('handle_group').off('mouseover').off('mouseout');
   if(mode!=="off"){
-    draw.select(selector).mouseover(function() {
-      edit_mousedown_up("off");
-      if(!this.hasClass('edit_select')){
-        if(this.hasClass('image')){
-          draw.rect(this.width() , this.height()).attr({
-            'fill' : 'none',
-            'stroke' : '#f00',
-            'stroke-width' : SELECT_RECT_STROKEWIDTH * 1.5,
-            'stroke-dasharray': SELECT_RECT_STROKEDOTT, //点線に
-            'transform' : this.transform('matrix')
-          }).addClass('image_FrameRect');
-        }
-        this.off('mousedown').mousedown(function(e){
-          draw.select('.image_FrameRect').each(function(i,children){
-            this.remove();
-          })
-          if(!(input_key_buffer[16] || input_key_buffer[17])) edit_clear();
-          //this.attr({ stroke: PATH_SELECT_COLOR})
-          this.addClass('edit_select');
-          editselect_array.push(this.attr('id'));
-          upload_handle();
-          set_textsize();
-          set_strokewidth();
-          set_strokecolor();
-          set_fillcolor();
-          set_imageOpacity();
-          this.off('mousedown');
-          edit_hover();
-
-          //クリック移動
-          anchorX = getmousepoint('normal',e).x , anchorY = getmousepoint('normal',e).y;
-          let click_dTx = 0 , click_dTy = 0;
-          $(document).off('mousemove').mousemove(function(e){
-            let affin_info = get_affinmat('drag',e,gX,gY,gWidth,gHeight,anchorX,anchorY,click_dTx,click_dTy);
-            let affin_mat = affin_info.affine_mat;
-            click_dTx = affin_info.dTx;
-            click_dTy = affin_info.dTy;
-            update_editgroup(affin_mat , "drag");
-          });
-        })
-        this.attr({'cursor':'pointer'});
-      }
+    //現在、選択状態になっていない要素に関するマウスオーバー（マウスで上を乗せたとき）イベント
+    draw.select(selector + ':not(.edit_select)').mouseover(function(){
+      this.addClass('select_hover');
+      this.attr({'cursor':'pointer'});
+      edit_mousedown_up();
+    })
+    draw.select(selector + ':not(.edit_select)').mouseout(function(){
+      this.removeClass('select_hover');
+      edit_mousedown_up();
     })
     SVG.get('handle_group').mouseover(function() {
       edit_mousedown_up("off");
-    })
-    draw.select(selector).mouseout(function(){
-      let font_strokewidth = ($('input[name="braillefont"]:checked').val()==='IBfont') ? String(PATH_STROKE_WIDTH * 0.25) : '';
-      let font_strokecolor = ($('input[name="braillefont"]:checked').val()==='IBfont') ? '#000000' : 'none';
-      edit_mousedown_up();
-      if(!this.hasClass('edit_select')){
-        if(this.hasClass('image')){
-          draw.select('.image_FrameRect').each(function(i,children){
-            this.remove();
-          })
-        }else if(this.hasClass('braille')){  //text要素の場合
-          this.attr({
-            'stroke-width': font_strokewidth
-          });
-        }
-        this.off('mousedown');
-        this.attr({'cursor':'default'});
-      }
     })
     SVG.get('handle_group').mouseout(function() {
       edit_mousedown_up();
@@ -194,66 +144,57 @@ function edit_hover(mode){
 }
 
 /******************************************************
-//edit_selectを解除する関数
+//選択状態を全解除する関数
 ******************************************************/
-function edit_clear(clear_flag){
+function edit_clear(){
   SVG.get('handle_group').hide();
-  if($('#rb_width').is(':focus')) update_widthBox();
-  if($('#rb_height').is(':focus')) update_heightBox();
+  if($('#rb_width').is(':focus')) update_resizeBox('width');
+  if($('#rb_height').is(':focus')) update_resizeBox('height');
   if($('#textInfo_TextBox').is(':focus')) update_TextInfoBox();
   draw.select('.edit_select').each(function(i, children) {
-    this.removeClass('edit_select'); //edit_selectクラスを取り除く
-    if(!clear_flag) editselect_array.length = 0;
+    if(this.hasClass('connected') && nowchecked === 'EditPath'){
+      toFragmented(this);
+      this.remove();
+    }else{
+      this.removeClass('edit_select');
+    }
   })
+  upload_handle();
 }
 
 function upload_handle(){
-  $('#rb_width').off('focusout').on('focusout' , update_widthBox);
-  $('#rb_height').off('focusout').on('focusout' , update_heightBox);
-  $('#textInfo_TextBox').off('focusout').on('focusout' , update_TextInfoBox);
+  //移動、サイズ変更、回転用のハンドルを非表示
+  SVG.get('handle_group').hide();　
+  $('.resizeInk_gadget , .resizeBraille_gadget').hide();
+  $('.stroke_option').hide();
+  $('.gadget_imageOpacity').hide();
+  $('#layer_table , #select_fill_table').hide();
+  $('.resizeBox_textbox').hide();
+  $('.textInfo_gadget').hide();
+  if(draw.select('.edit_select').first()!==undefined){ //選択状態の要素がない場合
 
-  (draw.select('.edit_select.ink').first()!==undefined) ? $('.resizeInk_gadget').show() : $('.resizeInk_gadget').hide();
-  (draw.select('.edit_select.braille').first()!==undefined) ? $('.resizeBraille_gadget').show() : $('.resizeBraille_gadget').hide();
-  (draw.select('.edit_select.path , .edit_select.circle').first()!==undefined) ? $('.stroke_option').show() : $('.stroke_option').hide();
-  (draw.select('.edit_select.image').first()!==undefined) ? $('.gadget_imageOpacity').show() : $('.gadget_imageOpacity').hide();
-
-  //文字の内容変更用
-  if(draw.select('.edit_select.ink,.edit_select.braille').members.length===1){
-    $('.textInfo_gadget').show();
-    let text = draw.select('.edit_select.ink,.edit_select.braille').first();
-    let text_type , text_value;
-    text.hasClass('ink') ? text_type = 'ink' : text_type = 'braille';
-    text.hasClass('ink') ? text_value = text.text() : text_value = text.attr('brailleorigintext');
-    $('#textInfo_TextBox').val(text_value);
-  }else{
-    $('.textInfo_gadget').hide();
-  }
-
-  if(draw.select('.edit_select').first()===undefined){
-    SVG.get('handle_group').hide();　//移動、サイズ変更、回転用のハンドルを非表示
-    $('#layer_select').hide();
-    $('#fill_change').hide();
-  }else{
-    SVG.get('handle_group').show();　//移動、サイズ変更、回転用のハンドルを表示
-    SVG.get('handle_group').front();
-
-    $('#layer_select').show();
-    $('#fill_change').hide();
-    if(draw.select('.edit_select.connected , .edit_select.circle').first()) $('#fill_change').show();
-
-
-
-    var point1 = new Array() , point2 = new Array();  //affin変換行列作成に使う行列
-    for(var i=0;i<3;i++){
-      point1[i] = new Array();
-      point2[i] = new Array();
+    if(draw.select('.edit_select.ink').first()!==undefined) $('.resizeInk_gadget').show();
+    if(draw.select('.edit_select.braille').first()!==undefined) $('.resizeBraille_gadget').show();
+    if(draw.select('.edit_select.path , .edit_select.circle').first()!==undefined) $('.stroke_option').show();
+    if(draw.select('.edit_select.image').first()!==undefined) $('.gadget_imageOpacity').show();
+    if(draw.select('.edit_select.connected , .edit_select.circle').first()!==undefined) $('#select_fill_table').show();
+    /***************************************************************
+      文字（墨字or点字）が選択状態の場合は編集用のテキストボックスを表示
+      そうでない場合は非表示
+    ****************************************************************/
+    if(draw.select('.edit_select.ink,.edit_select.braille').members.length===1){　
+      let text = draw.select('.edit_select.ink,.edit_select.braille').first();
+      text.hasClass('ink') ? $('#textInfo_TextBox').val(text.text()) : $('#textInfo_TextBox').val(text.attr('brailleorigintext'));
+      $('.textInfo_gadget').show();
     }
+    SVG.get('handle_group').show().front();　//移動、サイズ変更、回転用のハンドルを表示して最前へ
+    $('#layer_table').show();
+    $('.resizeBox_textbox').show();
 
-    var gmin_x = 1000000 ,  gmin_y = 1000000;
-    var gmax_x = -1000000 , gmax_y = -1000000;
-
+    let gmin_x = 1000000 ,  gmin_y = 1000000;
+    let gmax_x = -1000000 , gmax_y = -1000000;
     draw.select('.edit_select').each(function(i , children){
-      var bbox = get_bbox(this);
+      let bbox = get_bbox(this);
       //ハンドル位置の4隅の座標を更新する
       if(gmin_x > bbox.min_x) gmin_x = bbox.min_x;
       if(gmin_y > bbox.min_y) gmin_y = bbox.min_y;
@@ -264,21 +205,21 @@ function upload_handle(){
     //各ハンドルとなる要素を取得
     // box: 移動 , t : 上部 , l:左部 , b:下部 , r:右部
     // lt : 上左部 , rt:上右部 , lb:下左部 , rb:下右部  , rot:回転
-    var box_resize = SVG.get('box_resize').show();
-    var t_resize = SVG.get('t_resize').show(); //t:
-    var l_resize = SVG.get('l_resize').show();
-    var b_resize = SVG.get('b_resize').show();
-    var r_resize = SVG.get('r_resize').show();
-    var lt_resize = SVG.get('lt_resize').show();
-    var rt_resize = SVG.get('rt_resize').show();
-    var lb_resize = SVG.get('lb_resize').show();
-    var rb_resize = SVG.get('rb_resize').show();
-    var rot_resize = SVG.get('rot_resize').show();
+    let box_resize = SVG.get('box_resize').show();
+    let t_resize = SVG.get('t_resize').show(); //t:
+    let l_resize = SVG.get('l_resize').show();
+    let b_resize = SVG.get('b_resize').show();
+    let r_resize = SVG.get('r_resize').show();
+    let lt_resize = SVG.get('lt_resize').show();
+    let rt_resize = SVG.get('rt_resize').show();
+    let lb_resize = SVG.get('lb_resize').show();
+    let rb_resize = SVG.get('rb_resize').show();
+    let rot_resize = SVG.get('rot_resize').show();
 
     //ハンドル位置の4隅の座標を決定
     gX = gmin_x　, gY = gmin_y;
     gWidth = gmax_x-gmin_x , gHeight = gmax_y-gmin_y;
-    if(gWidth < 0.001 || gHeight < 0.001){
+    if(gWidth < 0.001 || gHeight < 0.001){ //極めて選択した要素が小さい場合には角４隅のハンドルは非表示にする
       lt_resize.hide();
       rt_resize.hide();
       lb_resize.hide();
@@ -293,72 +234,67 @@ function upload_handle(){
       gHeight = 5;
     }
 
-
-    change_gX = gmin_x　, change_gY = gmin_y;
-    change_gWidth = gmax_x-gmin_x , change_gHeight = gmax_y-gmin_y;
-
-    var dTx = 0 , dTy = 0;
-    var cx = 0 , cy = 0;
-    var anchorX = 0 , anchorY = 0;
-    var rad = 0 , deg = 0; //回転操作時の角度
+    let anchorX = 0 , anchorY = 0;
+    let dTx = 0 , dTy = 0;
+    let cx = 0 , cy = 0 , rad = 0;
 
     //ハンドル位置の更新
-    SVG.get('handle_group').attr({'transform' : ''});
+    draw.select('.handle').attr({'transform' : ''});
+
     box_resize.attr({
       'x' : gX,
       'y' : gY,
       'width' : gWidth,
-      'height' : gHeight,
-      'transform':''
+      'height' : gHeight
     });
     t_resize.attr({
       'cx' : gX+gWidth/2,
       'cy' : gY,
-      'r' : HANDLE_CIRCLE_RADIUS/(2*draw.viewbox().zoom)
+      'r' : SELECT_HANDLE_RADIUS/(2*draw.viewbox().zoom)
     });
     l_resize.attr({
       'cx':gX,
       'cy':gY + gHeight/2,
-      'r' : HANDLE_CIRCLE_RADIUS/(2*draw.viewbox().zoom)
+      'r' : SELECT_HANDLE_RADIUS/(2*draw.viewbox().zoom)
     })
     b_resize.attr({
       'cx':gX + gWidth/2,
       'cy':gY + gHeight,
-      'r' : HANDLE_CIRCLE_RADIUS/(2*draw.viewbox().zoom)
+      'r' : SELECT_HANDLE_RADIUS/(2*draw.viewbox().zoom)
     })
     r_resize.attr({
       'cx':gX + gWidth,
       'cy':gY + gHeight/2,
-      'r' : HANDLE_CIRCLE_RADIUS/(2*draw.viewbox().zoom)
+      'r' : SELECT_HANDLE_RADIUS/(2*draw.viewbox().zoom)
     })
     lt_resize.attr({
       'cx':gX,
       'cy':gY,
-      'r' : HANDLE_CIRCLE_RADIUS/(2*draw.viewbox().zoom)
+      'r' : SELECT_HANDLE_RADIUS/(2*draw.viewbox().zoom)
     })
     rt_resize.attr({
       'cx' : gX + gWidth,
       'cy' : gY,
-      'r' : HANDLE_CIRCLE_RADIUS/(2*draw.viewbox().zoom)
+      'r' : SELECT_HANDLE_RADIUS/(2*draw.viewbox().zoom)
     })
     lb_resize.attr({
       'cx' : gX,
       'cy' : gY + gHeight,
-      'r' : HANDLE_CIRCLE_RADIUS/(2*draw.viewbox().zoom)
+      'r' : SELECT_HANDLE_RADIUS/(2*draw.viewbox().zoom)
     })
     rb_resize.attr({
       'cx' : gX + gWidth,
       'cy' : gY + gHeight,
-      'r' : HANDLE_CIRCLE_RADIUS/(2*draw.viewbox().zoom)
+      'r' : SELECT_HANDLE_RADIUS/(2*draw.viewbox().zoom)
     })
     rot_resize.attr({
       'cx' : gX + gWidth/2,
       'cy' : gY - 15/draw.viewbox().zoom,
-      'r' : HANDLE_CIRCLE_RADIUS/(2*draw.viewbox().zoom)
+      'r' : SELECT_HANDLE_RADIUS/(2*draw.viewbox().zoom)
     })
 
 
-    //幅、高さのテキストボックスに値を入力
+    //幅、高さのテキストボックスに[mm]に換算した値を入力
     $('#rb_width').val(Math.round( gWidth/SVG_RATIO * Math.pow( 10 , 2 ) ) / (Math.pow( 10 , 2 ) ) );
     $('#rb_height').val(Math.round( gHeight/SVG_RATIO * Math.pow( 10 , 2 ) ) / (Math.pow( 10 , 2 ) ) );
 
@@ -385,7 +321,7 @@ function upload_handle(){
           let affin_mat = affin_info.affine_mat;
           dTx = affin_info.dTx;
           dTy = affin_info.dTy;
-          update_editgroup(affin_mat , 'top');
+          update_editgroup(affin_mat　,　'top');
         });
       }
     });
@@ -497,7 +433,6 @@ function upload_handle(){
           let affin_info = get_affinmat('rot',e,gX,gY,gWidth,gHeight,cx,cy,rad);
           let affin_mat = affin_info.affine_mat;
           rad = affin_info.rad;
-          deg = affin_info.deg;
           update_editgroup(affin_mat , 'rot');
         });
       }
@@ -508,8 +443,8 @@ function upload_handle(){
 function get_affinmat(type,event,gX,gY,gWidth,gHeight,anchorX,anchorY,dTx,dTy){
   now_movingFlag = true;
   let obj = new Object();
-  var point1 = new Array() , point2 = new Array(); //affin変換行列作成に使う行列
-  for(var i=0;i<3;i++){
+  let point1 = new Array() , point2 = new Array(); //affin変換行列作成に使う行列
+  for(let i=0;i<3;i++){
     point1[i] = new Array();
     point2[i] = new Array();
   }
@@ -517,12 +452,12 @@ function get_affinmat(type,event,gX,gY,gWidth,gHeight,anchorX,anchorY,dTx,dTy){
   if(type==='rot'){
     let cx = anchorX , cy = anchorY;
     let rad = dTx;
-    var px1 = (gX - cx)*Math.cos(rad) - (gY - cy)*Math.sin(rad) + cx;
-    var py1 = (gX - cx)*Math.sin(rad) + (gY - cy)*Math.cos(rad) + cy;
-    var px2 = (gX + gWidth - cx)*Math.cos(rad) - (gY - cy)*Math.sin(rad) + cx;
-    var py2 = (gX + gWidth - cx)*Math.sin(rad) + (gY - cy)*Math.cos(rad) + cy;
-    var px3 = (gX - cx)*Math.cos(rad) - (gY + gHeight- cy)*Math.sin(rad) + cx;
-    var py3 = (gX - cx)*Math.sin(rad) + (gY + gHeight - cy)*Math.cos(rad) + cy;
+    let px1 = (gX - cx)*Math.cos(rad) - (gY - cy)*Math.sin(rad) + cx;
+    let py1 = (gX - cx)*Math.sin(rad) + (gY - cy)*Math.cos(rad) + cy;
+    let px2 = (gX + gWidth - cx)*Math.cos(rad) - (gY - cy)*Math.sin(rad) + cx;
+    let py2 = (gX + gWidth - cx)*Math.sin(rad) + (gY - cy)*Math.cos(rad) + cy;
+    let px3 = (gX - cx)*Math.cos(rad) - (gY + gHeight- cy)*Math.sin(rad) + cx;
+    let py3 = (gX - cx)*Math.sin(rad) + (gY + gHeight - cy)*Math.cos(rad) + cy;
     //変換前の3座標の入力
     point1[0]=[px1,px2,px3];
     point1[1]=[py1,py2,py3];
@@ -530,14 +465,13 @@ function get_affinmat(type,event,gX,gY,gWidth,gHeight,anchorX,anchorY,dTx,dTy){
 
     mx = getmousepoint('normal',event).x; //描画領域上でのマウスポイント計算
     my = getmousepoint('normal',event).y;
-    rad = Math.atan(( Number(my)-cy )/( Number(mx)-cx ));
-    if(Number(mx)-cx<0)rad=Math.PI+rad;
+    rad = Math.atan(( my-cy )/( mx - cx));
+    if(mx - cx < 0) rad = Math.PI + rad;
     if(input_key_buffer[16] || input_key_buffer[17]){
       rad = Math.PI/2+Math.round(rad / (Math.PI/6)) * Math.PI/6
     }else{
       rad = Math.PI/2+Math.round(rad / (Math.PI/90)) * Math.PI/90
     }
-    deg =  rad*180/Math.PI;
 
     px1 = (gX - cx)*Math.cos(rad) - (gY - cy)*Math.sin(rad) + cx;
     py1 = (gX - cx)*Math.sin(rad) + (gY - cy)*Math.cos(rad) + cy;
@@ -552,9 +486,7 @@ function get_affinmat(type,event,gX,gY,gWidth,gHeight,anchorX,anchorY,dTx,dTy){
     point2[2]=[1,1,1];
     obj.affine_mat = math.multiply(point2 , math.inv(point1));
     obj.rad = rad;
-    obj.deg = deg;
     return obj
-
   }else{
     if(type==='drag'){
       //変換前の3座標の入力
@@ -627,11 +559,7 @@ function get_affinmat(type,event,gX,gY,gWidth,gHeight,anchorX,anchorY,dTx,dTy){
       if(gWidth <= dTx) dTx = gWidth - 10; //10という数字に大きな意味はなし
       if(gHeight <= dTy) dTy = gHeight - 10; //10という数字に大きな意味はなし
 
-      if(Math.abs(dTx) > Math.abs(dTy)){
-        dTx = dTy*gWidth/gHeight;
-      }else{
-        dTy = dTx*gHeight/gWidth;
-      }
+      Math.abs(dTx) > Math.abs(dTy) ? dTx = dTy*gWidth/gHeight :  dTy = dTx*gHeight/gWidth;
 
       //変換後の3座標の入力
       point2[0]=[gX + dTx , gX + gWidth, gX + dTx];
@@ -649,17 +577,11 @@ function get_affinmat(type,event,gX,gY,gWidth,gHeight,anchorX,anchorY,dTx,dTy){
       if(gWidth + dTx <= 0) dTx = -gWidth + 10; //10という数字に大きな意味はなし
       if(gHeight <= dTy) dTy = gHeight - 10; //10という数字に大きな意味はなし
 
-      if(Math.abs(dTx) > Math.abs(dTy)){
-        dTx = -dTy*gWidth/gHeight;
-      }else{
-        dTy = -dTx*gHeight/gWidth;
-      }
-
+      Math.abs(dTx) > Math.abs(dTy) ? dTx = -dTy*gWidth/gHeight : dTy = -dTx*gHeight/gWidth;
       //変換後の3座標の入力
       point2[0]=[gX , gX + gWidth + dTx, gX];
       point2[1]=[gY + dTy , gY + dTy, gY + gHeight];
       point2[2]=[1,1,1];
-
     }else if(type==='left_bottom'){
       point1[0]=[gX + dTx , gX + gWidth, gX + dTx];
       point1[1]=[gY , gY, gY + gHeight + dTy];
@@ -671,17 +593,11 @@ function get_affinmat(type,event,gX,gY,gWidth,gHeight,anchorX,anchorY,dTx,dTy){
       if(gWidth <= dTx) dTx = gWidth - 10; //10という数字に大きな意味はなし
       if(gHeight + dTy <= 0) dTy = -gHeight + 10; //10という数字に大きな意味はなし
 
-      if(Math.abs(dTx) > Math.abs(dTy)){
-        dTx = -dTy*gWidth/gHeight;
-      }else{
-        dTy = -dTx*gHeight/gWidth;
-      }
-
+      Math.abs(dTx) > Math.abs(dTy) ? dTx = -dTy*gWidth/gHeight : dTy = -dTx*gHeight/gWidth;
       //変換後の3座標の入力
       point2[0]=[gX + dTx , gX + gWidth, gX + dTx];
       point2[1]=[gY , gY, gY + gHeight + dTy];
       point2[2]=[1,1,1];
-
     }else if(type==='right_bottom'){
       point1[0]=[gX , gX + gWidth + dTx , gX];
       point1[1]=[gY , gY, gY + gHeight + dTy];
@@ -693,11 +609,7 @@ function get_affinmat(type,event,gX,gY,gWidth,gHeight,anchorX,anchorY,dTx,dTy){
       if(gWidth + dTx <= 0) dTx = -gWidth + 10; //10という数字に大きな意味はなし
       if(gHeight + dTy <= 0) dTy = -gHeight + 10; //10という数字に大きな意味はなし
 
-      if(Math.abs(dTx) > Math.abs(dTy)){
-        dTx = dTy*gWidth/gHeight;
-      }else{
-        dTy = dTx*gHeight/gWidth;
-      }
+      Math.abs(dTx) > Math.abs(dTy) ? dTx = dTy*gWidth/gHeight : dTy = dTx*gHeight/gWidth
 
       //変換後の3座標の入力
       point2[0]=[gX , gX + gWidth + dTx , gX];
@@ -711,16 +623,14 @@ function get_affinmat(type,event,gX,gY,gWidth,gHeight,anchorX,anchorY,dTx,dTy){
   }
 }
 
-
 //アフィン変換によるtarget_group内の要素の座標変換
 function update_editgroup(affin_mat,scale){
-  //SVG.get('handle_group').hide();
   draw.select('.edit_select').each(function(i,children){
-    var matrix = this.transform('matrix');
-    var trans_matrix = [[matrix.a, matrix.c, matrix.e]
+    let matrix = this.transform('matrix');
+    let trans_matrix = [[matrix.a, matrix.c, matrix.e]
                       ,[matrix.b, matrix.d, matrix.f]
                       ,[0, 0, 1]]
-    var trans_matrix = math.multiply(affin_mat , trans_matrix) //座標変換行列をAffin変換
+    trans_matrix = math.multiply(affin_mat , trans_matrix) //座標変換行列をAffin変換
     if(this.hasClass('ink') || this.hasClass('braille')){  //文字要素の場合
       if(scale==="drag" || scale==="rot"){
         this.transform({
@@ -729,110 +639,99 @@ function update_editgroup(affin_mat,scale){
         })
       }
     }else if(this.hasClass('circle')){ //円要素の場合
-        var cx = Number( this.attr('cx') ) , cy = Number( this.attr('cy') );
-        var cr = Number( this.attr('r') );
-        var pos1 = [ [ cx ],[ cy ],[1]];
-        switch(scale){
-          case 'top':
-            var pos2 = [ [ cx  ],[ cy - cr ],[1]];
-            break;
-          case 'left':
-            var pos2 = [ [ cx - cr ],[ cy ],[1]];
-            break;
-          case 'bottom':
-            var pos2 = [ [ cx  ],[ cy + cr ],[1]];
-            break;
-          case 'right':
-            var pos2 = [ [ cx + cr],[ cy ],[1]];
-            break;
-          default:
-            var pos2 = [ [ cx + cr * Math.sin(Math.PI/4) ],[ cy + cr * Math.cos(Math.PI/4) ],[1]]; //pathの座標を格納
-            break;
-        }
-        var pos1 = math.multiply(affin_mat,pos1) , pos2 = math.multiply(affin_mat,pos2); //pathの座標をAffin変
-        var new_cr = Math.sqrt( (Number(pos2[0][0])-Number(pos1[0][0])) * (Number(pos2[0][0])-Number(pos1[0][0]))
-                                + (Number(pos2[1][0])-Number(pos1[1][0])) * (Number(pos2[1][0])-Number(pos1[1][0])) );
+      let cx = Number( this.attr('cx') ) , cy = Number( this.attr('cy') );
+      let cr = Number( this.attr('r') );
+      let pos1 = [ [ cx ],[ cy ],[1]] , pos2;
+      switch(scale){
+        case 'top':
+          pos2 = [ [ cx  ],[ cy - cr ],[1]];
+          break;
+        case 'left':
+          pos2 = [ [ cx - cr ],[ cy ],[1]];
+          break;
+        case 'bottom':
+          pos2 = [ [ cx  ],[ cy + cr ],[1]];
+          break;
+        case 'right':
+          pos2 = [ [ cx + cr],[ cy ],[1]];
+          break;
+        default:
+          pos2 = [ [ cx + cr * Math.sin(Math.PI/4) ],[ cy + cr * Math.cos(Math.PI/4) ],[1]]; //pathの座標を格納
+          break;
+      }
+      pos1 = math.multiply(affin_mat,pos1) , pos2 = math.multiply(affin_mat,pos2); //pathの座標をAffin変
+      let new_cr = Math.sqrt( (Number(pos2[0][0])-Number(pos1[0][0])) * (Number(pos2[0][0])-Number(pos1[0][0]))
+                              + (Number(pos2[1][0])-Number(pos1[1][0])) * (Number(pos2[1][0])-Number(pos1[1][0])));
 
-        this.attr({ 'cx' : Number(pos1[0][0]) });
-        this.attr({ 'cy' : Number(pos1[1][0]) });
-        this.attr({ 'r' : new_cr });
+      this.attr({
+        'cx' : Number(pos1[0][0]),
+        'cy' : Number(pos1[1][0]),
+        'r' : new_cr
+      });
     }else if(this.hasClass('image')){//画像要素の場合
       this.transform({
         'a': trans_matrix[0][0],'c': trans_matrix[0][1],'b': trans_matrix[1][0],
         'd': trans_matrix[1][1],'e': trans_matrix[0][2],'f': trans_matrix[1][2]
       })
     }else{//path要素の場合
-      var dpoint_array = this.clear().array().settle(); //pathのdpoint配列を取得
-      var new_dpoint = "";
-      for(var j=0;j<dpoint_array.length; j++){
-        if(dpoint_array[j][0]!=="Z"){  //属性がZ以外の場合
-          var pos1 = [ [ dpoint_array[j][1] ],[ dpoint_array[j][2] ],[1]]; //pathの座標を格納
-          var trans_matrix = math.multiply(affin_mat,pos1) //pathの座標をAffin変換
-          new_dpoint += dpoint_array[j][0]+" "+trans_matrix[0][0]+" "+trans_matrix[1][0]; //新しい座標として格納
+      let dpoint = this.clear().array().settle(); //pathのdpoint配列を取得
+      let d = "";
+      for(let j = 0; j < dpoint.length; j++){
+        if(dpoint[j][0]!=="Z"){  //属性がZ以外の場合
+          let pos1 = [ [ dpoint[j][1] ],[ dpoint[j][2] ],[1]]; //pathの座標を格納
+          let trans_matrix = math.multiply(affin_mat,pos1) //pathの座標をAffin変換
+          d += dpoint[j][0]+" "+trans_matrix[0][0]+" "+trans_matrix[1][0]; //新しい座標として格納
         }else{
-          new_dpoint += dpoint_array[j][0];
+          d += dpoint[j][0];
         }
       }
-      this.attr({'d':new_dpoint});
+      this.attr({'d': d});
     }
   })
-  let pos_gXY = [ [ change_gX ],[ change_gY ],[1]]; //座標(gX , gY)
-  let pos_gWidHei = [ [ change_gX + change_gWidth ],[ change_gY + change_gHeight],[1]]; //座標(gX + gWidth, gY + Height)
-  pos_gXY = math.multiply(affin_mat , pos_gXY);
-  pos_gWidHei = math.multiply(affin_mat , pos_gWidHei);
-
-  change_gX = Number(pos_gXY[0][0]), change_gY = Number(pos_gXY[1][0]);
-  change_gWidth = Number(pos_gWidHei[0][0]) - change_gX , change_gHeight = Number(pos_gWidHei[1][0]) - change_gY;
-  if(change_gWidth<0.001){
-    change_gX = change_gX -2.5;
-    change_gWidth = 5;
-  }
-  if(change_gHeight<0.001){
-    change_gY = change_gY -2.5;
-    change_gHeight = 5;
-  }
-
-  //ハンドル位置の更新
-  if(scale === "rot"){
-    var matrix = SVG.get('handle_group').transform('matrix');
-    var trans_matrix = [[matrix.a, matrix.c, matrix.e]
-                      ,[matrix.b, matrix.d, matrix.f]
-                      ,[0, 0, 1]]
-    var trans_matrix = math.multiply(affin_mat , trans_matrix) //座標変換行列をAffin変換
-    SVG.get('handle_group').transform({
-      'a': trans_matrix[0][0],'c': trans_matrix[0][1],'b': trans_matrix[1][0],
-      'd': trans_matrix[1][1],'e': trans_matrix[0][2],'f': trans_matrix[1][2]
-    })
-  }else{
-    SVG.get('box_resize').attr({ 'x' : change_gX, 'y' : change_gY,  'width' : change_gWidth,  'height' : change_gHeight });
-    SVG.get('t_resize').attr({ 'cx' : change_gX + change_gWidth/2, 'cy' : change_gY });
-    SVG.get('l_resize').attr({ 'cx': change_gX, 'cy':change_gY + change_gHeight/2 })
-    SVG.get('b_resize').attr({ 'cx': change_gX + change_gWidth/2, 'cy':change_gY + change_gHeight })
-    SVG.get('r_resize').attr({ 'cx': change_gX + change_gWidth, 'cy': change_gY + change_gHeight/2 })
-    SVG.get('lt_resize').attr({'cx':change_gX, 'cy':change_gY })
-    SVG.get('rt_resize').attr({'cx' : change_gX + change_gWidth , 'cy' : change_gY })
-    SVG.get('lb_resize').attr({'cx' : change_gX, 'cy' : change_gY + change_gHeight })
-    SVG.get('rb_resize').attr({'cx' : change_gX + change_gWidth, 'cy' : change_gY + change_gHeight })
-    SVG.get('rot_resize').attr({ 'cx' : change_gX + change_gWidth/2, 'cy' : change_gY - 15/draw.viewbox().zoom })
-  }
+  SVG.get('handle_group').each(function(i,children){
+    if(this.id()=== 'box_resize'){
+      let matrix = this.transform('matrix');
+      let trans_matrix = [[matrix.a, matrix.c, matrix.e]
+                        ,[matrix.b, matrix.d, matrix.f]
+                        ,[0, 0, 1]]
+      trans_matrix = math.multiply(affin_mat , trans_matrix) //座標変換行列をAffin変換
+      this.transform({
+        'a': trans_matrix[0][0],'c': trans_matrix[0][1],'b': trans_matrix[1][0],
+        'd': trans_matrix[1][1],'e': trans_matrix[0][2],'f': trans_matrix[1][2]
+      })
+    }else{
+      let pos1 = [ [ this.attr('cx') ],[ this.attr('cy') ],[1]]; //pathの座標を格納
+      let trans_matrix = math.multiply(affin_mat,pos1) //pathの座標をAffin変換
+      this.attr({
+        'cx': trans_matrix[0][0],
+        'cy': trans_matrix[1][0]
+      });
+    }
+  })
 }
 
 /******************************************************
 //テキストボックスでサイズを変更する関数
 ******************************************************/
-function update_widthBox(){
-  var  self = $('#rb_width');
-  if(!self.val().match(/[^0-9\.]/) && self.val()!==0 && String(self.val())!=="\." && String(self.val())!==""){
-    var point1 = new Array() , point2 = new Array(); //affin変換行列作成に使う行列
-    for(var i=0;i<3;i++){
+function update_resizeBox(mode){
+  let val = (mode === 'width') ? $('#rb_width').val() : $('#rb_height').val();
+  if(!val.match(/[^0-9\.]/) && val!==0 && String(val)!=="\." && String(val)!==""){
+    let point1 = new Array() , point2 = new Array(); //affin変換行列作成に使う行列
+    for(let i=0;i<3;i++){
       point1[i] = new Array();
       point2[i] = new Array();
     }
-    var box = SVG.get('box_resize');
-    var bx = Number(box.x()) , by = Number(box.y());
-    var bwidth = Number(box.width()) , bheight = Number(box.height());
-    var new_bwidth = Number(self.val()) * SVG_RATIO;
-    var new_bheight = new_bwidth * bheight/bwidth;
+    let box = SVG.get('box_resize');
+    let bx = Number(box.x()) , by = Number(box.y());
+    let bwidth = Number(box.width()) , bheight = Number(box.height());
+    let new_bwidth ,  new_bheight;
+    if(mode==='width'){
+      new_bwidth = Number(val) * SVG_RATIO;
+      new_bheight = new_bwidth * bheight/bwidth;
+    }else{
+      new_bheight = Number(val) * SVG_RATIO;
+      new_bwidth = new_bheight * bwidth/bheight;
+    }
     point1[0]=[bx + bwidth, bx , bx + bwidth];
     point1[1]=[by,by + bheight,  by + bheight];
     point1[2]=[1,1,1];
@@ -840,38 +739,12 @@ function update_widthBox(){
     point2[0]=[bx + new_bwidth , bx ,bx + new_bwidth];
     point2[1]=[by , by + new_bheight , by + new_bheight];
     point2[2]=[1,1,1];
-    var affin_mat = math.multiply(point2 , math.inv(point1));
+    let affin_mat = math.multiply(point2 , math.inv(point1));
     update_editgroup(affin_mat);
     upload_handle();
   }
 }
-function update_heightBox(){
-  var  self = $('#rb_height');
-  if(!self.val().match(/[^0-9\.]/) && self.val()!==0 && String(self.val())!=="\." && String(self.val())!==""){
-    var point1 = new Array() , point2 = new Array(); //affin変換行列作成に使う行列
-    for(var i=0;i<3;i++){
-      point1[i]=new Array();
-      point2[i]=new Array();
-    }
 
-    var box = SVG.get('box_resize');
-    var bx = Number(box.x()) , by = Number(box.y());
-    var bwidth = Number(box.width()) , bheight = Number(box.height());
-    var new_bheight = Number(self.val()) * SVG_RATIO;
-    var new_bwidth = new_bheight * bwidth/bheight;
-
-    point1[0]=[bx + bwidth, bx , bx + bwidth];
-    point1[1]=[by,by + bheight,  by + bheight];
-    point1[2]=[1,1,1];
-    //変換後の3座標の入力
-    point2[0]=[bx + new_bwidth , bx ,bx + new_bwidth];
-    point2[1]=[by , by + new_bheight , by + new_bheight];
-    point2[2]=[1,1,1];
-    var affin_mat = math.multiply(point2 , math.inv(point1));
-    update_editgroup(affin_mat,"left_top");
-    upload_handle();
-  }
-}
 
 function update_TextInfoBox(){
   if(draw.select('.edit_select.ink,.edit_select.braille').members.length===1){
@@ -893,15 +766,15 @@ function update_TextInfoBox(){
 
 //要素が占める領域（四角）の４点を取得
 function get_bbox(tg_element){
-  var pmin_x = 10000000 , pmax_x = -10000000;
-  var pmin_y = 10000000 , pmax_y = -10000000;
-  var matrix = tg_element.transform('matrix')
-  var trans_matrix = [[matrix.a, matrix.c, matrix.e]
+  let pmin_x = 10000000 , pmax_x = -10000000;
+  let pmin_y = 10000000 , pmax_y = -10000000;
+  let matrix = tg_element.transform('matrix')
+  let trans_matrix = [[matrix.a, matrix.c, matrix.e]
                     ,[matrix.b, matrix.d, matrix.f]
                     ,[0, 0, 1]];
   if(tg_element.hasClass('path')){
-    var dpoint = tg_element.clear().array().settle(); //pathのdpoint配列を取得
-    for(var j=0; j < dpoint.length; j++){
+    let dpoint = tg_element.clear().array().settle(); //pathのdpoint配列を取得
+    for(let j=0; j < dpoint.length; j++){
       if(dpoint[j][0] !== 'Z'){
         if(pmin_x > Number( dpoint[j][1]))pmin_x = Number( dpoint[j][1]);
         if(pmax_x < Number( dpoint[j][1]))pmax_x = Number( dpoint[j][1]);
@@ -937,54 +810,47 @@ function get_bbox(tg_element){
     pmin_y = Number(tg_element.attr('y'))
     pmax_y = Number(tg_element.attr('y')) + Number(tg_element.bbox().height);
   }
-  var position1 = [ [ pmin_x ],[ pmin_y ],[1]];
-  var position2 = [ [ pmax_x ],[ pmin_y ],[1]];
-  var position3 = [ [ pmin_x ],[ pmax_y ],[1]];
-  var position4 = [ [ pmax_x ],[ pmax_y ],[1]];
+  let position1 = [ [ pmin_x ],[ pmin_y ],[1]];
+  let position2 = [ [ pmax_x ],[ pmin_y ],[1]];
+  let position3 = [ [ pmin_x ],[ pmax_y ],[1]];
+  let position4 = [ [ pmax_x ],[ pmax_y ],[1]];
 
-  var trans1 = math.multiply(trans_matrix , position1);
-  var trans2 = math.multiply(trans_matrix , position2);
-  var trans3 = math.multiply(trans_matrix , position3);
-  var trans4 = math.multiply(trans_matrix , position4);
+  let trans1 = math.multiply(trans_matrix , position1);
+  let trans2 = math.multiply(trans_matrix , position2);
+  let trans3 = math.multiply(trans_matrix , position3);
+  let trans4 = math.multiply(trans_matrix , position4);
 
   pmin_x = Math.min( trans1[0][0], trans2[0][0] , trans3[0][0] , trans4[0][0]);
   pmax_x = Math.max( trans1[0][0], trans2[0][0] , trans3[0][0] , trans4[0][0]);
   pmin_y = Math.min( trans1[1][0], trans2[1][0] , trans3[1][0] , trans4[1][0]);
   pmax_y = Math.max( trans1[1][0], trans2[1][0] , trans3[1][0] , trans4[1][0]);
 
-  var bbox = new Object();
+  let bbox = new Object();
   bbox.min_x = pmin_x , bbox.max_x = pmax_x;
   bbox.min_y = pmin_y , bbox.max_y = pmax_y;
   return bbox;
 }
 
-
-
-
 function copy_select(){
-  copy_elements.length = 0;
+  copy.length = 0;
   draw.select('.edit_select').each(function(i, children){
-    copy_elements.unshift(this);
+    copy.unshift(this);
   })
 }
 
 function paste_select(){
-  if(copy_elements.length > 0) edit_clear();
-  for(let i=0;i < copy_elements.length; i++){
-    let clone = copy_elements[i].clone().addClass('edit_select');
+  if(copy.length > 0) edit_clear();
+  for(let i=0;i < copy.length; i++){
+    let clone = copy[i].clone().addClass('edit_select');
     clone.dmove(100);
     if($('input[name="tg_mode"]:checked').val()==='Edit') clone.off('mousedown');
   }
-  if(copy_elements.length > 0){
+  if(copy.length > 0){
     copy_select();
     let current_mode = $('input[name="tg_mode"]:checked').val();
     if(current_mode==='Edit' || current_mode ==='EditImage'){
       upload_handle();
-      set_textsize();
-      set_strokewidth();
-      set_strokecolor();
-      set_fillcolor();
-      set_imageOpacity();
+      set_SelectElement_Param();
     }else{
       draw.select('.edit_select').removeClass('edit_select');
     }
@@ -1004,6 +870,73 @@ function delete_select(){
   edit_mousedown_up();
 }
 
+/**************************************************************************************
+//選択状態のpathのstroke-widthを取得してテキストボックスとスライダーの値を変更する関数
+//選択状態のpathが存在しない場合は変更なし、または複数存在する場合は空白にする
+**********************************************************************************/
+function set_SelectElement_Param(){
+  /**********************
+  ここから線幅、線色
+  ***********************/
+  let strokewidth , strokecolor;
+  draw.select('.edit_select.path').each(function(i,children){
+    if(i===0){
+      strokewidth = this.attr('stroke-width');
+      strokecolor = this.attr('stroke');
+    }
+    if(strokewidth === this.attr('stroke-width')){
+      $("#StrokeWidth_Slider").slider("value",Math.round(strokewidth/ SVG_RATIO * 10)/10);
+      $('#StrokeWidth_TextBox').val(Math.round(strokewidth/ SVG_RATIO * 10)/10);
+    }else{
+      $('#StrokeWidth_TextBox').val('');
+      strokewidth = -1; //-1にすることで絶対にこれ以上一致しなくなる
+    }
+    strokecolor === this.attr('stroke') ? $('#stroke_color').val(strokecolor) :  strokecolor = -1;
+  })
+
+  /**********************
+  ここから墨字
+  ***********************/
+  let ink_fontsize;
+  draw.select('.edit_select.ink').each(function(i,children){
+    if(i===0) ink_fontsize = this.attr('font-size');
+    if(ink_fontsize === this.attr('font-size')){
+      $("#resizeInk_Slider").slider("value",Math.round(ink_fontsize/(TEXT_CORRECTION) * 10)/10);
+      $('#resizeInk_TextBox').val(Math.round(ink_fontsize/(TEXT_CORRECTION) * 10)/10);
+    }else{
+      $('#resizeInk_TextBox').val('');
+      ink_fontsize = -1; //-1にすることで絶対にこれ以上一致しなくなる
+    }
+  })
+
+  /**********************
+  ここから点字
+  ***********************/
+  let braille_fontsize;
+  draw.select('.edit_select.braille').each(function(i,children){
+    if(i===0) braille_fontsize = this.attr('font-size');
+    if(braille_fontsize === this.attr('font-size')){
+      $("#resizeBraille_Slider").slider("value",Math.round(braille_fontsize/(TEXT_CORRECTION) * 10)/10);
+      $('#resizeBraille_TextBox').val(Math.round(braille_fontsize/(TEXT_CORRECTION) * 10)/10);
+    }else{
+      $('#resizeBraille_TextBox').val('');
+      braille_fontsize = -1; //-1にすることで絶対にこれ以上一致しなくなる
+    }
+  })
+
+  let imageOpacity;
+  draw.select('.edit_select.image').each(function(i,children){
+    if(i===0) imageOpacity = this.attr('opacity');
+    if(imageOpacity === this.attr('opacity')){
+      $("#ImageOpacity_Slider").slider("value",imageOpacity*100);
+      $('#ImageOpacity_TextBox').val(imageOpacity*100);
+    }else{
+      $('#ImageOpacity_TextBox').val('');
+      imageOpacity = -1; //-1にすることで絶対にこれ以上一致しなくなる
+    }
+  })
+}
+
 function set_handle(){
   if(SVG.get('handle_group')!==null)SVG.get('handle_group').remove();
   var handle_group =  draw.group().attr({'id':'handle_group'});
@@ -1021,55 +954,55 @@ function set_handle(){
 	  'fill-opacity': 0.1
   }))
 
-  handle_group.add(draw.circle(HANDLE_CIRCLE_RADIUS).attr({
+  handle_group.add(draw.circle(SELECT_HANDLE_RADIUS).attr({
       'fill':'black',
       'id':'t_resize',
       'class':'handle',
       'cursor': 'n-resize',
   }))
-  handle_group.add(draw.circle(HANDLE_CIRCLE_RADIUS).attr({
+  handle_group.add(draw.circle(SELECT_HANDLE_RADIUS).attr({
     'fill':'black',
     'id':'l_resize',
     'class':'handle',
     'cursor': 'e-resize'
   }))
-  handle_group.add(draw.circle(HANDLE_CIRCLE_RADIUS).attr({
+  handle_group.add(draw.circle(SELECT_HANDLE_RADIUS).attr({
     'fill':'black',
     'id':'b_resize',
     'class':'handle',
     'cursor': 's-resize',
   }))
-  handle_group.add(draw.circle(HANDLE_CIRCLE_RADIUS).attr({
+  handle_group.add(draw.circle(SELECT_HANDLE_RADIUS).attr({
     'fill':'black',
     'id':'r_resize',
     'class':'handle',
     'cursor': 'w-resize',
   }))
-  handle_group.add(draw.circle(HANDLE_CIRCLE_RADIUS).attr({
+  handle_group.add(draw.circle(SELECT_HANDLE_RADIUS).attr({
     'fill':'black',
     'id':'lt_resize',
     'class':'handle',
     'cursor': 'nw-resize',
   }))
-  handle_group.add(draw.circle(HANDLE_CIRCLE_RADIUS).attr({
+  handle_group.add(draw.circle(SELECT_HANDLE_RADIUS).attr({
     'fill':'black',
     'id':'rt_resize',
     'class':'handle',
     'cursor': 'ne-resize',
   }))
-  handle_group.add(draw.circle(HANDLE_CIRCLE_RADIUS).attr({
+  handle_group.add(draw.circle(SELECT_HANDLE_RADIUS).attr({
     'fill':'black',
     'id':'lb_resize',
     'class':'handle',
     'cursor': 'sw-resize',
   }))
-  handle_group.add(draw.circle(HANDLE_CIRCLE_RADIUS).attr({
+  handle_group.add(draw.circle(SELECT_HANDLE_RADIUS).attr({
     'fill':'black',
     'id':'rb_resize',
     'class':'handle',
     'cursor': 'se-resize',
   }))
-  handle_group.add(draw.circle(HANDLE_CIRCLE_RADIUS).attr({
+  handle_group.add(draw.circle(SELECT_HANDLE_RADIUS).attr({
     'stroke':'black',
     'fill':'white',
     'id':'rot_resize',

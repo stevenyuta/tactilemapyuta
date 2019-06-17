@@ -1,58 +1,5 @@
-/******************************************************
-//undo機能 操作した処理を戻す関数
-******************************************************/
-function undo() { //操作を１つ戻る関数
-  if(cash_array.length > cash_pointer + 1){  //cash_arrayにデータがある場合
-    let current_mode =  $('input[name="tg_mode"]:checked'); //現在のモードを記憶
-    let vx = draw.viewbox().x , vy = draw.viewbox().y;
-    let vwidth = draw.viewbox().width , vheight = draw.viewbox().height;
-
-    $('#draw_area').remove(); //draw_areaの削除
-    $("#draw_include").append($('<div id="draw_area"></div>'));
-    draw = SVG('draw_area').size(DRAW_AREA_WIDTH,DRAW_AREA_HEIGHT).attr('id','svg_draw_area');
-    draw.viewbox(vx, vy, vwidth, vheight);
-    draw.svg(cash_array[++cash_pointer]);
-    draw_gridline(3000,3000,50,50); //グリッド線の描画
-    defs_set();
-    RadioEvent_set(true);
-    checkBox_change();
-    js_sleep(100); //100ms待機
-  }
-  undredo_checker();
-}
-
-/******************************************************
-//redo機能 操作した処理を戻す関数
-******************************************************/
-function redo(e) { //操作を１つ戻る関数
-  if(cash_pointer > 0){  //cash_arrayにデータがある場合
-    let current_mode =  $('input[name="tg_mode"]:checked'); //現在のモードを記憶
-    //現在のviewBox情報を取得
-    let vx = draw.viewbox().x , vy = draw.viewbox().y;
-    let vwidth = draw.viewbox().width , vheight = draw.viewbox().height;
-
-    //draw_areaの削除と新規作成
-    $('#draw_area').remove();
-    $("#draw_include").append($('<div id="draw_area"></div>'));
-
-    draw = SVG('draw_area').size(DRAW_AREA_WIDTH,DRAW_AREA_HEIGHT).attr('id','svg_draw_area');
-    draw.viewbox(vx, vy, vwidth, vheight);
-
-    draw.svg(cash_array[--cash_pointer]);
-
-    draw_gridline(3000,3000,50,50); //グリッド線の描画
-    defs_set();
-
-    RadioEvent_set(true);
-    checkBox_change();
-    js_sleep(100); //100ms待機
-  }
-  undredo_checker();
-}
-
-
 function cash_svg(){ //SVG文字列を配列に格納 undo時に随時読み込む
-  var current_svg= "";
+  let current_svg= "";
   //最初にcash_pointerまでcash_arrayを削除
   for(let i=0; i < cash_pointer; i++){
     cash_array.shift();
@@ -70,9 +17,11 @@ function cash_svg(){ //SVG文字列を配列に格納 undo時に随時読み込�
 
 function undredo_checker(){
   if(cash_array.length > cash_pointer + 1){  //cash_arrayにデータがある場合
-    $('#undo').css('cursor','pointer');
-    $('#undo').css('background-color','#E2EDF9');
-    $('#undo').css('border-color','orange');
+    $('#undo').css({
+      'cursor' :'pointer',
+      'background-color' : '#E2EDF9',
+      'border-color' : 'orange'
+    });
     $('#undo').hover(function() {
       $(this).css('background', '#31A9EE');
     }, function() {
@@ -80,18 +29,22 @@ function undredo_checker(){
     });
     $('#undo').prop("disabled", false);
   }else{
-    $('#undo').css('cursor','default');
-    $('#undo').css('background-color','#C0C0C0');
-    $('#undo').css('color','#000000');
-    $('#undo').css('border-color','#696969');
+    $('#undo').css({
+      'cursor' : 'default',
+      'background-color' : '#C0C0C0',
+      'color' : '#000000',
+      'border-color' : '#696969'
+    });
     $('#undo').off('mouseenter mouseleave');
     $('#undo').prop("disabled", true);
   }
 
   if(cash_pointer > 0){  //cash_arrayにデータがある場合
-    $('#redo').css('cursor','pointer');
-    $('#redo').css('background-color','#E2EDF9');
-    $('#redo').css('border-color','orange');
+    $('#redo').css({
+      'cursor' : 'pointer',
+      'background-color' : '#E2EDF9',
+      'border-color' : 'orange',
+    });
     $('#redo').hover(function() {
       $(this).css('background', '#31A9EE');
     }, function() {
@@ -99,54 +52,47 @@ function undredo_checker(){
     });
     $('#redo').prop("disabled", false);
   }else{
-    $('#redo').css('cursor','default');
-    $('#redo').css('background-color','#C0C0C0');
-    $('#redo').css('color','#000000');
-    $('#redo').css('border-color','#696969');
+    $('#redo').css({
+      'cursor':'default',
+      'background-color' : '#C0C0C0',
+      'color' : '#000000',
+      'border-color' : '#696969'
+    });
     $('#redo').off('mouseenter mouseleave');
     $('#redo').prop("disabled", true);
   }
 }
-
-
 
 /******************************************************
 //ダウンロード時に出力svgファイルをフォーマットする関数
 //返却値はsvg形式のテキストデータ
 ******************************************************/
 function download_setSVG(original_draw) { //ダウンロード時に出力svgファイルをフォーマットする関数
-
-  dummy_delete();
+  selector_delete('.dummy');
   edit_clear();
   toConnected();
-  select_rect_delete(); //select_rectの全削除
-  draw.select('.image_FrameRect').each(function(i,children){
-    this.remove();
-  })
-  rect_delete();
+  selector_delete('.select_rect');
+  selector_delete('.edit_rect , .init_node , .last_node , .close_node');
+  selector_delete('.fragmented_RectGroup');
   //不要なグループの削除
   SVG.get('gridline_group').remove();
   SVG.get('handle_group').remove();
   SVG.get('guiderect_group').remove();
 
-  draw.select('.SVG_Element').each(function(){
-    this.attr('cursor', null);
-  })
+  draw.select('.SVG_Element').attr('cursor', null);
 
   //グループ内に要素が何もないグループの削除
-  var svg_str = original_draw.svg(); //serialとsvg_strはグローバル関数である
+  let svg_str = original_draw.svg(); //serialとsvg_strはグローバル関数である
   svg_str = svg_str.replace( /\n/g , "" );
   svg_str = svg_str.replace( />/g , ">\n" );
   svg_str = svg_str.replace( /svgjs:data="{&quot;leading&quot;:&quot;1.3&quot;}"/g , "" )
   //現在の<svg>内のデータをcurrent_svgに記録
-  var current_svg= ""
-  draw.select('defs').each(function(){  //defs要素の全削除
-    this.remove()
-  })
+  let current_svg= "";
+  selector_delete('defs');
   SVG.get('svg_draw_area').each(function(i, children){
     current_svg +=this.svg();
   })
-  var viewbox = draw.viewbox();
+  let viewbox = draw.viewbox();
   continue_setSVG(current_svg,viewbox.x,viewbox.y,viewbox.width,viewbox.height)
 
   return svg_str;
@@ -159,63 +105,60 @@ function download_setSVG(original_draw) { //ダウンロード時に出力svgフ
 ******************************************************/
 
 function download_setPNG(original_draw) { //ダウンロード時に出力pngファイルをフォーマットする関数
-  var viewbox = draw.viewbox();
+  let viewbox = draw.viewbox();
   if(draw.select('.A4').first().style('display')!=='none'){
     let rotation = draw.select('.A4').first().transform('rotation')
     if(Math.abs(rotation) === 90){
-      draw.viewbox(-367.5 , -519.75 , 735 , 1039.5 )
-      draw.attr('width' , '2205').attr('height' , '3118.5')
+      draw.viewbox(-367.5 , -519.75 , 735 , 1039.5 );
+      draw.attr('width' , '2205').attr('height' , '3118.5');
     }else{
-      draw.viewbox(-519.75 , -367.5 ,1039.5 , 735)
-      draw.attr('width' , '3118.5').attr('height' , '2205')
+      draw.viewbox(-519.75 , -367.5 ,1039.5 , 735);
+      draw.attr('width' , '3118.5').attr('height' , '2205');
     }
   }else if(draw.select('.B4').first().style('display')!=='none'){
-    let rotation = draw.select('.B4').first().transform('rotation')
+    let rotation = draw.select('.B4').first().transform('rotation');
     if(Math.abs(rotation) === 90){
-      draw.viewbox( -899/2, -1274/2 , 899 ,1274 )
-      draw.attr('width' , '2697').attr('height' , '3822')
+      draw.viewbox( -899/2, -1274/2 , 899 ,1274 );
+      draw.attr('width' , '2697').attr('height' , '3822');
     }else{
-      draw.viewbox(-1274/2, -899/2 ,1274 , 899)
-      draw.attr('width' , '3822').attr('height' , '2697')
+      draw.viewbox(-1274/2, -899/2 ,1274 , 899);
+      draw.attr('width' , '3822').attr('height' , '2697');
     }
   }else{
-    let rotation = draw.select('.A3').first().transform('rotation')
+    let rotation = draw.select('.A3').first().transform('rotation');
     if(Math.abs(rotation) === 90){
-      draw.viewbox( -1039.5/2, -1470/2 , 1039.5 , 1470)
-      draw.attr('width' , '3118.5').attr('height' , '4410')
+      draw.viewbox( -1039.5/2, -1470/2 , 1039.5 , 1470);
+      draw.attr('width' , '3118.5').attr('height' , '4410');
     }else{
-      draw.viewbox(-1470/2, -1039.5/2 ,1470 , 1039.5)
-      draw.attr('width' , '4410').attr('height' , '3118.5')
+      draw.viewbox(-1470/2, -1039.5/2 ,1470 , 1039.5);
+      draw.attr('width' , '4410').attr('height' , '3118.5');
     }
   }
-  draw.rect(1274, 1274).addClass('background_rect').back().move(-1274/2 , -1274/2).attr({'fill' : '#ffffff'})
-  dummy_delete();
+  draw.rect(1274, 1274).addClass('background_rect').back().move(-1274/2 , -1274/2).attr({'fill' : '#ffffff'});
+  selector_delete('.dummy');
   edit_clear();
   toConnected();
-  select_rect_delete(); //select_rectの全削除
-  rect_delete(); //edit_circleの全削除
+  selector_delete('.select_rect');
+  selector_delete('.edit_rect , .init_node , .last_node , .close_node');
+  selector_delete('.fragmented_RectGroup');
   add_fontStyle();
   //不要なグループの削除
   SVG.get('gridline_group').remove();
   SVG.get('handle_group').remove();
 
   //グループ内に要素が何もないグループの削除
-  var png_str = original_draw.svg(); //serialとsvg_strはグローバル関数である
+  let png_str = original_draw.svg(); //serialとsvg_strはグローバル関数である
   png_str = png_str.replace( /\n/g , "" );
   png_str = png_str.replace( />/g , ">\n" );
 
   //現在の<svg>内のデータをcurrent_svgに記録
-  var current_svg= ""
-  draw.select('defs').each(function(){  //defs要素の全削除
-    this.remove()
-  })
-  draw.select('.background_rect').each(function(){  //png化用の背景の全削除
-    this.remove()
-  })
+  let current_svg= "";
+  selector_delete('defs');
+  selector_delete('.background_rect');
   SVG.get('svg_draw_area').each(function(i, children){
     current_svg +=this.svg();
   })
-  continue_setSVG(current_svg,viewbox.x,viewbox.y,viewbox.width,viewbox.height)
+  continue_setSVG(current_svg,viewbox.x,viewbox.y,viewbox.width,viewbox.height);
 
   return png_str;
 }
@@ -223,55 +166,19 @@ function download_setPNG(original_draw) { //ダウンロード時に出力pngフ
 function continue_setSVG(input_draw,vx,vy,vwidth,vheight){ //svgデータを読み込み再初期化する関数
   //html内の#draw_areaを削除して再配置
   $('#draw_area').remove();
-  var draw_area = $('<div id="draw_area"></div>');
-  $("#draw_include").append(draw_area);
+  $("#draw_include").append($('<div id="draw_area"></div>'));
   //drawの内容を再設定
   draw = SVG('draw_area').size(DRAW_AREA_WIDTH,DRAW_AREA_HEIGHT).attr('id','svg_draw_area');
   draw.viewbox(vx, vy, vwidth, vheight);
   draw.svg(input_draw);
   defs_set();
   set_zoom();
-  set_handle(); //移動用ハンドル描画
+  set_handle(); //選択モードで使うハンドルの描画
   draw_gridline(3000,3000,50,50); //グリッド線の描画
   draw_guiderect(); //ガイドの描画
   checkBox_change();
   $('input[name="tg_mode"]:checked').prop('checked', true).trigger('change'); //モードを設定
 }
-
-/******************************************************
-//file_apiの設定関数
-******************************************************/
-function set_fileAPI_continue(){
-  //file_apiの処理
-  var inputFile = $('#fileAPI_continue');
-  var reader = new FileReader();
-
-  function fileChange(ev) { //ファイル選択ボタンを押下時
-    var file = ev.target.files[0];
-    var type = file.type;
-
-    if (type !== 'image/svg+xml') {
-      alert('選択できるファイルはSVGファイルだけです。');
-      inputFile.value = '';
-      return;
-    }
-    reader.readAsText(file);
-  }
-  function fileLoad() {
-    var svg_text = reader.result;
-    svg_text = svg_text.replace(/<svg.+>/g, '')
-    svg_text = svg_text.replace( /<\/svg>/g , "" );
-    continue_setSVG(svg_text,-DRAW_AREA_WIDTH, -DRAW_AREA_HEIGHT, DRAW_AREA_WIDTH * 2, DRAW_AREA_HEIGHT * 2);
-    cash_svg();
-  }
-  function fileClear() {
-    this.value = null;
-  }
-  inputFile.on('click',fileClear);
-  inputFile.on('change',fileChange);
-  $(reader).on('load',fileLoad);
-}
-
 
 //ダウンロードリンク
 function svgDownload() {
@@ -303,45 +210,45 @@ function svgDownload() {
 function pngDownload() {
   var png_str = download_setPNG(draw)
   if(draw.select('.A4').first().style('display')!=='none'){
-    let rotation = draw.select('.A4').first().transform('rotation')
+    let rotation = draw.select('.A4').first().transform('rotation');
     if(Math.abs(rotation) === 90){
-      $("body").append("<canvas id='canvas1' visibility='hidden' width='2205' height='3118.5'></canvas>")
+      $("body").append("<canvas id='canvas1' visibility='hidden' width='2205' height='3118.5'></canvas>");
     }else{
-      $("body").append("<canvas id='canvas1' visibility='hidden' width='3118.5' height='2205'></canvas>")
+      $("body").append("<canvas id='canvas1' visibility='hidden' width='3118.5' height='2205'></canvas>");
     }
   }else if(draw.select('.B4').first().style('display')!=='none'){
-    let rotation = draw.select('.B4').first().transform('rotation')
+    let rotation = draw.select('.B4').first().transform('rotation');
     if(Math.abs(rotation) === 90){
-      $("body").append("<canvas id='canvas1' visibility='hidden' width='2697' height='3822'></canvas>")
+      $("body").append("<canvas id='canvas1' visibility='hidden' width='2697' height='3822'></canvas>");
     }else{
-      $("body").append("<canvas id='canvas1' visibility='hidden' width='3822' height='2697'></canvas>")
+      $("body").append("<canvas id='canvas1' visibility='hidden' width='3822' height='2697'></canvas>");
     }
   }else{
-    let rotation = draw.select('.A3').first().transform('rotation')
+    let rotation = draw.select('.A3').first().transform('rotation');
     if(Math.abs(rotation) === 90){
-      $("body").append("<canvas id='canvas1' visibility='hidden' width='3118.5' height='4410'></canvas>")
+      $("body").append("<canvas id='canvas1' visibility='hidden' width='3118.5' height='4410'></canvas>");
     }else{
-      $("body").append("<canvas id='canvas1' visibility='hidden' width='4410' height='3118.5'></canvas>")
+      $("body").append("<canvas id='canvas1' visibility='hidden' width='4410' height='3118.5'></canvas>");
     }
   }
-  var canvas = $("#canvas1")[0]
-  var ctx = canvas.getContext("2d")
-  var imgsrc = "data:image/svg+xml;charset=utf-8;base64,"+ btoa(unescape(encodeURIComponent(png_str)))
-  var image = new Image()
+  let canvas = $("#canvas1")[0];
+  let ctx = canvas.getContext("2d");
+  let imgsrc = "data:image/svg+xml;charset=utf-8;base64,"+ btoa(unescape(encodeURIComponent(png_str)));
+  let image = new Image();
 
   image.onload = function(){
     ctx.drawImage(image, 0, 0);
-    var dataurl = canvas.toDataURL("image/png");
-    var bin = atob(dataurl.split(',')[1]);
+    let dataurl = canvas.toDataURL("image/png");
+    let bin = atob(dataurl.split(',')[1]);
     // 空の Uint8Array ビューを作る
-    var buffer = new Uint8Array(bin.length);
+    let buffer = new Uint8Array(bin.length);
     // Uin t8Array ビューに 1 バイトずつ値を埋める
-    for (var i = 0; i < bin.length; i++) {
+    for (let i = 0; i < bin.length; i++) {
       buffer[i] = bin.charCodeAt(i);
     }
     // Uint8Array ビューのバッファーを抜き出し、それを元に Blob を作る
-    var blob = new Blob([buffer.buffer], {type: "image/png"});
-    var url = window.URL.createObjectURL(blob);
+    let blob = new Blob([buffer.buffer], {type: "image/png"});
+    let url = window.URL.createObjectURL(blob);
     ctx.drawImage(image, 0, 0);
 
     //現在の年月日、時刻データを取得し、ファイ名にする
@@ -371,37 +278,4 @@ function pngDownload() {
     URL.revokeObjectURL(url); // オブジェクトURLを開放
   }
   image.src = imgsrc;
-}
-
-function legendDownload() {
-  let legend_str = "";
-  for(let i=0; i < text_pairs.length; i++){
-    let text_pairs_id = text_pairs[i];
-    let Braille = undefined , Ink = undefined;
-
-    if(text_pairs_id.Braille) Braille = SVG.get("#" + text_pairs_id.Braille);
-    if(text_pairs_id.Ink) Ink = SVG.get("#" + text_pairs_id.Ink);
-
-    if(Braille) legend_str += Braille.attr('brailleorigintext') + ",";//点字要素が入手できた場合
-    if(Ink)legend_str += Ink.text();
-
-    if(Braille){
-      if($('#graduation_frame').prop('checked')){
-        let mainFrame = SVG.get('mainFrame');
-        for(let i=-F_WIDTH/2; i < F_WIDTH/2; i += F_WIDTH/4){
-          if(i <= Braille.x() && Braille.x() < i + F_WIDTH/4) legend_str += ' 目盛り：横は' + String((i + F_WIDTH/2)/(F_WIDTH/4) + 1) + " ";
-        }
-        for(let i=-F_HEIGHT/2; i < F_HEIGHT/2; i += F_HEIGHT/3){
-          if(i <= Braille.y() && Braille.y() < i + F_HEIGHT/3) legend_str += ' 縦は' + String((i + F_HEIGHT/2)/(F_HEIGHT/3) + 1) + " ";
-        }
-      }
-      legend_str += '\r\n';
-    }
-  }
-  let blob = new Blob([ legend_str ], { 'type' : 'text/plain' });
-  if (window.navigator.msSaveBlob) {
-    window.navigator.msSaveOrOpenBlob(blob, '凡例.csv');
-  } else {
-    document.getElementById('legend_download').href = window.URL.createObjectURL(blob);
-  }
 }

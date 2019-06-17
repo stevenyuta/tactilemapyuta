@@ -34,11 +34,7 @@ function draw_line(){
       }else{
         mx = getmousepoint('connect',e).x , my = getmousepoint('connect',e).y;
       }
-
-      if(draw.select('.drawing_path').first()){
-        let change_dpoint = drawing_path_dpoint + 'L ' + mx +' '+ my;
-        draw.select('.drawing_path').first().attr({'d' : change_dpoint});
-      }
+      if(draw.select('.drawing_path').first())draw.select('.drawing_path').first().attr({'d' : drawing_path_dpoint + 'L ' + mx +' '+ my});
     })
   }
 
@@ -86,11 +82,12 @@ function draw_line(){
             drawing_path = draw.path().M({x: mx, y: my}) //pathの描画
             now_drawing_path_ID = drawing_path.id();
             drawing_path.attr({
-              'fill': $('input[name="draw_line_fillRadio"]:checked').val(), 'stroke': $('#stroke_color').val(),
+              'fill': $('input[name="draw_line_fillRadio"]:checked').val(),
+              'stroke': $('#stroke_color').val(),
               'stroke-width': PS_WIDTH*$('#StrokeWidth_TextBox').val()
             })
             if($('input[name="draw_line_fillRadio"]:checked').val()==='custom') drawing_path.fill($('#draw_fill_color').val());
-            if($('input[name="stroke"]:checked').val()==='dotted_line'){
+            if($('input[name="stroke"]:checked').attr('id')==='dotted_line'){
               drawing_path.attr({ 'stroke-dasharray': PS_WIDTH*$('#StrokeWidth_TextBox').val() })
             }
             drawing_path.addClass('connected').addClass('SVG_Element').addClass('drawing_path').addClass('path');
@@ -167,7 +164,7 @@ function set_closePathNode(){
         'fill': '#6495ED'
       })
       closePath_rect.mouseover(function(e){
-        this.attr({ 'fill': NODE_HOVER_COLOR,  'cursor':'pointer' });
+        this.attr({ 'fill': DRAW_HOVER_COLOR,  'cursor':'pointer' });
         this.addClass('hovering_node');
       })
       closePath_rect.mouseout(function(e){
@@ -202,109 +199,23 @@ function set_InitLastNode(){
       let init_node = draw.rect(node_width , node_height).addClass('init_node').front();
       init_node.attr({
         'x' : ix - init_node.width()/2,  'y' : iy - init_node.width()/2,
-        'fill': NODE_COLOR, 'connectedID' : this.attr('id')
+        'fill': DRAW_NODE_COLOR, 'connectedID' : this.attr('id')
       })
       let last_node = draw.rect(node_width , node_height).addClass('last_node').front();
       last_node.attr({
         'x' : lx - last_node.width()/2, 'y' : ly - last_node.height()/2,
-        'fill': NODE_COLOR, 'connectedID' : this.attr('id')
+        'fill': DRAW_NODE_COLOR, 'connectedID' : this.attr('id')
       })
       init_node.off('mouseover').mouseover(function(){
-        this.attr({ 'fill': NODE_HOVER_COLOR , 'cursor' : 'pointer' }).addClass('hovering_node');
+        this.attr({ 'fill': DRAW_HOVER_COLOR , 'cursor' : 'pointer' }).addClass('hovering_node');
       }).off('mouseout').mouseout(function(){
-        this.attr({ 'fill': NODE_COLOR , 'cursor' : 'default'}).removeClass('hovering_node');
+        this.attr({ 'fill': DRAW_NODE_COLOR , 'cursor' : 'default'}).removeClass('hovering_node');
       })
       last_node.off('mouseover').mouseover(function(){
-        this.attr({ 'fill': NODE_HOVER_COLOR , 'cursor' : 'pointer'}).addClass('hovering_node');
+        this.attr({ 'fill': DRAW_HOVER_COLOR , 'cursor' : 'pointer'}).addClass('hovering_node');
       }).off('mouseout').mouseout(function(){
-        this.attr({ 'fill': NODE_COLOR , 'cursor' : 'default'}).removeClass('hovering_node');
+        this.attr({ 'fill': DRAW_NODE_COLOR , 'cursor' : 'default'}).removeClass('hovering_node');
       })
     }
   })
-}
-
-/**************************************************************************************
-//選択状態のpathのstroke-widthを取得してテキストボックスとスライダーの値を変更する関数
-//選択状態のpathが存在しない場合は変更なし、または複数存在する場合は空白にする
-**********************************************************************************/
-function set_strokewidth(){
-  if(draw.select('.edit_select').first()){
-    let strokewidth_flag = false;  //true: 選択状態のパスあり false: なし
-    let strokewidth = false  // strokewidth属性の値を格納、 false: strokewitdhが違うpathが2つ以上ある場合
-    draw.select('.edit_select').each(function(i,children){
-      if(!this.hasClass('ink') && !this.hasClass('braille') && !this.hasClass('image')){
-        if(!strokewidth_flag){
-          strokewidth = this.attr('stroke-width');
-          strokewidth_flag = true;
-        }else if(strokewidth !== this.attr('stroke-width')){
-          strokewidth = false;
-        }
-      }
-    })
-    if(strokewidth_flag){
-      if(strokewidth===false){
-        $('#StrokeWidth_TextBox').val('')
-      }else{
-        $("#StrokeWidth_Slider").slider("value",Math.round(strokewidth/ SVG_RATIO * 10)/10);
-        $('#StrokeWidth_TextBox').val(Math.round(strokewidth/ SVG_RATIO * 10)/10);
-
-      }
-    }
-  }
-}
-
-/**************************************************************************************
-//選択状態のpathの色を取得して色変更ガジェットを変更する関数
-//選択状態のpathが存在しない場合は変更なし、または複数存在する場合はも何もしない
-**********************************************************************************/
-function set_strokecolor(){
-  if(draw.select('.edit_select').first()){
-    let strokecolor_flag = false;  //true: 選択状態のパスあり false: なし
-    let strokecolor = false  // strokewidth属性の値を格納、 false: strokewitdhが違うpathが2つ以上ある場合
-
-    draw.select('.edit_select').each(function(i,children){
-      if(!this.hasClass('ink') && !this.hasClass('braille') && !this.hasClass('image')){
-        if(!strokecolor_flag){
-          strokecolor = this.attr('stroke');
-          strokecolor_flag = true;
-        }else if(strokecolor !== this.attr('stroke')){
-          strokecolor = false;
-        }
-      }
-    })
-    if(strokecolor_flag){
-      if(strokecolor===false){
-      }else{
-        $('#stroke_color').val(strokecolor);
-      }
-    }
-  }
-}
-
-/**************************************************************************************
-//選択状態のpathの色を取得して色変更ガジェットを変更する関数
-//選択状態のpathが存在しない場合は変更なし、または複数存在する場合はも何もしない
-**********************************************************************************/
-function set_fillcolor(){
-  if(draw.select('.edit_select').first()){
-    let fillcolor_flag = false;  //true: 選択状態のパスあり false: なし
-    let fillcolor = false  // strokewidth属性の値を格納、 false: strokewitdhが違うpathが2つ以上ある場合
-
-    draw.select('.edit_select').each(function(i,children){
-      if(!this.hasClass('ink') && !this.hasClass('braille') && !this.hasClass('image')){
-        if(!fillcolor_flag){
-          fillcolor = this.attr('fill');
-          fillcolor_flag = true;
-        }else if(fillcolor !== this.attr('fill')){
-          fillcolor = false;
-        }
-      }
-    })
-    if(fillcolor_flag){
-      if(!fillcolor===false){
-        $('#fill_color').val(fillcolor);
-        $('#draw_fill_color').val(fillcolor);
-      }
-    }
-  }
 }

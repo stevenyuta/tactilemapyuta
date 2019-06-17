@@ -1,17 +1,30 @@
 function set_key_down_up(){
   $(document).off('keydown').on('keydown' , function(e){
+    //現在のモードを記憶
     let current_mode = $('input[name="tg_mode"]:checked').val();
+    //テキストボックスにフォーカスている時はfalse
     let focus_flag = true;
     if($(':focus').length !== 0){
       if($(':focus').first().attr('type') === 'text') focus_flag = false;
     }
     if(focus_flag){
-      if(e.ctrlKey){ //ctrlキー
+      if(e.ctrlKey){ //ctrlキーを押している場合
         if(!input_key_buffer[17] && current_mode === 'EditPath') editpath_mousemove('90degree', mx, my);
-        if(e.keyCode === 90) undo(); //90 : Zキー
-        if(e.keyCode === 89) redo(); //89 : Yキー
-        if(e.keyCode === 67) copy_select(); //67 : Cキー
-        if(e.keyCode === 86) paste_select(); //86 : Vキー
+        switch(e.keyCode){
+          case 90: //Zキー　：元に戻す
+            undo();
+            break;
+          case 89: //Yキー　：　やり直し
+            redo();
+            break;
+          case 67: //Cキー　：コピー
+            copy_select();
+            break;
+          case 86: //Vキー ：貼り付け
+            paste_select();
+            break;
+          default:
+        }
         draw.panZoom({ //zoomの導入
           doPanning: false,
           zoomFactor: 0.03,
@@ -23,11 +36,10 @@ function set_key_down_up(){
         case 13: //Enterキー
           if(current_mode === 'Draw' && draw.select('.drawing_path').first())  draw_end_function();
           break;
-        case 46: // delete key
+        case 46: // deleteキー
           if(current_mode === "Edit" || current_mode === "EditImage") delete_select();
           if(current_mode === 'EditPath') delete_editpath();
           break;
-
         case 37: // ← key
         case 38: // ↑ key
         case 39: // → key
@@ -47,7 +59,7 @@ function set_key_down_up(){
                   'd': matrix.d,'e': new_matrix_e,'f': new_matrix_f
                 })
               }else if(this.hasClass('ink') || this.hasClass('braille')){  //text、image要素の場合
-                var px = Number(this.attr('x')),py = Number(this.attr('y')); //テキストの座標位置
+                let px = Number(this.attr('x')),py = Number(this.attr('y')); //テキストの座標位置
                 if(e.keyCode===37)this.attr('x',px-CURSOR_KEY_MOVE);
                 if(e.keyCode===38)this.attr('y',py-CURSOR_KEY_MOVE);
                 if(e.keyCode===39)this.attr('x',px+CURSOR_KEY_MOVE);
@@ -93,7 +105,6 @@ function set_key_down_up(){
                 if(e.keyCode===40) x1 = dpoint[0][1] , y1 = dpoint[0][2] + CURSOR_KEY_MOVE , x2 = dpoint[1][1] , y2 = dpoint[1][2] + CURSOR_KEY_MOVE;
                 this.attr({'d':''}).M({x: x1, y: y1}).L({x: x2, y: y2});
                 let nears = getSimultaneouslyEdit_element(this);
-
                 if(nears.beforeRect) nears.beforeRect.attr({'x': x1 - nears.beforeRect.width()/2,'y':y1 - nears.beforeRect.height()/2});
                 if(nears.afterRect) nears.afterRect.attr({'x':x2 - nears.afterRect.width()/2,'y':y2 - nears.afterRect.height()/2});
                 if(nears.beforePath){
@@ -113,8 +124,8 @@ function set_key_down_up(){
     }else{
       if(e.keyCode === 13){
         if(current_mode === 'Edit' || current_mode === 'EditImage'){
-          if($('#rb_width').is(':focus')) update_widthBox();
-          if($('#rb_height').is(':focus')) update_heightBox();
+          if($('#rb_width').is(':focus')) update_resizeBox('width');
+          if($('#rb_height').is(':focus')) update_resizeBox('height');
           if($('#textInfo_TextBox').is(':focus')) update_TextInfoBox();
         }
         if($('#StrokeWidth_TextBox').is(':focus')) update_StrokeWidth_TextBox();

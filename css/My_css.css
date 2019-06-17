@@ -103,32 +103,11 @@ top_contents
 /******************
  top_toolbar
 ******************/
-
-
 #top_toolbar input[type=text] {
 	margin: 0px 20px 0px 0px;
 	width: 200px;
   height: 30px;
   font-size: 100%;
-}
-
-#top_toolbar_buttons{
-	margin : 0px 0px 0px 20px;
-}
-
-#top_toolbar_buttons button{
-	margin : 0px 10px 20px 15px;
-	width:50px;
-  height:40px;
-  font-size: 100%;
-  background-color: #E2EDF9;
-  border: 2px solid #FFA500;/* ボックスの境界線を実線で指定する */
-  border-radius : 20px;
-  cursor : pointer;
-}
-
-#top_toolbar_buttons button:hover{
-  background: #31A9EE;/* マウス選択時の背景色を指定する */
 }
 
 /**************************
@@ -211,12 +190,27 @@ right toolbar
   margin:0px 0px 0px 30px;
 }
 
+#undo_redo_table button{
+	margin : 0px 10px 0px 15px;
+	width:50px;
+  height:40px;
+  font-size: 100%;
+  background-color: #E2EDF9;
+  border: 2px solid #FFA500;/* ボックスの境界線を実線で指定する */
+  border-radius : 20px;
+  cursor : pointer;
+}
+
+#undo_redo_table button:hover{
+  background: #31A9EE;/* マウス選択時の背景色を指定する */
+}
+
 /********************
 線種変更ラジオボタン
 ********************/
 
 .stroke_style label{
-  padding: 0px 20px;	/* ボックス内左側の余白を指定する */
+  padding: 0px 25px;	/* ボックス内左側の余白を指定する */
   border: 2px solid #006DD9;/* ボックスの境界線を実線で指定する */
 }
 
@@ -228,12 +222,16 @@ right toolbar
 /********************************************
 線幅、墨字、点字、画像透過度変更用スライダー設定
 ********************************************/
-#rightUI_table{
-	margin : 0px 0px 30px 0px;
+#rightUI_table,
+#undo_redo_table,
+#layer_table,
+#select_fill_table{
+	margin : 0px 0px 10px 0px;
 }
 
 #rightUI_table td{
-	padding : 3px 3px;
+	padding : 5px 0px;
+	text-align: center;
 }
 
 #rightUI_table input[type="text"]{
@@ -246,7 +244,7 @@ right toolbar
 #resizeInk_Slider,
 #resizeBraille_Slider,
 #ImageOpacity_Slider{ /* css */
-  width:200px;
+  width:180px;
   height:12px;
 }
 
@@ -264,11 +262,17 @@ right toolbar
 /*
 ドローラインモード塗りつぶしラジオボタン
 */
-#draw_line_fill_table{
-	margin: 30px 0px 0px 10px;
+.draw_fill_table td,
+.draw_fill_table th{
+	text-align: center;
+	border: 0.5px solid;
 }
 
-#draw_line_fill_table input[type="radio"] + label{
+.draw_fill_table th{
+	background-color : #ccff00;
+}
+
+#draw_fill_table input[type="radio"] + label{
   border: 2.5px solid #003300;/* ボックスの境界線を実線で指定する */
 	width : 80px;
 	height : 40px;
@@ -278,12 +282,11 @@ right toolbar
 	padding : 5px;
 }
 
-
-#draw_line_fill_table input[type="radio"]:hover + label{
+#draw_fill_table input[type="radio"]:hover + label{
   border-color: #006DD9;/* ボックスの境界線を実線で指定する */
 }
 
-#draw_line_fill_table input[type="radio"]:checked + label {
+#draw_fill_table input[type="radio"]:checked + label {
 	border-color: orange;/* ボックスの境界線を実線で指定する */
 }
 
@@ -317,13 +320,23 @@ right toolbar
 触知記号スタンプ
 */
 #stamp_table{
-  margin: 30px 0px 0px 30px;
-  border-collapse: separate;
-  border-spacing: 0px 15px;
+	width:200px;
+}
+
+#stamp_table td,
+#stamp_table th{
+	border: 0.5px solid;
+	text-align: center;
+	padding : 4px;
+}
+
+#stamp_table th{
+	background-color: #ccff00
 }
 
 #stamp_table input[type="radio"] + label{
   padding: 5px 15px; 	/* ボックス内左側の余白を指定する */
+	width: 150px;
   border: 2px solid #003300;/* ボックスの境界線を実線で指定する */
 }
 
@@ -331,19 +344,32 @@ right toolbar
 	background: #009933;/* マウス選択時の背景色を指定する */
 	color: #ffffff; 	/* マウス選択時のフォント色を指定する */
 }
+/**
+	スタンプの表の中のテキストボックス
+	墨字や点字を入力する
+**/
+#stamp_table input[type="text"]{
+	width: 80px;
+	height: 40px;
+}
 
 /*
 レイヤ移動ボタン
 */
-#layer_select{
-	margin: 0px 0px 30px 10px;
-}
 
-#layer_select td{
+#layer_table td,
+#layer_table th{
 	padding: 3px;
+	text-align: center;
+	border: 0.5px solid;
 }
 
-#layer_select button{
+#layer_table th{
+	background-color: #ccff00;
+}
+
+
+#layer_table button{
 	width:80px;
   height:30px;
   background-color : #ffffff;
@@ -352,7 +378,7 @@ right toolbar
   background-size: contain; /*背景画像のサイズ設定*/
 }
 
-#layer_select button:hover{
+#layer_table button:hover{
   border-color: #006DD9;/* ボックスの境界線を実線で指定する */
 }
 
@@ -376,15 +402,11 @@ right toolbar
 塗りつぶしボタン
 *************************/
 
-#fill_change{
-  margin: 0px 0px 30px 10px;
-}
-
-#fill_change button:hover{
+#select_fill_table button:hover{
   border-color: #006DD9;/* ボックスの境界線を実線で指定する */
 }
 
-#fill_change button{
+#select_fill_table button{
   width:80px;
   height:30px;
   background-color: #ffffff;
@@ -392,46 +414,53 @@ right toolbar
   background-repeat:no-repeat; /*背景画像の繰り返し*/
 }
 
-#fill_change td{
+#select_fill_table td,
+#select_fill_table th{
   padding: 3px;
+	text-align: center;
+	border: 0.5px solid;
 }
 
-#fill_change #diagonal_button{
+#select_fill_table th{
+	background-color: #ccff00;
+}
+
+#select_fill_table #diagonal_button{
   background-image: url('../images/diagonal.png');
 }
 
-#fill_change #white_button{
+#select_fill_table #white_button{
   background-image: url('../images/white.png');
 }
 
-#fill_change #gray_button{
+#select_fill_table #gray_button{
   background-image: url('../images/gray.png');
 }
 
-#fill_change #black_button{
+#select_fill_table #black_button{
   background-image: url('../images/black.png');
 }
 
-#fill_change #polkadot_button{
+#select_fill_table #polkadot_button{
   background-image: url('../images/polkadot.png');
 }
 
-#fill_change #polkadot_water_button{
+#select_fill_table #polkadot_water_button{
   background-image: url('../images/polkadot_water.png');
 }
 
 /***********************************
 選択状態ボックス変更テキストボックス
 ************************************/
-#resizeBox_textbox{
+.resizeBox_textbox{
 	margin: 0px 0px 30px 10px;
 }
 
-#resizeBox_textbox td{
+.resizeBox_textbox td{
 	padding: 5px;
 }
 
-#resizeBox_textbox input[type="text"]{
+.resizeBox_textbox input[type="text"]{
   width:90px;
   height:30px;
   text-align: center;

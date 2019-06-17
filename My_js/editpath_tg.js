@@ -1,18 +1,8 @@
 function editpath(){
-  for(var i=0; i < editpath_array.length; i++){
-    var select_element = SVG.get("#" + editpath_array[i]);
-    if(select_element){
-      if(select_element.hasClass('connected')){
-        toFragmented(select_element);
-        select_element.remove();
-      }
-    }
-  }
-  if(editpath_array.length > 0){
-    update_editElement();
-    fragmentedPath_EventSet();
-    edit_rect_EventSet();
-  }
+  update_editElement();
+  fragmentedPath_EventSet();
+  edit_rect_EventSet();
+
   editpath_mousemove('connect');
   editpath_hover(true);
   $('#node_connect').off('click').click(node_connect_function);
@@ -84,13 +74,13 @@ function editpath_hover(mode){
     //ノード（edit_rect）のイベントセット
     draw.select('.edit_rect:not(.editing_target)').mouseover(function() {
       this.attr({
-        'fill': CIRCLE_EDIT_COLOR,
+        'fill': EDIT_HOVER_COLOR,
         'cursor':'pointer'
       });
     })
     draw.select('.edit_rect:not(.editing_target)').mouseout(function() {
       this.attr({
-        'fill': CIRCLE_COLOR,
+        'fill': EDIT_RECT_COLOR,
         'cursor':'default'
       })
     })
@@ -112,7 +102,6 @@ function editpath_mousedown(){
 
 //くっつき状態のpathをバラバラ状態にする関数
 function toFragmented(connectedPath){
-  editpath_array.push(connectedPath.attr('id'));
   let max_frag_num = getMax_fragmented_Group_Number(); //connectedがもつfrag_numの最大数を取得する
   let dpoint = connectedPath.clear().array().settle();
   let fragmented_PathGroup = draw.group().addClass('fragmented_PathGroup');
@@ -149,7 +138,7 @@ function toFragmented(connectedPath){
     rect.attr({
       'x' : dpoint[j][1] - rect.width()/2,
       'y' : dpoint[j][2] - rect.height()/2,
-      'fill': CIRCLE_COLOR
+      'fill': EDIT_RECT_COLOR
     })
     if(j === 0){
       fragmentedPath.addClass('first_fragmentedPath');
@@ -165,7 +154,7 @@ function toFragmented(connectedPath){
         rect.attr({
           'x' : dpoint[j + 1][1] - rect.width()/2,
           'y' : dpoint[j + 1][2] - rect.height()/2,
-          'fill': CIRCLE_COLOR
+          'fill': EDIT_RECT_COLOR
         })
       }
     }
@@ -260,7 +249,7 @@ function fragmentedPath_EventSet(){
         rect.attr({
           'x' : mx - rect.width()/2,
           'y' : my - rect.height()/2,
-          'fill': CIRCLE_COLOR
+          'fill': EDIT_RECT_COLOR
         })
         this.after(fragmentedPath2).after(fragmentedPath1);
         for(let i=0; i < Number(assignment_Number) + 1; i++) rect.forward();
@@ -285,7 +274,7 @@ function edit_rect_EventSet(){
     editpath_hover(false);
     if(!input_key_buffer[16] && !this.hasClass('editing_target') && event.button===0)  reset_editing_target();
     if(e.button===0){
-      this.attr({ 'fill' : CIRCLE_EDIT_COLOR}).addClass('editing_target');
+      this.attr({ 'fill' : EDIT_HOVER_COLOR}).addClass('editing_target');
       // シングルクリックの場合
       if( !clickCount ) {
         move_editing();
@@ -717,7 +706,7 @@ function reset_editing_target(){
   draw.select('.editing_target').each(function(i,children){
     this.removeClass('editing_target');
     if(this.hasClass('edit_rect')){
-      this.attr({ 'fill' : CIRCLE_COLOR});
+      this.attr({ 'fill' : EDIT_RECT_COLOR});
     }else{
       this.attr({ 'stroke' : this.parent().attr('stroke_tmp')});
     }

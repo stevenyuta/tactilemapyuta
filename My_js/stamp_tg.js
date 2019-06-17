@@ -7,14 +7,14 @@ function set_Stampmode(){
   set_contextMenu();
   reset_dcheck_element();
   set_zoom(); //zoomイベントの開始
-  dummy_delete(); //dummyの全削除
+  selector_delete('.dummy');
   let stamp_checked = $('input[name="tactileSymbol"]:checked').val();
 
   /** 右メニューを全て一旦隠す**/
   $('.strokewidth_gadget').hide(); //線種変更
   $('.resizeInk_gadget , .resizeBraille_gadget').hide(); //墨字点字サイズ変更
   $('.gadget_imageOpacity').hide(); //画像透過度変更
-  $('#layer_select , #fill_change , #resizeBox_textbox').hide(); //レイヤ、塗りつぶし、リサイズ用テキストボックス変更
+  $('.layer_select , .fill_change , .resizeBox_textbox').hide(); //レイヤ、塗りつぶし、リサイズ用テキストボックス変更
 
   switch(stamp_checked){
     case 'Text':
@@ -53,7 +53,7 @@ function add_stair(){
   let back_num = getPathCirclePos();
   let symbol_id;
   draw.off('mousemove').mousemove(function(e){
-    dummy_delete();
+    selector_delete('.dummy');
     mx = getmousepoint('normal',e).x , my = getmousepoint('normal',e).y;//描画領域上でのマウスポイント計算
     let dummy_stair = draw.path().M({x: mx-STAIRS_BX, y: my-STAIRS_BY})
                                  .L({x: mx+STAIRS_BX, y: my})
@@ -86,7 +86,7 @@ function add_escalator(){
   let back_num = getPathCirclePos();
   let symbol_id;
   draw.off('mousemove').mousemove(function(e){
-    dummy_delete();
+    selector_delete('.dummy');
     let mx = getmousepoint('normal',e).x , my = getmousepoint('normal',e).y; //描画領域上でのマウスポイント計算
     let back_num = getPathCirclePos();
     let dummy_escalator = draw.path().M({x: mx-STAIRS_BX, y: my-STAIRS_BY})
@@ -120,7 +120,7 @@ function add_arrow(){
   let back_num = getPathCirclePos();
   let symbol_id;
   draw.off('mousemove').mousemove(function(e){
-    dummy_delete();
+    selector_delete('.dummy');
     let mx = getmousepoint('normal',e).x , my = getmousepoint('normal',e).y; //描画領域上でのマウスポイント計算
     let back_num = getPathCirclePos();
     let dummy_arrow = draw.path().M({x: mx-18, y: my}).L({x: mx+24,y:my}).L({x: mx, y: my-12}).L({x: mx+24,y:my}).L({x: mx,y:my+12});
@@ -152,7 +152,7 @@ function add_Tiket_gate(){
   let back_num = getPathCirclePos();
   let symbol_id = new Array();
   draw.off('mousemove').mousemove(function(e){
-    dummy_delete();
+    selector_delete('.dummy');
     let mx = getmousepoint('normal',e).x , my = getmousepoint('normal',e).y; //描画領域上でのマウスポイント計算
     let back_num = getPathCirclePos();
     let dummy_tiket_gate1 = draw.path().M({x: mx-40, y: my}).L({x: mx-15,y:my}).addClass('dummy').back();
@@ -198,7 +198,7 @@ function add_reducescale(){
   let back_num = getPathCirclePos();
   let symbol_id = new Array();
   draw.off('mousemove').mousemove(function(e){
-    dummy_delete();
+    selector_delete('.dummy');
     let mx = getmousepoint('normal',e).x , my = getmousepoint('normal',e).y; //描画領域上でのマウスポイント計算
     let back_num = getPathCirclePos();
     let dummy_scale = draw.path().M({x: mx-45, y: my}).L({x: mx-45,y:my-15}).L({x: mx-45, y: my+15}).L({x: mx-45,y:my})
@@ -278,7 +278,7 @@ function draw_circle(){
         'stroke' : $('#stroke_color').val()
       })
       if($('input[name="draw_line_fillRadio"]:checked').val()==='custom') make_circle.fill($('#draw_fill_color').val());
-      if($('input[name="stroke"]:checked').val()==='dotted_line'){
+      if($('input[name="stroke"]:checked').attr('id')==='dotted_line'){
         make_circle.attr({ 'stroke-dasharray': PATH_STROKE_WIDTH*$('#StrokeWidth_TextBox').val() })
       }
       make_circle.addClass('SVG_Element').addClass('circle').addClass('make_circle').back();
@@ -328,7 +328,7 @@ function draw_rect(){
         'stroke' : $('#stroke_color').val()
       })
       if($('input[name="draw_line_fillRadio"]:checked').val()==='custom') make_path.fill($('#draw_fill_color').val());
-      if($('input[name="stroke"]:checked').val()==='dotted_line'){
+      if($('input[name="stroke"]:checked').attr('id')==='dotted_line'){
         make_path.attr({ 'stroke-dasharray': PATH_STROKE_WIDTH*$('#StrokeWidth_TextBox').val() })
       }
       make_path.addClass('connected').addClass('SVG_Element').addClass('path').back();
@@ -357,11 +357,6 @@ function draw_rect(){
   })
 }
 
-/////////////////
-//文字要素関係関数
-/////////////////
-
-
 /******************************************************
 //墨字と点字をdraw_areaのマウス位置に入力する関数
 ******************************************************/
@@ -371,7 +366,7 @@ function add_text(){
   let back_ink_num = getInkPos();
   let ink_id , bra_id;
   draw.mousemove(function(e){
-    dummy_delete();
+    selector_delete('.dummy');
     let mx = getmousepoint('normal',e).x , my = getmousepoint('normal',e).y; //描画領域上でのマウスポイント計算
     if($('#check_ink').prop('checked')){
       let dummy_Ink_text = draw.plain( $("#InkChar").val() );
@@ -394,12 +389,12 @@ function add_text(){
         return String.fromCharCode(s.charCodeAt(0) - 0x60);
       });
       let dummy_Bra_text = draw.plain(tactileGraphic().convertText(transed_BraText));//文字を点字表現に変換
-      let font_family = ($('input[name="braillefont"]:checked').val()==='IBfont') ? 'Ikarashi Braille' : '点字線なし';
-      let font_stroke = ($('input[name="braillefont"]:checked').val()==='IBfont') ? String(PATH_STROKE_WIDTH * 0.25) : '';
+      let font_family = ($('input[name="braillefont"]:checked').attr('id')==='IBfont') ? 'Ikarashi Braille' : '点字線なし';
+      let font_stroke = ($('input[name="braillefont"]:checked').attr('id')==='IBfont') ? String(PATH_STROKE_WIDTH * 0.25) : '';
       dummy_Bra_text.attr({
-        'x': mx
-        ,'y': my + 30
-        ,'stroke-width' :  font_stroke,
+        'x': mx,
+        'y': my + 30,
+        'stroke-width' :  font_stroke,
         'font-family': font_family,
         'font-size': $('#resizeBraille_TextBox').val() * TEXT_CORRECTION,
         'brailleorigintext' : transed_BraText,
@@ -416,28 +411,20 @@ function add_text(){
       if(real_Ink_text){
         if(  real_Ink_text.text() ==="" ){
           alert("墨字に何か入力してください。");
-          dummy_delete();
+          selector_delete('.dummy');
           return;
         }
       }
       if(real_Bra_text){
         if( real_Bra_text.text() ==="" ){
           alert("点字に何か入力してください。");
-          dummy_delete();
+          selector_delete('.dummy');
           return;
         }
       }
       if(real_Ink_text)real_Ink_text.removeClass('dummy').addClass('ink').addClass('SVG_Element');
       if(real_Bra_text)real_Bra_text.removeClass('dummy').addClass('braille').addClass('SVG_Element');
       if(real_Ink_text || real_Bra_text) cash_svg();
-
-
-      if($('#check_bra').prop('checked')){
-        let text_pairs_id = new Object();
-        text_pairs_id.Braille = real_Bra_text.attr('id');
-        if( $('#check_ink').prop('checked') ) text_pairs_id.Ink = real_Ink_text.attr('id');
-        text_pairs.push(text_pairs_id);
-      }
     }
   })
 }
@@ -473,56 +460,6 @@ function getInkPos(){
     return 0;
   }else{
     return position;
-  }
-}
-
-/**************************************************************************************
-//選択状態の墨字のfont-sizeを取得してテキストボックスとスライダーの値を変更する関数
-//選択状態の墨字が存在しない場合は変更なし、または複数存在する場合は空白にする
-**********************************************************************************/
-function set_textsize(){
-  if(draw.select('.edit_select').first()!==null){
-    let ink_flag = false, braille_flag = false;  //true: 選択状態の墨字、点字あり false: なし
-    let ink_fontsize = false , braille_fontsize = false;  // 墨字、点字のサイズを格納、 false: サイズが違う文字が2つ以上あり
-    draw.select('.edit_select').each(function(i,children){
-      if(this.hasClass('ink')){
-        if(!ink_flag){
-          ink_fontsize = this.attr('font-size');
-          ink_flag = true;
-        }else if(ink_fontsize !== this.attr('font-size')){
-          ink_fontsize = false;
-        }
-      }
-      if(this.hasClass('braille')){
-        if(!braille_flag){
-          braille_fontsize = this.attr('font-size');
-          braille_flag = true;
-        }else if(braille_fontsize !== this.attr('font-size')){
-          braille_fontsize = false;
-        }
-      }
-    });
-    if(ink_flag){
-      if(!ink_fontsize){
-        $('#resizeInk_TextBox').val('')
-      }else{
-        $("#resizeInk_Slider").slider("value",Math.round(ink_fontsize/(TEXT_CORRECTION) * 10)/10);
-        $('#resizeInk_TextBox').val(Math.round(ink_fontsize/(TEXT_CORRECTION) * 10)/10)
-      }
-    }else{
-    }
-    if(braille_flag){
-      if(!braille_fontsize){
-        $('#resizeBraille_TextBox').val('')
-      }else{
-        $("#resizeBraille_Slider").slider("value",Math.round(braille_fontsize/(TEXT_CORRECTION) * 10)/10);
-        $('#resizeBraille_TextBox').val(Math.round(braille_fontsize/(TEXT_CORRECTION) * 10)/10);
-      }
-    }else{
-    }
-    return;
-  }else{
-    return;
   }
 }
 

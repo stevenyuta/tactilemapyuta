@@ -8,12 +8,12 @@ function toConnected(){
     if(SVG.get('fragmented_RectGroup_' + String(this.attr('fragmented_Group_Number')))){
       SVG.get('fragmented_RectGroup_' + String(this.attr('fragmented_Group_Number'))).remove();
     }
-    var new_path = draw.path().addClass('connected').addClass('SVG_Element').addClass('path');
+    let new_path = draw.path().addClass('connected').addClass('SVG_Element').addClass('path');
     this.after(new_path);
-    editpath_array.push(new_path.attr('id'));
+    if(nowchecked==='Edit') new_path.addClass('edit_select');
     let self = this;
     this.each(function(j,children){
-      var dpoint = this.clear().array().settle() //pathのdpoint配列を取得
+      let dpoint = this.clear().array().settle() //pathのdpoint配列を取得
       if(j===0){
         new_path.M({x: dpoint[0][1], y: dpoint[0][2]});
         new_path.attr({ //線属性の指定
@@ -35,9 +35,7 @@ function toConnected(){
     if(this.hasClass('closed_path'))  new_path.Z();
     this.remove();
   })
-  draw.select('.ghost_path').each(function(i, children) {
-    this.remove()
-  })
+  selector_delete('.ghost_path');
 }
 
 /***************************************************************************
@@ -420,139 +418,6 @@ function reset_dcheck_element(){
   draw.select('.distance_rect').each(function(i , children){
     this.remove();
   })
-}
-
-/*************************************
-//不等角投影図を平面図化する関数
-***************************************/
-
-function fig_trans(){
-  var current_mode =  $('input[name="tg_mode"]:checked');
-  $(current_mode).prop('checked', true).trigger('change'); //モードを設定
-  fig_connect();
-  //左側角度、右側角度の取得
-  var min_x = 1000000 ,  min_y = 1000000
-  var max_x = -1000000 ,  max_y = -1000000
-
-  var left_angle_param = Array.apply(null, Array(180)).map(function () {return 0 });//角度パラメータ追加用の配列
-  var right_angle_param = Array.apply(null, Array(180)).map(function () {return 0 });
-
-  draw.select('.connected').each(function(i,children){
-    var dpoint = this.clear().array().settle() //pathのdpoint配列を取得
-    for(var j=0; j < dpoint.length - 1; j++){
-      if(dpoint[j + 1][0] !== 'Z'){
-        var path_x1_base = Number( dpoint[j][1])
-        var path_y1_base = Number( dpoint[j][2])
-        var path_x2_base = Number( dpoint[j + 1][1])
-        var path_y2_base = Number( dpoint[j + 1][2])
-      }else{
-        var path_x1_base = Number( dpoint[j][1])
-        var path_y1_base = Number( dpoint[j][2])
-        var path_x2_base = Number( dpoint[0][1])
-        var path_y2_base = Number( dpoint[0][2])
-      }
-
-      if(min_x > path_x1_base) min_x = path_x1_base
-      if(min_y > path_y1_base) min_y = path_y1_base
-      if(max_x < path_x1_base) max_x = path_x1_base
-      if(max_y < path_y1_base) max_y = path_y1_base
-
-      if( (path_x2_base-path_x1_base)!=0 ){
-        if(  ( (path_x2_base-path_x1_base)*(path_y2_base-path_y1_base) )  >= 0 ){
-          var tan = Math.abs(path_y2_base-path_y1_base) / Math.abs(path_x2_base-path_x1_base );
-          for(var l=0; l<180; l++){
-            if(tan > Math.tan( (l/2)*Math.PI/180)){
-              if(tan < Math.tan( ( (l+1)/2 )*Math.PI/180)){
-                left_angle_param[l]++;
-              }
-            }
-          }
-        }else{
-          var tan = Math.abs(path_y2_base-path_y1_base) / Math.abs(path_x2_base-path_x1_base );
-          for(var l=0; l<180; l++){
-            if(tan > Math.tan( (l/2)*Math.PI/180)){
-              if(tan < Math.tan( ( (l+1)/2 )*Math.PI/180)){
-                right_angle_param[l]++;
-              }
-            }
-          }
-        }
-      }
-    }
-  })
-  var left_k=45,right_k=45;
-  var left_angle_max=0,right_angle_max=0;
-  for(var k=0; k<180; k++){
-    if(left_angle_param[k]>left_angle_max){
-      left_angle_max=left_angle_param[k];
-      left_k = k/2;
-    }
-    if(right_angle_param[k]>right_angle_max){
-      right_angle_max=right_angle_param[k];
-      right_k = k/2;
-    }
-  }
-
-  var angleL = left_k
-  var angleR = right_k
-
-  //平面図化affin変換行列の計算
-
-  var angle_x = angleL*Math.PI/180, angle_y = angleR*Math.PI/180; //角度をrad→degへ
-  var TanAngL = Math.tan(angle_x), TanAngR = Math.tan(angle_y); //タンジェントを計算
-  var thetaZ = Math.PI/2 -  Math.atan( Math.sqrt(TanAngL/TanAngR) ); //θZを計算
-  var Yratio = TanAngR/Math.tan(thetaZ); //y軸方向への補正数を計算
-
-  var point1 = new Array(); //affin変換行列作成に使う行列
-  var point2 = new Array();
-  for(var i=0;i<3;i++){
-    point1[i]=new Array();
-    point2[i]=new Array();
-  }
-  point1[0]=[0,0,Number(DRAW_AREA_WIDTH)];//Affine変換前の3座標の入力
-  point1[1]=[0,Number(DRAW_AREA_HEIGHT),Number(DRAW_AREA_HEIGHT)];
-  point1[2]=[1,1,1];
-
-  point2[0]=[0,0,0];//Affin変換後の3座標の入力
-  point2[1]=[0,0,0];
-  point2[2]=[1,1,1];
-
-  var center_x = (max_x + min_x)/2 ,center_y= (max_y + min_y)/2; //回転するときの軸
-  var rotAx = point1[0][0] - center_x,rotAy = (center_y - point1[1][0])/Yratio;
-  var rotBx = point1[0][1] - center_x,rotBy = (center_y - point1[1][1])/Yratio;
-  var rotCx = point1[0][2] - center_x,rotCy = (center_y - point1[1][2])/Yratio;
-
-  point2[0][0]=center_x + Math.cos(-thetaZ)*rotAx - Math.sin(-thetaZ)*rotAy; //affin変換後の座標を計算
-  point2[1][0]=center_y - Math.sin(-thetaZ)*rotAx - Math.cos(-thetaZ)*rotAy;
-  point2[0][1]=center_x + Math.cos(-thetaZ)*rotBx - Math.sin(-thetaZ)*rotBy;
-  point2[1][1]=center_y - Math.sin(-thetaZ)*rotBx - Math.cos(-thetaZ)*rotBy;
-  point2[0][2]=center_x + Math.cos(-thetaZ)*rotCx - Math.sin(-thetaZ)*rotCy;
-  point2[1][2]=center_y - Math.sin(-thetaZ)*rotCx - Math.cos(-thetaZ)*rotCy;
-
-  var affin_mat = math.multiply(point2 , math.inv(point1))
-
-  //////////////////////////////////////////
-  ///Affin変換(平面図化実施)
-  //////////////////////////////////////////
-  draw.select('.connected').each(function(i,children){
-    var dpoint = this.clear().array().settle() //pathのdpoint配列を取得
-    var new_dpoint = "";
-    for(var j=0;j<dpoint.length; j++){
-      if(dpoint[j][0]!=="Z"){  //属性がZ以外の場合
-        var pos_array = [ [ dpoint[j][1] ],[ dpoint[j][2] ],[1]]; //pathの座標を格納
-        var mat_pos = math.multiply(affin_mat,pos_array) //pathの座標をAffin変換
-        new_dpoint += dpoint[j][0]+" "+mat_pos[0][0]+" "+mat_pos[1][0]; //新しい座標として格納
-      }else{
-        new_dpoint += dpoint[j][0]
-      }
-    }
-    this.attr({'d':new_dpoint})
-  })
-
-
-  fig_straight();
-  fig_connect();
-  cash_svg();
 }
 
 function fig_straight(){

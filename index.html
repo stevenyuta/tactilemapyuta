@@ -22,19 +22,6 @@
     <script type="text/javascript" src="./dl_js/tactileGraph.min.js"></script><!-- tactileGraph.jsの導入  -->
     <script type="text/javascript" src="./dl_js/math.js"></script>
 
-    <!-- 自作jsファイル -->
-    <script type="text/javascript" src="./My_js/draw_tg.js"></script> <!--ペン機能関係-->
-    <script type="text/javascript" src="./My_js/edit_tg.js"></script> <!--要素操作機能関係-->
-    <script type="text/javascript" src="./My_js/editpath_tg.js"></script> <!--線の詳細編集機能関係-->
-    <script type="text/javascript" src="./My_js/stamp_tg.js"></script> <!--スタンプ機能関係-->
-    <script type="text/javascript" src="./My_js/path_point_tg.js"></script> <!--path要素関係関数-->
-    <script type="text/javascript" src="./My_js/gadget_tg.js"></script> <!--html上のスライダー、チェックボックス関係の関数-->
-    <script type="text/javascript" src="./My_js/svgdata_tg.js"></script> <!--svgのデータ関係関数-->
-    <script type="text/javascript" src="./My_js/image_tg.js"></script> <!--画像関係関数-->
-    <script type="text/javascript" src="./My_js/keypush_tg.js"></script> <!--キー入力受付関係-->
-    <script type="text/javascript" src="./My_js/font_tg.js"></script> <!--フォント埋め込み-->
-    <script type="text/javascript" src="./My_js/other_tg.js"></script> <!--そのほかいろいろ-->
-
     <!-- bootstrap関連のjsファイル -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 
@@ -48,124 +35,138 @@
 
     <div class="aplication_area" style="width:1550px; height:auto;">
       <div id="top_contents">
+        <!--ファイル選択API-->
         <span>
           <input type="file" id="fileAPI_continue">
           <input type="button" value="ファイル選択" onClick="$('#fileAPI_continue').click();" >
           <input type="file" id="fileAPI_img">
           <input type="button" value="画像ファイル選択" onClick="$('#fileAPI_img').click();" >
         </span>
-
+        <!--ガイドの四角形のサイズ変更-->
         <span>
-          <input type="radio" id="guiderect_A4" name="guiderect" value="guiderect_A4"/>
+          <input type="radio" id="guiderect_A4" name="guiderect"/>
           <label for="guiderect_A4">A4</label>
-          <input type="radio" id="guiderect_B4" name="guiderect" value="guiderect_B4" />
+          <input type="radio" id="guiderect_B4" name="guiderect"/>
           <label for="guiderect_B4">B4</label>
-          <input type="radio" id="guiderect_A3" name="guiderect" value="guiderect_A3" />
+          <input type="radio" id="guiderect_A3" name="guiderect"/>
           <label for="guiderect_A3">A3</label>
         </span>
-
+        <!--ガイドの四角形の向き変更-->
         <span>
-          <input type="radio" id="horizontal_guide" name="direction_guide" value="horizontal_guide" />
+          <input type="radio" id="horizontal_guide" name="direction_guide"/>
           <label for="horizontal_guide">横</label>
-          <input type="radio" id="vertical_guide" name="direction_guide" value="vertical_guide" />
+          <input type="radio" id="vertical_guide" name="direction_guide"/>
           <label for="vertical_guide">縦</label>
         </span>
-
+        <!--点字フォントの種類変更-->
         <span>
-          <input type="radio" id="IBfont" name="braillefont" value="IBfont"/>
+          <input type="radio" id="IBfont" name="braillefont"/>
           <label for="IBfont" >いからし点字</label>
-          <input type="radio" id="lighthouse" name="braillefont" value="lighthouse"/>
+          <input type="radio" id="lighthouse" name="braillefont"/>
           <label for="lighthouse">ライトハウス点字</label>
         </span>
-
+        <!--SVGとPNG、そして取扱説明書のダウンロード-->
         <span id="downloader">
           <a id="svg_download" href="#" onclick="svgDownload()">SVG</a>
           <a id="png_download" href="#" onclick="pngDownload()">PNG</a>
-          <a id="legend_download"  href="#" download="凡例.csv" onclick="legendDownload()" style="display:none;">凡例</a>
           <a href="manual.pdf" target="_blank">取扱説明書</a>
         </span>
       </div>
 
+      <!--描画領域やモード変更用のラジオボタンなどなど-->
       <div id="main_content">
+        <!-- モード変更切り替えラジオボタンなどの画面左側に表示される様々なガジェット -->
         <div id="left_toolbar">
-          <div id="toolbar2_radio">
-            <div>
-              <input  type="radio" name="tg_mode" value="Edit" id="Edit" checked>
-              <label for="Edit">選択</label>
-            </div>
-            <div>
-              <input  type="radio" name="tg_mode" value="EditPath" id="EditPath">
-              <label for="EditPath">線の詳細編集</label>
-            </div>
-            <div>
-              <input  type="radio" name="tg_mode" value="Draw" id="Draw">
-              <label for="Draw">線</label>
-            </div>
-            <div>
-              <input  type="radio" name="tg_mode" value="DrawRect" id="DrawRect">
-              <label for="DrawRect">四角形</label>
-            </div>
-            <div>
-              <input  type="radio" name="tg_mode" value="DrawCircle" id="DrawCircle">
-              <label for="DrawCircle">円</label>
-            </div>
-            <div>
-              <input  type="radio" name="tg_mode" value="Stamp" id="Stamp">
-              <label for="Stamp">文字・記号</label>
-            </div>
-            <div id = "EditImage_div">
-              <input  type="radio" name="tg_mode" value="EditImage" id="EditImage">
-              <label for="EditImage">画像選択</label>
-            </div>
+          <div>
+            <input  type="radio" name="tg_mode" value="Edit" id="Edit" checked>
+            <label for="Edit">選択</label>
+          </div>
+          <div>
+            <input  type="radio" name="tg_mode" value="EditPath" id="EditPath">
+            <label for="EditPath">線の詳細編集</label>
+          </div>
+          <div>
+            <input  type="radio" name="tg_mode" value="Draw" id="Draw">
+            <label for="Draw">線</label>
+          </div>
+          <div>
+            <input  type="radio" name="tg_mode" value="DrawRect" id="DrawRect">
+            <label for="DrawRect">四角形</label>
+          </div>
+          <div>
+            <input  type="radio" name="tg_mode" value="DrawCircle" id="DrawCircle">
+            <label for="DrawCircle">円</label>
+          </div>
+          <div>
+            <input  type="radio" name="tg_mode" value="Stamp" id="Stamp">
+            <label for="Stamp">文字・記号</label>
+          </div>
+          <div id = "EditImage_div">
+            <input  type="radio" name="tg_mode" value="EditImage" id="EditImage">
+            <label for="EditImage">画像選択</label>
           </div>
 
+          <!-- 線の自動補正＆距離間チェックボタン-->
           <div id="left_toolbar_button">
             <div><input type="button" id="straight_connect_button" style="" value="線の自動補正"></div>
             <div><input type="button" id="distance_check_button" value="距離間チェック"></div>
-            <div><input type="button" style = "display:none;" id="trans" value="平面図変換"></div>
           </div>
 
+          <!-- SVG・画像・グリッド線の表示非表示や点訳用のチェックボックス-->
           <div id="left_toolbar_checkbox">
               <div>
-                <input type="checkbox" id="display_DrawElement" name="checkers" value="display_DrawElement"/>
+                <input type="checkbox" id="display_DrawElement" name="checkers"/>
                 <label for="display_DrawElement" class="custom_check_label">描画要素</label>
               </div>
               <div>
-                <input type="checkbox" id="image" name="checkers" value="image"/>
+                <input type="checkbox" id="image" name="checkers"/>
                 <label for="image" class="custom_check_label">画像</label>
               </div>
               <div>
-                <input type="checkbox" id="graduation_frame" name="checkers" value="graduation_frame"/>
+                <input type="checkbox" id="graduation_frame" name="checkers"/>
                 <label for="graduation_frame" class="custom_check_label" style="display:none;">目盛付き枠</label>
               </div>
               <div>
-                <input type="checkbox" id="gridline" name="checkers" value="gridline" />
+                <input type="checkbox" id="gridline" name="checkers"/>
                 <label for="gridline" class="custom_check_label">グリッド線</label>
               </div>
               <div>
-                <input type="checkbox" id="2Braille" name="checkers" value="2Braille" />
-                <label for="2Braille" class="custom_check_label">点訳</label>
+                <input type="checkbox" id="trans_braille" name="checkers"/>
+                <label for="trans_braille" class="custom_check_label">点訳</label>
               </div>
           </div>
         </div>
 
+        <!--描画領域が表示されるエリア。-->
         <span id="draw_include" unselectable=on><div id="draw_area"></div></span>
+        <!-- 上下方向に操作するスクロールバー -->
         <div  id="svg_height_scrollbar" ></div>
 
+        <!-- アプリ右側に表示される様々なガジェット-->
         <div id="right_toolbar">
-          <span id="top_toolbar_buttons">
-            <button id="undo"><i class="fa fa-undo"></i></button> <!-- undo ボタン-->
-            <button id="redo"><i class="fa fa-repeat"></i></button> <!-- redo ボタン-->
-          </span>
+          <!-- 元に戻す、やり直しボタン -->
+          <table id="undo_redo_table">
+            <tr>
+              <td colspan="2">元に戻す</td>
+              <td colspan="2">やり直し</td>
+            </tr>
+            <tr>
+              <td colspan="2"><button id="undo"><i class="fa fa-undo"></i></button></td> <!--元に戻すボタン-->
+              <td colspan="2"><button id="redo"><i class="fa fa-repeat"></i></button></td> <!--やり直しボタン-->
+            </tr>
+          </table>
 
           <table id = "rightUI_table">
-            <tr class="stroke_option stroke_style"><td colspan="2">
-              <input type="radio" id="solid_line" name="stroke" value="solid_line"/>
-              <label for="solid_line">実線</label>
-            </td><td colspan="2">
-              <input type="radio" id="dotted_line" name="stroke" value="dotted_line"/>
-              <label for="dotted_line">点線</label>
-            </td></tr>
+            <tr class="stroke_option stroke_style">
+              <td colspan="2">
+                <input type="radio" id="solid_line" name="stroke"/>
+                <label for="solid_line">実線</label>
+              </td>
+              <td colspan="2">
+                <input type="radio" id="dotted_line" name="stroke"/>
+                <label for="dotted_line">点線</label>
+              </td>
+            </tr>
             <tr class="stroke_option">
               <td align="center" colspan="1">線色</td>
               <td align="center" colspan="3"><input type="color" id="stroke_color" name="scolor" value="#000000" style="width:100px;"></td>
@@ -176,31 +177,37 @@
               <td>mm</td>
               <td><button id="resetStrokeWidth_Button">初期値</button></td>
             </tr>
-            <tr class="strokewidth_gadget stroke_option"><td colspan="4">
-              <div class="slider" id="StrokeWidth_Slider" ></div>
-            </td></tr>
+            <tr class="strokewidth_gadget stroke_option">
+              <td colspan="4">
+                <div class="slider" id="StrokeWidth_Slider" ></div>
+              </td>
+            </tr>
             <tr class="resizeInk_gadget">
               <td>墨字</td>
               <td><input type="text" id="resizeInk_TextBox" oncopy="return false" onpaste="return false" oncontextmenu="return false"></td>
               <td>pt</td>
               <td><button id="resetInk_Button">初期値</button></td>
             </tr>
-            <tr class="resizeInk_gadget"><td colspan="4">
-              <div class="slider" id="resizeInk_Slider"></div>
-            </td></tr>
+            <tr class="resizeInk_gadget">
+              <td colspan="4">
+                <div class="slider" id="resizeInk_Slider"></div>
+              </td>
+            </tr>
             <tr class="resizeBraille_gadget">
               <td>点字</td>
               <td><input type="text" id="resizeBraille_TextBox" oncopy="return false" onpaste="return false" oncontextmenu="return false"></td>
               <td>pt</td>
               <td><button id="brasize_resetbutton">初期値</button></td>
-            </td></tr>
-            <tr class="resizeBraille_gadget"><td colspan="4">
-              <div class="slider" id="resizeBraille_Slider"></div>
-            </td></tr>
+            </tr>
+            <tr class="resizeBraille_gadget">
+              <td colspan="4">
+                <div class="slider" id="resizeBraille_Slider"></div>
+              </td>
+            </tr>
             <tr class="textInfo_gadget">
-              <td colspan="1" align="center">文字内容</td>
-              <td colspan="3">
-                <input type="text" id="textInfo_TextBox" oncopy="return false" onpaste="return false" oncontextmenu="return false" style="width:120px; height:30px;">
+              <td colspan="2" align="center">文字内容</td>
+              <td colspan="2">
+                <input type="text" id="textInfo_TextBox" oncopy="return false" onpaste="return false" oncontextmenu="return false" style="width:80px; height:30px;">
               </td>
             </tr>
             <tr class="gadget_imageOpacity">
@@ -209,121 +216,149 @@
               <td>%</td>
               <td><button id="ImageOpacity_resetbutton">100%</button></td>
             </tr>
-            <tr class="gadget_imageOpacity"><td colspan="4">
-              <div class="slider" id="ImageOpacity_Slider"></div>
-            </td></tr>
+            <tr class="gadget_imageOpacity">
+              <td colspan="4">
+                <div class="slider" id="ImageOpacity_Slider"></div>
+              </td>
+            </tr>
           </table>
 
-          <!-- ドローモード塗りつぶし状態変更ラジオボタン -->
-          <table id="draw_line_fill_table" border="1">
-            <tr><td colspan="2" align="center">
-              塗りつぶし
-            </td></tr>
-            <tr><td>
-              <input type="radio" id="draw_fill_none" name="draw_line_fillRadio" value="none" checked="checked"/>
-              <label for="draw_fill_none" style="display: table-cell; text-align: center;">なし</label>
-            </td><td>
-              <input type="radio" id="draw_fill_diagonal" name="draw_line_fillRadio" value="url(#diagonal-texture)"/>
-              <label for="draw_fill_diagonal"></label>
-            </td></tr>
-            <tr><td>
-              <input type="radio" id="draw_fill_polkadot_water" name="draw_line_fillRadio" value="url(#polkadot_water-texture)"/>
-              <label for="draw_fill_polkadot_water"></label>
-            </td><td>
-              <input type="radio" id="draw_fill_polkadot" name="draw_line_fillRadio" value="url(#polkadot-texture)"/>
-              <label for="draw_fill_polkadot"></label>
-            </td></tr>
-            <tr><td>
-              <input type="radio" id="draw_fill_gray" name="draw_line_fillRadio" value="#333"/>
-              <label for="draw_fill_gray"></label>
-            </td><td align="center">
-              <input type="radio" id="draw_fill_custom" name="draw_line_fillRadio" value="custom"/>
-              <label for="draw_fill_custom">カスタム</label><br>
-              <input type="color" id="draw_fill_color" name="draw_filcolor" value="#FFFFFF" style="width:80px; height:20px">
-            </td></tr>
+          <table id="select_fill_table">
+            <tr>
+              <th colspan="4" align="center">塗りつぶし</th>
+            </tr>
+            <tr>
+              <td colspan="2"><button id="fillnone_button" value='none'>なし</button></td>
+              <td colspan="2"><button id="diagonal_button" value='url(#diagonal-texture)'></button></td>
+            </tr>
+            <tr>
+              <td colspan="2"><button id="polkadot_button" value='url(#polkadot-texture)'></button></td>
+              <td colspan="2"><button id="polkadot_water_button" value='url(#polkadot_water-texture)'></button></td>
+            </tr>
+            <tr>
+              <td colspan="2"><button id="gray_button" value='#333'></button></td>
+              <td colspan="2"><input type="color" id="fill_color" name="filcolor" value="#FFFFFF" style="width:80px; height:30px"></td>
+            </tr>
           </table>
 
+          <table id="layer_table">
+            <tr>
+              <th colspan="4">レイヤー</th>
+            </tr>
+            <tr>
+              <td colspan="2"><button id="front_button"></button></td>
+              <td colspan="2"><button id="forward_button"></button></td>
+            </tr>
+            <tr>
+              <td colspan="2"><button id="backward_button"></button></td>
+              <td colspan="2"><button id="back_button"></button></td>
+            </tr>
+          </table>
+
+          <!--線、四角形、円の描画で使う塗りつぶし変更ガジェット-->
+          <table id="draw_fill_table">
+            <tr class="draw_fill_table">
+              <th colspan="4" align="center" >塗りつぶし</th>
+            </tr>
+            <tr class="draw_fill_table">
+              <td colspan="2">
+                <input type="radio" id="draw_fill_none" name="draw_line_fillRadio" value="none" checked="checked"/>
+                <label for="draw_fill_none" style="text-align: center;">なし</label>
+              </td>
+              <td colspan="2">
+                <input type="radio" id="draw_fill_diagonal" name="draw_line_fillRadio" value="url(#diagonal-texture)"/>
+                <label for="draw_fill_diagonal"></label>
+              </td>
+            </tr>
+            <tr class="draw_fill_table">
+              <td colspan="2">
+                <input type="radio" id="draw_fill_polkadot_water" name="draw_line_fillRadio" value="url(#polkadot_water-texture)"/>
+                <label for="draw_fill_polkadot_water"></label>
+              </td>
+              <td colspan="2">
+                <input type="radio" id="draw_fill_polkadot" name="draw_line_fillRadio" value="url(#polkadot-texture)"/>
+                <label for="draw_fill_polkadot"></label>
+              </td>
+            </tr>
+            <tr class="draw_fill_table">
+              <td colspan="2">
+                <input type="radio" id="draw_fill_gray" name="draw_line_fillRadio" value="#333"/>
+                <label for="draw_fill_gray"></label>
+              </td>
+              <td colspan="2">
+                <input type="radio" id="draw_fill_custom" name="draw_line_fillRadio" value="custom"/>
+                <label for="draw_fill_custom">カスタム</label><br>
+                <input type="color" id="draw_fill_color" name="draw_filcolor" value="#FFFFFF" style="width:80px; height:20px;">
+              </td>
+            </tr>
+          </table>
+
+          <!--スタンプ（記号・文字など）の選択-->
           <table id="stamp_table">
-            <tr><td>
-              <input  type="radio" name="tactileSymbol" value="Stair" id="Stair">
-              <label for="Stair">階段</label>
-            </td></tr>
-            <tr><td>
-              <input  type="radio" name="tactileSymbol" value="Escalator" id="Escalator">
-              <label for="Escalator">エスカレータ</label>
-            </td></tr>
-            <tr><td>
-              <input  type="radio" name="tactileSymbol" value="Arrow" id="Arrow">
-              <label for="Arrow">矢印</label>
-            </td></tr>
-            <tr><td>
-              <input  type="radio" name="tactileSymbol" value="Tiket_gate" id="Tiket_gate">
-              <label for="Tiket_gate">改札</label>
-            </td></tr>
-            <tr><td>
-              <input  type="radio" name="tactileSymbol" value="Reducescale" id="Reducescale">
-              <label for="Reducescale">縮尺</label>
-            </td></tr>
-            <tr><td>
-              <input  type="radio" name="tactileSymbol" value="Text" id="Text" checked="checked">
-              <label for="Text">墨点字</label>
-            </td></tr>
-            <tr><td>
-              <input type="checkbox" id="check_ink" name="checkers" value="check_ink"/>
-              <label for="check_ink" class="custom_check_label" style="margin-left:-10px;"></label>
-              <input type="text" id="InkChar" oncopy="return false" value="墨字" placeholder="墨字が入力できます" onpaste="return false" oncontextmenu="return false">
-
-            </td></tr>
-            <tr><td>
-              <input type="checkbox" id="check_bra" name="checkers" value="check_bra"/>
-              <label for="check_bra" class="custom_check_label" style="margin-left:-10px;"></label>
-              <input type="text" id="Braille" oncopy="return false" value="てんじ" placeholder="てんじが入力できます" onpaste="return false" oncontextmenu="return false">
-
-            </td></tr>
-          </table>
-
-          <table id="layer_select" border="1">
-            <tr><td colspan="2" align="center">
-              レイヤー
-            </td></tr>
             <tr>
-              <td><button id="front_button"></button></td>
-              <td><button id="forward_button"></button></td>
+                <th colspan="4">スタンプの追加</th>
             </tr>
             <tr>
-              <td><button id="backward_button"></button></td>
-              <td><button id="back_button"></button></td>
-            </tr>
-          </table>
-
-          <table id="fill_change" border="1">
-            <tr><td colspan="2" align="center">
-              塗りつぶし
-            </td></tr>
-            <tr>
-              <td><button id="fillnone_button">なし</button></td>
-              <td><button id="diagonal_button"></button></td>
+              <td colspan="4">
+                <input  type="radio" name="tactileSymbol" value="Stair" id="Stair">
+                <label for="Stair">階段</label>
+              </td>
             </tr>
             <tr>
-              <td><button id="polkadot_button" ></button></td>
-              <td><button id="polkadot_water_button"></button></td>
+              <td colspan="4">
+                <input  type="radio" name="tactileSymbol" value="Escalator" id="Escalator">
+                <label for="Escalator">エスカレータ</label>
+              </td>
             </tr>
             <tr>
-              <td><button id="gray_button"></button></td>
-              <td><input type="color" id="fill_color" name="filcolor" value="#FFFFFF" style="width:80px; height:30px"></td>
+              <td colspan="4">
+                <input  type="radio" name="tactileSymbol" value="Arrow" id="Arrow">
+                <label for="Arrow">矢印</label>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="4">
+                <input  type="radio" name="tactileSymbol" value="Tiket_gate" id="Tiket_gate">
+                <label for="Tiket_gate">改札</label>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="4">
+                <input  type="radio" name="tactileSymbol" value="Reducescale" id="Reducescale">
+                <label for="Reducescale">縮尺</label>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="4">
+                <input  type="radio" name="tactileSymbol" value="Text" id="Text" checked="checked">
+                <label for="Text">墨字・点字</label>
+              </td>
+            </tr>
+            <tr class='resizeInk_gadget'>
+              <td colspan="4">
+                <input type="checkbox" id="check_ink" name="checkers" value="check_ink"/>
+                <label for="check_ink" class="custom_check_label"></label>
+                <input type="text" id="InkChar" oncopy="return false" value="墨字" placeholder="墨字が入力できます" onpaste="return false" oncontextmenu="return false" style="width:130px;">
+              </td>
+            </tr>
+            <tr class='resizeBraille_gadget'>
+              <td colspan="4">
+                <input type="checkbox" id="check_bra" name="checkers" value="check_bra"/>
+                <label for="check_bra" class="custom_check_label"></label>
+                <input type="text" id="Braille" oncopy="return false" value="てんじ" placeholder="てんじが入力できます" onpaste="return false" oncontextmenu="return false" style="width:130px;">
+              </td>
             </tr>
           </table>
 
-          <table id="resizeBox_textbox">
-            <tr>
-              <td>幅</td>
-              <td>：<input type="text" id="rb_width" value="" oncopy="return false" onpaste="return false" oncontextmenu="return false" maxlength="6"></td>
-              <td>mm</td>
+          <!--選択時の幅や高さを表示するテキストボックス-->
+          <table>
+            <tr class="resizeBox_textbox">
+              <td colspan="2">幅：</td>
+              <td colspan="2"><input type="text" id="rb_width" value="" oncopy="return false" onpaste="return false" oncontextmenu="return false" maxlength="6" style="width:80px;">mm</td>
             </tr>
-            <tr>
-              <td>高さ</td>
-              <td>：<input type="text" id="rb_height" value="" oncopy="return false" onpaste="return false" oncontextmenu="return false" maxlength="6"></td>
-              <td>mm</td>
+            <tr class="resizeBox_textbox">
+              <td colspan="2">高さ：</td>
+              <td colspan="2"><input type="text" id="rb_height" value="" oncopy="return false" onpaste="return false" oncontextmenu="return false" maxlength="6" style="width:80px;">mm</td>
             </tr>
           </table>
 
@@ -332,250 +367,16 @@
       </div>
     </div>
 
-
-    <script>
-
-        /***************************************
-        //const定数の定義
-        ***************************************/
-        //svgデータのwidthとheightの定義
-        const DRAW_AREA_WIDTH = 1039.5;
-        const DRAW_AREA_HEIGHT = 735;
-
-        //A4サイズ(297mm×210mm)に対するsvgデータの画像サイズの比率
-        //この値がSVGデータでの座標系における1mmに相当する
-        const SVG_RATIO = DRAW_AREA_WIDTH / 297;
-
-        //pathの属性について
-        const PATH_STROKE_COLOR = '#000' //通常時（黒色）
-        const PS_COLOR = '#000' //通常時（黒色）
-        const PATH_SELECT_COLOR = '#B22222' //選択時（赤色）
-        const PATH_EDIT_COLOR = '#0000CD' //詳細編集での選択時（青色）
-        const PATH_STROKE_WIDTH = SVG_RATIO //線幅（1mm）
-        const PS_WIDTH = SVG_RATIO //線幅（1mm）
-
-        const THRE_DISTANCE = 3 * SVG_RATIO //距離チェック時の閾値 3mm
-
-        //textの基本設定
-        const INK_FILL_COLOR = '#0066ff';
-        const BRA_FILL_COLOR = '#000';
-        const DEF_INK_SIZE = '18'; //デフォルトの墨字サイズ
-        const DEF_BRA_SIZE = '20'; //デフォルトの点字サイズ
-        const TEXT_CORRECTION = SVG_RATIO * 0.352778;
-
-        //cashデータ数の最大値
-        const CASH_MAX = 40;
-
-        //ガイドの四角形
-        const GUIDE_WIDTH_A4 = DRAW_AREA_WIDTH;
-        const GUIDE_HEIGHT_A4 = DRAW_AREA_HEIGHT;
-        const GUIDE_WIDTH_B4 = DRAW_AREA_WIDTH * 364/297;
-        const GUIDE_HEIGHT_B4 = DRAW_AREA_HEIGHT * 257/210;
-        const GUIDE_WIDTH_A3 = DRAW_AREA_WIDTH * 420/297;
-        const GUIDE_HEIGHT_A3 = DRAW_AREA_HEIGHT * 297/210;
-
-        const GUIDE_STROKE_COLOR_A4 = '#f0f'; //A4ガイドの線の色
-        const GUIDE_STROKE_COLOR_B4 = '#006400'; //B4ガイドの線の色
-        const GUIDE_STROKE_COLOR_A3 = '#AA6400'; //A3ガイドの線の色
-        const GUIDE_STROKE_WIDTH = 2; //ガイドの線の太さ
-
-        //範囲指定用四角形
-        const SELECT_RECT_COLOR = '#f00'; //red
-        const SELECT_RECT_STROKEWIDTH = 2;
-        const SELECT_RECT_STROKEDOTT = String(SVG_RATIO) + ' ' + String(SVG_RATIO); //点線の間隔
-
-        //階段、エスカレータ記号用定数
-        const STAIRS_BX = 15;
-        const STAIRS_BY = STAIRS_BX - 2;
-
-        //線の詳細編集などに使用するクリック用サークル、レクト関係
-        const CIRCLE_RADIUS = 8;
-        const HANDLE_CIRCLE_RADIUS = 10;
-        const CIRCLE_COLOR = '#32CD32';
-        const NODE_COLOR = '#32CD32';
-        const CIRCLE_HOVER_COLOR = '#B22222'; //ホバー時（red）
-        const NODE_HOVER_COLOR = '#B22222'; //ホバー時（red）
-        const CIRCLE_EDIT_COLOR = '#00f'; //エディットホバー時(blue)
-
-        const RECT_WIDTH = 13;
-        const RECT_HEIGHT = 13;
-
-        //カーソルキーによる移動量
-        const CURSOR_KEY_MOVE = 0.3
-
-        //目盛付き枠用
-        const F_WIDTH = SVG_RATIO * 297 * 297/364 ,  F_HEIGHT = SVG_RATIO * 210 * 297/364 ;
-        const F_SCALE = SVG_RATIO * 5; //5mm
-
-        let cash_array = new Array() //undo、redo機能用
-        let cash_pointer = 0;
-        let input_key_buffer = new Array() //キー入力状態を保有
-        let arrIntervalCnt = new Array() //タイマー処理のリセット用
-        let copy_elements =  new Array() //要素のコピー機能用
-        let text_pairs = new Array();　//凡例機能用
-        let editselect_array = new Array(); //選択機能で選択状態のものの一時記憶用
-        let editpath_array = new Array(); //線の編集機能で選択状態のものの一時記憶用
-        let viewbox_x = -DRAW_AREA_WIDTH , viewbox_y = -DRAW_AREA_HEIGHT; //現在のviewboxのx,yの値
-        let widthScrollBar_ratio , widthScrollBar_center;
-        let heightScrollBar_ratio , heightScrollBar_center;
-        let now_drawing_path_ID , drawing_path_dpoint="";
-        let now_movingFlag = false;
-        let nowchecked;
-
-      $(window).on('load',function () { //window読み込み後
-        //chrome以外のブラウザで表示
-        let userAgent = window.navigator.userAgent.toLowerCase();
-        if(userAgent.indexOf('chrome') < 0){
-          $('.aplication_area').before('<p style="border: solid #808; padding:5px;">本アプリケーションはGoogle Chromeのみ対応しております<br>お使いのブラウザでは動作しません。</p>');
-        }
-
-        //ウィンドウサイズ変更とアプリの余白を変更
-        let timer = 0;
-        window.onresize = function () {
-          if (timer > 0) {
-            clearTimeout(timer);
-          }
-          timer = setTimeout(function () {
-            resize_aplication_area();
-          }, 200);
-        };
-        resize_aplication_area();
-
-        //描画領域の初期設定
-        continue_setSVG('',-DRAW_AREA_WIDTH, -DRAW_AREA_HEIGHT, DRAW_AREA_WIDTH * 2, DRAW_AREA_HEIGHT * 2);
-
-        gadget_set(); //スクロールスライダー、墨字点字、線幅変更用ガジェットの設定
-        checkbox_set(); //html上のチェックボックスの設定
-        stroke_radio_set(); //線種変更用のラジオボタンの設定
-        braillefont_set();
-
-        set_fillbutton(); //塗りつぶしボタンの設定
-        set_fileAPI_continue(); //続きからボタンの設定
-        set_fileAPI_image(); //画像表示ボタンの設定
-
-        $('#undo').click(undo); //undo機能
-        $('#redo').click(redo); //undo機能
-        $('#trans').click(fig_trans); //平面図変換ボタンクリック時に起動する関数を設定
-        $('#distance_check_button').click(distance_check); //距離間チェックボタンクリック時に起動する関数を設定
-        $('#straight_connect_button').click(function(){
-          fig_connect();
-          fig_straight();
-          fig_connect();
-          fig_pathUpload();
-          if(draw.select('.connected').first()) cash_svg();
-        })
-
-        //レイヤー変更ボタンの設定
-        $('#front_button').click(layer_change);
-        $('#forward_button').click(layer_change);
-        $('#backward_button').click(layer_change);
-        $('#back_button').click(layer_change);
-
-        //各機能のラジオボタンの設定
-        nowchecked = $('input[name="tg_mode"]:checked').val();
-        $('input[name="tg_mode"]:radio').off('click').on('click',function(){
-          RadioEvent_set();
-        });
-        RadioEvent_set();
-        $('input[name="tactileSymbol"]:radio').off('change').on('change',set_Stampmode);
-        cash_svg();
-      }) //window.onload終了
-
-
-      function RadioEvent_set(unredo_flag){
-        /*************************************
-        //モードを変更したときに必ず行う処理
-        *************************************/
-        nowchecked = $('input[name="tg_mode"]:checked').val();
-        let Image_radio = $('#EditImage_div');
-        (draw.select('.image').first()) ? Image_radio.show() : Image_radio.hide();
-        $(document).off(); //ページ上のイベントの削除
-        draw.off(); //描画領域のイベント削除
-        draw.select('.SVG_Element , .image').off().attr({'cursor':'default'});; //SVG_Element、画像のイベント解除とマウスカーソルのデフォルト化
-        $('#rb_width , #rb_height').off(); //幅と高さのテキストボックスのイベント解除
-        draw.select('.connected').each(function(i,children){
-          if(this.clear().array().settle().length < 2) this.remove();
-        })
-
-        set_key_down_up();
-        set_contextMenu();
-        toConnected();  //バラバラ状態のpathをくっつき状態に
-        set_zoom(); //zoomイベントの開始
-        edit_clear(true); //edit_groupの解散
-        dummy_delete(); //dummyの全削除
-        rect_delete(); //circleの全削除
-        select_rect_delete(); //select_rectの全削除
-        get_node_connectRect();
-
-        /** 右メニューを全て一旦隠す**/
-        $('.stroke_option').hide(); //線の太さ、色変更
-        $('.resizeInk_gadget').hide(); //墨字サイズ変更
-        $('.resizeBraille_gadget').hide(); //点字サイズ変更
-        $('.gadget_imageOpacity').hide(); //画像透過度変更
-        $('#draw_line_fill_table').hide();
-        $('#layer_select').hide(); //レイヤ変更
-        $('#fill_change').hide();  //塗りつぶし変更
-        $('#resizeBox_textbox').hide(); //リサイズテキストボックス
-        $('#stamp_table').hide();
-
-        if(unredo_flag){
-          editselect_array.length = 0;
-          editpath_array.length = 0;
-        }
-
-        /*************************************
-        //各モードごとの処理
-        *************************************/
-        switch(nowchecked){
-          case 'Draw':
-            $('.stroke_option').show(); //線種変更
-            $('#draw_line_fill_table').show();
-            draw_line(); //線の描画モード
-            break;
-          case 'Edit':
-            editselect_array = editselect_array.concat(editpath_array);
-            $('#resizeBox_textbox').show();
-            edit();//線の詳細編集モード
-            break;
-          case 'EditPath':
-            editpath_array = editpath_array.concat(editselect_array);
-            editpath();//線の詳細編集モード
-            break;
-          case 'DrawRect':
-            $('.stroke_option').show(); //線種変更
-            $('#draw_line_fill_table').show();
-            draw_rect();//矩形描画モード
-            break;
-          case 'EditImage':
-            $('#layer_select').show();
-            $('#resizeBox_textbox').show();
-            edit();//原図の移動モード
-            break;
-          case 'DrawCircle':
-            $('.stroke_option').show(); //線種変更
-            $('#draw_line_fill_table').show();
-            draw_circle();
-            break;
-          case 'Stamp':
-            $('#stamp_table').show();
-            set_Stampmode();
-            break;
-          default:
-            break;
-        }
-
-        if(nowchecked!=="Draw"){
-          let current_path = draw.select('.drawing_path').first();
-          if(current_path){
-            current_path.removeClass('drawing_path');
-            if(!unredo_flag) current_path.attr({'d' : drawing_path_dpoint});
-            now_drawing_path_ID = "";
-            drawing_path_dpoint="";
-          }
-        }
-        if(nowchecked!=="Edit" && nowchecked!=="EditImage")  editselect_array.length = 0;
-        if(nowchecked!=="EditPath") editpath_array.length = 0;
-      }
-    </script>
+    <!-- 自作jsファイルのインポート -->
+    <script type="text/javascript" src="./My_js/draw_tg.js"></script> <!--ペン機能関係-->
+    <script type="text/javascript" src="./My_js/edit_tg.js"></script> <!--要素操作機能関係-->
+    <script type="text/javascript" src="./My_js/editpath_tg.js"></script> <!--線の詳細編集機能関係-->
+    <script type="text/javascript" src="./My_js/stamp_tg.js"></script> <!--スタンプ機能関係-->
+    <script type="text/javascript" src="./My_js/path_point_tg.js"></script> <!--path要素関係関数-->
+    <script type="text/javascript" src="./My_js/gadget_tg.js"></script> <!--html上のスライダー、チェックボックス関係の関数-->
+    <script type="text/javascript" src="./My_js/svgdata_tg.js"></script> <!--svgのデータ関係関数-->
+    <script type="text/javascript" src="./My_js/keypush_tg.js"></script> <!--キー入力受付関係-->
+    <script type="text/javascript" src="./My_js/font_tg.js"></script> <!--フォント埋め込み-->
+    <script type="text/javascript" src="./My_js/start_up_tg.js"></script> <!--アプリの初期設定をする-->
   </body>
 </html>
