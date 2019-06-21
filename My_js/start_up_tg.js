@@ -146,6 +146,24 @@ $(window).on('load',function () {
       draw.viewbox(viewbox.x, move, viewbox.width, viewbox.height);
     })
 
+    $('#dottedLine_line').off('focusout').on('focusout' , update_dottedLine);
+    $('#dottedLine_line').val(1);
+
+    $('#dottedLine_space').off('focusout').on('focusout' , update_dottedLine);
+    $('#dottedLine_space').val(1);
+
+    $('#reset_dottedLine').click(function(){  //線幅リセットボタンを押下時の処理
+      $("#dottedLine_line").val($('#StrokeWidth_TextBox').val());
+      $("#dottedLine_space").val($('#StrokeWidth_TextBox').val());
+      draw.select('.edit_select.path , .fragmented , .drawing_path').each(function(i,children){
+        if(this.attr('stroke-dasharray')!==undefined && this.attr('stroke-dasharray')!==''){
+          this.attr({ 'stroke-dasharray': PS_WIDTH * $('#dottedLine_line').val() + ' ' +  PS_WIDTH * $('#dottedLine_space').val()});
+        }
+      })
+    })
+
+
+
     /************************************************************
     線幅を変更するテキストボックス、リセットボタン、スライダーの設定
     *************************************************************/
@@ -153,26 +171,11 @@ $(window).on('load',function () {
     $('#StrokeWidth_TextBox').val(1); //線幅の初期値を指定
 
     $('#resetStrokeWidth_Button').click(function(){  //線幅リセットボタンを押下時の処理
-      $("#StrokeWidth_Slider").slider("value" , 1);
       $("#StrokeWidth_TextBox").val(1);
       draw.select('.edit_select.path , .fragmented , .drawing_path').each(function(i,children){
         this.attr({'stroke-width':PATH_STROKE_WIDTH});
         if(this.attr('stroke-dasharray')!== undefined && this.attr('stroke-dasharray')!=='') this.attr({'stroke-dasharray':PATH_STROKE_WIDTH});
       })
-    });
-    //線幅変更スライダーの設定
-    $("#StrokeWidth_Slider").slider({
-      max:5, //最大値
-      min:0, //最小値
-      value: 1, //初期値
-      step: 0.1, //幅
-      slide: function( event, ui ) {
-        draw.select('.edit_select.path , .fragmented , .drawing_path').each(function(i,children){
-          this.attr({'stroke-width':PATH_STROKE_WIDTH * ui.value});
-          if(this.attr('stroke-dasharray')!==undefined && this.attr('stroke-dasharray')!=='') this.attr({'stroke-dasharray':PATH_STROKE_WIDTH*ui.value});
-        });
-        $('#StrokeWidth_TextBox').val(ui.value);
-      }
     });
 
     /**************************************************************
@@ -182,20 +185,9 @@ $(window).on('load',function () {
     $('#resizeInk_TextBox').val(16); //墨字の初期値を指定
 
     $('#resetInk_Button').click(function(){  //リセットボタンを押下時の処理
-      $("#resizeInk_Slider").slider("value",16);
       $("#resizeInk_TextBox").val(16);
       draw.select('.edit_select.ink').attr({'font-size': 16 * SVG_RATIO * 0.352778});
     }); //墨字の初期値を指定
-    $("#resizeInk_Slider").slider({
-      max:30, //最大値
-      min:4, //最小値
-      value: 16, //初期値
-      step: 1, //幅
-      slide: function( event, ui ) {
-        draw.select('.edit_select.ink').attr({'font-size': ui.value * SVG_RATIO * 0.352778});
-        $('#resizeInk_TextBox').val(ui.value);
-      }
-    });
 
     /*****************************************
     //点字の大きさを設定するスライダー
@@ -204,20 +196,10 @@ $(window).on('load',function () {
     $('#resizeBraille_TextBox').val(18); //墨字の初期値を指定
 
     $('#brasize_resetbutton').click(function(){  //リセットボタンを押下時の処理
-      $("#resizeBraille_Slider").slider("value",18);
       $("#resizeBraille_TextBox").val(18);
       draw.select('.edit_select.braille').attr({'font-size': 18 * SVG_RATIO * 0.352778});
     }); //点字の初期値を指定
-    $("#resizeBraille_Slider").slider({
-      max:30, //最大値
-      min:4, //最小値
-      value: 18, //初期値
-      step: 1, //幅
-      slide: function( event, ui ) {
-        draw.select('.edit_select.braille').attr({'font-size': ui.value * SVG_RATIO * 0.352778});
-        $('#resizeBraille_TextBox').val(ui.value);
-      }
-    });
+
     //墨字・点字のテキストボックスをフォーカスした時には文字入力モードへと自動的に変更する
     $('#InkChar , #Braille').off('focusin').on('focusin' ,function() {
       $('input[name="tactileSymbol"][value="Text"]').prop('checked', true);
@@ -231,20 +213,10 @@ $(window).on('load',function () {
     $('#ImageOpacity_TextBox').val(100);
 
     $('#ImageOpacity_resetbutton').click(function(){  //リセットボタンを押下時の処理
-      $("#ImageOpacity_Slider").slider("value",100);
       $("#ImageOpacity_TextBox").val(100);
       draw.select('.edit_select.image').attr({'opacity': 1});
     }); //墨字の初期値を指定
-    $("#ImageOpacity_Slider").slider({
-      max:100, //最大値
-      min:1, //最小値
-      value: 100, //初期値
-      step: 1, //幅
-      slide: function( event, ui ) {
-        draw.select('.edit_select.image').attr({'opacity': ui.value/100});
-        $('#ImageOpacity_TextBox').val(ui.value)
-      }
-    });
+
 
     /****************************************
     アプリ上のチェックボックスの初期設定を行う
@@ -339,11 +311,14 @@ $(window).on('load',function () {
     $('input[name="stroke"]:radio').off('change').on('change',function(){
       if($(this).attr('id')==='solid_line'){ //実線の場合
         draw.select('.edit_select.connected , .fragmented , .drawing_path').attr({'stroke-dasharray': ''});
+        $('.dotted_option').hide();
       }else{ //点線の場合
         draw.select('.edit_select.connected,.edit_select.circle,.fragmented,.drawing_path').attr({'stroke-dasharray': PS_WIDTH * $('#StrokeWidth_TextBox').val()});
+        $('.dotted_option').show();
       }
     })
     $("#solid_line").prop('checked', true).change();//初期状態は実線にチェックを入れておく
+    $('.dotted_option').hide();
 
     /*************************
     線色変更ガジェットの設定

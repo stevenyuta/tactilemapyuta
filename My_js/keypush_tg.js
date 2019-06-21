@@ -128,6 +128,7 @@ function set_key_down_up(){
           if($('#rb_height').is(':focus')) update_resizeBox('height');
           if($('#textInfo_TextBox').is(':focus')) update_TextInfoBox();
         }
+        if($('#dottedLine_line').is(':focus') || $('#dottedLine_space').is(':focus')) update_dottedLine();
         if($('#StrokeWidth_TextBox').is(':focus')) update_StrokeWidth_TextBox();
         if($('#resizeInk_TextBox').is(':focus')) update_resizeInk_TextBox();
         if($('#resizeBraille_TextBox').is(':focus')) update_resizeBraille_TextBox();

@@ -11,7 +11,7 @@ function set_Stampmode(){
   let stamp_checked = $('input[name="tactileSymbol"]:checked').val();
 
   /** 右メニューを全て一旦隠す**/
-  $('.strokewidth_gadget').hide(); //線種変更
+  $('.stroke_option , .dotted_option').hide(); //線種変更
   $('.resizeInk_gadget , .resizeBraille_gadget').hide(); //墨字点字サイズ変更
   $('.gadget_imageOpacity').hide(); //画像透過度変更
   $('.layer_select , .fill_change , .resizeBox_textbox').hide(); //レイヤ、塗りつぶし、リサイズ用テキストボックス変更
@@ -22,23 +22,28 @@ function set_Stampmode(){
       add_text(); //点字、墨字追加モード
       break;
     case 'Stair':
-      $('.strokewidth_gadget').show(); //線種変更
+      $('.stroke_option').show(); //線種変更
+      if($('input[name="stroke"]:checked').attr('id')==='dotted_line') $('.dotted_option').show();
       add_stair();
       break;
     case 'Escalator':
-      $('.strokewidth_gadget').show(); //線種変更
+      $('.stroke_option').show(); //線種変更
+      if($('input[name="stroke"]:checked').attr('id')==='dotted_line') $('.dotted_option').show();
       add_escalator();
       break;
     case 'Arrow':
-      $('.strokewidth_gadget').show(); //線種変更
+      $('.stroke_option').show(); //線種変更
+      if($('input[name="stroke"]:checked').attr('id')==='dotted_line') $('.dotted_option').show();
       add_arrow();
       break;
     case 'Tiket_gate':
-      $('.strokewidth_gadget').show(); //線種変更
+      $('.stroke_option').show(); //線種変更
+      if($('input[name="stroke"]:checked').attr('id')==='dotted_line') $('.dotted_option').show();
       add_Tiket_gate();
       break;
     case 'Reducescale':
-      $('.strokewidth_gadget').show(); //線種変更
+      $('.stroke_option').show(); //線種変更
+      if($('input[name="stroke"]:checked').attr('id')==='dotted_line') $('.dotted_option').show();
       add_reducescale();
       break;
     default:
@@ -67,7 +72,11 @@ function add_stair(){
       'fill': 'none',
       'stroke': $('#stroke_color').val(),
       'stroke-width' : PATH_STROKE_WIDTH*$('#StrokeWidth_TextBox').val(),
+      'stroke-linejoin': 'round'
     })
+    if($('input[name="stroke"]:checked').attr('id')==='dotted_line'){
+      dummy_stair.attr({ 'stroke-dasharray': PS_WIDTH * $('#dottedLine_line').val() + ' ' +  PS_WIDTH * $('#dottedLine_space').val()});
+    }
   })
 
   draw.off('mousedown').mousedown(function(e){
@@ -102,7 +111,11 @@ function add_escalator(){
       'fill': 'none',
       'stroke': $('#stroke_color').val(),
       'stroke-width' : PATH_STROKE_WIDTH*$('#StrokeWidth_TextBox').val(),
+      'stroke-linejoin': 'round'
     })
+    if($('input[name="stroke"]:checked').attr('id')==='dotted_line'){
+      dummy_escalator.attr({ 'stroke-dasharray': PS_WIDTH * $('#dottedLine_line').val() + ' ' +  PS_WIDTH * $('#dottedLine_space').val()});
+    }
   })
   draw.off('mousedown').mousedown(function(e){
     if(e.button===0){
@@ -133,7 +146,11 @@ function add_arrow(){
       'fill': 'none',
       'stroke': $('#stroke_color').val(),
       'stroke-width' : PATH_STROKE_WIDTH*$('#StrokeWidth_TextBox').val(),
+      'stroke-linejoin': 'round'
     })
+    if($('input[name="stroke"]:checked').attr('id')==='dotted_line'){
+      dummy_arrow.attr({ 'stroke-dasharray': PS_WIDTH * $('#dottedLine_line').val() + ' ' +  PS_WIDTH * $('#dottedLine_space').val()});
+    }
   })
 
   draw.off('mousedown').mousedown(function(e){
@@ -176,7 +193,11 @@ function add_Tiket_gate(){
       'fill': 'none',
       'stroke': $('#stroke_color').val(),
       'stroke-width' : PATH_STROKE_WIDTH*$('#StrokeWidth_TextBox').val(),
+      'stroke-linejoin': 'round'
     })
+    if($('input[name="stroke"]:checked').attr('id')==='dotted_line'){
+      draw.select('.dummy').attr({ 'stroke-dasharray': PS_WIDTH * $('#dottedLine_line').val() + ' ' +  PS_WIDTH * $('#dottedLine_space').val()});
+    }
   })
 
   draw.off('mousedown').mousedown(function(e){
@@ -212,7 +233,11 @@ function add_reducescale(){
       'fill': 'none',
       'stroke': $('#stroke_color').val(),
       'stroke-width' : PATH_STROKE_WIDTH*$('#StrokeWidth_TextBox').val(),
+      'stroke-linejoin': 'round'
     })
+    if($('input[name="stroke"]:checked').attr('id')==='dotted_line'){
+      dummy_scale.attr({ 'stroke-dasharray': PS_WIDTH * $('#dottedLine_line').val() + ' ' +  PS_WIDTH * $('#dottedLine_space').val()});
+    }
   })
 
   draw.off('mousedown').mousedown(function(e){
@@ -279,7 +304,7 @@ function draw_circle(){
       })
       if($('input[name="draw_line_fillRadio"]:checked').val()==='custom') make_circle.fill($('#draw_fill_color').val());
       if($('input[name="stroke"]:checked').attr('id')==='dotted_line'){
-        make_circle.attr({ 'stroke-dasharray': PATH_STROKE_WIDTH*$('#StrokeWidth_TextBox').val() })
+        make_circle.attr({ 'stroke-dasharray': PS_WIDTH * $('#dottedLine_line').val() + ' ' +  PS_WIDTH * $('#dottedLine_space').val()});
       }
       make_circle.addClass('SVG_Element').addClass('circle').addClass('make_circle').back();
       for(let i=0; i< back_num; i++){
@@ -325,11 +350,12 @@ function draw_rect(){
       make_path = draw.path().attr({
         'fill': $('input[name="draw_line_fillRadio"]:checked').val(),
         'stroke-width' : PATH_STROKE_WIDTH * $('#StrokeWidth_TextBox').val(),
-        'stroke' : $('#stroke_color').val()
+        'stroke' : $('#stroke_color').val(),
+        'stroke-linejoin': 'round'
       })
       if($('input[name="draw_line_fillRadio"]:checked').val()==='custom') make_path.fill($('#draw_fill_color').val());
       if($('input[name="stroke"]:checked').attr('id')==='dotted_line'){
-        make_path.attr({ 'stroke-dasharray': PATH_STROKE_WIDTH*$('#StrokeWidth_TextBox').val() })
+        make_path.attr({ 'stroke-dasharray': PS_WIDTH * $('#dottedLine_line').val() + ' ' +  PS_WIDTH * $('#dottedLine_space').val()});
       }
       make_path.addClass('connected').addClass('SVG_Element').addClass('path').back();
       for(let i=0; i< back_num; i++){

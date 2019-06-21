@@ -205,58 +205,64 @@ right toolbar
   background: #31A9EE;/* マウス選択時の背景色を指定する */
 }
 
-/********************
-線種変更ラジオボタン
-********************/
+/********************************************
+線幅、墨字、点字、画像透過度変更用スライダー設定
+********************************************/
+#stroke_option_table,
+#InkBra_table,
+#undo_redo_table,
+#layer_table,
+#select_fill_table,
+#draw_fill_table{
+	margin : 0px 0px 5px 0px;
+}
 
-.stroke_style label{
-  padding: 0px 25px;	/* ボックス内左側の余白を指定する */
+#stroke_option_table,
+#InkBra_table,
+#layer_table,
+#select_fill_table,
+#draw_fill_table,
+#stamp_table{
+	width : 200px;
+}
+
+#stroke_option_table label{
+  padding: 0px 28px;	/* ボックス内左側の余白を指定する */
   border: 2px solid #006DD9;/* ボックスの境界線を実線で指定する */
 }
 
-.stroke_style input[type="radio"]:checked + label {
+#stroke_option_table input[type="radio"]:checked + label {
 	background: #31A9EE;/* マウス選択時の背景色を指定する */
 	color: #ffffff; 	/* マウス選択時のフォント色を指定する */
 }
 
-/********************************************
-線幅、墨字、点字、画像透過度変更用スライダー設定
-********************************************/
-#rightUI_table,
-#undo_redo_table,
-#layer_table,
-#select_fill_table{
-	margin : 0px 0px 10px 0px;
+#InkBra_table tr,
+#stroke_option_table tr{
+	border: 0.5px solid;
 }
 
-#rightUI_table td{
+#stroke_option_table td,
+#stroke_option_table th{
 	padding : 5px 0px;
 	text-align: center;
 }
 
-#rightUI_table input[type="text"]{
+#InkBra_table td,
+#InkBra_table th{
+	padding : 5px;
+	text-align: center;
+}
+
+#stroke_option_table th,
+#InkBra_table th{
+	background-color : #ccff00;
+}
+
+#InkBra_table input[type="text"],
+#stroke_option_table input[type="text"]{
   width:30px;
   height:20px;
   font-size: 100%;
-}
-
-#StrokeWidth_Slider,
-#resizeInk_Slider,
-#resizeBraille_Slider,
-#ImageOpacity_Slider{ /* css */
-  width:180px;
-  height:12px;
-}
-
-#StrokeWidth_Slider .ui-slider-handle,
-#resizeInk_Slider .ui-slider-handle,
-#resizeBraille_Slider .ui-slider-handle,
-#ImageOpacity_Slider .ui-slider-handle{
-  width:20px;
-  height:16px;
-  background:#3399ff;
-  border:3px solid #00008b;
-	margin : 2px 0px 0px -10px;
 }
 
 /*
@@ -319,9 +325,6 @@ right toolbar
 /*
 触知記号スタンプ
 */
-#stamp_table{
-	width:200px;
-}
 
 #stamp_table td,
 #stamp_table th{
@@ -453,7 +456,7 @@ right toolbar
 選択状態ボックス変更テキストボックス
 ************************************/
 .resizeBox_textbox{
-	margin: 0px 0px 30px 10px;
+	margin: 0px 0px 0px 10px;
 }
 
 .resizeBox_textbox td{

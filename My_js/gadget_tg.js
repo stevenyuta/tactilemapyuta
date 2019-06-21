@@ -38,7 +38,7 @@ function RadioEvent_set(unredo_flag){
 
   /** アプリ右側に表示されるメニューを全て一旦隠す**/
   //線の太さ、色変更
-  $('.stroke_option').hide();
+  $('.stroke_option , .dotted_option').hide();
   //墨字サイズ変更
   $('.resizeInk_gadget').hide();
   //点字サイズ変更
@@ -58,6 +58,7 @@ function RadioEvent_set(unredo_flag){
   //選択モード時の選択ボックス（選択している要素の大きさを示す）の設定
   $('.resizeBox_textbox').hide();
 
+
   /*************************************
   //各モードごとの処理
   *************************************/
@@ -65,6 +66,7 @@ function RadioEvent_set(unredo_flag){
     case 'Draw':
       //右のメニューの線種線色と塗りつぶしの表示
       $('.stroke_option').show();
+      if($('input[name="stroke"]:checked').attr('id')==='dotted_line') $('.dotted_option').show();
       $('#draw_fill_table').show();
       //draw_line関数を起動して線の描画を開始 draw_tg.jsファイルを参照
       draw_line();
@@ -80,6 +82,7 @@ function RadioEvent_set(unredo_flag){
       break;
     case 'DrawRect':
       $('.stroke_option').show();
+      if($('input[name="stroke"]:checked').attr('id')==='dotted_line') $('.dotted_option').show();
       $('#draw_fill_table').show();
       //四角形描画モードの開始 stamp_tg.jsファイルを参照
       draw_rect();
@@ -91,6 +94,7 @@ function RadioEvent_set(unredo_flag){
       break;
     case 'DrawCircle':
       $('.stroke_option').show();
+      if($('input[name="stroke"]:checked').attr('id')==='dotted_line') $('.dotted_option').show();
       $('#draw_fill_table').show();
       //円の描画モード stamp_tg.jsファイルを参照
       draw_circle();
@@ -422,6 +426,24 @@ function leaveOnlyNumber(String_num){
   });
   let array = converted.match(/[0-9]+\.?[0-9]*/g);
   return array[0]
+}
+
+
+/*****************************************************************
+
+******************************************************************/
+function update_dottedLine(){
+  if(String($('#dottedLine_line').val())!==""){
+    let transNumber = leaveOnlyNumber($('#dottedLine_line').val());
+    $('#dottedLine_line').val(transNumber);
+    if(!transNumber.match(/[^0-9\.]/)){
+      draw.select('.edit_select.path , .fragmented , .drawing_path').each(function(i,children){
+        if(this.attr('stroke-dasharray')!==undefined && this.attr('stroke-dasharray')!==''){
+          this.attr({ 'stroke-dasharray': PS_WIDTH * $('#dottedLine_line').val() + ' ' +  PS_WIDTH * $('#dottedLine_space').val()});
+        }
+      })
+    }
+  }
 }
 
 /*****************************************************************

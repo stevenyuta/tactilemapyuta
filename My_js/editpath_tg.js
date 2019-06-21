@@ -128,11 +128,13 @@ function toFragmented(connectedPath){
       'fill' : 'none', 'stroke' : connectedPath.attr('stroke'),
       'stroke-width': connectedPath.attr('stroke-width'),
       'stroke-dasharray' : connectedPath.attr('stroke-dasharray'),
+      'stroke-linejoin': connectedPath.attr('stroke-linejoin')
     })
     if(fragmentedPath.attr('stroke-width') === 0){ //線幅が0の場合
       fragmentedPath.attr({
         'stroke-width': PATH_STROKE_WIDTH,
-        'stroke-dasharray' : 4*PATH_STROKE_WIDTH + ' ' + PATH_STROKE_WIDTH
+        'stroke-dasharray' : 4*PATH_STROKE_WIDTH + ' ' + PATH_STROKE_WIDTH,
+        'Non_stroke' : 'true'
       })
     }
     rect.attr({
@@ -240,11 +242,13 @@ function fragmentedPath_EventSet(){
           'fill' : 'none', 'stroke' : this.parent().attr('stroke_tmp'),
           'stroke-width': this.attr('stroke-width'),
           'stroke-dasharray': this.attr('stroke-dasharray'),
+          'stroke-linejoin': this.attr('stroke-linejoin')
         })
         fragmentedPath2.attr({
           'fill' : 'none', 'stroke' : this.parent().attr('stroke_tmp'),
           'stroke-width': this.attr('stroke-width'),
           'stroke-dasharray': this.attr('stroke-dasharray'),
+          'stroke-linejoin': this.attr('stroke-linejoin')
         })
         rect.attr({
           'x' : mx - rect.width()/2,
@@ -379,6 +383,7 @@ function delete_editpath_rect(editing_target){
       'fill' : 'none','stroke' : nears.beforePath.parent().attr('stroke_tmp'),
       'stroke-width': nears.beforePath.attr('stroke-width'),
       'stroke-dasharray': nears.beforePath.attr('stroke-dasharray'),
+      'stroke-linejoin': nears.beforePath.attr('stroke-linejoin')
     })
     nears.beforePath.after(new_fragmentedPath);
   }
@@ -463,6 +468,7 @@ function node_connect_function(){
       'fill' : 'none','stroke' : fragmented_PathGroup1.attr('stroke_tmp'),
       'stroke-width': fragmented_PathGroup1.first().attr('stroke-width'),
       'stroke-dasharray': fragmented_PathGroup1.first().attr('stroke-dasharray'),
+      'stroke-linejoin': fragmented_PathGroup1.first().attr('stroke-linejoin')
     })
     if(fragmented_PathGroup1 === fragmented_PathGroup2){
       if(rect1.hasClass('first')){

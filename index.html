@@ -156,58 +156,56 @@
             </tr>
           </table>
 
-          <table id = "rightUI_table">
+          <table id="stroke_option_table">
+            <th class="stroke_option" colspan="4">線の基本属性</th>
+            <tr class="stroke_option">
+              <td colspan="4">色　<input type="color" id="stroke_color" name="scolor" value="#000000" style="width:100px;"></td>
+            </tr>
+            <tr class="strokewidth_gadget stroke_option">
+              <td colspan="4">
+                幅　<input type="text" id="StrokeWidth_TextBox" oncopy="return false" onpaste="return false" oncontextmenu="return false">mm　
+                <button id="resetStrokeWidth_Button">Reset</button>
+              </td>
+            </tr>
             <tr class="stroke_option stroke_style">
-              <td colspan="2">
+              <td colspan="4">
                 <input type="radio" id="solid_line" name="stroke"/>
                 <label for="solid_line">実線</label>
-              </td>
-              <td colspan="2">
                 <input type="radio" id="dotted_line" name="stroke"/>
                 <label for="dotted_line">点線</label>
               </td>
             </tr>
-            <tr class="stroke_option">
-              <td align="center" colspan="1">線色</td>
-              <td align="center" colspan="3"><input type="color" id="stroke_color" name="scolor" value="#000000" style="width:100px;"></td>
+            <tr class="dotted_option" style="background-color:orange;"><td colspan="4">点線情報</td></tr>
+            <tr class="dotted_option">
+              <td colspan="4">線の部分の長さ　<input type="text" id="dottedLine_line" oncopy="return false" onpaste="return false" oncontextmenu="return false">mm</td>
             </tr>
-            <tr class="strokewidth_gadget stroke_option">
-              <td>線幅</td>
-              <td><input type="text" id="StrokeWidth_TextBox" oncopy="return false" onpaste="return false" oncontextmenu="return false"></td>
-              <td>mm</td>
-              <td><button id="resetStrokeWidth_Button">初期値</button></td>
+            <tr class="dotted_option">
+              <td colspan="4">余白の長さ　<input type="text" id="dottedLine_space" oncopy="return false" onpaste="return false" oncontextmenu="return false">mm</td>
             </tr>
-            <tr class="strokewidth_gadget stroke_option">
-              <td colspan="4">
-                <div class="slider" id="StrokeWidth_Slider" ></div>
-              </td>
-            </tr>
-            <tr class="resizeInk_gadget">
-              <td>墨字</td>
-              <td><input type="text" id="resizeInk_TextBox" oncopy="return false" onpaste="return false" oncontextmenu="return false"></td>
-              <td>pt</td>
-              <td><button id="resetInk_Button">初期値</button></td>
-            </tr>
+            <tr class="dotted_option"><td colspan="4"><button id="reset_dottedLine">線の幅に合わせる</button></td></tr>
+          </table>
+
+          <table id = "InkBra_table">
+            <th colspan="4" class="resizeInk_gadget resizeBraille_gadget">文字の属性</th>
+
             <tr class="resizeInk_gadget">
               <td colspan="4">
-                <div class="slider" id="resizeInk_Slider"></div>
+                墨字　<input type="text" id="resizeInk_TextBox" oncopy="return false" onpaste="return false" oncontextmenu="return false">
+                pt　<button id="resetInk_Button">Reset</button>
               </td>
             </tr>
-            <tr class="resizeBraille_gadget">
-              <td>点字</td>
-              <td><input type="text" id="resizeBraille_TextBox" oncopy="return false" onpaste="return false" oncontextmenu="return false"></td>
-              <td>pt</td>
-              <td><button id="brasize_resetbutton">初期値</button></td>
-            </tr>
+
             <tr class="resizeBraille_gadget">
               <td colspan="4">
-                <div class="slider" id="resizeBraille_Slider"></div>
+                点字　<input type="text" id="resizeBraille_TextBox" oncopy="return false" onpaste="return false" oncontextmenu="return false">
+                pt　<button id="brasize_resetbutton">Reset</button>
               </td>
             </tr>
+
             <tr class="textInfo_gadget">
               <td colspan="2" align="center">文字内容</td>
               <td colspan="2">
-                <input type="text" id="textInfo_TextBox" oncopy="return false" onpaste="return false" oncontextmenu="return false" style="width:80px; height:30px;">
+                <input type="text" id="textInfo_TextBox" oncopy="return false" onpaste="return false" oncontextmenu="return false" style="width:100px; height:30px;">
               </td>
             </tr>
             <tr class="gadget_imageOpacity">
@@ -216,11 +214,7 @@
               <td>%</td>
               <td><button id="ImageOpacity_resetbutton">100%</button></td>
             </tr>
-            <tr class="gadget_imageOpacity">
-              <td colspan="4">
-                <div class="slider" id="ImageOpacity_Slider"></div>
-              </td>
-            </tr>
+
           </table>
 
           <table id="select_fill_table">

@@ -19,12 +19,9 @@ function toConnected(){
         new_path.attr({ //線属性の指定
           'stroke-width': this.attr('stroke-width'),
           'stroke-dasharray': this.attr('stroke-dasharray'),
+          'stroke-linejoin': this.attr('stroke-linejoin')
         })
-        if(this.attr('stroke-dasharray')){
-          if( String( this.attr('stroke-dasharray') ).split(/\s/).length === 2 ){
-            new_path.attr({ 'stroke-width': 0 , 'stroke-dasharray': '' })
-          }
-        }
+        if(this.attr('Non_stroke'))  new_path.attr({ 'stroke-width': 0 , 'stroke-dasharray': '' })
       }else{
         new_path.L({x: dpoint[0][1], y: dpoint[0][2]})
       }

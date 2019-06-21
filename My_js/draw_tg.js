@@ -84,11 +84,12 @@ function draw_line(){
             drawing_path.attr({
               'fill': $('input[name="draw_line_fillRadio"]:checked').val(),
               'stroke': $('#stroke_color').val(),
-              'stroke-width': PS_WIDTH*$('#StrokeWidth_TextBox').val()
+              'stroke-width': PS_WIDTH*$('#StrokeWidth_TextBox').val(),
+               'stroke-linejoin': 'round'
             })
             if($('input[name="draw_line_fillRadio"]:checked').val()==='custom') drawing_path.fill($('#draw_fill_color').val());
             if($('input[name="stroke"]:checked').attr('id')==='dotted_line'){
-              drawing_path.attr({ 'stroke-dasharray': PS_WIDTH*$('#StrokeWidth_TextBox').val() })
+              drawing_path.attr({ 'stroke-dasharray': PS_WIDTH * $('#dottedLine_line').val() + ' ' +  PS_WIDTH * $('#dottedLine_space').val()});
             }
             drawing_path.addClass('connected').addClass('SVG_Element').addClass('drawing_path').addClass('path');
             drawing_path.back();

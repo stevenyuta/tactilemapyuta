@@ -166,16 +166,19 @@ function upload_handle(){
   //移動、サイズ変更、回転用のハンドルを非表示
   SVG.get('handle_group').hide();　
   $('.resizeInk_gadget , .resizeBraille_gadget').hide();
-  $('.stroke_option').hide();
+  $('.textInfo_gadget').hide();
+  $('.stroke_option , .dotted_option').hide();
   $('.gadget_imageOpacity').hide();
   $('#layer_table , #select_fill_table').hide();
   $('.resizeBox_textbox').hide();
-  $('.textInfo_gadget').hide();
   if(draw.select('.edit_select').first()!==undefined){ //選択状態の要素がない場合
 
     if(draw.select('.edit_select.ink').first()!==undefined) $('.resizeInk_gadget').show();
     if(draw.select('.edit_select.braille').first()!==undefined) $('.resizeBraille_gadget').show();
-    if(draw.select('.edit_select.path , .edit_select.circle').first()!==undefined) $('.stroke_option').show();
+    if(draw.select('.edit_select.path , .edit_select.circle').first()!==undefined){
+      $('.stroke_option').show();
+      if($('input[name="stroke"]:checked').attr('id')==='dotted_line') $('.dotted_option').show();
+    }
     if(draw.select('.edit_select.image').first()!==undefined) $('.gadget_imageOpacity').show();
     if(draw.select('.edit_select.connected , .edit_select.circle').first()!==undefined) $('#select_fill_table').show();
     /***************************************************************
@@ -876,20 +879,38 @@ function delete_select(){
 **********************************************************************************/
 function set_SelectElement_Param(){
   /**********************
-  ここから線幅、線色
+  ここから線幅、線色、線種
   ***********************/
-  let strokewidth , strokecolor;
+  let strokewidth , strokecolor , dasharray_line , dasharray_space;
   draw.select('.edit_select.path').each(function(i,children){
     if(i===0){
       strokewidth = this.attr('stroke-width');
       strokecolor = this.attr('stroke');
+      if(this.attr('stroke-dasharray')){
+        dasharray_line = String(this.attr('stroke-dasharray')).split(/\s/)[0];
+        dasharray_space = String(this.attr('stroke-dasharray')).split(/\s/)[1];
+      }
+      if(dasharray_line && !dasharray_space) dasharray_space = dasharray_line;
     }
     if(strokewidth === this.attr('stroke-width')){
-      $("#StrokeWidth_Slider").slider("value",Math.round(strokewidth/ SVG_RATIO * 10)/10);
       $('#StrokeWidth_TextBox').val(Math.round(strokewidth/ SVG_RATIO * 10)/10);
     }else{
       $('#StrokeWidth_TextBox').val('');
       strokewidth = -1; //-1にすることで絶対にこれ以上一致しなくなる
+    }
+    if(this.attr('stroke-dasharray')){
+      let tmp_dasharray_line = String(this.attr('stroke-dasharray')).split(/\s/)[0];
+      let tmp_dasharray_space = String(this.attr('stroke-dasharray')).split(/\s/)[1];
+      if(tmp_dasharray_line && !tmp_dasharray_space) tmp_dasharray_space = tmp_dasharray_line;
+      if(dasharray_line === tmp_dasharray_line && dasharray_space === tmp_dasharray_space){
+        $("#dotted_line").prop('checked', true);
+        $('#dottedLine_line').val(Math.round(dasharray_line/ SVG_RATIO * 10)/10);
+        $('#dottedLine_space').val(Math.round(dasharray_space/ SVG_RATIO * 10)/10);
+        $('.dotted_option').show();
+      }else{
+        dasharray_line = -1;
+        dasharray_space = -1;
+      }
     }
     strokecolor === this.attr('stroke') ? $('#stroke_color').val(strokecolor) :  strokecolor = -1;
   })
@@ -901,7 +922,6 @@ function set_SelectElement_Param(){
   draw.select('.edit_select.ink').each(function(i,children){
     if(i===0) ink_fontsize = this.attr('font-size');
     if(ink_fontsize === this.attr('font-size')){
-      $("#resizeInk_Slider").slider("value",Math.round(ink_fontsize/(TEXT_CORRECTION) * 10)/10);
       $('#resizeInk_TextBox').val(Math.round(ink_fontsize/(TEXT_CORRECTION) * 10)/10);
     }else{
       $('#resizeInk_TextBox').val('');
@@ -916,7 +936,6 @@ function set_SelectElement_Param(){
   draw.select('.edit_select.braille').each(function(i,children){
     if(i===0) braille_fontsize = this.attr('font-size');
     if(braille_fontsize === this.attr('font-size')){
-      $("#resizeBraille_Slider").slider("value",Math.round(braille_fontsize/(TEXT_CORRECTION) * 10)/10);
       $('#resizeBraille_TextBox').val(Math.round(braille_fontsize/(TEXT_CORRECTION) * 10)/10);
     }else{
       $('#resizeBraille_TextBox').val('');
@@ -928,7 +947,6 @@ function set_SelectElement_Param(){
   draw.select('.edit_select.image').each(function(i,children){
     if(i===0) imageOpacity = this.attr('opacity');
     if(imageOpacity === this.attr('opacity')){
-      $("#ImageOpacity_Slider").slider("value",imageOpacity*100);
       $('#ImageOpacity_TextBox').val(imageOpacity*100);
     }else{
       $('#ImageOpacity_TextBox').val('');
