@@ -584,8 +584,11 @@ function getmousepoint(mode , mouseevent , px , py){
     let line_a = Math.tan(arg) , line_b = -1 , line_c = py - px * line_a;
     let connect_x = (line_b * line_b * mx - line_a * line_b * my - line_a * line_c)/(line_a * line_a + line_b * line_b);
     let connect_y =  - (line_a * line_b * mx - line_a * line_a * my + line_b * line_c)/(line_a * line_a + line_b * line_b);
-    mouse.x = connect_x;
-    mouse.y = connect_y;
+    mx = connect_x;
+    my = connect_y;
+    mouse.x = mx;
+    mouse.y = my;
+
   }else if(mode==='90degree'){
     mx = (mouseevent.pageX-Number($('#draw_area').offset().left))/draw.viewbox().zoom+Number(draw.viewbox().x); //描画領域上でのマウスポイント計算
     my = (mouseevent.pageY-Number($('#draw_area').offset().top))/draw.viewbox().zoom+Number(draw.viewbox().y);
