@@ -178,6 +178,7 @@ function continue_setSVG(input_draw,vx,vy,vwidth,vheight){ //svgデータを読�
   draw_guiderect(); //ガイドの描画
   checkBox_change();
   $('input[name="tg_mode"]:checked').prop('checked', true).trigger('change'); //モードを設定
+  RadioEvent_set();
 }
 
 //ダウンロードリンク

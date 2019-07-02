@@ -397,13 +397,11 @@ function add_text(){
     if($('#check_ink').prop('checked')){
       let dummy_Ink_text = draw.plain( $("#InkChar").val() );
       dummy_Ink_text.attr({
-        'x': mx,
-        'y': my,
         'font-family': 'メイリオ',
         'font-size': $('#resizeInk_TextBox').val() * TEXT_CORRECTION,
         'fill': INK_FILL_COLOR,
         'cursor':'default'
-      });
+      }).translate(mx,my);
       ink_id = dummy_Ink_text.attr('id');
       dummy_Ink_text.addClass('dummy').back();
       for(let i=0; i< back_ink_num; i++){
@@ -418,14 +416,12 @@ function add_text(){
       let font_family = ($('input[name="braillefont"]:checked').attr('id')==='IBfont') ? 'Ikarashi Braille' : '点字線なし';
       let font_stroke = ($('input[name="braillefont"]:checked').attr('id')==='IBfont') ? String(PATH_STROKE_WIDTH * 0.25) : '';
       dummy_Bra_text.attr({
-        'x': mx,
-        'y': my + 30,
         'stroke-width' :  font_stroke,
         'font-family': font_family,
         'font-size': $('#resizeBraille_TextBox').val() * TEXT_CORRECTION,
         'brailleorigintext' : transed_BraText,
         'cursor':'default'
-      })
+      }).translate(mx,my + 30)
       bra_id = dummy_Bra_text.attr('id');
       dummy_Bra_text.addClass('dummy');
     }
