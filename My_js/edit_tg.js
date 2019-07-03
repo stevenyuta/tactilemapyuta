@@ -244,12 +244,9 @@ function upload_handle(){
     //ハンドル位置の更新
     draw.select('.handle').attr({'transform' : ''});
 
-    box_resize.attr({
-      'x' : gX,
-      'y' : gY,
-      'width' : gWidth,
-      'height' : gHeight
-    });
+    box_resize.attr({'d' : ''});
+    box_resize.M({x : gX , y : gY}).L({x : gX + gWidth, y : gY}).L({x : gX + gWidth , y : gY + gHeight}).L({x : gX, y : gY + gHeight}).Z();
+
     t_resize.attr({
       'cx' : gX+gWidth/2,
       'cy' : gY,
@@ -430,8 +427,8 @@ function upload_handle(){
     //rot handle
     rot_resize.off('mousedown').mousedown(function(e){
       if(e.button===0){
-        cx = Number($('#box_resize').attr("x")) + Number($('#box_resize').attr("width"))/2;
-        cy = Number($('#box_resize').attr("y")) + Number($('#box_resize').attr("height"))/2;
+        cx = gX + gWidth/2;
+        cy = gY + gHeight/2;
         $(document).off('mousemove').mousemove(function(e){
           let affin_info = get_affinmat('rot',e,gX,gY,gWidth,gHeight,cx,cy,rad);
           let affin_mat = affin_info.affine_mat;
@@ -640,6 +637,12 @@ function update_editgroup(affin_mat,scale){
           'a': trans_matrix[0][0],'c': trans_matrix[0][1],'b': trans_matrix[1][0],
           'd': trans_matrix[1][1],'e': trans_matrix[0][2],'f': trans_matrix[1][2]
         })
+        //draw.circle(10).fill('#000').translate(matrix.e , matrix.f).addClass('hoge_circle');
+      }else{
+        this.transform({
+          'a': matrix.a , 'c': matrix.c , 'b': matrix.b,
+          'd': matrix.d , 'e': trans_matrix[0][2] , 'f': trans_matrix[1][2]
+        })
       }
     }else if(this.hasClass('circle')){ //円要素の場合
       let cx = Number( this.attr('cx') ) , cy = Number( this.attr('cy') );
@@ -693,15 +696,18 @@ function update_editgroup(affin_mat,scale){
   })
   SVG.get('handle_group').each(function(i,children){
     if(this.id()=== 'box_resize'){
-      let matrix = this.transform('matrix');
-      let trans_matrix = [[matrix.a, matrix.c, matrix.e]
-                        ,[matrix.b, matrix.d, matrix.f]
-                        ,[0, 0, 1]]
-      trans_matrix = math.multiply(affin_mat , trans_matrix) //座標変換行列をAffin変換
-      this.transform({
-        'a': trans_matrix[0][0],'c': trans_matrix[0][1],'b': trans_matrix[1][0],
-        'd': trans_matrix[1][1],'e': trans_matrix[0][2],'f': trans_matrix[1][2]
-      })
+      let dpoint = this.clear().array().settle(); //pathのdpoint配列を取得
+      let d = "";
+      for(let j = 0; j < dpoint.length; j++){
+        if(dpoint[j][0]!=="Z"){  //属性がZ以外の場合
+          let pos1 = [ [ dpoint[j][1] ],[ dpoint[j][2] ],[1]]; //pathの座標を格納
+          let trans_matrix = math.multiply(affin_mat,pos1) //pathの座標をAffin変換
+          d += dpoint[j][0]+" "+trans_matrix[0][0]+" "+trans_matrix[1][0]; //新しい座標として格納
+        }else{
+          d += dpoint[j][0];
+        }
+      }
+      this.attr({'d': d});
     }else{
       let pos1 = [ [ this.attr('cx') ],[ this.attr('cy') ],[1]]; //pathの座標を格納
       let trans_matrix = math.multiply(affin_mat,pos1) //pathの座標をAffin変換
@@ -842,10 +848,19 @@ function copy_select(){
 }
 
 function paste_select(){
+  /**
+  let gmin_x = 1000000 ,  gmin_y = 1000000;
+  for(let i=0;i < copy.length; i++){
+    let bbox = get_bbox(copy[i]);
+    //ハンドル位置の4隅の座標を更新する
+    if(gmin_x > bbox.min_x) gmin_x = bbox.min_x;
+    if(gmin_y > bbox.min_y) gmin_y = bbox.min_y;
+  }
+  **/
   if(copy.length > 0) edit_clear();
   for(let i=0;i < copy.length; i++){
     let clone = copy[i].clone().addClass('edit_select');
-    clone.dmove(100);
+    clone.dmove(100 , 100);
     if($('input[name="tg_mode"]:checked').val()==='Edit') clone.off('mousedown');
   }
   if(copy.length > 0){
@@ -960,7 +975,7 @@ function set_handle(){
   var handle_group =  draw.group().attr({'id':'handle_group'});
   handle_group.hide();
 
-  handle_group.add(draw.rect(0,0).attr({
+  handle_group.add(draw.path().attr({
     'id':'box_resize',
     'class':'handle',
     'cursor':'move',

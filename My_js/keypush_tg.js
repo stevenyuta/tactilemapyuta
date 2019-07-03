@@ -34,6 +34,7 @@ function set_key_down_up(){
       }
       switch(e.keyCode){
         case 13: //Enterキー
+        case 27: //ESCキー
           if(current_mode === 'Draw' && draw.select('.drawing_path').first())  draw_end_function();
           break;
         case 46: // deleteキー
