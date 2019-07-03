@@ -390,11 +390,9 @@ function set_zoom(){
 
     //選択モード時に使うハンドルの大きさをズームレベルに合わせて変更する
     //定数はかなり適当
-    let gY = 0;
     SVG.get('handle_group').each(function(i , children){
-      if(this.type === 'rect') gY = this.attr('y');
       if(this.type === 'circle') this.radius(SELECT_HANDLE_RADIUS/(2*zoom_lvl));
-      if(this.attr('id') === 'rot_resize') this.attr({'cy' : gY - 15/zoom_lvl});
+      if(this.attr('id') === 'rot_resize') this.attr({'cy' : Number(SVG.get('t_resize').attr('cy')) - 15/zoom_lvl});
     })
     draw.select('.svg_select_points').attr({'r':SELECT_HANDLE_RADIUS/(2*zoom_lvl)});
     draw.select('.svg_select_points_rot').attr({ 'r':SELECT_HANDLE_RADIUS/(2*zoom_lvl) });
