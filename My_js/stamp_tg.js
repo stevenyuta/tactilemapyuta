@@ -46,6 +46,11 @@ function set_Stampmode(){
       if($('input[name="stroke"]:checked').attr('id')==='dotted_line') $('.dotted_option').show();
       add_reducescale();
       break;
+    case 'graduationFrame_stamp':
+      $('.stroke_option').show(); //線種変更
+      if($('input[name="stroke"]:checked').attr('id')==='dotted_line') $('.dotted_option').show();
+      add_graduationFrame();
+      break;
     default:
       break;
   }
@@ -254,29 +259,55 @@ function add_reducescale(){
 ******************************************************/
 
 function add_graduationFrame(){
-  if(SVG.get('.graduationFrame_group'))SVG.get('.graduationFrame_group').remove();
-
   let back_num = getPathCirclePos();
-  let Frame_group = draw.group().id('graduationFrame_group');
-  let frame = Frame_group.path().M({x: -F_WIDTH/2, y: -F_HEIGHT/2}).L({x: F_WIDTH/2,y:-F_HEIGHT/2})
-                         .L({x: F_WIDTH/2, y: F_HEIGHT/2}).L({x: -F_WIDTH/2, y:F_HEIGHT/2})
-                         .Z().addClass('graduationFrame').addClass('path').id('mainFrame');
-  for(let i=-F_WIDTH/2; i <= F_WIDTH/2; i += F_WIDTH/4){
-    Frame_group.path().M({x: i, y: -F_HEIGHT/2}).L({x: i , y:-F_HEIGHT/2 - F_SCALE}).addClass('graduationFrame').addClass('path');
-    Frame_group.path().M({x: i, y: F_HEIGHT/2}).L({x: i , y:F_HEIGHT/2 + F_SCALE}).addClass('graduationFrame').addClass('path');
-  }
-  for(let i=-F_HEIGHT/2; i <= F_HEIGHT/1.5; i += F_HEIGHT/3){
-    Frame_group.path().M({x: -F_WIDTH/2 , y: i}).L({x: -F_WIDTH/2 - F_SCALE , y:i}).addClass('graduationFrame').addClass('path');
-    Frame_group.path().M({x: F_WIDTH/2 , y: i}).L({x: F_WIDTH/2 + F_SCALE , y:i}).addClass('graduationFrame').addClass('path');
-  }
+  let Frame_id;
 
-  Frame_group.back();
-  for(let i=0; i< back_num; i++){
-    Frame_group.forward();
-  }
-  draw.select('.graduationFrame').attr({
-    'fill' : 'none',
-    'stroke-width': PATH_STROKE_WIDTH
+  draw.off('mousemove').mousemove(function(e){
+    selector_delete('.dummy');
+    let mx = getmousepoint('normal',e).x , my = getmousepoint('normal',e).y; //描画領域上でのマウスポイント計算
+    let back_num = getPathCirclePos();
+    let dummy_graduationFrame = draw.path()
+                                .M({x: -F_WIDTH/2, y:-F_HEIGHT/2 - F_SCALE}).L({x: -F_WIDTH/2, y: -F_HEIGHT/2}) //縦ひげ1
+                                .L({x: -F_WIDTH/4, y: -F_HEIGHT/2}).L({x: -F_WIDTH/4 , y:-F_HEIGHT/2 - F_SCALE}).L({x: -F_WIDTH/4 , y:-F_HEIGHT/2}) //縦ひげ2
+                                .L({x: 0, y: -F_HEIGHT/2}).L({x: 0 , y:-F_HEIGHT/2 - F_SCALE}).L({x: 0, y:-F_HEIGHT/2}) //縦ひげ3
+                                .L({x: F_WIDTH/4, y: -F_HEIGHT/2}).L({x: F_WIDTH/4 , y:-F_HEIGHT/2 - F_SCALE}).L({x: F_WIDTH/4, y:-F_HEIGHT/2}) //縦ひげ4
+                                .L({x: F_WIDTH/2, y: -F_HEIGHT/2}).L({x: F_WIDTH/2 , y:-F_HEIGHT/2 - F_SCALE}).L({x: F_WIDTH/2, y:-F_HEIGHT/2}) //縦ひげ5
+                                .L({x: F_WIDTH/2 , y: -F_HEIGHT/2}).L({x: F_WIDTH/2 + F_SCALE , y:-F_HEIGHT/2}).L({x: F_WIDTH/2 , y: -F_HEIGHT/2}) //横ひげ1
+                                .L({x: F_WIDTH/2 , y: -F_HEIGHT/2 + F_HEIGHT/3}).L({x: F_WIDTH/2 + F_SCALE , y:-F_HEIGHT/2 + F_HEIGHT/3}).L({x: F_WIDTH/2 , y: -F_HEIGHT/2 + F_HEIGHT/3}) //横ひげ2
+                                .L({x: F_WIDTH/2 , y: -F_HEIGHT/2 + F_HEIGHT*2/3}).L({x: F_WIDTH/2 + F_SCALE , y:-F_HEIGHT/2 + F_HEIGHT*2/3}).L({x: F_WIDTH/2 , y: -F_HEIGHT/2 + F_HEIGHT*2/3}) //横ひげ3
+                                .L({x: F_WIDTH/2 , y: -F_HEIGHT/2 + F_HEIGHT}).L({x: F_WIDTH/2 + F_SCALE , y:-F_HEIGHT/2 + F_HEIGHT}).L({x: F_WIDTH/2 , y: -F_HEIGHT/2 + F_HEIGHT}) //横ひげ4
+                                .L({x: F_WIDTH/2, y: F_HEIGHT/2}).L({x: F_WIDTH/2 , y:F_HEIGHT/2 + F_SCALE}).L({x: F_WIDTH/2, y:F_HEIGHT/2}) //縦ひげ6
+                                .L({x: F_WIDTH/4, y: F_HEIGHT/2}).L({x: F_WIDTH/4 , y:F_HEIGHT/2 + F_SCALE}).L({x: F_WIDTH/4, y:F_HEIGHT/2}) //縦ひげ7
+                                .L({x: 0, y: F_HEIGHT/2}).L({x: 0, y:F_HEIGHT/2 + F_SCALE}).L({x: 0, y:F_HEIGHT/2}) //縦ひげ8
+                                .L({x: -F_WIDTH/4, y: F_HEIGHT/2}).L({x: -F_WIDTH/4 , y:F_HEIGHT/2 + F_SCALE}).L({x: -F_WIDTH/4, y:F_HEIGHT/2}) //縦ひげ9
+                                .L({x: -F_WIDTH/2, y: F_HEIGHT/2}).L({x: -F_WIDTH/2 , y:F_HEIGHT/2 + F_SCALE}).L({x: -F_WIDTH/2, y:F_HEIGHT/2}) //縦ひげ10
+                                .L({x: -F_WIDTH/2 , y: F_HEIGHT/2}).L({x: -F_WIDTH/2 - F_SCALE , y:F_HEIGHT/2}).L({x: -F_WIDTH/2 , y: F_HEIGHT/2}) //横ひげ5
+                                .L({x: -F_WIDTH/2 , y: F_HEIGHT/2 -F_HEIGHT/3}).L({x: -F_WIDTH/2 - F_SCALE , y:F_HEIGHT/2 - F_HEIGHT/3}).L({x: -F_WIDTH/2 , y: F_HEIGHT/2 - F_HEIGHT/3}) //横ひげ6
+                                .L({x: -F_WIDTH/2 , y: F_HEIGHT/2 - F_HEIGHT*2/3}).L({x: -F_WIDTH/2 - F_SCALE , y:F_HEIGHT/2 - F_HEIGHT*2/3}).L({x: -F_WIDTH/2 , y: F_HEIGHT/2 - F_HEIGHT*2/3}) //横ひげ7
+                                .L({x: -F_WIDTH/2 , y: -F_HEIGHT/2}).L({x: -F_WIDTH/2 - F_SCALE , y:-F_HEIGHT/2}).L({x: -F_WIDTH/2 , y: -F_HEIGHT/2}) //横ひげ8
+                                .Z().dmove(mx,my);
+    Frame_id = dummy_graduationFrame.attr('id');
+    dummy_graduationFrame.addClass('dummy').back();
+    for(let i=0; i< back_num; i++){
+      dummy_graduationFrame.forward();
+    }
+    dummy_graduationFrame.attr({
+      'fill': 'none',
+      'stroke': $('#stroke_color').val(),
+      'stroke-width' : PATH_STROKE_WIDTH*$('#StrokeWidth_TextBox').val(),
+      'stroke-linejoin': 'round'
+    })
+    if($('input[name="stroke"]:checked').attr('id')==='dotted_line'){
+      dummy_graduationFrame.attr({ 'stroke-dasharray': PS_WIDTH * $('#dottedLine_line').val() + ' ' +  PS_WIDTH * $('#dottedLine_space').val()});
+    }
+  })
+
+  draw.off('mousedown').mousedown(function(e){
+    if(e.button===0){
+      let real_graduationFrame = SVG.get('#' + Frame_id).removeClass('dummy');
+      if(real_graduationFrame)real_graduationFrame.addClass('connected').addClass('SVG_Element').addClass('path');
+      cash_svg(); //svgデータのcash
+    }
   })
 }
 

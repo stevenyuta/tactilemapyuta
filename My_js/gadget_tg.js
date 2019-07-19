@@ -247,11 +247,13 @@ function draw_gridline(range_x,range_y,interval_x,interval_y){
   //縦方向の線を引数のパラメータに従って描画
   for(let i=-range_x; i<=range_x; i+=interval_x){
     let line = draw.line(i, range_y, i, -range_y).attr({ 'stroke-width': 0.3 });
+    if(i==0) line.attr({'stroke' : '#ff0000'}).attr({ 'stroke-width': 2 });
     gridline_group.add(line);
   }
   //横方向の線を引数のパラメータに従って描画
   for(let i=-range_y; i<=range_y; i+=interval_y){
     let line = draw.line(range_x, i, -range_x, i).attr({ 'stroke-width': 0.3 });
+    if(i==0) line.attr({'stroke' : '#ff0000'}).attr({ 'stroke-width': 2 });
     gridline_group.add(line);
   }
   //グリッド線の表示非表示チェックボックスがチェックされていない場合はグリッド線を非表示にする

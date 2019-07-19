@@ -259,8 +259,8 @@ $(window).on('load',function () {
     //目盛り枠の表示非表示チェックボックス
     ***************************************/
     $('#graduation_frame').off('change').change( function() {
-      if(!SVG.get('graduationFrame_group')) add_graduationFrame();
-      $('#graduation_frame').prop('checked') ? SVG.get('graduationFrame_group').show() : SVG.get('graduationFrame_group').hide()
+      if(!draw.select('.graduationFrame').first()) add_graduationFrame();
+      $('#graduation_frame').prop('checked') ? draw.select('.graduationFrame').show() : draw.select('.graduationFrame').hide()
     })
     $("#graduation_frame").prop('checked', false).change();//初期状態はチェックを入れないでおく
     /**********************************************
@@ -284,10 +284,10 @@ $(window).on('load',function () {
     $( 'input[name="direction_guide"]:radio' ).change( function() {
       if($(this).attr('id') === 'horizontal_guide'){
         draw.select('.A4 , .B4 , .A3').transform({rotation:0});
-        SVG.get('graduationFrame_group').transform({rotation:0});
+        //draw.select('.graduationFrame_group').first().transform({rotation:0});
       }else{
         draw.select('.A4 , .B4 , .A3').transform({rotation:90});
-        SVG.get('graduationFrame_group').transform({rotation:90});
+        //SVG.get('graduationFrame_group').transform({rotation:90});
       }
     })
     $('input[name="direction_guide"]#horizontal_guide').prop('checked', true).trigger('change');
