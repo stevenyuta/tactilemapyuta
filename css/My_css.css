@@ -20,6 +20,7 @@
 
 .aplication_area{
 	margin : 10px 0px 0px 10px;
+	position:absolute;
 }
 .aplication_area input[type=radio],
 .aplication_area input[type=file],
@@ -481,4 +482,44 @@ right toolbar
   width:12px;
   height:735px;
   float:left;
+}
+
+#start_message_background{
+	position:absolute;
+	background-color: rgb(255,255,255,0.8);
+	top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+  margin: auto;
+	z-index: 5px;
+}
+
+#start_message{
+	position:absolute;
+	width: 750px;
+	height: 450px;
+	background-color: rgb(106,255,255,0.8);
+	top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+  margin: auto;
+	z-index: 10px;
+}
+
+#start_message p{
+	color: #000;
+	font-size: 20px;
+	margin: 20px;
+}
+
+#button_wrapper{
+	text-align:center;
+	margin: 50px 0px;
+}
+
+#MessageHidden{
+	width: auto;
+	height: 50px;
 }

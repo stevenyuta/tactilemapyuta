@@ -545,5 +545,9 @@ $(window).on('load',function () {
     ***************************************************************/
     $('input[name="tactileSymbol"]:radio').off('change').on('change',set_Stampmode);
     cash_svg();
+
+    $('#MessageHidden').click(function(){
+      $('#start_message , #start_message_background').hide();
+    })
   //}
 }) //window.onload終了
