@@ -2,7 +2,7 @@
 <html lang="ja">
   <head>
     <meta charset="utf-8">
-    <title>立体コピー触地図作成支援Webアプリ</title>
+    <title>Web Application to Support the Creation of Tactile Maps</title>
   </head>
   <body>
     <!-- jquery関連のjsファイル -->
@@ -38,9 +38,9 @@
         <!--ファイル選択API-->
         <span>
           <input type="file" id="fileAPI_continue">
-          <input type="button" value="ファイル選択" onClick="$('#fileAPI_continue').click();" >
+          <input type="button" value="Select File" onClick="$('#fileAPI_continue').click();" >
           <input type="file" id="fileAPI_img">
-          <input type="button" value="画像ファイル選択" onClick="$('#fileAPI_img').click();" >
+          <input type="button" value="Select Image File" onClick="$('#fileAPI_img').click();" >
         </span>
         <!--ガイドの四角形のサイズ変更-->
         <span>
@@ -54,23 +54,23 @@
         <!--ガイドの四角形の向き変更-->
         <span>
           <input type="radio" id="horizontal_guide" name="direction_guide"/>
-          <label for="horizontal_guide">横</label>
+          <label for="horizontal_guide">Horizontal</label>
           <input type="radio" id="vertical_guide" name="direction_guide"/>
-          <label for="vertical_guide">縦</label>
+          <label for="vertical_guide">Vertical</label>
         </span>
         <!--点字フォントの種類変更-->
         <span>
           <input type="radio" id="IBfont" name="braillefont"/>
-          <label for="IBfont" >いからし点字</label>
+          <label for="IBfont" >Braille Type1</label>
           <input type="radio" id="lighthouse" name="braillefont"/>
-          <label for="lighthouse">ライトハウス点字</label>
+          <label for="lighthouse">Braille Type2</label>
         </span>
         <!--SVGとPNG、そして取扱説明書のダウンロード-->
         <span id="downloader">
-          <a id="svg_download" href="#" onclick="svgDownload()">SVG出力</a>
-          <a id="png_download" href="#" onclick="pngDownload()">PNG出力</a>
-          <a href="manual.pdf" target="_blank">取扱説明書</a>
-          <a href="index_en.html">English Edition</a>
+          <a id="svg_download" href="#" onclick="svgDownload()">SVG</a>
+          <a id="png_download" href="#" onclick="pngDownload()">PNG</a>
+          <a href="manual.pdf" target="_blank">Manual</a>
+          <a href="index.html">Japanese Edition</a>
         </span>
       </div>
 
@@ -80,60 +80,60 @@
         <div id="left_toolbar">
           <div>
             <input  type="radio" name="tg_mode" value="Edit" id="Edit" checked>
-            <label for="Edit">選択</label>
+            <label for="Edit">Select</label>
           </div>
           <div>
             <input  type="radio" name="tg_mode" value="EditPath" id="EditPath">
-            <label for="EditPath">線の詳細編集</label>
+            <label for="EditPath">Edit Line</label>
           </div>
           <div>
             <input  type="radio" name="tg_mode" value="Draw" id="Draw">
-            <label for="Draw">線</label>
+            <label for="Draw">Line</label>
           </div>
           <div>
             <input  type="radio" name="tg_mode" value="DrawRect" id="DrawRect">
-            <label for="DrawRect">四角形</label>
+            <label for="DrawRect">Rect</label>
           </div>
           <div>
             <input  type="radio" name="tg_mode" value="DrawCircle" id="DrawCircle">
-            <label for="DrawCircle">円</label>
+            <label for="DrawCircle">Circle</label>
           </div>
           <div>
             <input  type="radio" name="tg_mode" value="Stamp" id="Stamp">
-            <label for="Stamp">文字・記号</label>
+            <label for="Stamp">Text・Symbols</label>
           </div>
           <div id = "EditImage_div">
             <input  type="radio" name="tg_mode" value="EditImage" id="EditImage">
-            <label for="EditImage">画像選択</label>
+            <label for="EditImage">Select Image</label>
           </div>
 
           <!-- 線の自動補正＆距離間チェックボタン-->
           <div id="left_toolbar_button">
-            <div><input type="button" id="straight_connect_button" style="" value="線の自動補正"></div>
-            <div><input type="button" id="distance_check_button" value="距離間チェック"></div>
+            <div><input type="button" id="straight_connect_button" style="" value="Auto Correction"></div>
+            <div><input type="button" id="distance_check_button" value="Distance Check"></div>
           </div>
 
           <!-- SVG・画像・グリッド線の表示非表示や点訳用のチェックボックス-->
           <div id="left_toolbar_checkbox">
               <div>
                 <input type="checkbox" id="display_DrawElement" name="checkers"/>
-                <label for="display_DrawElement" class="custom_check_label">描画要素</label>
+                <label for="display_DrawElement" class="custom_check_label">Draw Element</label>
               </div>
               <div>
                 <input type="checkbox" id="image" name="checkers"/>
-                <label for="image" class="custom_check_label">画像</label>
+                <label for="image" class="custom_check_label">Image</label>
               </div>
               <div>
                 <input type="checkbox" id="graduation_frame" name="checkers"/>
-                <label for="graduation_frame" class="custom_check_label" style="display:none;">目盛付き枠</label>
+                <label for="graduation_frame" class="custom_check_label" style="display:none;">Graduation Frame</label>
               </div>
               <div>
                 <input type="checkbox" id="gridline" name="checkers"/>
-                <label for="gridline" class="custom_check_label">グリッド線</label>
+                <label for="gridline" class="custom_check_label">Grid Line</label>
               </div>
               <div>
                 <input type="checkbox" id="trans_braille" name="checkers"/>
-                <label for="trans_braille" class="custom_check_label">点訳</label>
+                <label for="trans_braille" class="custom_check_label">Transform Braille</label>
               </div>
           </div>
         </div>
@@ -148,8 +148,8 @@
           <!-- 元に戻す、やり直しボタン -->
           <table id="undo_redo_table">
             <tr>
-              <td colspan="2">元に戻す</td>
-              <td colspan="2">やり直し</td>
+              <td colspan="2">Undo</td>
+              <td colspan="2">Redo</td>
             </tr>
             <tr>
               <td colspan="2"><button id="undo"><i class="fa fa-undo"></i></button></td> <!--元に戻すボタン-->
@@ -158,59 +158,59 @@
           </table>
 
           <table id="stroke_option_table">
-            <th class="stroke_option" colspan="4">線の基本属性</th>
+            <th class="stroke_option" colspan="4">Line Attribute</th>
             <tr class="stroke_option">
-              <td colspan="4">色　<input type="color" id="stroke_color" name="scolor" value="#000000" style="width:100px;"></td>
+              <td colspan="4">Color　<input type="color" id="stroke_color" name="scolor" value="#000000" style="width:100px;"></td>
             </tr>
             <tr class="strokewidth_gadget stroke_option">
               <td colspan="4">
-                幅　<input type="text" id="StrokeWidth_TextBox" oncopy="return false" onpaste="return false" oncontextmenu="return false">mm　
+                Width　<input type="text" id="StrokeWidth_TextBox" oncopy="return false" onpaste="return false" oncontextmenu="return false">mm　
                 <button id="resetStrokeWidth_Button">Reset</button>
               </td>
             </tr>
             <tr class="stroke_option stroke_style">
               <td colspan="4">
                 <input type="radio" id="solid_line" name="stroke"/>
-                <label for="solid_line">実線</label>
+                <label for="solid_line">Solid</label>
                 <input type="radio" id="dotted_line" name="stroke"/>
-                <label for="dotted_line">点線</label>
+                <label for="dotted_line">Dot</label>
               </td>
             </tr>
-            <tr class="dotted_option" style="background-color:orange;"><td colspan="4">点線情報</td></tr>
+            <tr class="dotted_option" style="background-color:orange;"><td colspan="4">Dot Attribute</td></tr>
             <tr class="dotted_option">
-              <td colspan="4">線の部分の長さ　<input type="text" id="dottedLine_line" oncopy="return false" onpaste="return false" oncontextmenu="return false">mm</td>
+              <td colspan="4">Length of Line　<input type="text" id="dottedLine_line" oncopy="return false" onpaste="return false" oncontextmenu="return false">mm</td>
             </tr>
             <tr class="dotted_option">
-              <td colspan="4">余白の長さ　<input type="text" id="dottedLine_space" oncopy="return false" onpaste="return false" oncontextmenu="return false">mm</td>
+              <td colspan="4">Length of Blank　<input type="text" id="dottedLine_space" oncopy="return false" onpaste="return false" oncontextmenu="return false">mm</td>
             </tr>
-            <tr class="dotted_option"><td colspan="4"><button id="reset_dottedLine">線の幅に合わせる</button></td></tr>
+            <tr class="dotted_option"><td colspan="4"><button id="reset_dottedLine">Fit to Line Width</button></td></tr>
           </table>
 
           <table id = "InkBra_table">
-            <th colspan="4" class="resizeInk_gadget resizeBraille_gadget">文字の属性</th>
+            <th colspan="4" class="resizeInk_gadget resizeBraille_gadget">Text Attribute</th>
 
             <tr class="resizeInk_gadget">
               <td colspan="4">
-                墨字　<input type="text" id="resizeInk_TextBox" oncopy="return false" onpaste="return false" oncontextmenu="return false">
+                Text　<input type="text" id="resizeInk_TextBox" oncopy="return false" onpaste="return false" oncontextmenu="return false">
                 pt　<button id="resetInk_Button">Reset</button>
               </td>
             </tr>
 
             <tr class="resizeBraille_gadget">
               <td colspan="4">
-                点字　<input type="text" id="resizeBraille_TextBox" oncopy="return false" onpaste="return false" oncontextmenu="return false">
+                Braille　<input type="text" id="resizeBraille_TextBox" oncopy="return false" onpaste="return false" oncontextmenu="return false">
                 pt　<button id="brasize_resetbutton">Reset</button>
               </td>
             </tr>
 
             <tr class="textInfo_gadget">
-              <td colspan="2" align="center">文字内容</td>
+              <td colspan="2" align="center">Value</td>
               <td colspan="2">
                 <input type="text" id="textInfo_TextBox" oncopy="return false" onpaste="return false" oncontextmenu="return false" style="width:100px; height:30px;">
               </td>
             </tr>
             <tr class="gadget_imageOpacity">
-              <td>画像透過度</td>
+              <td>Image Transparency</td>
               <td><input type="text" id="ImageOpacity_TextBox" oncopy="return false" onpaste="return false" oncontextmenu="return false"></td>
               <td>%</td>
               <td><button id="ImageOpacity_resetbutton">100%</button></td>
@@ -220,10 +220,10 @@
 
           <table id="select_fill_table">
             <tr>
-              <th colspan="4" align="center">塗りつぶし</th>
+              <th colspan="4" align="center">Fill</th>
             </tr>
             <tr>
-              <td colspan="2"><button id="fillnone_button" value='none'>なし</button></td>
+              <td colspan="2"><button id="fillnone_button" value='none'>None</button></td>
               <td colspan="2"><button id="diagonal_button" value='url(#diagonal-texture)'></button></td>
             </tr>
             <tr>
@@ -238,7 +238,7 @@
 
           <table id="layer_table">
             <tr>
-              <th colspan="4">レイヤー</th>
+              <th colspan="4">Layer</th>
             </tr>
             <tr>
               <td colspan="2"><button id="front_button"></button></td>
@@ -253,12 +253,12 @@
           <!--線、四角形、円の描画で使う塗りつぶし変更ガジェット-->
           <table id="draw_fill_table">
             <tr class="draw_fill_table">
-              <th colspan="4" align="center" >塗りつぶし</th>
+              <th colspan="4" align="center" >Fill</th>
             </tr>
             <tr class="draw_fill_table">
               <td colspan="2">
                 <input type="radio" id="draw_fill_none" name="draw_line_fillRadio" value="none" checked="checked"/>
-                <label for="draw_fill_none" style="text-align: center;">なし</label>
+                <label for="draw_fill_none" style="text-align: center;">None</label>
               </td>
               <td colspan="2">
                 <input type="radio" id="draw_fill_diagonal" name="draw_line_fillRadio" value="url(#diagonal-texture)"/>
@@ -282,7 +282,7 @@
               </td>
               <td colspan="2">
                 <input type="radio" id="draw_fill_custom" name="draw_line_fillRadio" value="custom"/>
-                <label for="draw_fill_custom">カスタム</label><br>
+                <label for="draw_fill_custom">Custom</label><br>
                 <input type="color" id="draw_fill_color" name="draw_filcolor" value="#FFFFFF" style="width:80px; height:20px;">
               </td>
             </tr>
@@ -291,62 +291,62 @@
           <!--スタンプ（記号・文字など）の選択-->
           <table id="stamp_table">
             <tr>
-                <th colspan="4">スタンプの追加</th>
+                <th colspan="4">Stamps</th>
             </tr>
             <tr>
               <td colspan="4">
                 <input  type="radio" name="tactileSymbol" value="Stair" id="Stair">
-                <label for="Stair">階段</label>
+                <label for="Stair">Stair</label>
               </td>
             </tr>
             <tr>
               <td colspan="4">
                 <input  type="radio" name="tactileSymbol" value="Escalator" id="Escalator">
-                <label for="Escalator">エスカレータ</label>
+                <label for="Escalator">Escalator</label>
               </td>
             </tr>
             <tr>
               <td colspan="4">
                 <input  type="radio" name="tactileSymbol" value="Arrow" id="Arrow">
-                <label for="Arrow">矢印</label>
+                <label for="Arrow">Arrow</label>
               </td>
             </tr>
             <tr>
               <td colspan="4">
                 <input  type="radio" name="tactileSymbol" value="Tiket_gate" id="Tiket_gate">
-                <label for="Tiket_gate">改札</label>
+                <label for="Tiket_gate">Tiket Gate</label>
               </td>
             </tr>
             <tr>
               <td colspan="4">
                 <input  type="radio" name="tactileSymbol" value="Reducescale" id="Reducescale">
-                <label for="Reducescale">縮尺</label>
+                <label for="Reducescale">Reduce Scale</label>
               </td>
             </tr>
             <tr>
               <td colspan="4">
                 <input  type="radio" name="tactileSymbol" value="graduationFrame_stamp" id="graduationFrame_stamp">
-                <label for="graduationFrame_stamp">目盛り付き枠</label>
+                <label for="graduationFrame_stamp">Frame</label>
               </td>
             </tr>
             <tr>
               <td colspan="4">
                 <input  type="radio" name="tactileSymbol" value="Text" id="Text" checked="checked">
-                <label for="Text">墨字・点字</label>
+                <label for="Text">Text・Braille</label>
               </td>
             </tr>
             <tr class='resizeInk_gadget'>
               <td colspan="4">
                 <input type="checkbox" id="check_ink" name="checkers" value="check_ink"/>
                 <label for="check_ink" class="custom_check_label"></label>
-                <input type="text" id="InkChar" oncopy="return false" value="墨字" placeholder="墨字が入力できます" onpaste="return false" oncontextmenu="return false" style="width:130px;">
+                <input type="text" id="InkChar" oncopy="return false" value="Text" placeholder="Can Enter Text" onpaste="return false" oncontextmenu="return false" style="width:130px;">
               </td>
             </tr>
             <tr class='resizeBraille_gadget'>
               <td colspan="4">
                 <input type="checkbox" id="check_bra" name="checkers" value="check_bra"/>
                 <label for="check_bra" class="custom_check_label"></label>
-                <input type="text" id="Braille" oncopy="return false" value="てんじ" placeholder="てんじが入力できます" onpaste="return false" oncontextmenu="return false" style="width:130px;">
+                <input type="text" id="Braille" oncopy="return false" value="Braille" placeholder="Can Enter Braille" onpaste="return false" oncontextmenu="return false" style="width:130px;">
               </td>
             </tr>
           </table>
@@ -354,11 +354,11 @@
           <!--選択時の幅や高さを表示するテキストボックス-->
           <table>
             <tr class="resizeBox_textbox">
-              <td colspan="2">幅：</td>
+              <td colspan="2">Width：</td>
               <td colspan="2"><input type="text" id="rb_width" value="" oncopy="return false" onpaste="return false" oncontextmenu="return false" maxlength="6" style="width:80px;">mm</td>
             </tr>
             <tr class="resizeBox_textbox">
-              <td colspan="2">高さ：</td>
+              <td colspan="2">Height：</td>
               <td colspan="2"><input type="text" id="rb_height" value="" oncopy="return false" onpaste="return false" oncontextmenu="return false" maxlength="6" style="width:80px;">mm</td>
             </tr>
           </table>
@@ -370,19 +370,19 @@
     <div id="start_message_background"></div>
     <div id="start_message">
       <p>
-        このアプリは立体コピー触地図の画像データを作成できるシステムです。<br>
-        以下のブラウザが対応しています。<br>
-        ●　Google Chrome（バージョン：75.0.3770.142　以降）　<br>
-        ●　FireFox（バージョン：68.0.1　以降） <br>
-        ●　Microsoft Edge（バージョン：44.17763.1.0　以降）<br>
-        ●　Internet Explorer 11<br>
-        ●　Safari<br>
-        実際に利用するブラウザにはGoogle Chromeを強くお勧めします。<br>
-        その他のブラウザは、動作が不安定になる場合が想定されます。<br>
-        下のボタンをクリックするとアプリが開始されます。
+        This application is a system that can create image data of 3D copy touch map.<br>
+        The following browsers are compatible.<br>
+        ● Google Chrome (Version: 75.0.3770.142 or later)<br>
+        ● FireFox (version: 68.0.1 or later)<br>
+        ● Microsoft Edge (version: 44.17763.1.0 or later)<br>
+        ● Internet Explorer 11<br>
+        ● Safari<br>
+        Google Chrome is strongly recommended for the actual browser.<br>
+        Other browsers are expected to be unstable.<br>
+        Click the button below to start the app.
 
       </p>
-      <div id="button_wrapper"><button id="MessageHidden">利用を開始する</button></div>
+      <div id="button_wrapper"><button id="MessageHidden">Start Application</button></div>
     </div>
 
     <!-- 自作jsファイルのインポート -->
