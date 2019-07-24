@@ -88,11 +88,13 @@ let nowchecked;
 *******************************************/
 $(window).on('load',function () {
   let userAgent = window.navigator.userAgent.toLowerCase();
+  /**
   if(userAgent.indexOf('chrome') < 0 || userAgent.indexOf('edge') > 0){  //chrome以外のブラウザで表示した場合の処理
     $('.aplication_area').before('<p style="border: solid #808; padding:5px; font-size: 50px;">ブラウザはGoogle Chromeのみ対応しております<br>お使いのブラウザでは動作しません。<br>申し訳ございません。</p>');
     $('.aplication_area').before('<image width="500px"  src="images/sorry.png">');
     $('.aplication_area').hide();
   }else{
+    **/
     //ウィンドウサイズ変更とアプリの余白を変更
     let timer = 0;
     window.onresize = function () { //ウィンドウサイズが変更した場合に実行
@@ -543,5 +545,5 @@ $(window).on('load',function () {
     ***************************************************************/
     $('input[name="tactileSymbol"]:radio').off('change').on('change',set_Stampmode);
     cash_svg();
-  }
+  //}
 }) //window.onload終了

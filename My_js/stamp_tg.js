@@ -61,18 +61,20 @@ function set_Stampmode(){
 ******************************************************/
 function add_stair(){
   let back_num = getPathCirclePos();
-  let symbol_id;
+  let dummy_stair = draw.path().addClass('dummy').back();
+  for(let i=0; i< back_num; i++){
+    dummy_stair.forward();
+  }
+  let symbol_id = dummy_stair.attr('id');
   draw.off('mousemove').mousemove(function(e){
-    selector_delete('.dummy');
+    //selector_delete('.dummy');
     mx = getmousepoint('normal',e).x , my = getmousepoint('normal',e).y;//描画領域上でのマウスポイント計算
-    let dummy_stair = draw.path().M({x: mx-STAIRS_BX, y: my-STAIRS_BY})
-                                 .L({x: mx+STAIRS_BX, y: my})
-                                 .L({x: mx-STAIRS_BX, y: my+STAIRS_BY});
-    symbol_id = dummy_stair.attr('id');
-    dummy_stair.addClass('dummy').back();
-    for(let i=0; i< back_num; i++){
-      dummy_stair.forward();
-    }
+    let dummy_stair = draw.select('.dummy').first();
+    dummy_stair.attr({'d' : ''});
+    dummy_stair.M({x: mx-STAIRS_BX, y: my-STAIRS_BY})
+               .L({x: mx+STAIRS_BX, y: my})
+               .L({x: mx-STAIRS_BX, y: my+STAIRS_BY});
+
     dummy_stair.attr({
       'fill': 'none',
       'stroke': $('#stroke_color').val(),
@@ -82,6 +84,7 @@ function add_stair(){
     if($('input[name="stroke"]:checked').attr('id')==='dotted_line'){
       dummy_stair.attr({ 'stroke-dasharray': PS_WIDTH * $('#dottedLine_line').val() + ' ' +  PS_WIDTH * $('#dottedLine_space').val()});
     }
+
   })
 
   draw.off('mousedown').mousedown(function(e){
@@ -89,6 +92,12 @@ function add_stair(){
       let real_stair = SVG.get('#' + symbol_id).removeClass('dummy');
       if(real_stair)real_stair.addClass('stair').addClass('symbol').addClass('SVG_Element').addClass('path');
       cash_svg(); //svgデータのcash
+      let back_num = getPathCirclePos();
+      dummy_stair = draw.path().addClass('dummy').back();
+      for(let i=0; i< back_num; i++){
+        dummy_stair.forward();
+      }
+      symbol_id = dummy_stair.attr('id');
     }
   })
 }
@@ -101,14 +110,14 @@ function add_escalator(){
   let symbol_id;
   draw.off('mousemove').mousemove(function(e){
     selector_delete('.dummy');
-    let mx = getmousepoint('normal',e).x , my = getmousepoint('normal',e).y; //描画領域上でのマウスポイント計算
-    let back_num = getPathCirclePos();
+    mx = getmousepoint('normal',e).x , my = getmousepoint('normal',e).y; //描画領域上でのマウスポイント計算
     let dummy_escalator = draw.path().M({x: mx-STAIRS_BX, y: my-STAIRS_BY})
                                      .L({x: mx+STAIRS_BX, y: my})
                                      .L({x: mx-STAIRS_BX, y: my+STAIRS_BY})
                                      .Z();
     symbol_id = dummy_escalator.attr('id');
     dummy_escalator.addClass('dummy').back();
+
     for(let i=0; i< back_num; i++){
       dummy_escalator.forward();
     }

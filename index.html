@@ -6,31 +6,30 @@
   </head>
   <body>
     <!-- jquery関連のjsファイル -->
-    <script type="text/javascript" src="./dl_js/jquery-3.2.1.min.js"></script> <!--jquery本体の導入-->
-    <script type="text/javascript" src="./dl_js/jquery-ui.min.js"></script> <!--カスタムUI の導入のため-->
-    <script src="./dl_js/jquery.contextMenu.min.js" type="text/javascript"></script> <!--カスタムしたメニューを右クリックで表示させるライブラリ-->
+    <script type="text/javascript" src="./dl_js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="./dl_js/jquery-ui.min.js"></script>
+    <script src="./dl_js/jquery.contextMenu.min.js" type="text/javascript"></script>
 
     <!-- svg.js関連のjsファイル -->
-    <script type="text/javascript" src="./dl_js/svg.min.js"></script> <!--SVG.js本体の導入-->
-    <script type="text/javascript" src="./dl_js/svg.path.js"></script> <!--パスを描くときに色々使うライブラリ-->
-    <script type="text/javascript" src="./dl_js/svg.panzoom.min.js"></script>　<!--マウスホイールでズームしたりするときに使うライブラリ-->
-    <script type="text/javascript" src="./dl_js/svg.draw.min.js"></script> <!--四角形とかを簡単に描くときに使うライブラリ-->
-    <script type="text/javascript" src="./dl_js/svg.draggable.min.js"></script> <!--マウスドラッグで描画したものを移動できたりするライブラリ-->
+    <script type="text/javascript" src="./dl_js/svg.min.js"></script>
+    <script type="text/javascript" src="./dl_js/svg.path.js"></script>
+    <script type="text/javascript" src="./dl_js/svg.panzoom.min.js"></script>
+    <script type="text/javascript" src="./dl_js/svg.draw.min.js"></script>
+    <script type="text/javascript" src="./dl_js/svg.draggable.min.js"></script>
 
     <!-- その他のjsファイル -->
-    <script type="text/javascript" src="./dl_js/rangeslider.min.js"></script> <!--レンジスライダーの導入（今は使ってない）-->
-    <script type="text/javascript" src="./dl_js/tactileGraph.min.js"></script><!-- tactileGraph.js（点字の表記法の自動変換用）の導入  -->
-    <script type="text/javascript" src="./dl_js/math.js"></script> <!-- 計算に使うライブラリ -->
+    <script type="text/javascript" src="./dl_js/rangeslider.min.js"></script>
+    <script type="text/javascript" src="./dl_js/tactileGraph.min.js"></script><!-- tactileGraph.jsの導入  -->
+    <script type="text/javascript" src="./dl_js/math.js"></script>
 
     <!-- bootstrap関連のjsファイル -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 
     <!-- cssファイル導入 -->
-    <link type="text/css" rel="stylesheet" href="./css/jquery-ui.min.css" /> <!--jquery-UIのcssファイル-->
-    <link type="text/css" rel="stylesheet" href="./css/rangeslider.css" /> <!--レンジスライダーのcss（今は使ってない）-->
-    <link rel="stylesheet" href="./css/My_css.css" type="text/css"/> <!--このアプリ用のcss-->
-    <link rel="stylesheet" href="./css/jquery.contextMenu.min.css" type="text/css"/> <!--カスタムみぎりクックメニューのcss-->
-    <!--↓bootstrapの関連のcssファイル-->
+    <link type="text/css" rel="stylesheet" href="./css/jquery-ui.min.css" />
+    <link type="text/css" rel="stylesheet" href="./css/rangeslider.css" />
+    <link rel="stylesheet" href="./css/My_css.css" type="text/css"/>
+    <link rel="stylesheet" href="./css/jquery.contextMenu.min.css" type="text/css"/>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous"/>
 
@@ -66,7 +65,7 @@
           <input type="radio" id="lighthouse" name="braillefont"/>
           <label for="lighthouse">ライトハウス点字</label>
         </span>
-        <!--SVGとPNG、取扱説明書のダウンロード-->
+        <!--SVGとPNG、そして取扱説明書のダウンロード-->
         <span id="downloader">
           <a id="svg_download" href="#" onclick="svgDownload()">SVG</a>
           <a id="png_download" href="#" onclick="pngDownload()">PNG</a>
@@ -78,37 +77,30 @@
       <div id="main_content">
         <!-- モード変更切り替えラジオボタンなどの画面左側に表示される様々なガジェット -->
         <div id="left_toolbar">
-          <!--選択モード（線や点字などを選択状態にして拡大縮小したりするモード）-->
           <div>
             <input  type="radio" name="tg_mode" value="Edit" id="Edit" checked>
             <label for="Edit">選択</label>
           </div>
-          <!--線の詳細編集モード（線をノードとノード同士を繋ぐ線に分解し、詳細に編集できるモード）-->
           <div>
             <input  type="radio" name="tg_mode" value="EditPath" id="EditPath">
             <label for="EditPath">線の詳細編集</label>
           </div>
-          <!--線の描画モード（線を描くモード）-->
           <div>
             <input  type="radio" name="tg_mode" value="Draw" id="Draw">
             <label for="Draw">線</label>
           </div>
-          <!--四角形の描画モード（四角形を描くモード）-->
           <div>
             <input  type="radio" name="tg_mode" value="DrawRect" id="DrawRect">
             <label for="DrawRect">四角形</label>
           </div>
-          <!--円の描画モード（円を描くモード）-->
           <div>
             <input  type="radio" name="tg_mode" value="DrawCircle" id="DrawCircle">
             <label for="DrawCircle">円</label>
           </div>
-          <!--文字・記号の追加モード（文字や触知記号をスタンプのように追加できるモード）-->
           <div>
             <input  type="radio" name="tg_mode" value="Stamp" id="Stamp">
             <label for="Stamp">文字・記号</label>
           </div>
-          <!--画像の選択モード（普通の選択モード同様の機能が画像だけが対象になる）-->
           <div id = "EditImage_div">
             <input  type="radio" name="tg_mode" value="EditImage" id="EditImage">
             <label for="EditImage">画像選択</label>
@@ -116,7 +108,7 @@
 
           <!-- 線の自動補正＆距離間チェックボタン-->
           <div id="left_toolbar_button">
-            <div><input type="button" id="straight_connect_button" value="線の自動補正"></div>
+            <div><input type="button" id="straight_connect_button" style="" value="線の自動補正"></div>
             <div><input type="button" id="distance_check_button" value="距離間チェック"></div>
           </div>
 
