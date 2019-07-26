@@ -267,7 +267,6 @@ function pngDownload() {
     if(second < 10) second = '0' + second;
 
     let file_name = year +'_'+ month + day + '_' +hour + minute + second +'.png';
-
     // Optional: 自動でダウンロードさせる場合
     // Optional: 自動でダウンロードさせる場合
     $("body").append("<a id='image-file' class='hidden' type='application/octet-stream' href='"

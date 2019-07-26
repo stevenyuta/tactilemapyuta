@@ -486,7 +486,7 @@ right toolbar
 
 #start_message_background{
 	position:absolute;
-	background-color: rgb(255,255,255,0.8);
+	background-color: rgba(255,255,255,0.8);
 	top: 0px;
   right: 0px;
   bottom: 0px;
@@ -498,8 +498,8 @@ right toolbar
 #start_message{
 	position:absolute;
 	width: 750px;
-	height: 450px;
-	background-color: rgb(106,255,255,0.8);
+	height: 750px;
+	background-color: rgba(106,255,255,0.8);
 	top: 0px;
   right: 0px;
   bottom: 0px;
