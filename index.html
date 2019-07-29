@@ -33,7 +33,7 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous"/>
 
-    <div class="aplication_area" style="width:1550px; height:auto;">
+    <div class="application_area">
       <div id="top_contents">
         <!--ファイル選択API-->
         <span>
@@ -160,7 +160,7 @@
           <table id="stroke_option_table">
             <th class="stroke_option" colspan="4">線の基本属性</th>
             <tr class="stroke_option">
-              <td colspan="4">色　<input type="color" id="stroke_color" name="scolor" value="#000000" style="width:100px;"></td>
+              <td colspan="4">色　<input type="color" id="stroke_color" name="scolor" value="#000000"></td>
             </tr>
             <tr class="strokewidth_gadget stroke_option">
               <td colspan="4">
@@ -206,7 +206,7 @@
             <tr class="textInfo_gadget">
               <td colspan="2" align="center">文字内容</td>
               <td colspan="2">
-                <input type="text" id="textInfo_TextBox" oncopy="return false" onpaste="return false" oncontextmenu="return false" style="width:100px; height:30px;">
+                <input type="text" id="textInfo_TextBox" oncopy="return false" onpaste="return false" oncontextmenu="return false">
               </td>
             </tr>
             <tr class="gadget_imageOpacity">
@@ -232,7 +232,7 @@
             </tr>
             <tr>
               <td colspan="2"><button id="gray_button" value='#333'></button></td>
-              <td colspan="2"><input type="color" id="fill_color" name="filcolor" value="#FFFFFF" style="width:80px; height:30px"></td>
+              <td colspan="2"><input type="color" id="fill_color" name="filcolor" value="#FFFFFF"></td>
             </tr>
           </table>
 
@@ -283,7 +283,7 @@
               <td colspan="2">
                 <input type="radio" id="draw_fill_custom" name="draw_line_fillRadio" value="custom"/>
                 <label for="draw_fill_custom">カスタム</label><br>
-                <input type="color" id="draw_fill_color" name="draw_filcolor" value="#FFFFFF" style="width:80px; height:20px;">
+                <input type="color" id="draw_fill_color" name="draw_filcolor" value="#FFFFFF">
               </td>
             </tr>
           </table>
@@ -364,7 +364,7 @@
           </table>
 
          </div>
-         <div style="clear:both;" id="svg_width_scrollbar"></div>
+         <div id="svg_width_scrollbar"></div>
       </div>
     </div>
     <div id="start_message_background"></div>

@@ -132,8 +132,8 @@ function toFragmented(connectedPath){
     })
     if(fragmentedPath.attr('stroke-width') === 0){ //線幅が0の場合
       fragmentedPath.attr({
-        'stroke-width': PATH_STROKE_WIDTH,
-        'stroke-dasharray' : 4*PATH_STROKE_WIDTH + ' ' + PATH_STROKE_WIDTH,
+        'stroke-width': PS_WIDTH,
+        'stroke-dasharray' : 4*PS_WIDTH + ' ' + PS_WIDTH,
         'Non_stroke' : 'true'
       })
     }
@@ -678,12 +678,12 @@ function verhor_fragmentedPath(){
 *****************************************************/
 function checkEditPath_gadget(){
   $('.stroke_option').hide();
-  $('#layer_select').hide();
-  $('#fill_change').hide();
+  $('#layer_table').hide();
+  $('#select_fill_table').hide();
   if(draw.select('.fragmented_PathGroup').first()!==undefined){
     $('.stroke_option').show();
-    $('#layer_select').show();
-    $('#fill_change').show();
+    $('#layer_table').show();
+    $('#select_fill_table').show();
   }
 }
 

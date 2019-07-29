@@ -18,21 +18,23 @@
 
 }
 
-.aplication_area{
+.application_area{
+	width:1550px;
+	height:auto;
 	margin : 10px 0px 0px 10px;
 	position:absolute;
 }
-.aplication_area input[type=radio],
-.aplication_area input[type=file],
-.aplication_area input[type="checkbox"]{
+.application_area input[type=radio],
+.application_area input[type=file],
+.application_area input[type="checkbox"]{
   display: none;
 }
 
-.aplication_area input[type="radio"] + label:hover{
+.application_area input[type="radio"] + label:hover{
 	background-color: #E2EDF9; 	/* マウスオーバー時の背景色を指定する */
 }
 
-.aplication_area input[type=text]:hover {
+.application_area input[type=text]:hover {
   border-color: #0171bd;	/* ボックスの境界線を実線で指定する */
 }
 
@@ -237,6 +239,10 @@ right toolbar
 	color: #ffffff; 	/* マウス選択時のフォント色を指定する */
 }
 
+#stroke_color{
+	width: 100px;
+}
+
 #InkBra_table tr,
 #stroke_option_table tr{
 	border: 0.5px solid;
@@ -252,6 +258,11 @@ right toolbar
 #InkBra_table th{
 	padding : 5px;
 	text-align: center;
+}
+
+#textInfo_TextBox{
+	width:100px;
+	height:30px;
 }
 
 #stroke_option_table th,
@@ -321,7 +332,10 @@ right toolbar
   background-image: url('../images/polkadot_water.png');
 }
 
-
+#draw_fill_color{
+	width:80px;
+	height:20px;
+}
 
 /*
 触知記号スタンプ
@@ -453,6 +467,11 @@ right toolbar
   background-image: url('../images/polkadot_water.png');
 }
 
+#fill_color{
+	width:80px;
+	height:30px;
+}
+
 /***********************************
 選択状態ボックス変更テキストボックス
 ************************************/
@@ -475,6 +494,7 @@ right toolbar
   margin :0px 0px 0px 170px;
   width:1040px;
   height:12px;
+	clear:both;
 }
 
 #svg_height_scrollbar{ /* css */

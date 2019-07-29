@@ -319,7 +319,8 @@ function draw_guiderect(){
 
 function checkBox_change(){
   //SVG要素の表示非表示チェックボックス
-  $('#display_DrawElement').prop('checked') ? draw.select('.SVG_Element:not(.graduationFrame)').show() : draw.select('.SVG_Element:not(.graduationFrame)').hide();
+  let svg_element = draw.select('.SVG_Element,.ghost_path,.edit_rect,.init_node,.last_node,.close_node,.closePath_rect,.handle');
+  $('#display_DrawElement').prop('checked') ? svg_element.show() : svg_element.hide();
   //画像の表示非表示
   $('#image').prop('checked') ? SVG.select('.image').show() : SVG.select('.image').hide();
   //グリッド線の表示非表示
@@ -456,8 +457,8 @@ function update_StrokeWidth_TextBox(){
     $('#StrokeWidth_TextBox').val(transNumber);
     if(!transNumber.match(/[^0-9\.]/)){
       draw.select('.edit_select.path , .fragmented , .drawing_path').each(function(i,children){
-        this.attr({'stroke-width': Number(transNumber) * PATH_STROKE_WIDTH });
-        if(this.attr('stroke-dasharray')!==undefined && this.attr('stroke-dasharray')!=='')this.attr({'stroke-dasharray': PATH_STROKE_WIDTH});
+        this.attr({'stroke-width': Number(transNumber) * PS_WIDTH });
+        if(this.attr('stroke-dasharray')!==undefined && this.attr('stroke-dasharray')!=='')this.attr({'stroke-dasharray': PS_WIDTH});
       })
     }
   }
@@ -802,11 +803,11 @@ function js_sleep(waitMsec) {
   while (new Date() - startMsec < waitMsec);
 }
 
-function resize_aplication_area(){
+function resize_application_area(){
   let window_width = $(window).width() , window_height = $(window).height();
   let width_Margin = ($(window).width() - 1550)/2;
   let height_Margin = ($(window).height() - 805)/2;
   if(width_Margin > 0 && height_Margin > 0){
-    $('.aplication_area').css( "margin" , height_Margin + 'px ' + width_Margin + 'px');
+    $('.application_area').css( "margin" , height_Margin + 'px ' + width_Margin + 'px');
   }
 }

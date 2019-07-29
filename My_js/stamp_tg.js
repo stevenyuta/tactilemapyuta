@@ -78,7 +78,7 @@ function add_stair(){
     dummy_stair.attr({
       'fill': 'none',
       'stroke': $('#stroke_color').val(),
-      'stroke-width' : PATH_STROKE_WIDTH*$('#StrokeWidth_TextBox').val(),
+      'stroke-width' : PS_WIDTH*$('#StrokeWidth_TextBox').val(),
       'stroke-linejoin': 'round'
     })
     if($('input[name="stroke"]:checked').attr('id')==='dotted_line'){
@@ -124,7 +124,7 @@ function add_escalator(){
     dummy_escalator.attr({
       'fill': 'none',
       'stroke': $('#stroke_color').val(),
-      'stroke-width' : PATH_STROKE_WIDTH*$('#StrokeWidth_TextBox').val(),
+      'stroke-width' : PS_WIDTH*$('#StrokeWidth_TextBox').val(),
       'stroke-linejoin': 'round'
     })
     if($('input[name="stroke"]:checked').attr('id')==='dotted_line'){
@@ -159,7 +159,7 @@ function add_arrow(){
     dummy_arrow.attr({
       'fill': 'none',
       'stroke': $('#stroke_color').val(),
-      'stroke-width' : PATH_STROKE_WIDTH*$('#StrokeWidth_TextBox').val(),
+      'stroke-width' : PS_WIDTH*$('#StrokeWidth_TextBox').val(),
       'stroke-linejoin': 'round'
     })
     if($('input[name="stroke"]:checked').attr('id')==='dotted_line'){
@@ -206,7 +206,7 @@ function add_Tiket_gate(){
     draw.select('.dummy').attr({
       'fill': 'none',
       'stroke': $('#stroke_color').val(),
-      'stroke-width' : PATH_STROKE_WIDTH*$('#StrokeWidth_TextBox').val(),
+      'stroke-width' : PS_WIDTH*$('#StrokeWidth_TextBox').val(),
       'stroke-linejoin': 'round'
     })
     if($('input[name="stroke"]:checked').attr('id')==='dotted_line'){
@@ -246,7 +246,7 @@ function add_reducescale(){
     dummy_scale.attr({
       'fill': 'none',
       'stroke': $('#stroke_color').val(),
-      'stroke-width' : PATH_STROKE_WIDTH*$('#StrokeWidth_TextBox').val(),
+      'stroke-width' : PS_WIDTH*$('#StrokeWidth_TextBox').val(),
       'stroke-linejoin': 'round'
     })
     if($('input[name="stroke"]:checked').attr('id')==='dotted_line'){
@@ -303,7 +303,7 @@ function add_graduationFrame(){
     dummy_graduationFrame.attr({
       'fill': 'none',
       'stroke': $('#stroke_color').val(),
-      'stroke-width' : PATH_STROKE_WIDTH*$('#StrokeWidth_TextBox').val(),
+      'stroke-width' : PS_WIDTH*$('#StrokeWidth_TextBox').val(),
       'stroke-linejoin': 'round'
     })
     if($('input[name="stroke"]:checked').attr('id')==='dotted_line'){
@@ -339,7 +339,7 @@ function draw_circle(){
         'cx' : sx,
         'cy' : sy,
         'fill': $('input[name="draw_line_fillRadio"]:checked').val(),
-        'stroke-width' : PATH_STROKE_WIDTH * $('#StrokeWidth_TextBox').val(),
+        'stroke-width' : PS_WIDTH * $('#StrokeWidth_TextBox').val(),
         'stroke' : $('#stroke_color').val()
       })
       if($('input[name="draw_line_fillRadio"]:checked').val()==='custom') make_circle.fill($('#draw_fill_color').val());
@@ -389,7 +389,7 @@ function draw_rect(){
       let back_num = getPathCirclePos();
       make_path = draw.path().attr({
         'fill': $('input[name="draw_line_fillRadio"]:checked').val(),
-        'stroke-width' : PATH_STROKE_WIDTH * $('#StrokeWidth_TextBox').val(),
+        'stroke-width' : PS_WIDTH * $('#StrokeWidth_TextBox').val(),
         'stroke' : $('#stroke_color').val(),
         'stroke-linejoin': 'round'
       })
@@ -454,7 +454,7 @@ function add_text(){
       });
       let dummy_Bra_text = draw.plain(tactileGraphic().convertText(transed_BraText));//文字を点字表現に変換
       let font_family = ($('input[name="braillefont"]:checked').attr('id')==='IBfont') ? 'Ikarashi Braille' : '点字線なし';
-      let font_stroke = ($('input[name="braillefont"]:checked').attr('id')==='IBfont') ? String(PATH_STROKE_WIDTH * 0.25) : '';
+      let font_stroke = ($('input[name="braillefont"]:checked').attr('id')==='IBfont') ? String(PS_WIDTH * 0.25) : '';
       dummy_Bra_text.attr({
         'stroke-width' :  font_stroke,
         'font-family': font_family,
