@@ -109,9 +109,8 @@ function RadioEvent_set(unredo_flag){
   }
 
   if(nowchecked!=="Draw"){
-    let current_path = draw.select('.drawing_path').first();
+    let current_path = SVG.get('#'+now_drawing_path_ID);
     if(current_path){
-      current_path.removeClass('drawing_path');
       if(!unredo_flag) current_path.attr({'d' : drawing_path_dpoint});
       now_drawing_path_ID = "";
       drawing_path_dpoint = "";
@@ -209,7 +208,7 @@ function set_contextMenu(){
         icon: 'fa-pencil',
         disabled: function(){
           let flag;
-          (draw.select('.drawing_path').first()) ? flag = false : flag = true;
+          SVG.get('#' + now_drawing_path_ID) ? flag = false : flag = true;
           return flag;
         }
       },
@@ -438,7 +437,8 @@ function update_dottedLine(){
     let transNumber = leaveOnlyNumber($('#dottedLine_line').val());
     $('#dottedLine_line').val(transNumber);
     if(!transNumber.match(/[^0-9\.]/)){
-      draw.select('.edit_select.path , .fragmented , .drawing_path').each(function(i,children){
+      let drawing_path_selector = now_drawing_path_ID === '' ? '' : ',#' + now_drawing_path_ID;
+      draw.select('.edit_select.path , .fragmented' + drawing_path_selector).each(function(i,children){
         if(this.attr('stroke-dasharray')!==undefined && this.attr('stroke-dasharray')!==''){
           this.attr({ 'stroke-dasharray': PS_WIDTH * $('#dottedLine_line').val() + ' ' +  PS_WIDTH * $('#dottedLine_space').val()});
         }
@@ -456,7 +456,8 @@ function update_StrokeWidth_TextBox(){
     let transNumber = leaveOnlyNumber($('#StrokeWidth_TextBox').val());
     $('#StrokeWidth_TextBox').val(transNumber);
     if(!transNumber.match(/[^0-9\.]/)){
-      draw.select('.edit_select.path , .fragmented , .drawing_path').each(function(i,children){
+      let drawing_path_selector = now_drawing_path_ID === '' ? '' : ',#' + now_drawing_path_ID;
+      draw.select('.edit_select.path , .fragmented' + drawing_path_selector).each(function(i,children){
         this.attr({'stroke-width': Number(transNumber) * PS_WIDTH });
         if(this.attr('stroke-dasharray')!==undefined && this.attr('stroke-dasharray')!=='')this.attr({'stroke-dasharray': PS_WIDTH});
       })
@@ -525,39 +526,41 @@ function getmousepoint(mode , mouseevent , px , py){
     let mini_pA, mini_pB, mini_pC;
     let mini_x1 , mini_y1 , mini_x2 , mini_y2;
     let path_x1 , path_y1 , path_x2 , path_y2;
-    draw.select('.connected:not(.drawing_path)').each(function(i,children){
-      let dpoint = this.clear().array().settle() //pathのdpoint配列を取得
-      for(let j=0; j < dpoint.length - 1; j++){
-        if(dpoint[j + 1][0] !== 'Z'){
-          path_x1 = Number( dpoint[j][1]) , path_y1 = Number( dpoint[j][2])
-          path_x2 = Number( dpoint[j + 1][1]) , path_y2 = Number( dpoint[j + 1][2])
-        }else{
-          path_x1 = Number( dpoint[j][1]) , path_y1 = Number( dpoint[j][2])
-          path_x2 = Number( dpoint[0][1]) , path_y2 = Number( dpoint[0][2])
-        }
-
-        let pA = -Number(path_y2) + Number(path_y1)//補正前の直線パラメータのa,b,c
-        let pB =  Number(path_x2) - Number(path_x1)
-        let pC = -pA * Number(path_x1) - pB * Number(path_y1);
-
-        let x1 = path_x1  //座標パラメータ取得
-        let y1 = path_y1
-        let x2 = path_x2
-        let y2 = path_y2
-
-        let relativeXY = get_relativeXY(x1,y1,x2,y2,thre_xy); //直線の領域のx,y座標
-
-        if(mx < relativeXY.max_x && mx > relativeXY.min_x && my < relativeXY.max_y && my > relativeXY.min_y){ //マウスポイントが閾値の領域内にあったら
-          let dis = Math.abs(pA * mx + pB * my + pC)/Math.sqrt(pA * pA + pB * pB); //直線とマウスポイントの距離
-          if(Min_dis==="EMPTY"){ //Min_disがEMPTY(一度も書き換えられていない)
-            Min_dis = dis;
-            mini_pA = pA , mini_pB = pB , mini_pC = pC
-            mini_x1= x1 , mini_y1= y1 , mini_x2= x2 , mini_y2= y2
+    draw.select('.connected').each(function(i,children){
+      if(this.id() !== now_drawing_path_ID){
+        let dpoint = this.clear().array().settle() //pathのdpoint配列を取得
+        for(let j=0; j < dpoint.length - 1; j++){
+          if(dpoint[j + 1][0] !== 'Z'){
+            path_x1 = Number( dpoint[j][1]) , path_y1 = Number( dpoint[j][2])
+            path_x2 = Number( dpoint[j + 1][1]) , path_y2 = Number( dpoint[j + 1][2])
           }else{
-            if(Min_dis > dis){
-              Min_dis = dis; //disが最小ならば
+            path_x1 = Number( dpoint[j][1]) , path_y1 = Number( dpoint[j][2])
+            path_x2 = Number( dpoint[0][1]) , path_y2 = Number( dpoint[0][2])
+          }
+
+          let pA = -Number(path_y2) + Number(path_y1)//補正前の直線パラメータのa,b,c
+          let pB =  Number(path_x2) - Number(path_x1)
+          let pC = -pA * Number(path_x1) - pB * Number(path_y1);
+
+          let x1 = path_x1  //座標パラメータ取得
+          let y1 = path_y1
+          let x2 = path_x2
+          let y2 = path_y2
+
+          let relativeXY = get_relativeXY(x1,y1,x2,y2,thre_xy); //直線の領域のx,y座標
+
+          if(mx < relativeXY.max_x && mx > relativeXY.min_x && my < relativeXY.max_y && my > relativeXY.min_y){ //マウスポイントが閾値の領域内にあったら
+            let dis = Math.abs(pA * mx + pB * my + pC)/Math.sqrt(pA * pA + pB * pB); //直線とマウスポイントの距離
+            if(Min_dis==="EMPTY"){ //Min_disがEMPTY(一度も書き換えられていない)
+              Min_dis = dis;
               mini_pA = pA , mini_pB = pB , mini_pC = pC
               mini_x1= x1 , mini_y1= y1 , mini_x2= x2 , mini_y2= y2
+            }else{
+              if(Min_dis > dis){
+                Min_dis = dis; //disが最小ならば
+                mini_pA = pA , mini_pB = pB , mini_pC = pC
+                mini_x1= x1 , mini_y1= y1 , mini_x2= x2 , mini_y2= y2
+              }
             }
           }
         }

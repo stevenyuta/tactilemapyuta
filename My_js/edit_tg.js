@@ -2,7 +2,7 @@
 //要素の移動を行う機能
 ******************************************************/
 function edit(){
-  let gX , gY , gWidth , gHeight;
+  let gX , gY , gWidth , gHeight; //選択ボックスの左隅の座標(gX,gY)と幅(gWidth)と高さ（gHeight）
   $('#rb_width').off('focusout').on('focusout' , function(){update_resizeBox('width')});
   $('#rb_height').off('focusout').on('focusout' , function(){update_resizeBox('height')});
   $('#textInfo_TextBox').off('focusout').on('focusout' , update_TextInfoBox);
@@ -28,8 +28,9 @@ mode = off : イベントの全削除
 function edit_mousedown_up(mode){
   draw.off('mousedown').off('mouseup');
   if(mode!=="off"){
+    //select_hoverを持つ要素が存在するということは要素に触れているということ。その要素を選択状態にして、この時は範囲選択はしない。
     if(draw.select('.select_hover').first()){
-      let target = draw.select('.select_hover').first();
+      let target = draw.select('.select_hover').first(); //触れている要素を入手
       target.on('mousedown', function(e){
         //shiftキーを押していなければ複数選択しないので、一度edit_clearする
         if(!(input_key_buffer[16] || input_key_buffer[17])) edit_clear();
@@ -37,7 +38,7 @@ function edit_mousedown_up(mode){
         this.addClass('edit_select');
         //選択状態の要素のパラメータ更新
         set_SelectElement_Param();
-        //選択ハンドルのイベントを再設定
+        //選択ハンドルの位置やイベントを再設定
         upload_handle();
         this.off('mousedown');
         this.removeClass('select_hover');
@@ -53,8 +54,7 @@ function edit_mousedown_up(mode){
           update_editgroup(affin_mat , "drag");
         });
       });
-
-    }else if(draw.select('.edit_select').first()===undefined){ //選択状態の要素が何もない場合
+    }else if(draw.select('.edit_select').first()===undefined){ //要素に触れてなく、選択状態の要素が何もない場合
       let select_rect = draw.rect().addClass('select_rect');
       select_rect.attr({  //範囲指定用四角形
         'fill' : 'none',

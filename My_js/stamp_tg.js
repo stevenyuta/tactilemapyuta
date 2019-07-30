@@ -148,7 +148,8 @@ function add_arrow(){
   let symbol_id;
   draw.off('mousemove').mousemove(function(e){
     selector_delete('.dummy');
-    let mx = getmousepoint('normal',e).x , my = getmousepoint('normal',e).y; //描画領域上でのマウスポイント計算
+    mx = getmousepoint('normal',e).x
+    my = getmousepoint('normal',e).y; //描画領域上でのマウスポイント計算
     let back_num = getPathCirclePos();
     let dummy_arrow = draw.path().M({x: mx-18, y: my}).L({x: mx+24,y:my}).L({x: mx, y: my-12}).L({x: mx+24,y:my}).L({x: mx,y:my+12});
     symbol_id = dummy_arrow.attr('id');
@@ -184,7 +185,8 @@ function add_Tiket_gate(){
   let symbol_id = new Array();
   draw.off('mousemove').mousemove(function(e){
     selector_delete('.dummy');
-    let mx = getmousepoint('normal',e).x , my = getmousepoint('normal',e).y; //描画領域上でのマウスポイント計算
+    mx = getmousepoint('normal',e).x
+    my = getmousepoint('normal',e).y; //描画領域上でのマウスポイント計算
     let back_num = getPathCirclePos();
     let dummy_tiket_gate1 = draw.path().M({x: mx-40, y: my}).L({x: mx-15,y:my}).addClass('dummy').back();
     let dummy_tiket_gate2 = draw.path().M({x: mx-15, y: my-15}).L({x: mx-15,y:my+15}).addClass('dummy').back();
@@ -234,7 +236,8 @@ function add_reducescale(){
   let symbol_id = new Array();
   draw.off('mousemove').mousemove(function(e){
     selector_delete('.dummy');
-    let mx = getmousepoint('normal',e).x , my = getmousepoint('normal',e).y; //描画領域上でのマウスポイント計算
+    mx = getmousepoint('normal',e).x
+    my = getmousepoint('normal',e).y; //描画領域上でのマウスポイント計算
     let back_num = getPathCirclePos();
     let dummy_scale = draw.path().M({x: mx-45, y: my}).L({x: mx-45,y:my-15}).L({x: mx-45, y: my+15}).L({x: mx-45,y:my})
                                  .L({x: mx+45, y: my}).L({x: mx+45,y:my-15}).L({x: mx+45, y: my+15}).L({x: mx+45,y:my});
@@ -273,7 +276,8 @@ function add_graduationFrame(){
 
   draw.off('mousemove').mousemove(function(e){
     selector_delete('.dummy');
-    let mx = getmousepoint('normal',e).x , my = getmousepoint('normal',e).y; //描画領域上でのマウスポイント計算
+    mx = getmousepoint('normal',e).x;
+    my = getmousepoint('normal',e).y; //描画領域上でのマウスポイント計算
     let back_num = getPathCirclePos();
     let dummy_graduationFrame = draw.path()
                                 .M({x: -F_WIDTH/2, y:-F_HEIGHT/2 - F_SCALE}).L({x: -F_WIDTH/2, y: -F_HEIGHT/2}) //縦ひげ1
@@ -433,7 +437,8 @@ function add_text(){
   let ink_id , bra_id;
   draw.mousemove(function(e){
     selector_delete('.dummy');
-    let mx = getmousepoint('normal',e).x , my = getmousepoint('normal',e).y; //描画領域上でのマウスポイント計算
+    mx = getmousepoint('normal',e).x;
+    my = getmousepoint('normal',e).y; //描画領域上でのマウスポイント計算
     if($('#check_ink').prop('checked')){
       let dummy_Ink_text = draw.plain( $("#InkChar").val() );
       dummy_Ink_text.attr({

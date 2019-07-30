@@ -78,6 +78,7 @@ const F_SCALE = SVG_RATIO * 5; //5mm
 ************************/
 
 let nowchecked; //現在選択しているモードを格納
+let mx = 0 , my = 0;
 
 let cash_array = new Array()　, cash_pointer = 0; //undo、redo機能用
 let input_key_buffer = new Array(); //キー入力状態を保有  キーコードの数字に対応する配列が　⇒　押してる時：true ,  押していない時： false
@@ -150,7 +151,8 @@ $(window).on('load',function () {
 
   $('#resetStrokeWidth_Button').click(function(){  //線幅のリセットボタンを押したときの処理
     $("#StrokeWidth_TextBox").val(1);
-    draw.select('.edit_select.path , .fragmented , .drawing_path').each(function(i,children){
+    let drawing_path_selector = now_drawing_path_ID === '' ? '' : ',#' + now_drawing_path_ID;
+    draw.select('.edit_select.path , .fragmented' + drawing_path_selector).each(function(i,children){
       this.attr({ 'stroke-width':PS_WIDTH });
       if(this.attr('stroke-dasharray')!== undefined && this.attr('stroke-dasharray')!=='') this.attr({'stroke-dasharray':PS_WIDTH}); //点線の場合
     })
@@ -270,11 +272,12 @@ $(window).on('load',function () {
   線種変更ラジオボタンの設定
   *************************/
   $('input[name="stroke"]:radio').off('change').on('change',function(){
+    let drawing_path_selector = now_drawing_path_ID === '' ? '' : ',#' + now_drawing_path_ID;
     if($(this).attr('id')==='solid_line'){ //実線の場合
-      draw.select('.edit_select.connected , .fragmented , .drawing_path').attr({'stroke-dasharray': ''});
+      draw.select('.edit_select.connected , .fragmented' + drawing_path_selector).attr({'stroke-dasharray': ''});
       $('.dotted_option').hide();
     }else{ //点線の場合
-      draw.select('.edit_select.connected,.edit_select.circle,.fragmented,.drawing_path').attr({'stroke-dasharray': PS_WIDTH * $('#StrokeWidth_TextBox').val()});
+      draw.select('.edit_select.connected,.edit_select.circle,.fragmented' + drawing_path_selector).attr({'stroke-dasharray': PS_WIDTH * $('#StrokeWidth_TextBox').val()});
       $('.dotted_option').show();
     }
   })
@@ -290,7 +293,8 @@ $(window).on('load',function () {
   $('#reset_dottedLine').click(function(){  //点線の詳細情報の線幅に合わせるボタンを押したときの処理
     $("#dottedLine_line").val($('#StrokeWidth_TextBox').val());
     $("#dottedLine_space").val($('#StrokeWidth_TextBox').val());
-    draw.select('.edit_select.path , .fragmented , .drawing_path').each(function(i,children){
+    let drawing_path_selector = now_drawing_path_ID === '' ? '' : ',#' + now_drawing_path_ID;
+    draw.select('.edit_select.path , .fragmented' + drawing_path_selector).each(function(i,children){
       if(this.attr('stroke-dasharray')!==undefined && this.attr('stroke-dasharray')!==''){
         this.attr({ 'stroke-dasharray': PS_WIDTH * $('#dottedLine_line').val() + ' ' +  PS_WIDTH * $('#dottedLine_space').val()});
       }
@@ -301,7 +305,8 @@ $(window).on('load',function () {
   線色変更ガジェットの設定
   **************************/
   $("#stroke_color").off('change').on("change", function(){
-     draw.select('.edit_select.path , .edit_select.circle , .fragmented ,.drawing_path').attr({'stroke' : $("#stroke_color").val()});
+    let drawing_path_selector = now_drawing_path_ID === '' ? '' : ',#' + now_drawing_path_ID;
+     draw.select('.edit_select.path , .edit_select.circle , .fragmented' + drawing_path_selector).attr({'stroke' : $("#stroke_color").val()});
      draw.select('.fragmented_PathGroup').attr({'stroke_tmp' : $("#stroke_color").val()});
   });
 
@@ -309,11 +314,13 @@ $(window).on('load',function () {
   塗りつぶしラジオボタンの設定（線の描画モードで使うほう）
   **************************************************/
   $('input[name="draw_line_fillRadio"]:radio').off('change').on('change',function(){ //ラジオボタンを変えたときに行う処理
+    let drawing_path_selector = now_drawing_path_ID === '' ? '' : '#' + now_drawing_path_ID;
     draw.select('.drawing_path').fill($('input[name="draw_line_fillRadio"]:checked').val());
-    if($('input[name="draw_line_fillRadio"]:checked').val()==='custom') draw.select('.drawing_path').fill($('#draw_fill_color').val());
+    if($('input[name="draw_line_fillRadio"]:checked').val()==='custom') draw.select(drawing_path_selector).fill($('#draw_fill_color').val());
   });
   $("#draw_fill_color").off('change').on("change", function(){ //カスタムの設定で色を変えたときに行う処理
-     draw.select('.drawing_path').fill($('#draw_fill_color').val());
+     let drawing_path_selector = now_drawing_path_ID === '' ? '' : '#' + now_drawing_path_ID;
+     draw.select(drawing_path_selector).fill($('#draw_fill_color').val());
      $('#fill_color').val($('#draw_fill_color').val());
      $("#draw_fill_custom").prop('checked', true);
   });

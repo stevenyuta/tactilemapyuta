@@ -542,8 +542,8 @@ function fig_connect(){
 
 function fig_pathUpload(){
   //描画中の線の更新
-  if(draw.select('.drawing_path').first()){
-    drawing_path = draw.select('.drawing_path').first();
+  if(SVG.get('#' + now_drawing_path_ID)){
+    drawing_path = SVG.get('#' + now_drawing_path_ID);
     let dpoint = drawing_path.clear().array().settle();
     current_x = dpoint[dpoint.length-1][1];
     current_y = dpoint[dpoint.length-1][2];
