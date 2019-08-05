@@ -174,7 +174,7 @@ function continue_setSVG(input_draw,vx,vy,vwidth,vheight){ //svgデータを読�
   defs_set();
   set_zoom();
   set_handle(); //選択モードで使うハンドルの描画
-  draw_gridline(3000,3000,50,50); //グリッド線の描画
+  draw_gridline(3000,3000,75,75); //グリッド線の描画
   draw_guiderect(); //ガイドの描画
   checkBox_change();
   $('input[name="tg_mode"]:checked').prop('checked', true).trigger('change'); //モードを設定

@@ -305,14 +305,16 @@ $(window).on('load',function () {
   塗りつぶしラジオボタンの設定（線の描画モードで使うほう）
   **************************************************/
   $('input[name="draw_line_fillRadio"]:radio').off('change').on('change',function(){ //ラジオボタンを変えたときに行う処理
-    let drawing_path_selector = (now_drawing_path_ID === '' || now_drawing_path_ID === undefined) ? '' : '#' + now_drawing_path_ID;
-    draw.select(drawing_path_selector).fill($('input[name="draw_line_fillRadio"]:checked').val());
-    if($('input[name="draw_line_fillRadio"]:checked').val()==='custom') draw.select(drawing_path_selector).fill($('#draw_fill_color').val());
+    if(now_drawing_path_ID !== '' && now_drawing_path_ID !== undefined){
+      draw.select('#' + now_drawing_path_ID).fill($('input[name="draw_line_fillRadio"]:checked').val());
+      if($('input[name="draw_line_fillRadio"]:checked').val()==='custom') draw.select('#' + now_drawing_path_ID).fill($('#draw_fill_color').val());
+    }
   });
   $("#draw_fill_color").off('change').on("change", function(){ //カスタムの設定で色を変えたときに行う処理
-     let drawing_path_selector = (now_drawing_path_ID === '' || now_drawing_path_ID === undefined) ? '' : '#' + now_drawing_path_ID;
-     draw.select(drawing_path_selector).fill($('#draw_fill_color').val());
-     $('#custom_fill_color').val($('#draw_fill_color').val());
+     if(now_drawing_path_ID !== '' && now_drawing_path_ID !== undefined){
+       draw.select('#' + now_drawing_path_ID).fill($('#draw_fill_color').val());
+       $('#custom_fill_color').val($('#draw_fill_color').val());
+     }
      $("#draw_fill_custom").prop('checked', true);
   });
 

@@ -245,14 +245,20 @@ function draw_gridline(range_x,range_y,interval_x,interval_y){
   let gridline_group =  draw.group().attr({ id: 'gridline_group' }).front();
   //縦方向の線を引数のパラメータに従って描画
   for(let i=-range_x; i<=range_x; i+=interval_x){
-    let line = draw.line(i, range_y, i, -range_y).attr({ 'stroke-width': 0.3 });
-    if(i==0) line.attr({'stroke' : '#ff0000'}).attr({ 'stroke-width': 2 });
+    let line = draw.line(i, range_y, i, -range_y).attr({
+      'stroke-width': 1,
+      'stroke-dasharray': '1 5'
+    });
+    if(i===0) line.attr({'stroke' : '#ff0000'}).attr({ 'stroke-width': 2 });
     gridline_group.add(line);
   }
   //横方向の線を引数のパラメータに従って描画
   for(let i=-range_y; i<=range_y; i+=interval_y){
-    let line = draw.line(range_x, i, -range_x, i).attr({ 'stroke-width': 0.3 });
-    if(i==0) line.attr({'stroke' : '#ff0000'}).attr({ 'stroke-width': 2 });
+    let line = draw.line(range_x, i, -range_x, i).attr({
+      'stroke-width': 1,
+      'stroke-dasharray': '1 5'
+    });
+    if(i===0) line.attr({'stroke' : '#ff0000'}).attr({ 'stroke-width': 2 });
     gridline_group.add(line);
   }
   //グリッド線の表示非表示チェックボックスがチェックされていない場合はグリッド線を非表示にする
@@ -638,7 +644,7 @@ function undo(){
     //cash_arrayの中に記載されているsvgデータを書き込み
     draw.svg(cash_array[++cash_pointer]);
     //グリッド線を描画(グリッド線はデータが大きいので消しておいてあった)
-    draw_gridline(3000,3000,50,50);
+    draw_gridline(3000,3000,75,75);
     //defs（塗りつぶし機能に使う）の設定
     defs_set();
     checkBox_change();
@@ -666,7 +672,7 @@ function redo(){
     draw.viewbox(vx, vy, vwidth, vheight);
     draw.svg(cash_array[--cash_pointer]);
 
-    draw_gridline(3000,3000,50,50);
+    draw_gridline(3000,3000,75,75);
     defs_set();
     checkBox_change();
     RadioEvent_set(true);
@@ -692,6 +698,9 @@ function defs_set(){
   draw.select('.pattern').each(function(i, children){
     this.remove()
   })
+  let diameter = 1.5 * SVG_RATIO; //直径:1.5mm
+  let defs_width = 3.5 * SVG_RATIO;
+  let defs_height = 6 * SVG_RATIO;
   //斜線
   let diagonal_pattern = draw.pattern(8, 8, function(add) {
     add.rect(8 , 8).attr({
@@ -708,28 +717,28 @@ function defs_set(){
   }).addClass('pattern');
 
   //水玉模様（白色）
-  let polkadot_pattern = draw.pattern(10, 20, function(add) {
-    add.rect(10 , 20).attr({
+  let polkadot_pattern = draw.pattern(defs_width, defs_height, function(add) {
+    add.rect(defs_width , defs_height).attr({
       'fill' : '#fff'
     })
-    add.circle(5).attr({
-      'cx' : '5',
+    add.circle(diameter).attr({
+      'cx' : defs_width/2,
       'cy' : '0',
       'fill' : '#000'
     })
-    add.circle(5).attr({
+    add.circle(diameter).attr({
       'cx' : '0',
-      'cy' : '10',
+      'cy' : defs_height/2,
       'fill' : '#000'
     })
-    add.circle(5).attr({
-      'cx' : '10',
-      'cy' : '10',
+    add.circle(diameter).attr({
+      'cx' : defs_width,
+      'cy' : defs_height/2,
       'fill' : '#000'
     })
-    add.circle(5).attr({
-      'cx' : '5',
-      'cy' : '20',
+    add.circle(1.5*SVG_RATIO).attr({
+      'cx' : defs_width/2,
+      'cy' : defs_height,
       'fill' : '#000'
     })
   })
@@ -738,28 +747,28 @@ function defs_set(){
   }).addClass('pattern')
 
   //水玉模様（背景青色）
-  let polkadot_water_pattern = draw.pattern(10, 20, function(add) {
-    add.rect(10 , 20).attr({
+  let polkadot_water_pattern = draw.pattern(defs_width, defs_height, function(add) {
+    add.rect(defs_width , defs_height).attr({
       'fill' : '#1E90FF'
     })
-    add.circle(5).attr({
-      'cx' : '5',
+    add.circle(diameter).attr({
+      'cx' : defs_width/2,
       'cy' : '0',
       'fill' : '#000'
     })
-    add.circle(5).attr({
+    add.circle(diameter).attr({
       'cx' : '0',
-      'cy' : '10',
+      'cy' : defs_height/2,
       'fill' : '#000'
     })
-    add.circle(5).attr({
-      'cx' : '10',
-      'cy' : '10',
+    add.circle(diameter).attr({
+      'cx' : defs_width,
+      'cy' : defs_height/2,
       'fill' : '#000'
     })
-    add.circle(5).attr({
-      'cx' : '5',
-      'cy' : '20',
+    add.circle(diameter).attr({
+      'cx' : defs_width/2,
+      'cy' : defs_height,
       'fill' : '#000'
     })
   })
