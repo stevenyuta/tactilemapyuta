@@ -17,49 +17,49 @@ function cash_svg(){ //SVG文字列を配列に格納 undo時に随時読み込�
 
 function undredo_checker(){
   if(cash_array.length > cash_pointer + 1){  //cash_arrayにデータがある場合
-    $('#undo').css({
+    $('#button_undo').css({
       'cursor' :'pointer',
       'background-color' : '#E2EDF9',
       'border-color' : 'orange'
     });
-    $('#undo').hover(function() {
+    $('#button_undo').hover(function() {
       $(this).css('background', '#31A9EE');
     }, function() {
       $(this).css('background', '#E2EDF9');
     });
-    $('#undo').prop("disabled", false);
+    $('#button_undo').prop("disabled", false);
   }else{
-    $('#undo').css({
+    $('#button_undo').css({
       'cursor' : 'default',
       'background-color' : '#C0C0C0',
       'color' : '#000000',
       'border-color' : '#696969'
     });
-    $('#undo').off('mouseenter mouseleave');
-    $('#undo').prop("disabled", true);
+    $('#button_undo').off('mouseenter mouseleave');
+    $('#button_undo').prop("disabled", true);
   }
 
   if(cash_pointer > 0){  //cash_arrayにデータがある場合
-    $('#redo').css({
+    $('#button_redo').css({
       'cursor' : 'pointer',
       'background-color' : '#E2EDF9',
       'border-color' : 'orange',
     });
-    $('#redo').hover(function() {
+    $('#button_redo').hover(function() {
       $(this).css('background', '#31A9EE');
     }, function() {
       $(this).css('background', '#E2EDF9');
     });
-    $('#redo').prop("disabled", false);
+    $('#button_redo').prop("disabled", false);
   }else{
-    $('#redo').css({
+    $('#button_redo').css({
       'cursor':'default',
       'background-color' : '#C0C0C0',
       'color' : '#000000',
       'border-color' : '#696969'
     });
-    $('#redo').off('mouseenter mouseleave');
-    $('#redo').prop("disabled", true);
+    $('#button_redo').off('mouseenter mouseleave');
+    $('#button_redo').prop("disabled", true);
   }
 }
 

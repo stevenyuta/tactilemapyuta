@@ -15,8 +15,7 @@ function editpath(){
     editpath_mousemove('normal');
   })
   set_contextMenu();
-  var mx = 0 , my = 0;
-  var base_x = 0 , base_y = 0;
+  let base_x = 0 , base_y = 0;
 }
 //マウスを動かしているときの関数
 function editpath_mousemove(mode,param1,param2){
@@ -677,14 +676,19 @@ function verhor_fragmentedPath(){
 //レイヤー変更ボタン、塗りつぶしボタンを表示すべきか判定
 *****************************************************/
 function checkEditPath_gadget(){
-  $('.stroke_option').hide();
-  $('#layer_table').hide();
-  $('#select_fill_table').hide();
+  $('.stroke_option , .dotted_option').hide();
+  $("#radio_solid_path").prop('checked', true);
+  $('#table_layer').hide();
+  $('#table_select_fill').hide();
   if(draw.select('.fragmented_PathGroup').first()!==undefined){
     $('.stroke_option').show();
-    $('#layer_table').show();
-    $('#select_fill_table').show();
+    $('#table_layer').show();
+    $('#table_select_fill').show();
   }
+  draw.select('.fragmented').each(function(i,children){
+    if(this.attr('stroke-dasharray')!==undefined) $('.dotted_option').show();
+    $("#radio_dotted_path").prop('checked', true);
+  })
 }
 
 /****************************************

@@ -13,7 +13,7 @@ function RadioEvent_set(unredo_flag){
   //SVG_Element、画像のイベント解除と触れたときのマウスカーソルのデフォルト化
   draw.select('.SVG_Element , .image').off().attr({'cursor':'default'});
   //幅と高さのテキストボックスのイベント解除
-  $('#rb_width , #rb_height').off();
+  $('#textbox_selectBox_width , #textbox_selectBox_height').off();
   //
   draw.select('.connected').each(function(i,children){
     if(this.clear().array().settle().length < 2) this.remove();
@@ -40,21 +40,21 @@ function RadioEvent_set(unredo_flag){
   //線の太さ、色変更
   $('.stroke_option , .dotted_option').hide();
   //墨字サイズ変更
-  $('.resizeInk_gadget').hide();
+  $('.gadget_resizeInk').hide();
   //点字サイズ変更
-  $('.resizeBraille_gadget').hide();
+  $('.gadget_resize_braille').hide();
   //文字内容表示・変更テキストボックス
-  $('.textInfo_gadget').hide();
+  $('.gadget_textInfo').hide();
   //画像透過度変更
   $('.gadget_imageOpacity').hide();
   //線や四角形、円を描くときの塗りつぶしの設定
-  $('#draw_fill_table').hide();
+  $('#table_draw_fill').hide();
   //レイヤ変更
-  $('#layer_table').hide();
+  $('#table_layer').hide();
   //選択状態の塗りつぶし変更
-  $('#select_fill_table').hide();
+  $('#table_select_fill').hide();
   //スタンプの選択
-  $('#stamp_table').hide();
+  $('#table_stamp').hide();
   //選択モード時の選択ボックス（選択している要素の大きさを示す）の設定
   $('.resizeBox_textbox').hide();
 
@@ -66,8 +66,8 @@ function RadioEvent_set(unredo_flag){
     case 'Draw':
       //右のメニューの線種線色と塗りつぶしの表示
       $('.stroke_option').show();
-      if($('input[name="stroke"]:checked').attr('id')==='dotted_line') $('.dotted_option').show();
-      $('#draw_fill_table').show();
+      if($('input[name="stroke"]:checked').attr('id')==='radio_dotted_path') $('.dotted_option').show();
+      $('#table_draw_fill').show();
       //draw_line関数を起動して線の描画を開始 draw_tg.jsファイルを参照
       draw_line();
       break;
@@ -82,8 +82,8 @@ function RadioEvent_set(unredo_flag){
       break;
     case 'DrawRect':
       $('.stroke_option').show();
-      if($('input[name="stroke"]:checked').attr('id')==='dotted_line') $('.dotted_option').show();
-      $('#draw_fill_table').show();
+      if($('input[name="stroke"]:checked').attr('id')==='radio_dotted_path') $('.dotted_option').show();
+      $('#table_draw_fill').show();
       //四角形描画モードの開始 stamp_tg.jsファイルを参照
       draw_rect();
       break;
@@ -94,13 +94,13 @@ function RadioEvent_set(unredo_flag){
       break;
     case 'DrawCircle':
       $('.stroke_option').show();
-      if($('input[name="stroke"]:checked').attr('id')==='dotted_line') $('.dotted_option').show();
-      $('#draw_fill_table').show();
+      if($('input[name="stroke"]:checked').attr('id')==='radio_dotted_path') $('.dotted_option').show();
+      $('#table_draw_fill').show();
       //円の描画モード stamp_tg.jsファイルを参照
       draw_circle();
       break;
     case 'Stamp':
-      $('#stamp_table').show();
+      $('#table_stamp').show();
       //スタンプ（文字or記号）モードの開始 stamp_tg.jsファイルを参照
       set_Stampmode();
       break;
@@ -256,7 +256,7 @@ function draw_gridline(range_x,range_y,interval_x,interval_y){
     gridline_group.add(line);
   }
   //グリッド線の表示非表示チェックボックスがチェックされていない場合はグリッド線を非表示にする
-  if(!$('#gridline').prop('checked')) gridline_group.attr({'display':'none'});
+  if(!$('#display_gridline').prop('checked')) gridline_group.hide();
 }
 
 /********************************************************************
@@ -266,7 +266,7 @@ function draw_guiderect(){
   //既にガイドが描画されていない場合に描画する
   if(SVG.get('guiderect_group')===null){
     //ダウンロードに使うガイドを格納するグループを作成
-    let guiderect_group = draw.group().attr({ id: 'guiderect_group' }).back();
+    let guiderect_group = draw.group().attr({ id: 'guiderect_group' }).front();
     //A4のガイドを作成
     let guiderectA4 = draw.rect(GUIDE_WIDTH_A4 + 2 * GUIDE_STROKE_WIDTH , GUIDE_HEIGHT_A4 + 2 * GUIDE_STROKE_WIDTH);
     guiderectA4.addClass('guiderect').addClass('A4').front();
@@ -315,17 +315,17 @@ function draw_guiderect(){
   }
 }
 
-
+//チェックボックスの設定に合わせて描画したものを表示非表示させたりする
 function checkBox_change(){
   //SVG要素の表示非表示チェックボックス
   let svg_element = draw.select('.SVG_Element,.ghost_path,.edit_rect,.init_node,.last_node,.close_node,.closePath_rect,.handle');
   $('#display_DrawElement').prop('checked') ? svg_element.show() : svg_element.hide();
   //画像の表示非表示
-  $('#image').prop('checked') ? SVG.select('.image').show() : SVG.select('.image').hide();
+  $('#display_image').prop('checked') ? SVG.select('.image').show() : SVG.select('.image').hide();
   //グリッド線の表示非表示
-  $('#gridline').prop('checked') ? SVG.get('gridline_group').attr({'display':'inline'}) : SVG.get('gridline_group').attr({'display':'none'});
+  $('#display_gridline').prop('checked') ? SVG.get('gridline_group').show() : SVG.get('gridline_group').hide();
   //点字の日本語変換
-  let font_family = ($('input[name="braillefont"]:checked').attr('id')==='IBfont') ? 'Ikarashi Braille' : '点字線なし';
+  let font_family = ($('input[name="braillefont"]:checked').attr('id')==='IkarashiBraille_font') ? 'Ikarashi Braille' : '点字線なし';
   $('#trans_braille').prop('checked') ? draw.select('.braille').attr({'font-family':'メイリオ'}) : draw.select('.braille').attr({'font-family':font_family});
 
   //ガイドの四角形がA4かB4か
@@ -430,15 +430,15 @@ function leaveOnlyNumber(String_num){
 
 
 /*****************************************************************
-
+点線の幅のテキストボックスの内容に合わせて点線の情報を変化させる関数
 ******************************************************************/
 function update_dottedLine(){
   if(String($('#dottedLine_line').val())!==""){
     let transNumber = leaveOnlyNumber($('#dottedLine_line').val());
     $('#dottedLine_line').val(transNumber);
     if(!transNumber.match(/[^0-9\.]/)){
-      let drawing_path_selector = now_drawing_path_ID === '' ? '' : ',#' + now_drawing_path_ID;
-      draw.select('.edit_select.path , .fragmented' + drawing_path_selector).each(function(i,children){
+      let drawing_path_selector = (now_drawing_path_ID === '' || now_drawing_path_ID === undefined) ? '' : ',#' + now_drawing_path_ID;
+      draw.select('.edit_select.path , .edit_select.circle , .fragmented' + drawing_path_selector).each(function(i,children){
         if(this.attr('stroke-dasharray')!==undefined && this.attr('stroke-dasharray')!==''){
           this.attr({ 'stroke-dasharray': PS_WIDTH * $('#dottedLine_line').val() + ' ' +  PS_WIDTH * $('#dottedLine_space').val()});
         }
@@ -451,13 +451,13 @@ function update_dottedLine(){
 線幅変更用のテキストボックスに値が入力されて決定されたときに実行する関数
 テキストボックスの値に従って線幅を変更する
 ******************************************************************/
-function update_StrokeWidth_TextBox(){
-  if(String($('#StrokeWidth_TextBox').val())!==""){
-    let transNumber = leaveOnlyNumber($('#StrokeWidth_TextBox').val());
-    $('#StrokeWidth_TextBox').val(transNumber);
+function update_textbox_strokewidth(){
+  if(String($('#textbox_strokewidth').val())!==""){
+    let transNumber = leaveOnlyNumber($('#textbox_strokewidth').val());
+    $('#textbox_strokewidth').val(transNumber);
     if(!transNumber.match(/[^0-9\.]/)){
-      let drawing_path_selector = now_drawing_path_ID === '' ? '' : ',#' + now_drawing_path_ID;
-      draw.select('.edit_select.path , .fragmented' + drawing_path_selector).each(function(i,children){
+      let drawing_path_selector = (now_drawing_path_ID === '' || now_drawing_path_ID === undefined) ? '' : ',#' + now_drawing_path_ID;
+      draw.select('.edit_select.path , .edit_select.circle , .fragmented' + drawing_path_selector).each(function(i,children){
         this.attr({'stroke-width': Number(transNumber) * PS_WIDTH });
         if(this.attr('stroke-dasharray')!==undefined && this.attr('stroke-dasharray')!=='')this.attr({'stroke-dasharray': PS_WIDTH});
       })
@@ -470,9 +470,9 @@ function update_StrokeWidth_TextBox(){
 テキストボックスの値に従って墨字のフォントサイズを変更する
 ********************************************************************************/
 function update_resizeInk_TextBox(){
-  if(String($('#resizeInk_TextBox').val())!==""){
-    let transNumber = leaveOnlyNumber($('#resizeInk_TextBox').val());
-    $('#resizeInk_TextBox').val(transNumber);
+  if(String($('#textbox_resize_ink').val())!==""){
+    let transNumber = leaveOnlyNumber($('#textbox_resize_ink').val());
+    $('#textbox_resize_ink').val(transNumber);
     if(!transNumber.match(/[^0-9\.]/)){
       draw.select('.edit_select.ink').attr({ 'font-size': Number(transNumber) * SVG_RATIO * 0.352778 });
     }
@@ -484,9 +484,9 @@ function update_resizeInk_TextBox(){
 テキストボックスの値に従って点字のフォントサイズを変更する
 ********************************************************************************/
 function update_resizeBraille_TextBox(){
-  if(String($('#resizeBraille_TextBox').val())!==""){
-    let transNumber = leaveOnlyNumber($('#resizeBraille_TextBox').val());
-    $('#resizeInk_TextBox').val(transNumber);
+  if(String($('#textbox_resize_braille').val())!==""){
+    let transNumber = leaveOnlyNumber($('#textbox_resize_braille').val());
+    $('#textbox_resize_braille').val(transNumber);
     if(!transNumber.match(/[^0-9\.]/)){
       draw.select('.edit_select.braille').attr({ 'font-size': Number(transNumber) * SVG_RATIO * 0.352778 });
     }
@@ -497,10 +497,10 @@ function update_resizeBraille_TextBox(){
 画像の透過度変更用のテキストボックスに値が入力されて決定されたときに実行する関数
 テキストボックスの値に従って画像の透過度を変更する
 ********************************************************************************/
-function update_ImageOpacity_TextBox(){
-  if(String($('#ImageOpacity_TextBox').val())!==""){
-    let transNumber = leaveOnlyNumber($('#ImageOpacity_TextBox').val());
-    $('#ImageOpacity_TextBox').val(transNumber)
+function update_textbox_image_opacity(){
+  if(String($('#textbox_image_opacity').val())!==""){
+    let transNumber = leaveOnlyNumber($('#textbox_image_opacity').val());
+    $('#textbox_image_opacity').val(transNumber)
     if(!transNumber.match(/[^0-9\.]/)){
       draw.select('.edit_select.image').attr({ 'opacity' : Number(transNumber)/100 });
     }
@@ -511,7 +511,7 @@ function update_ImageOpacity_TextBox(){
 描画領域でのマウス位置を計算し、返す関数
 modeごとに動作が違う
 normal   ⇒  普通に座標を返す
-connect　⇒　近傍の線(path)に近づくと自動的にくっつくようにマウス座標を返却
+connect　⇒　近傍の線(path)に近づくと自動的にくっつくようにマウス座標を返す
 15degree ⇒　引数のpxとpyを基準点として、そこから15度刻みでマウス座標を返す　線の描画モードでctrlキーを押しながら描くときを見てほしい
 90degree ⇒  15degreeの90度版。線の詳細編集でのctrlキーを押しな柄の移動に使う
 ********************************************************************************************************************/
@@ -683,7 +683,6 @@ function selector_delete(selector){
     this.remove();
   })
 }
-
 
 /******************************************************
 //塗りつぶし用のテクチャ属性を定義する関数

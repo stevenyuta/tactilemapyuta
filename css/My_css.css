@@ -1,4 +1,4 @@
-@font-face {
+table_layer@font-face {
 	font-family: 'Ikarashi Braille';
 	src: url(.././いからし点字.ttf);
 }
@@ -8,7 +8,7 @@
 }
 
 
-#main_content{
+.main_content{
   user-select: none; /* CSS3 */
   -moz-user-select: none; <!-- Firefox -->
   -ms-user-select: none;  <!-- Internet Explorer -->
@@ -88,8 +88,8 @@ top_contents
 	margin : 0px 30px 0px 0px;
 }
 
-#downloader a{
-	margin : 0px 30px 0px 0px;
+.downloader a{
+	/*margin : 0px 30px 0px 0px; */
 	font-size : 18px;
 }
 
@@ -116,28 +116,26 @@ top_contents
 /**************************
  left_toolbar
 ***************************/
-#left_toolbar{
+.left_toolbar{
   float : left;
 	margin : 0px 20px 0px 0px;
 }
 
-#left_toolbar input[type="radio"] + label{
-	margin: 0px 0px 20px 0px;
+.left_toolbar input[type="radio"] + label{
+	margin: 0px 0px 15px 0px;
 	padding: 5px 15px; 	/* ボックス内左側の余白を指定する */
   border: 2px solid #006DD9;/* ボックスの境界線を実線で指定する */
+	width: 130px;
+	 text-align: center;
 }
 
-#left_toolbar input[type="radio"]:checked + label {
+.left_toolbar input[type="radio"]:checked + label {
 	background: #31A9EE;/* マウス選択時の背景色を指定する */
 	color: #ffffff; 	/* マウス選択時のフォント色を指定する */
 }
 
-#left_toolbar input[type="button"]{
-	margin: 0px 0px 20px 0px;
-}
-
-#left_toolbar_button{
-	margin: 20px 0px 20px 0px;
+.left_toolbar_button{
+	margin: 20px 0px 0px 0px;
 }
 
 #node_connect{
@@ -165,12 +163,22 @@ top_contents
   background : #31A9EE;
 }
 
-#left_toolbar input[type="checkbox"] + label{
+.left_toolbar input[type="checkbox"] + label{
 	margin: 0px 0px 20px 0px;
 }
 
-#left_toolbar_checkbox{
+.checkboxes{
   margin: 20px 0px 0px -10px;
+}
+
+#table_output td,
+#table_output th{
+	padding : 5px;
+	text-align: center;
+	border: 0.5px solid;
+}
+#table_output th{
+	background-color : #ccff00;
 }
 
 
@@ -188,12 +196,12 @@ svg描画領域
 /**************************
 right toolbar
 **************************/
-#right_toolbar{
+.toolbar_right{
   float:left;
   margin:0px 0px 0px 30px;
 }
 
-#undo_redo_table button{
+#table_undo_redo button{
 	margin : 0px 10px 0px 15px;
 	width:50px;
   height:40px;
@@ -204,74 +212,74 @@ right toolbar
   cursor : pointer;
 }
 
-#undo_redo_table button:hover{
+#table_undo_redo button:hover{
   background: #31A9EE;/* マウス選択時の背景色を指定する */
 }
 
 /********************************************
 線幅、墨字、点字、画像透過度変更用スライダー設定
 ********************************************/
-#stroke_option_table,
-#InkBra_table,
-#undo_redo_table,
-#layer_table,
-#select_fill_table,
-#draw_fill_table{
+#table_stroke_option,
+#table_text,
+#table_undo_redo,
+#table_layer,
+#table_select_fill,
+#table_draw_fill{
 	margin : 0px 0px 5px 0px;
 }
 
-#stroke_option_table,
-#InkBra_table,
-#layer_table,
-#select_fill_table,
-#draw_fill_table,
-#stamp_table{
+#table_stroke_option,
+#table_text,
+#table_layer,
+#table_select_fill,
+#table_draw_fill,
+#table_stamp{
 	width : 200px;
 }
 
-#stroke_option_table label{
+#table_stroke_option label{
   padding: 0px 28px;	/* ボックス内左側の余白を指定する */
   border: 2px solid #006DD9;/* ボックスの境界線を実線で指定する */
 }
 
-#stroke_option_table input[type="radio"]:checked + label {
+#table_stroke_option input[type="radio"]:checked + label {
 	background: #31A9EE;/* マウス選択時の背景色を指定する */
 	color: #ffffff; 	/* マウス選択時のフォント色を指定する */
 }
 
-#stroke_color{
+#custom_stroke_color{
 	width: 100px;
 }
 
-#InkBra_table tr,
-#stroke_option_table tr{
+#table_text tr,
+#table_stroke_option tr{
 	border: 0.5px solid;
 }
 
-#stroke_option_table td,
-#stroke_option_table th{
+#table_stroke_option td,
+#table_stroke_option th{
 	padding : 5px 0px;
 	text-align: center;
 }
 
-#InkBra_table td,
-#InkBra_table th{
+#table_text td,
+#table_text th{
 	padding : 5px;
 	text-align: center;
 }
 
-#textInfo_TextBox{
+#textbox_text_info{
 	width:100px;
 	height:30px;
 }
 
-#stroke_option_table th,
-#InkBra_table th{
+#table_stroke_option th,
+#table_text th{
 	background-color : #ccff00;
 }
 
-#InkBra_table input[type="text"],
-#stroke_option_table input[type="text"]{
+#table_text input[type="text"],
+#table_stroke_option input[type="text"]{
   width:30px;
   height:20px;
   font-size: 100%;
@@ -280,17 +288,17 @@ right toolbar
 /*
 ドローラインモード塗りつぶしラジオボタン
 */
-.draw_fill_table td,
-.draw_fill_table th{
+.table_draw_fill td,
+.table_draw_fill th{
 	text-align: center;
 	border: 0.5px solid;
 }
 
-.draw_fill_table th{
+.table_draw_fill th{
 	background-color : #ccff00;
 }
 
-#draw_fill_table input[type="radio"] + label{
+#table_draw_fill input[type="radio"] + label{
   border: 2.5px solid #003300;/* ボックスの境界線を実線で指定する */
 	width : 80px;
 	height : 40px;
@@ -300,11 +308,11 @@ right toolbar
 	padding : 5px;
 }
 
-#draw_fill_table input[type="radio"]:hover + label{
+#table_draw_fill input[type="radio"]:hover + label{
   border-color: #006DD9;/* ボックスの境界線を実線で指定する */
 }
 
-#draw_fill_table input[type="radio"]:checked + label {
+#table_draw_fill input[type="radio"]:checked + label {
 	border-color: orange;/* ボックスの境界線を実線で指定する */
 }
 
@@ -341,24 +349,25 @@ right toolbar
 触知記号スタンプ
 */
 
-#stamp_table td,
-#stamp_table th{
+
+#table_stamp td,
+#table_stamp th{
 	border: 0.5px solid;
 	text-align: center;
 	padding : 4px;
 }
 
-#stamp_table th{
+#table_stamp th{
 	background-color: #ccff00
 }
 
-#stamp_table input[type="radio"] + label{
+#table_stamp input[type="radio"] + label{
   padding: 5px 15px; 	/* ボックス内左側の余白を指定する */
 	width: 150px;
   border: 2px solid #003300;/* ボックスの境界線を実線で指定する */
 }
 
-#stamp_table input[type="radio"]:checked + label {
+#table_stamp input[type="radio"]:checked + label {
 	background: #009933;/* マウス選択時の背景色を指定する */
 	color: #ffffff; 	/* マウス選択時のフォント色を指定する */
 }
@@ -366,7 +375,7 @@ right toolbar
 	スタンプの表の中のテキストボックス
 	墨字や点字を入力する
 **/
-#stamp_table input[type="text"]{
+#table_stamp input[type="text"]{
 	width: 80px;
 	height: 40px;
 }
@@ -375,19 +384,19 @@ right toolbar
 レイヤ移動ボタン
 */
 
-#layer_table td,
-#layer_table th{
+#table_layer td,
+#table_layer th{
 	padding: 3px;
 	text-align: center;
 	border: 0.5px solid;
 }
 
-#layer_table th{
+#table_layer th{
 	background-color: #ccff00;
 }
 
 
-#layer_table button{
+#table_layer button{
 	width:80px;
   height:30px;
   background-color : #ffffff;
@@ -396,23 +405,23 @@ right toolbar
   background-size: contain; /*背景画像のサイズ設定*/
 }
 
-#layer_table button:hover{
+#table_layer button:hover{
   border-color: #006DD9;/* ボックスの境界線を実線で指定する */
 }
 
-#front_button{
+#button_front{
   background-image: url('../images/front.png');
 }
 
-#forward_button{
+#button_forward{
   background-image: url('../images/forward.png');
 }
 
-#backward_button{
+#button_backward{
   background-image: url('../images/backward.png');
 }
 
-#back_button{
+#button_back{
   background-image: url('../images/back.png');
 }
 
@@ -420,11 +429,11 @@ right toolbar
 塗りつぶしボタン
 *************************/
 
-#select_fill_table button:hover{
+#table_select_fill button:hover{
   border-color: #006DD9;/* ボックスの境界線を実線で指定する */
 }
 
-#select_fill_table button{
+#table_select_fill button{
   width:80px;
   height:30px;
   background-color: #ffffff;
@@ -432,42 +441,42 @@ right toolbar
   background-repeat:no-repeat; /*背景画像の繰り返し*/
 }
 
-#select_fill_table td,
-#select_fill_table th{
+#table_select_fill td,
+#table_select_fill th{
   padding: 3px;
 	text-align: center;
 	border: 0.5px solid;
 }
 
-#select_fill_table th{
+#table_select_fill th{
 	background-color: #ccff00;
 }
 
-#select_fill_table #diagonal_button{
+#table_select_fill #button_diagonal{
   background-image: url('../images/diagonal.png');
 }
 
-#select_fill_table #white_button{
+#table_select_fill #button_white{
   background-image: url('../images/white.png');
 }
 
-#select_fill_table #gray_button{
+#table_select_fill #button_gray{
   background-image: url('../images/gray.png');
 }
 
-#select_fill_table #black_button{
+#table_select_fill #button_black{
   background-image: url('../images/black.png');
 }
 
-#select_fill_table #polkadot_button{
+#table_select_fill #button_polkadot{
   background-image: url('../images/polkadot.png');
 }
 
-#select_fill_table #polkadot_water_button{
+#table_select_fill #button_polkadot_water{
   background-image: url('../images/polkadot_water.png');
 }
 
-#fill_color{
+#custom_fill_color{
 	width:80px;
 	height:30px;
 }
@@ -490,14 +499,14 @@ right toolbar
 	font-size : 100%;
 }
 
-#svg_width_scrollbar{ /* css */
+#scrollbar_width{ /* css */
   margin :0px 0px 0px 170px;
   width:1040px;
   height:12px;
 	clear:both;
 }
 
-#svg_height_scrollbar{ /* css */
+#scrollbar_height{ /* css */
   margin-left:10px;
   width:12px;
   height:735px;

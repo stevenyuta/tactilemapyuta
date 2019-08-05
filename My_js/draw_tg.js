@@ -40,16 +40,16 @@ function draw_line(){
   function draw_mousedown(){
     draw.off('mousedown').mousedown(function(e){
       if(e.button===0){ //左クリック時
-        //StrokeWidth_TextBoxの値が何もないまたは0の場合はリセットボタンを発火させる（透明な線を表示させないようにするため）
-        if($('#StrokeWidth_TextBox').val()==='') $('#resetStrokeWidth_Button').click();
-        if($('#StrokeWidth_TextBox').val()==='0' && $('input[name="draw_line_fillRadio"]:checked').val()==='none') $('#resetStrokeWidth_Button').click();
+        //textbox_strokewidthの値が何もないまたは0の場合はリセットボタンを発火させる（透明な線を表示させないようにするため）
+        if($('#textbox_strokewidth').val()==='') $('#button_reset_strokewidth').click();
+        if($('#textbox_strokewidth').val()==='0' && $('input[name="draw_line_fillRadio"]:checked').val()==='none') $('#button_reset_strokewidth').click();
 
         let position_num = getPathCirclePos();
         if(!SVG.get('#'+ now_drawing_path_ID)){  //書き始めの場合：drawing_pathクラスをもつ要素がない
           if(draw.select('.hovering_node.init_node').first()){ //他のpath（線）の始点ノードをホバーしている時の処理
             let connectedPath = SVG.get(draw.select('.hovering_node.init_node').first().attr('connectedID')); //対象の始点ノードをもつpathをidで入手
             let d_array = connectedPath.clear().array().settle();
-            connectedPath.attr({'d' : ''}); 
+            connectedPath.attr({'d' : ''});
             drawing_path_dpoint="";
             for(let j = d_array.length - 1; j >= 0; j--){
               if(j===d_array.length - 1){
@@ -79,12 +79,12 @@ function draw_line(){
             now_drawing_path_ID = drawing_path.id();
             drawing_path.attr({
               'fill': $('input[name="draw_line_fillRadio"]:checked').val(),
-              'stroke': $('#stroke_color').val(),
-              'stroke-width': PS_WIDTH*$('#StrokeWidth_TextBox').val(),
+              'stroke': $('#custom_stroke_color').val(),
+              'stroke-width': PS_WIDTH*$('#textbox_strokewidth').val(),
               'stroke-linejoin': 'round'
             })
             if($('input[name="draw_line_fillRadio"]:checked').val()==='custom') drawing_path.fill($('#draw_fill_color').val());
-            if($('input[name="stroke"]:checked').attr('id')==='dotted_line'){
+            if($('input[name="stroke"]:checked').attr('id')==='radio_dotted_path'){
               drawing_path.attr({ 'stroke-dasharray': PS_WIDTH * $('#dottedLine_line').val() + ' ' +  PS_WIDTH * $('#dottedLine_space').val()});
             }
             drawing_path.addClass('connected').addClass('SVG_Element').addClass('path');

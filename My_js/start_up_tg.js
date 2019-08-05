@@ -107,7 +107,7 @@ $(window).on('load',function () {
   continue_setSVG('',-DRAW_AREA_WIDTH, -DRAW_AREA_HEIGHT, DRAW_AREA_WIDTH * 2, DRAW_AREA_HEIGHT * 2);
 
   //3.3 描画領域の表示範囲を調整する左右スクロールスライダー(SVGで描画)の設定
-  let width_scrollbar = SVG('svg_width_scrollbar').size(1040,10).attr('id','width_scrollbar');
+  let width_scrollbar = SVG('scrollbar_width').size(1040,10).attr('id','width_scrollbar');
   width_scrollbar.rect(1040, 10).stroke('#000000').fill('#ffffff'); //スライダーの大枠を描画
   let width_handle = width_scrollbar.rect(100, 10).attr({ //操作ハンドル（水色の四角形）を描画
     'x' : 470, // ( 1040 - 100 )/2 = 470
@@ -126,7 +126,7 @@ $(window).on('load',function () {
 
   //3.4 描画領域の表示範囲を指定する上下スクロールスライダー(SVGで描画)の設定
   //基本的にやることは左右するクロールバーと同じ（コメント省略）
-  let height_scrollbar = SVG('svg_height_scrollbar').size(10,735).attr('id','height_scrollbar');
+  let height_scrollbar = SVG('scrollbar_height').size(10,735).attr('id','height_scrollbar');
   height_scrollbar.rect(10,735).stroke('#000000').fill('#ffffff');
   let height_handle = height_scrollbar.rect(10, 100).attr({
     'y' : 317.5,
@@ -146,13 +146,13 @@ $(window).on('load',function () {
 
 
   //3.5 線幅を変更するテキストボックス、リセットボタンの設定
-  $('#StrokeWidth_TextBox').off('focusout').on('focusout' , update_StrokeWidth_TextBox); //テキストボックスからfocusoutしたとき
-  $('#StrokeWidth_TextBox').val(1); //線幅の初期値を指定
+  $('#textbox_strokewidth').off('focusout').on('focusout' , update_textbox_strokewidth); //テキストボックスからfocusoutしたとき
+  $('#textbox_strokewidth').val(1); //線幅の初期値を指定
 
-  $('#resetStrokeWidth_Button').click(function(){  //線幅のリセットボタンを押したときの処理
-    $("#StrokeWidth_TextBox").val(1);
-    let drawing_path_selector = now_drawing_path_ID === '' ? '' : ',#' + now_drawing_path_ID;
-    draw.select('.edit_select.path , .fragmented' + drawing_path_selector).each(function(i,children){
+  $('#button_reset_strokewidth').click(function(){  //線幅のリセットボタンを押したときの処理
+    $("#textbox_strokewidth").val(1);
+    let drawing_path_selector = (now_drawing_path_ID === '' || now_drawing_path_ID === undefined) ? '' : ',#' + now_drawing_path_ID;
+    draw.select('.edit_select.path , .edit_select.circle , .fragmented' + drawing_path_selector).each(function(i,children){
       this.attr({ 'stroke-width':PS_WIDTH });
       if(this.attr('stroke-dasharray')!== undefined && this.attr('stroke-dasharray')!=='') this.attr({'stroke-dasharray':PS_WIDTH}); //点線の場合
     })
@@ -160,29 +160,29 @@ $(window).on('load',function () {
 
 
   //3.6 墨字サイズを変更するテキストボックス、リセットボタンの設定
-  $('#resizeInk_TextBox').off('focusout').on('focusout' , update_resizeInk_TextBox);
-  $('#resizeInk_TextBox').val(DEF_INK_SIZE); //墨字の初期値を指定
+  $('#textbox_resize_ink').off('focusout').on('focusout' , update_resizeInk_TextBox);
+  $('#textbox_resize_ink').val(DEF_INK_SIZE); //墨字の初期値を指定
 
-  $('#resetInk_Button').click(function(){  //リセットボタンを押下時の処理
-    $("#resizeInk_TextBox").val(DEF_INK_SIZE);
+  $('#button_reset_ink').click(function(){  //リセットボタンを押下時の処理
+    $("#textbox_resize_ink").val(DEF_INK_SIZE);
     draw.select('.edit_select.ink').attr({'font-size': DEF_INK_SIZE * SVG_RATIO * 0.352778}); //0.352778をかけることでpt値になる
   });
 
   //3.7 点字の大きさを設定するテキストボックス、リセットボタンの設定
-  $('#resizeBraille_TextBox').off('focusout').on('focusout' , update_resizeBraille_TextBox);
-  $('#resizeBraille_TextBox').val(DEF_BRA_SIZE); //点字の初期値を指定
+  $('#textbox_resize_braille').off('focusout').on('focusout' , update_resizeBraille_TextBox);
+  $('#textbox_resize_braille').val(DEF_BRA_SIZE); //点字の初期値を指定
 
-  $('#brasize_resetbutton').click(function(){  //リセットボタンを押下時の処理
-    $("#resizeBraille_TextBox").val(DEF_BRA_SIZE);
+  $('#button_reset_braille').click(function(){  //リセットボタンを押下時の処理
+    $("#textbox_resize_braille").val(DEF_BRA_SIZE);
     draw.select('.edit_select.braille').attr({'font-size': DEF_BRA_SIZE * SVG_RATIO * 0.352778});
   });
 
   //画像透過度を変更するテキストボックス、リセットボタンの設定
-  $('#ImageOpacity_TextBox').off('focusout').on('focusout' , update_ImageOpacity_TextBox);
-  $('#ImageOpacity_TextBox').val(100);
+  $('#textbox_image_opacity').off('focusout').on('focusout' , update_textbox_image_opacity);
+  $('#textbox_image_opacity').val(100);
 
-  $('#ImageOpacity_resetbutton').click(function(){  //リセットボタンを押下時の処理
-    $("#ImageOpacity_TextBox").val(100);
+  $('#button_reset_image_opacity').click(function(){  //リセットボタンを押下時の処理
+    $("#textbox_image_opacity").val(100);
     draw.select('.edit_select.image').attr({'opacity': 1});
   });
 
@@ -199,33 +199,24 @@ $(window).on('load',function () {
   $("#display_DrawElement").prop('checked', true).change();//初期状態はチェックを入れておく
 
   //画像の表示非表示チェックボックス
-  $('#image').off('change').change( function() {
-    ($('#image').prop('checked')) ? SVG.select('.image').show() : SVG.select('.image').hide();
+  $('#display_image').off('change').change( function() {
+    ($('#display_image').prop('checked')) ? SVG.select('.image').show() : SVG.select('.image').hide();
   })
-  $("#image").prop('checked', true).change();//初期状態はチェックを入れておく
+  $("#display_image").prop('checked', true).change();//初期状態はチェックを入れておく
 
   //グリッド線の表示非表示チェックボックス
-  $('#gridline').off('change').change( function() {
-    ($('#gridline').prop('checked')) ? SVG.get('gridline_group').attr({'display':'inline'}) : SVG.get('gridline_group').attr({'display':'none'});
+  $('#display_gridline').off('change').change( function() {
+    $('#display_gridline').prop('checked') ? SVG.get('gridline_group').show() : SVG.get('gridline_group').hide();
   })
-  $("#gridline").prop('checked', false).change();//初期状態はチェックを入れておく
+  $("#display_gridline").prop('checked', false).change();//初期状態はチェックを入れておく
 
   //点字の日本語変換機能をチェックボックスと連結
   $('#trans_braille').off('change').change( function() {
-    let font_family = ($('input[name="braillefont"]:checked').attr('id')==='IBfont') ? 'Ikarashi Braille' : '点字線なし'; //点字のタイプによって周囲を塗りつぶすか指定
+    let font_family = ($('input[name="braillefont"]:checked').attr('id')==='IkarashiBraille_font') ? 'Ikarashi Braille' : '点字線なし'; //点字のタイプによって周囲を塗りつぶすか指定
     ($('#trans_braille').prop('checked')) ? draw.select('.braille').attr({'font-family':'メイリオ'}) : draw.select('.braille').attr({'font-family':font_family});
   })
   $("#trans_braille").prop('checked', false).change();//初期状態はチェックを入れないでおく
-  /**************************************
-  //目盛り枠の表示非表示チェックボックス
-  ***************************************/
-  /**
-  $('#graduation_frame').off('change').change( function() {
-    if(!draw.select('.graduationFrame').first()) add_graduationFrame();
-    $('#graduation_frame').prop('checked') ? draw.select('.graduationFrame').show() : draw.select('.graduationFrame').hide()
-  })
-  $("#graduation_frame").prop('checked', false).change();//初期状態はチェックを入れないでおく
-  **/
+
   /**********************************************
   //ガイドのサイズ（A4,B4,A3）を設定するラジオボタン
   ***********************************************/
@@ -257,31 +248,31 @@ $(window).on('load',function () {
   点字フォント変更ラジオボタンの設定
   ********************************/
   $('input[name="braillefont"]:radio').off('change').on('change',function(){ //点字フォント変更ラジオボタンを変えたときに行う処理
-    let font_family = ($('input[name="braillefont"]:checked').attr('id')==='IBfont') ? 'Ikarashi Braille' : '点字線なし'; //点字フォントの指定
-    let font_strokewidth = ($('input[name="braillefont"]:checked').attr('id')==='IBfont') ? String(PS_WIDTH * 0.25) : '';//いからし点字の場合は0.25mmの輪郭を書く（発泡しやすくする）
-    let font_strokecolor = ($('input[name="braillefont"]:checked').attr('id')==='IBfont') ? '#000000' : 'none';//輪郭線は黒色
+    let font_family = ($('input[name="braillefont"]:checked').attr('id')==='IkarashiBraille_font') ? 'Ikarashi Braille' : '点字線なし'; //点字フォントの指定
+    let font_strokewidth = ($('input[name="braillefont"]:checked').attr('id')==='IkarashiBraille_font') ? String(PS_WIDTH * 0.25) : '';//いからし点字の場合は0.25mmの輪郭を書く（発泡しやすくする）
+    let font_strokecolor = ($('input[name="braillefont"]:checked').attr('id')==='IkarashiBraille_font') ? '#000000' : 'none';//輪郭線は黒色
     draw.select('.braille').attr({
       'font-family': font_family,
       'stroke': font_strokecolor,
       'stroke-width': font_strokewidth
     })
   })
-  $('input[name="braillefont"]#IBfont').prop('checked', true).trigger('change');//初期状態はいからし点字にチェックを入れておく
+  $('input[name="braillefont"]#IkarashiBraille_font').prop('checked', true).trigger('change');//初期状態はいからし点字にチェックを入れておく
 
   /*************************
   線種変更ラジオボタンの設定
   *************************/
   $('input[name="stroke"]:radio').off('change').on('change',function(){
-    let drawing_path_selector = now_drawing_path_ID === '' ? '' : ',#' + now_drawing_path_ID;
-    if($(this).attr('id')==='solid_line'){ //実線の場合
-      draw.select('.edit_select.connected , .fragmented' + drawing_path_selector).attr({'stroke-dasharray': ''});
+    let drawing_path_selector = (now_drawing_path_ID === '' || now_drawing_path_ID === undefined) ? '' : ',#' + now_drawing_path_ID;
+    if($(this).attr('id')==='radio_solid_path'){ //実線の場合
+      draw.select('.edit_select.connected , .edit_select.circle , .fragmented' + drawing_path_selector).attr({'stroke-dasharray': ''});
       $('.dotted_option').hide();
     }else{ //点線の場合
-      draw.select('.edit_select.connected,.edit_select.circle,.fragmented' + drawing_path_selector).attr({'stroke-dasharray': PS_WIDTH * $('#StrokeWidth_TextBox').val()});
+      draw.select('.edit_select.connected,.edit_select.circle,.fragmented' + drawing_path_selector).attr({'stroke-dasharray': PS_WIDTH * $('#textbox_strokewidth').val()});
       $('.dotted_option').show();
     }
   })
-  $("#solid_line").prop('checked', true).change();//初期状態は実線にチェックを入れておく
+  $("#radio_solid_path").prop('checked', true).change();//初期状態は実線にチェックを入れておく
   $('.dotted_option').hide(); //点線の設定情報は非表示に
 
   $('#dottedLine_line').off('focusout').on('focusout' , update_dottedLine);　//点線の実線部分の長さを指定するテキストボックスをフォーカスアウトしたときのイベント設定
@@ -290,11 +281,11 @@ $(window).on('load',function () {
   $('#dottedLine_space').off('focusout').on('focusout' , update_dottedLine); //点線の空白部分の長さを指定するテキストボックスをフォーカスアウトしたときのイベント設定
   $('#dottedLine_space').val(1);
 
-  $('#reset_dottedLine').click(function(){  //点線の詳細情報の線幅に合わせるボタンを押したときの処理
-    $("#dottedLine_line").val($('#StrokeWidth_TextBox').val());
-    $("#dottedLine_space").val($('#StrokeWidth_TextBox').val());
-    let drawing_path_selector = now_drawing_path_ID === '' ? '' : ',#' + now_drawing_path_ID;
-    draw.select('.edit_select.path , .fragmented' + drawing_path_selector).each(function(i,children){
+  $('#button_reset_dottedpath').click(function(){  //点線の詳細情報の線幅に合わせるボタンを押したときの処理
+    $("#dottedLine_line").val($('#textbox_strokewidth').val());
+    $("#dottedLine_space").val($('#textbox_strokewidth').val());
+    let drawing_path_selector = (now_drawing_path_ID === '' || now_drawing_path_ID === undefined) ? '' : ',#' + now_drawing_path_ID;
+    draw.select('.edit_select.path , .edit_select.circle , .fragmented' + drawing_path_selector).each(function(i,children){
       if(this.attr('stroke-dasharray')!==undefined && this.attr('stroke-dasharray')!==''){
         this.attr({ 'stroke-dasharray': PS_WIDTH * $('#dottedLine_line').val() + ' ' +  PS_WIDTH * $('#dottedLine_space').val()});
       }
@@ -304,36 +295,36 @@ $(window).on('load',function () {
   /*************************
   線色変更ガジェットの設定
   **************************/
-  $("#stroke_color").off('change').on("change", function(){
-    let drawing_path_selector = now_drawing_path_ID === '' ? '' : ',#' + now_drawing_path_ID;
-     draw.select('.edit_select.path , .edit_select.circle , .fragmented' + drawing_path_selector).attr({'stroke' : $("#stroke_color").val()});
-     draw.select('.fragmented_PathGroup').attr({'stroke_tmp' : $("#stroke_color").val()});
+  $("#custom_stroke_color").off('change').on("change", function(){
+    let drawing_path_selector = (now_drawing_path_ID === '' || now_drawing_path_ID === undefined) ? '' : ',#' + now_drawing_path_ID;
+     draw.select('.edit_select.path , .edit_select.circle , .fragmented' + drawing_path_selector).attr({'stroke' : $("#custom_stroke_color").val()});
+     draw.select('.fragmented_PathGroup').attr({'stroke_tmp' : $("#custom_stroke_color").val()});
   });
 
   /*************************************************
   塗りつぶしラジオボタンの設定（線の描画モードで使うほう）
   **************************************************/
   $('input[name="draw_line_fillRadio"]:radio').off('change').on('change',function(){ //ラジオボタンを変えたときに行う処理
-    let drawing_path_selector = now_drawing_path_ID === '' ? '' : '#' + now_drawing_path_ID;
-    draw.select('.drawing_path').fill($('input[name="draw_line_fillRadio"]:checked').val());
+    let drawing_path_selector = (now_drawing_path_ID === '' || now_drawing_path_ID === undefined) ? '' : '#' + now_drawing_path_ID;
+    draw.select(drawing_path_selector).fill($('input[name="draw_line_fillRadio"]:checked').val());
     if($('input[name="draw_line_fillRadio"]:checked').val()==='custom') draw.select(drawing_path_selector).fill($('#draw_fill_color').val());
   });
   $("#draw_fill_color").off('change').on("change", function(){ //カスタムの設定で色を変えたときに行う処理
-     let drawing_path_selector = now_drawing_path_ID === '' ? '' : '#' + now_drawing_path_ID;
+     let drawing_path_selector = (now_drawing_path_ID === '' || now_drawing_path_ID === undefined) ? '' : '#' + now_drawing_path_ID;
      draw.select(drawing_path_selector).fill($('#draw_fill_color').val());
-     $('#fill_color').val($('#draw_fill_color').val());
+     $('#custom_fill_color').val($('#draw_fill_color').val());
      $("#draw_fill_custom").prop('checked', true);
   });
 
   /*************************************************
   塗りつぶしボタンの設定（選択モードで使うほう）
   **************************************************/
-  $("#fillnone_button , #gray_button , #diagonal_button").click(change_fill);
-  $("#polkadot_button , #polkadot_water_button").click(change_fill);
-  $("#fill_color").on('change',change_fill);
+  $("#button_fillnone , #button_gray , #button_diagonal").click(change_fill);
+  $("#button_polkadot , #button_polkadot_water").click(change_fill);
+  $("#custom_fill_color").on('change',change_fill);
 
   function change_fill(){
-    let fill = this.id==='fill_color' ?  $('#fill_color').val() :  $(this).val(); //カスタムの場合は、その色の値をfillに格納
+    let fill = this.id==='custom_fill_color' ?  $('#custom_fill_color').val() :  $(this).val(); //カスタムの場合は、その色の値をfillに格納
     let fill_complete_flag = false; //fillの変更があった場合にtrue。 戻る、やり直し用の一時保存データを作成する
     draw.select(".edit_select , .fragmented_PathGroup").each(function(i,children){
       let fill_flag = false;
@@ -358,17 +349,17 @@ $(window).on('load',function () {
   /*****************************
   レイヤー変更ボタンの設定
   *****************************/
-  $('#front_button , #forward_button , #backward_button , #back_button').click(function(e){
+  $('#button_front , #button_forward , #button_backward , #button_back').click(function(e){
     let base;
     switch(this.id){
-       case 'front_button': // 最前面ボタン（選択中の要素をレイヤーで一番前に移動する）
+       case 'button_front': // 最前面ボタン（選択中の要素をレイヤーで一番前に移動する）
          draw.select('.edit_select, .fragmented_PathGroup').each(function(i , children){
            this.front();
            let ghost_path = SVG.get('#ghost_path_' + this.attr('fragmented_Group_Number'));
            if(ghost_path) this.before(ghost_path);
          })
          break;
-       case 'forward_button': // 前面ボタン（選択中の要素をレイヤーで１つ前に移動する）
+       case 'button_forward': // 前面ボタン（選択中の要素をレイヤーで１つ前に移動する）
          draw.select('.edit_select, .fragmented_PathGroup').each(function(i , children){
            if(i===0){
              base = this;
@@ -383,7 +374,7 @@ $(window).on('load',function () {
            if(ghost_path) this.before(ghost_path);
          })
          break;
-       case 'backward_button': // 背面ボタン（選択中の要素をレイヤーで一つ後ろに移動する）
+       case 'button_backward': // 背面ボタン（選択中の要素をレイヤーで一つ後ろに移動する）
          draw.select('.edit_select, .fragmented_PathGroup').each(function(i , children){
            if(i===0){
              base = this;
@@ -398,7 +389,7 @@ $(window).on('load',function () {
            if(ghost_path) this.before(ghost_path);
          })
          break;
-       case 'back_button': // 最背面ボタン（選択中の要素をレイヤーで一番後に移動する）
+       case 'button_back': // 最背面ボタン（選択中の要素をレイヤーで一番後に移動する）
          draw.select('.edit_select, .fragmented_PathGroup').each(function(i , children){
            if(i===0){
              base = this;
@@ -487,9 +478,9 @@ $(window).on('load',function () {
   $(reader_img).on('load',fileLoad_img);
 
   //元に戻すの処理
-  $('#undo').click(undo);
+  $('#button_undo').click(undo);
   //やり直すの処理
-  $('#redo').click(redo);
+  $('#button_redo').click(redo);
   //距離間チェック機能
   $('#distance_check_button').click(distance_check); //距離間チェックボタンクリック時に起動する関数を設定
 

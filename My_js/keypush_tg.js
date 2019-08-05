@@ -125,15 +125,15 @@ function set_key_down_up(){
     }else{
       if(e.keyCode === 13){
         if(current_mode === 'Edit' || current_mode === 'EditImage'){
-          if($('#rb_width').is(':focus')) update_resizeBox('width');
-          if($('#rb_height').is(':focus')) update_resizeBox('height');
-          if($('#textInfo_TextBox').is(':focus')) update_TextInfoBox();
+          if($('#textbox_selectBox_width').is(':focus')) update_resizeBox('width');
+          if($('#textbox_selectBox_height').is(':focus')) update_resizeBox('height');
+          if($('#textbox_text_info').is(':focus')) update_TextInfoBox();
         }
         if($('#dottedLine_line').is(':focus') || $('#dottedLine_space').is(':focus')) update_dottedLine();
-        if($('#StrokeWidth_TextBox').is(':focus')) update_StrokeWidth_TextBox();
-        if($('#resizeInk_TextBox').is(':focus')) update_resizeInk_TextBox();
-        if($('#resizeBraille_TextBox').is(':focus')) update_resizeBraille_TextBox();
-        if($('#ImageOpacity_TextBox').is(':focus')) update_ImageOpacity_TextBox();
+        if($('#textbox_strokewidth').is(':focus')) update_textbox_strokewidth();
+        if($('#textbox_resize_ink').is(':focus')) update_resizeInk_TextBox();
+        if($('#textbox_resize_braille').is(':focus')) update_resizeBraille_TextBox();
+        if($('#textbox_image_opacity').is(':focus')) update_textbox_image_opacity();
       }
     }
     input_key_buffer[e.keyCode] = true;

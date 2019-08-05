@@ -3,9 +3,9 @@
 ******************************************************/
 function edit(){
   let gX , gY , gWidth , gHeight; //選択ボックスの左隅の座標(gX,gY)と幅(gWidth)と高さ（gHeight）
-  $('#rb_width').off('focusout').on('focusout' , function(){update_resizeBox('width')});
-  $('#rb_height').off('focusout').on('focusout' , function(){update_resizeBox('height')});
-  $('#textInfo_TextBox').off('focusout').on('focusout' , update_TextInfoBox);
+  $('#textbox_selectBox_width').off('focusout').on('focusout' , function(){update_resizeBox('width')});
+  $('#textbox_selectBox_height').off('focusout').on('focusout' , function(){update_resizeBox('height')});
+  $('#textbox_text_info').off('focusout').on('focusout' , update_TextInfoBox);
 
   edit_mousedown_up();
   edit_hover();
@@ -148,9 +148,9 @@ function edit_hover(mode){
 ******************************************************/
 function edit_clear(){
   SVG.get('handle_group').hide();
-  if($('#rb_width').is(':focus')) update_resizeBox('width');
-  if($('#rb_height').is(':focus')) update_resizeBox('height');
-  if($('#textInfo_TextBox').is(':focus')) update_TextInfoBox();
+  if($('#textbox_selectBox_width').is(':focus')) update_resizeBox('width');
+  if($('#textbox_selectBox_height').is(':focus')) update_resizeBox('height');
+  if($('#textbox_text_info').is(':focus')) update_TextInfoBox();
   draw.select('.edit_select').each(function(i, children) {
     if(this.hasClass('connected') && nowchecked === 'EditPath'){
       toFragmented(this);
@@ -165,33 +165,33 @@ function edit_clear(){
 function upload_handle(){
   //移動、サイズ変更、回転用のハンドルを非表示
   SVG.get('handle_group').hide();　
-  $('.resizeInk_gadget , .resizeBraille_gadget').hide();
-  $('.textInfo_gadget').hide();
+  $('.gadget_resizeInk , .gadget_resize_braille').hide();
+  $('.gadget_textInfo').hide();
   $('.stroke_option , .dotted_option').hide();
   $('.gadget_imageOpacity').hide();
-  $('#layer_table , #select_fill_table').hide();
+  $('#table_layer , #table_select_fill').hide();
   $('.resizeBox_textbox').hide();
   if(draw.select('.edit_select').first()!==undefined){ //選択状態の要素がない場合
 
-    if(draw.select('.edit_select.ink').first()!==undefined) $('.resizeInk_gadget').show();
-    if(draw.select('.edit_select.braille').first()!==undefined) $('.resizeBraille_gadget').show();
+    if(draw.select('.edit_select.ink').first()!==undefined) $('.gadget_resizeInk').show();
+    if(draw.select('.edit_select.braille').first()!==undefined) $('.gadget_resize_braille').show();
     if(draw.select('.edit_select.path , .edit_select.circle').first()!==undefined){
       $('.stroke_option').show();
-      if($('input[name="stroke"]:checked').attr('id')==='dotted_line') $('.dotted_option').show();
+      if($('input[name="stroke"]:checked').attr('id')==='radio_dotted_path') $('.dotted_option').show();
     }
     if(draw.select('.edit_select.image').first()!==undefined) $('.gadget_imageOpacity').show();
-    if(draw.select('.edit_select.connected , .edit_select.circle').first()!==undefined) $('#select_fill_table').show();
+    if(draw.select('.edit_select.connected , .edit_select.circle').first()!==undefined) $('#table_select_fill').show();
     /***************************************************************
       文字（墨字or点字）が選択状態の場合は編集用のテキストボックスを表示
       そうでない場合は非表示
     ****************************************************************/
     if(draw.select('.edit_select.ink,.edit_select.braille').members.length===1){　
       let text = draw.select('.edit_select.ink,.edit_select.braille').first();
-      text.hasClass('ink') ? $('#textInfo_TextBox').val(text.text()) : $('#textInfo_TextBox').val(text.attr('brailleorigintext'));
-      $('.textInfo_gadget').show();
+      text.hasClass('ink') ? $('#textbox_text_info').val(text.text()) : $('#textbox_text_info').val(text.attr('brailleorigintext'));
+      $('.gadget_textInfo').show();
     }
     SVG.get('handle_group').show().front();　//移動、サイズ変更、回転用のハンドルを表示して最前へ
-    $('#layer_table').show();
+    $('#table_layer').show();
     $('.resizeBox_textbox').show();
 
     let gmin_x = 1000000 ,  gmin_y = 1000000;
@@ -295,8 +295,8 @@ function upload_handle(){
 
 
     //幅、高さのテキストボックスに[mm]に換算した値を入力
-    $('#rb_width').val(Math.round( gWidth/SVG_RATIO * Math.pow( 10 , 2 ) ) / (Math.pow( 10 , 2 ) ) );
-    $('#rb_height').val(Math.round( gHeight/SVG_RATIO * Math.pow( 10 , 2 ) ) / (Math.pow( 10 , 2 ) ) );
+    $('#textbox_selectBox_width').val(Math.round( gWidth/SVG_RATIO * Math.pow( 10 , 2 ) ) / (Math.pow( 10 , 2 ) ) );
+    $('#textbox_selectBox_height').val(Math.round( gHeight/SVG_RATIO * Math.pow( 10 , 2 ) ) / (Math.pow( 10 , 2 ) ) );
 
     //box_resizeのマウスドラッグでの平行移動
     box_resize.off('mousedown').mousedown(function(e){
@@ -637,7 +637,6 @@ function update_editgroup(affin_mat,scale){
           'a': trans_matrix[0][0],'c': trans_matrix[0][1],'b': trans_matrix[1][0],
           'd': trans_matrix[1][1],'e': trans_matrix[0][2],'f': trans_matrix[1][2]
         })
-        //draw.circle(10).fill('#000').translate(matrix.e , matrix.f).addClass('hoge_circle');
       }else{
         this.transform({
           'a': matrix.a , 'c': matrix.c , 'b': matrix.b,
@@ -723,7 +722,7 @@ function update_editgroup(affin_mat,scale){
 //テキストボックスでサイズを変更する関数
 ******************************************************/
 function update_resizeBox(mode){
-  let val = (mode === 'width') ? $('#rb_width').val() : $('#rb_height').val();
+  let val = (mode === 'width') ? $('#textbox_selectBox_width').val() : $('#textbox_selectBox_height').val();
   if(!val.match(/[^0-9\.]/) && val!==0 && String(val)!=="\." && String(val)!==""){
     let point1 = new Array() , point2 = new Array(); //affin変換行列作成に使う行列
     for(let i=0;i<3;i++){
@@ -758,7 +757,7 @@ function update_resizeBox(mode){
 function update_TextInfoBox(){
   if(draw.select('.edit_select.ink,.edit_select.braille').members.length===1){
     let text = draw.select('.edit_select.ink,.edit_select.braille').first();
-    let text_type , text_value = $('#textInfo_TextBox').val();
+    let text_type , text_value = $('#textbox_text_info').val();
     text.hasClass('ink') ? text_type = 'ink' : text_type = 'braille';
     if(text.hasClass('ink')){
       text.plain(text_value);
@@ -908,9 +907,9 @@ function set_SelectElement_Param(){
       if(dasharray_line && !dasharray_space) dasharray_space = dasharray_line;
     }
     if(strokewidth === this.attr('stroke-width')){
-      $('#StrokeWidth_TextBox').val(Math.round(strokewidth/ SVG_RATIO * 10)/10);
+      $('#textbox_strokewidth').val(Math.round(strokewidth/ SVG_RATIO * 10)/10);
     }else{
-      $('#StrokeWidth_TextBox').val('');
+      $('#textbox_strokewidth').val('');
       strokewidth = -1; //-1にすることで絶対にこれ以上一致しなくなる
     }
     if(this.attr('stroke-dasharray')){
@@ -918,7 +917,7 @@ function set_SelectElement_Param(){
       let tmp_dasharray_space = String(this.attr('stroke-dasharray')).split(/\s/)[1];
       if(tmp_dasharray_line && !tmp_dasharray_space) tmp_dasharray_space = tmp_dasharray_line;
       if(dasharray_line === tmp_dasharray_line && dasharray_space === tmp_dasharray_space){
-        $("#dotted_line").prop('checked', true);
+        $("#radio_dotted_path").prop('checked', true);
         $('#dottedLine_line').val(Math.round(dasharray_line/ SVG_RATIO * 10)/10);
         $('#dottedLine_space').val(Math.round(dasharray_space/ SVG_RATIO * 10)/10);
         $('.dotted_option').show();
@@ -927,7 +926,7 @@ function set_SelectElement_Param(){
         dasharray_space = -1;
       }
     }
-    strokecolor === this.attr('stroke') ? $('#stroke_color').val(strokecolor) :  strokecolor = -1;
+    strokecolor === this.attr('stroke') ? $('#custom_stroke_color').val(strokecolor) :  strokecolor = -1;
   })
 
   /**********************
@@ -937,9 +936,9 @@ function set_SelectElement_Param(){
   draw.select('.edit_select.ink').each(function(i,children){
     if(i===0) ink_fontsize = this.attr('font-size');
     if(ink_fontsize === this.attr('font-size')){
-      $('#resizeInk_TextBox').val(Math.round(ink_fontsize/(TEXT_CORRECTION) * 10)/10);
+      $('#textbox_resize_ink').val(Math.round(ink_fontsize/(TEXT_CORRECTION) * 10)/10);
     }else{
-      $('#resizeInk_TextBox').val('');
+      $('#textbox_resize_ink').val('');
       ink_fontsize = -1; //-1にすることで絶対にこれ以上一致しなくなる
     }
   })
@@ -951,9 +950,9 @@ function set_SelectElement_Param(){
   draw.select('.edit_select.braille').each(function(i,children){
     if(i===0) braille_fontsize = this.attr('font-size');
     if(braille_fontsize === this.attr('font-size')){
-      $('#resizeBraille_TextBox').val(Math.round(braille_fontsize/(TEXT_CORRECTION) * 10)/10);
+      $('#textbox_resize_braille').val(Math.round(braille_fontsize/(TEXT_CORRECTION) * 10)/10);
     }else{
-      $('#resizeBraille_TextBox').val('');
+      $('#textbox_resize_braille').val('');
       braille_fontsize = -1; //-1にすることで絶対にこれ以上一致しなくなる
     }
   })
@@ -962,9 +961,9 @@ function set_SelectElement_Param(){
   draw.select('.edit_select.image').each(function(i,children){
     if(i===0) imageOpacity = this.attr('opacity');
     if(imageOpacity === this.attr('opacity')){
-      $('#ImageOpacity_TextBox').val(imageOpacity*100);
+      $('#textbox_image_opacity').val(imageOpacity*100);
     }else{
-      $('#ImageOpacity_TextBox').val('');
+      $('#textbox_image_opacity').val('');
       imageOpacity = -1; //-1にすることで絶対にこれ以上一致しなくなる
     }
   })

@@ -12,43 +12,43 @@ function set_Stampmode(){
 
   /** 右メニューを全て一旦隠す**/
   $('.stroke_option , .dotted_option').hide(); //線種変更
-  $('.resizeInk_gadget , .resizeBraille_gadget').hide(); //墨字点字サイズ変更
+  $('.gadget_resizeInk , .gadget_resize_braille').hide(); //墨字点字サイズ変更
   $('.gadget_imageOpacity').hide(); //画像透過度変更
   $('.layer_select , .fill_change , .resizeBox_textbox').hide(); //レイヤ、塗りつぶし、リサイズ用テキストボックス変更
 
   switch(stamp_checked){
     case 'Text':
-      $('.resizeInk_gadget , .resizeBraille_gadget').show(); //墨字サイズ変更
+      $('.gadget_resizeInk , .gadget_resize_braille').show(); //墨字サイズ変更
       add_text(); //点字、墨字追加モード
       break;
     case 'Stair':
       $('.stroke_option').show(); //線種変更
-      if($('input[name="stroke"]:checked').attr('id')==='dotted_line') $('.dotted_option').show();
+      if($('input[name="stroke"]:checked').attr('id')==='radio_dotted_path') $('.dotted_option').show();
       add_stair();
       break;
     case 'Escalator':
       $('.stroke_option').show(); //線種変更
-      if($('input[name="stroke"]:checked').attr('id')==='dotted_line') $('.dotted_option').show();
+      if($('input[name="stroke"]:checked').attr('id')==='radio_dotted_path') $('.dotted_option').show();
       add_escalator();
       break;
     case 'Arrow':
       $('.stroke_option').show(); //線種変更
-      if($('input[name="stroke"]:checked').attr('id')==='dotted_line') $('.dotted_option').show();
+      if($('input[name="stroke"]:checked').attr('id')==='radio_dotted_path') $('.dotted_option').show();
       add_arrow();
       break;
     case 'Tiket_gate':
       $('.stroke_option').show(); //線種変更
-      if($('input[name="stroke"]:checked').attr('id')==='dotted_line') $('.dotted_option').show();
+      if($('input[name="stroke"]:checked').attr('id')==='radio_dotted_path') $('.dotted_option').show();
       add_Tiket_gate();
       break;
     case 'Reducescale':
       $('.stroke_option').show(); //線種変更
-      if($('input[name="stroke"]:checked').attr('id')==='dotted_line') $('.dotted_option').show();
+      if($('input[name="stroke"]:checked').attr('id')==='radio_dotted_path') $('.dotted_option').show();
       add_reducescale();
       break;
     case 'graduationFrame_stamp':
       $('.stroke_option').show(); //線種変更
-      if($('input[name="stroke"]:checked').attr('id')==='dotted_line') $('.dotted_option').show();
+      if($('input[name="stroke"]:checked').attr('id')==='radio_dotted_path') $('.dotted_option').show();
       add_graduationFrame();
       break;
     default:
@@ -77,11 +77,11 @@ function add_stair(){
 
     dummy_stair.attr({
       'fill': 'none',
-      'stroke': $('#stroke_color').val(),
-      'stroke-width' : PS_WIDTH*$('#StrokeWidth_TextBox').val(),
+      'stroke': $('#custom_stroke_color').val(),
+      'stroke-width' : PS_WIDTH*$('#textbox_strokewidth').val(),
       'stroke-linejoin': 'round'
     })
-    if($('input[name="stroke"]:checked').attr('id')==='dotted_line'){
+    if($('input[name="stroke"]:checked').attr('id')==='radio_dotted_path'){
       dummy_stair.attr({ 'stroke-dasharray': PS_WIDTH * $('#dottedLine_line').val() + ' ' +  PS_WIDTH * $('#dottedLine_space').val()});
     }
 
@@ -123,11 +123,11 @@ function add_escalator(){
     }
     dummy_escalator.attr({
       'fill': 'none',
-      'stroke': $('#stroke_color').val(),
-      'stroke-width' : PS_WIDTH*$('#StrokeWidth_TextBox').val(),
+      'stroke': $('#custom_stroke_color').val(),
+      'stroke-width' : PS_WIDTH*$('#textbox_strokewidth').val(),
       'stroke-linejoin': 'round'
     })
-    if($('input[name="stroke"]:checked').attr('id')==='dotted_line'){
+    if($('input[name="stroke"]:checked').attr('id')==='radio_dotted_path'){
       dummy_escalator.attr({ 'stroke-dasharray': PS_WIDTH * $('#dottedLine_line').val() + ' ' +  PS_WIDTH * $('#dottedLine_space').val()});
     }
   })
@@ -159,11 +159,11 @@ function add_arrow(){
     }
     dummy_arrow.attr({
       'fill': 'none',
-      'stroke': $('#stroke_color').val(),
-      'stroke-width' : PS_WIDTH*$('#StrokeWidth_TextBox').val(),
+      'stroke': $('#custom_stroke_color').val(),
+      'stroke-width' : PS_WIDTH*$('#textbox_strokewidth').val(),
       'stroke-linejoin': 'round'
     })
-    if($('input[name="stroke"]:checked').attr('id')==='dotted_line'){
+    if($('input[name="stroke"]:checked').attr('id')==='radio_dotted_path'){
       dummy_arrow.attr({ 'stroke-dasharray': PS_WIDTH * $('#dottedLine_line').val() + ' ' +  PS_WIDTH * $('#dottedLine_space').val()});
     }
   })
@@ -207,11 +207,11 @@ function add_Tiket_gate(){
     }
     draw.select('.dummy').attr({
       'fill': 'none',
-      'stroke': $('#stroke_color').val(),
-      'stroke-width' : PS_WIDTH*$('#StrokeWidth_TextBox').val(),
+      'stroke': $('#custom_stroke_color').val(),
+      'stroke-width' : PS_WIDTH*$('#textbox_strokewidth').val(),
       'stroke-linejoin': 'round'
     })
-    if($('input[name="stroke"]:checked').attr('id')==='dotted_line'){
+    if($('input[name="stroke"]:checked').attr('id')==='radio_dotted_path'){
       draw.select('.dummy').attr({ 'stroke-dasharray': PS_WIDTH * $('#dottedLine_line').val() + ' ' +  PS_WIDTH * $('#dottedLine_space').val()});
     }
   })
@@ -248,11 +248,11 @@ function add_reducescale(){
     }
     dummy_scale.attr({
       'fill': 'none',
-      'stroke': $('#stroke_color').val(),
-      'stroke-width' : PS_WIDTH*$('#StrokeWidth_TextBox').val(),
+      'stroke': $('#custom_stroke_color').val(),
+      'stroke-width' : PS_WIDTH*$('#textbox_strokewidth').val(),
       'stroke-linejoin': 'round'
     })
-    if($('input[name="stroke"]:checked').attr('id')==='dotted_line'){
+    if($('input[name="stroke"]:checked').attr('id')==='radio_dotted_path'){
       dummy_scale.attr({ 'stroke-dasharray': PS_WIDTH * $('#dottedLine_line').val() + ' ' +  PS_WIDTH * $('#dottedLine_space').val()});
     }
   })
@@ -306,11 +306,11 @@ function add_graduationFrame(){
     }
     dummy_graduationFrame.attr({
       'fill': 'none',
-      'stroke': $('#stroke_color').val(),
-      'stroke-width' : PS_WIDTH*$('#StrokeWidth_TextBox').val(),
+      'stroke': $('#custom_stroke_color').val(),
+      'stroke-width' : PS_WIDTH*$('#textbox_strokewidth').val(),
       'stroke-linejoin': 'round'
     })
-    if($('input[name="stroke"]:checked').attr('id')==='dotted_line'){
+    if($('input[name="stroke"]:checked').attr('id')==='radio_dotted_path'){
       dummy_graduationFrame.attr({ 'stroke-dasharray': PS_WIDTH * $('#dottedLine_line').val() + ' ' +  PS_WIDTH * $('#dottedLine_space').val()});
     }
   })
@@ -334,20 +334,20 @@ function draw_circle(){
   let make_circle;
   draw.off('mousedown').on('mousedown', function(e){
     if(e.button===0){
-      //StrokeWidth_TextBoxの値が何もないまたは0の場合はリセットボタンを発火させる
-      if($('#StrokeWidth_TextBox').val()==='') $('#resetStrokeWidth_Button').click();
-      if($('#StrokeWidth_TextBox').val()==='0' && $('input[name="draw_line_fillRadio"]:checked').val()==='none') $('#resetStrokeWidth_Button').click();
+      //textbox_strokewidthの値が何もないまたは0の場合はリセットボタンを発火させる
+      if($('#textbox_strokewidth').val()==='') $('#button_reset_strokewidth').click();
+      if($('#textbox_strokewidth').val()==='0' && $('input[name="draw_line_fillRadio"]:checked').val()==='none') $('#button_reset_strokewidth').click();
       sx = getmousepoint('normal',e).x , sy = getmousepoint('normal',e).y; //描画領域上でのマウスポイント計算
       let back_num = getPathCirclePos();
       make_circle = draw.circle(0).attr({
         'cx' : sx,
         'cy' : sy,
         'fill': $('input[name="draw_line_fillRadio"]:checked').val(),
-        'stroke-width' : PS_WIDTH * $('#StrokeWidth_TextBox').val(),
-        'stroke' : $('#stroke_color').val()
+        'stroke-width' : PS_WIDTH * $('#textbox_strokewidth').val(),
+        'stroke' : $('#custom_stroke_color').val()
       })
       if($('input[name="draw_line_fillRadio"]:checked').val()==='custom') make_circle.fill($('#draw_fill_color').val());
-      if($('input[name="stroke"]:checked').attr('id')==='dotted_line'){
+      if($('input[name="stroke"]:checked').attr('id')==='radio_dotted_path'){
         make_circle.attr({ 'stroke-dasharray': PS_WIDTH * $('#dottedLine_line').val() + ' ' +  PS_WIDTH * $('#dottedLine_space').val()});
       }
       make_circle.addClass('SVG_Element').addClass('circle').addClass('make_circle').back();
@@ -386,19 +386,19 @@ function draw_rect(){
   let make_path;
   draw.off('mousedown').on('mousedown', function(e){
     if(e.button===0){
-      //StrokeWidth_TextBoxの値が何もないまたは0の場合はリセットボタンを発火させる
-      if($('#StrokeWidth_TextBox').val()==='') $('#resetStrokeWidth_Button').click();
-      if($('#StrokeWidth_TextBox').val()==='0' && $('input[name="draw_line_fillRadio"]:checked').val()==='none') $('#resetStrokeWidth_Button').click();
+      //textbox_strokewidthの値が何もないまたは0の場合はリセットボタンを発火させる
+      if($('#textbox_strokewidth').val()==='') $('#button_reset_strokewidth').click();
+      if($('#textbox_strokewidth').val()==='0' && $('input[name="draw_line_fillRadio"]:checked').val()==='none') $('#button_reset_strokewidth').click();
       sx = getmousepoint('normal',e).x , sy = getmousepoint('normal',e).y; //描画領域上でのマウスポイント計算
       let back_num = getPathCirclePos();
       make_path = draw.path().attr({
         'fill': $('input[name="draw_line_fillRadio"]:checked').val(),
-        'stroke-width' : PS_WIDTH * $('#StrokeWidth_TextBox').val(),
-        'stroke' : $('#stroke_color').val(),
+        'stroke-width' : PS_WIDTH * $('#textbox_strokewidth').val(),
+        'stroke' : $('#custom_stroke_color').val(),
         'stroke-linejoin': 'round'
       })
       if($('input[name="draw_line_fillRadio"]:checked').val()==='custom') make_path.fill($('#draw_fill_color').val());
-      if($('input[name="stroke"]:checked').attr('id')==='dotted_line'){
+      if($('input[name="stroke"]:checked').attr('id')==='radio_dotted_path'){
         make_path.attr({ 'stroke-dasharray': PS_WIDTH * $('#dottedLine_line').val() + ' ' +  PS_WIDTH * $('#dottedLine_space').val()});
       }
       make_path.addClass('connected').addClass('SVG_Element').addClass('path').back();
@@ -431,8 +431,8 @@ function draw_rect(){
 //墨字と点字をdraw_areaのマウス位置に入力する関数
 ******************************************************/
 function add_text(){
-  if($('#resizeInk_TextBox').val()==='')$('#inksize_resetbutton').click(); //resizeInk_TextBoxの値が何もない場合はリセットボタンを発火させる
-  if($('#resizeBraille_TextBox').val()==='')$('#brasize_resetbutton').click(); //resizeBraille_TextBoxの値が何もない場合はリセットボタンを発火させる
+  if($('#textbox_resize_ink').val()==='')$('#button_reset_ink').click(); //resizeInk_TextBoxの値が何もない場合はリセットボタンを発火させる
+  if($('#textbox_resize_braille').val()==='')$('#button_reset_braille').click(); //resizeBraille_TextBoxの値が何もない場合はリセットボタンを発火させる
   let back_ink_num = getInkPos();
   let ink_id , bra_id;
   draw.mousemove(function(e){
@@ -443,7 +443,7 @@ function add_text(){
       let dummy_Ink_text = draw.plain( $("#InkChar").val() );
       dummy_Ink_text.attr({
         'font-family': 'メイリオ',
-        'font-size': $('#resizeInk_TextBox').val() * TEXT_CORRECTION,
+        'font-size': $('#textbox_resize_ink').val() * TEXT_CORRECTION,
         'fill': INK_FILL_COLOR,
         'cursor':'default'
       }).translate(mx,my);
@@ -458,12 +458,12 @@ function add_text(){
         return String.fromCharCode(s.charCodeAt(0) - 0x60);
       });
       let dummy_Bra_text = draw.plain(tactileGraphic().convertText(transed_BraText));//文字を点字表現に変換
-      let font_family = ($('input[name="braillefont"]:checked').attr('id')==='IBfont') ? 'Ikarashi Braille' : '点字線なし';
-      let font_stroke = ($('input[name="braillefont"]:checked').attr('id')==='IBfont') ? String(PS_WIDTH * 0.25) : '';
+      let font_family = ($('input[name="braillefont"]:checked').attr('id')==='IkarashiBraille_font') ? 'Ikarashi Braille' : '点字線なし';
+      let font_stroke = ($('input[name="braillefont"]:checked').attr('id')==='IkarashiBraille_font') ? String(PS_WIDTH * 0.25) : '';
       dummy_Bra_text.attr({
         'stroke-width' :  font_stroke,
         'font-family': font_family,
-        'font-size': $('#resizeBraille_TextBox').val() * TEXT_CORRECTION,
+        'font-size': $('#textbox_resize_braille').val() * TEXT_CORRECTION,
         'brailleorigintext' : transed_BraText,
         'cursor':'default'
       }).translate(mx,my + 30)

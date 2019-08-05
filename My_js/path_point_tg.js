@@ -401,8 +401,8 @@ function get_p4oint(element){ //element : 対象の要素
 function reset_dcheck_element(){
   draw.select('.distance_check').each(function(i , children){
     this.removeClass('distance_check');
-    let font_strokewidth = ($('input[name="braillefont"]:checked').val()==='IBfont') ? String(PS_WIDTH * 0.25) : '';
-    let font_strokecolor = ($('input[name="braillefont"]:checked').val()==='IBfont') ? '#000000' : 'none';
+    let font_strokewidth = ($('input[name="braillefont"]:checked').val()==='IkarashiBraille_font') ? String(PS_WIDTH * 0.25) : '';
+    let font_strokecolor = ($('input[name="braillefont"]:checked').val()==='IkarashiBraille_font') ? '#000000' : 'none';
     if(this.hasClass('braille')){
       this.attr({
         'stroke': font_strokecolor,
