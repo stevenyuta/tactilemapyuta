@@ -685,10 +685,6 @@ function checkEditPath_gadget(){
     $('#table_layer').show();
     $('#table_select_fill').show();
   }
-  draw.select('.fragmented').each(function(i,children){
-    if(this.attr('stroke-dasharray')!==undefined) $('.dotted_option').show();
-    $("#radio_dotted_path").prop('checked', true);
-  })
 }
 
 /****************************************
