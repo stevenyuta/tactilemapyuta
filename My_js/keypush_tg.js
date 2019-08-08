@@ -73,10 +73,12 @@ function set_key_down_up(){
               }
             })
             SVG.get('handle_group').each(function(i,children){
+              
               if(e.keyCode===37)this.dx(-CURSOR_KEY_MOVE);
               if(e.keyCode===38)this.dy(-CURSOR_KEY_MOVE);
               if(e.keyCode===39)this.dx(CURSOR_KEY_MOVE);
               if(e.keyCode===40)this.dy(CURSOR_KEY_MOVE);
+
             })
           }else if(current_mode === 'EditPath'){
             draw.select('.editing_target').each(function(i, children){
