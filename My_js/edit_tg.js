@@ -7,6 +7,15 @@ function edit(){
   $('#textbox_selectBox_height').off('focusout').on('focusout' , function(){update_resizeBox('height')});
   $('#textbox_text_info').off('focusout').on('focusout' , update_TextInfoBox);
 
+  //画像選択モードから選択モードに移動したときに選択状態の画像は選択を解除する
+  draw.select('.edit_select').each(function(i,children){
+    if(this.hasClass('image')){
+      if(nowchecked!=='EditImage') this.removeClass('edit_select');
+    }else{
+      if(nowchecked!=='Edit') this.removeClass('edit_select');
+    }
+  })
+
   edit_mousedown_up();
   edit_hover();
   upload_handle();
@@ -120,7 +129,7 @@ function edit_mousedown_up(mode){
 ***************************************/
 function edit_hover(mode){
   //選択モードまたは画像選択モードに関係する要素のhoverイベントをすべてoffにしておく
-  let selector = (nowchecked == "Edit" ) ? '.SVG_Element' : '.image';
+  let selector = (nowchecked === "Edit" ) ? '.SVG_Element' : '.image';
   draw.select(selector).off('mouseover').off('mouseout');
   SVG.get('handle_group').off('mouseover').off('mouseout');
   if(mode!=="off"){

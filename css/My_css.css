@@ -527,7 +527,7 @@ right toolbar
 #start_message{
 	position:absolute;
 	width: 750px;
-	height: 750px;
+	height: 450px;
 	background-color: rgba(106,255,255,0.8);
 	top: 0px;
   right: 0px;
