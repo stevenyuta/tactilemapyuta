@@ -1048,6 +1048,6 @@ function set_handle(){
     'fill':'white',
     'id':'rot_resize',
     'class':'handle',
-    'cursor': 'pointer'
+    'cursor' : 'pointer'
   }))
 }

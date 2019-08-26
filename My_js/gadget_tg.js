@@ -5,7 +5,7 @@ function RadioEvent_set(unredo_flag){
   //現在のモードの記憶
   nowchecked = $('input[name="tg_mode"]:checked').val();
   //画像がある場合は画像選択モードに切り替えられるように表示させる
-  draw.select('.image').first() ? $('#EditImage_div').show() : $('#EditImage_div').hide();
+  draw.select('.image').first() ? $('#EditImage_div , #checkbox_image').show() : $('#EditImage_div , #checkbox_image').hide();
   //ページ上のイベントの削除
   $(document).off();
   //描画領域のイベント削除

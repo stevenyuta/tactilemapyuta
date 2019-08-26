@@ -471,8 +471,7 @@ $(window).on('load',function () {
         this.back();
       })
       cash_svg();
-      let Image_radio = $('#EditImage_div');
-      (draw.select('.image').first()) ? Image_radio.show() : Image_radio.hide();
+      (draw.select('.image').first()) ? $('#EditImage_div , #checkbox_image').show() : $('#EditImage_div , #checkbox_image').hide();
     })
   }
   inputFile_img.on('click',fileClear);
@@ -507,7 +506,16 @@ $(window).on('load',function () {
   cash_svg();
 
   //アプリ起動時のメッセージを削除するボタンの処理
-  $('#MessageHidden').click(function(){
-    $('#start_message , #start_message_background').hide();
+  $('#option').hide();
+  $('#Button_option').click(function(){
+    $('#option , #background').show();
+  })
+  $('#button_option_hide').click(function(){
+    $('#option , #background').hide();
+  })
+
+  //アプリ起動時のメッセージを削除するボタンの処理
+  $('#MessageHidden , #background').click(function(){
+    $('#start_message , #background , #option').hide();
   })
 }) //window.onload終了

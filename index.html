@@ -42,35 +42,10 @@
           <input type="file" id="fileAPI_img">
           <input type="button" value="画像ファイル選択" onClick="$('#fileAPI_img').click();" >
         </span>
-        <!--ガイドの四角形のサイズ変更-->
-        <span style="border: 2px solid #ff0000; padding:15px;">
-          用紙サイズと向き：
-          <input type="radio" id="guiderect_A4" name="guiderect"/>
-          <label for="guiderect_A4">A4</label>
-          <input type="radio" id="guiderect_B4" name="guiderect"/>
-          <label for="guiderect_B4">B4</label>
-          <input type="radio" id="guiderect_A3" name="guiderect"/>
-          <label for="guiderect_A3">A3</label>
-        <!--ガイドの四角形の向き変更-->
-          <input type="radio" id="horizontal_guide" name="direction_guide"/>
-          <label for="horizontal_guide">横</label>
-          <input type="radio" id="vertical_guide" name="direction_guide"/>
-          <label for="vertical_guide">縦</label>
-        </span>
-        <!--点字フォントの種類変更-->
-        <span style="border: 2px solid #ff0000; padding:15px;">
-          点字フォントの選択：
-          <input type="radio" id="IkarashiBraille_font" name="braillefont"/>
-          <label for="IkarashiBraille_font" >いからし</label>
-          <input type="radio" id="lighthouse_font" name="braillefont"/>
-          <label for="lighthouse_font">ライトハウス</label>
 
-        </span>
-        <!--SVGとPNG、そして取扱説明書のダウンロード-->
-        <span class="downloader" style="border: 2px solid #ff0000; padding:15px;">
-          <a href="manual.pdf" target="_blank">取扱説明書</a>
-        </span>
-        <span class="downloader" style="border: 2px solid #ff0000; padding:15px;">
+        <input type="button" id="Button_option" value="　　　設定とダウンロード　　　">
+
+        <span class="downloader" style="border: 2px solid #ff0000; padding:15px; margin-left:560px;">
           <a href="index_en.html">English Edition</a>
         </span>
       </div>
@@ -111,7 +86,7 @@
 
           <!-- 線の自動補正＆距離間チェックボタン-->
           <div class="left_toolbar_button">
-            <div><input type="button" id="straight_connect_button" style="" value="線の自動補正"></div>
+            <div><input type="button" id="straight_connect_button" style="" value="線を自動補正する"></div>
             <!--<div><input type="button" id="distance_check_button" value="距離間チェック"></div>-->
           </div>
 
@@ -121,7 +96,7 @@
                 <input type="checkbox" id="display_DrawElement" name="checkers"/>
                 <label for="display_DrawElement" class="custom_check_label">描画要素</label>
               </div>
-              <div>
+              <div id="checkbox_image">
                 <input type="checkbox" id="display_image" name="checkers"/>
                 <label for="display_image" class="custom_check_label">画像</label>
               </div>
@@ -135,16 +110,7 @@
               </div>
           </div>
 
-          <table id="table_output">
-            <th>データで出力</th>
-            <tr>
-              <td><a id="png_download" href="#" onclick="pngDownload()">印刷用形式(PNG)</a></td>
-            </tr>
-            <tr>
-              <td><a id="svg_download" href="#" onclick="svgDownload()">ベクトル形式(SVG)</a>
-              </td>
-            </tr>
-          </table>
+
         </div>
 
         <!--描画領域が表示されるエリア。-->
@@ -375,7 +341,80 @@
          <div id="scrollbar_width"></div>
       </div>
     </div>
-    <div id="start_message_background"></div>
+    <div id="background"></div>
+    <div id="option">
+      <table id="table_option" border="1">
+        <tr align=center><td class="op_title" colspan="4">設定</td><tr>
+        <tr align="center">
+          <td>サイズ</td>
+          <td>
+            <input type="radio" id="guiderect_A4" name="guiderect"/>
+            <label for="guiderect_A4">A4</label>
+          </td>
+          <td>
+            <input type="radio" id="guiderect_B4" name="guiderect"/>
+            <label for="guiderect_B4">B4</label>
+          </td>
+          <td>
+            <input type="radio" id="guiderect_A3" name="guiderect"/>
+            <label for="guiderect_A3">A3</label>
+          </td>
+        </tr>
+        <tr align="center">
+          <td>向き</td>
+          <td>
+            <input type="radio" id="horizontal_guide" name="direction_guide"/>
+            <label for="horizontal_guide">横</label>
+          </td>
+          <td>
+            <input type="radio" id="vertical_guide" name="direction_guide"/>
+            <label for="vertical_guide">縦</label>
+          </td>
+          <td></td>
+        </tr>
+        <tr align="center">
+          <td>点字フォント</td>
+          <td>
+            <input type="radio" id="IkarashiBraille_font" name="braillefont"/>
+            <label for="IkarashiBraille_font" >いからし</label>
+          </td>
+          <td>
+            <input type="radio" id="lighthouse_font" name="braillefont"/>
+            <label for="lighthouse_font">ライトハウス</label>
+          </td>
+          <td></td>
+        </tr>
+        <tr align="center"><td class="op_title" colspan="4">描いた図のダウンロード</td></tr>
+        <tr align="center">
+          <td>
+            <a id="png_download" href="#" onclick="pngDownload()">PNG</a>
+          </td>
+          <td colspan="3">
+            印刷などに使いやすいファイル形式
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <a id="svg_download" href="#" onclick="svgDownload()">SVG</a>
+          </td>
+          <td colspan="3">
+            本アプリに取り込めば途中から再開できるデータ<br>他ソフトでのデータの利用にも
+          </td>
+        </tr>
+        <tr align="center"><td class="op_title" colspan="4">本アプリの取扱説明書の閲覧</td></tr>
+        <tr align="center">
+          <td>
+            <a href="manual.pdf" target="_blank">こちらをクリック</a>
+          </td>
+          <td colspan="3">
+            本アプリの使い方をまとめたPDFファイル
+          </td>
+        </tr>
+      </table>
+
+      <div class="button_wrapper"><button id="button_option_hide" style="margin-top:30px;">閉じる</button></div>
+
+    </div>
     <div id="start_message">
       <p>
         このアプリは立体コピー触地図の画像データを作成できるシステムです。<br>
@@ -388,7 +427,7 @@
         下のボタンをクリックするとアプリが開始されます。<br><br>
 
       </p>
-      <div id="button_wrapper"><button id="MessageHidden">利用を開始する</button></div>
+      <div class="button_wrapper"><button id="MessageHidden">利用を開始する</button></div>
     </div>
 
     <!-- 自作jsファイルのインポート -->

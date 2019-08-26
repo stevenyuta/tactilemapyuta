@@ -26,11 +26,15 @@ table_layer@font-face {
 }
 .application_area input[type=radio],
 .application_area input[type=file],
-.application_area input[type="checkbox"]{
+.application_area input[type="checkbox"],
+#option input[type=radio],
+#option input[type=file],
+#option input[type="checkbox"]{
   display: none;
 }
 
-.application_area input[type="radio"] + label:hover{
+.application_area input[type="radio"] + label:hover,
+#option input[type="radio"] + label:hover{
 	background-color: #E2EDF9; 	/* マウスオーバー時の背景色を指定する */
 }
 
@@ -93,14 +97,19 @@ top_contents
 	font-size : 18px;
 }
 
-#top_contents input[type="radio"] + label{
+#option input[type="radio"] + label{
   padding: 1px 10px; 	/* ボックス内左側の余白を指定する */
   border: 2px solid #D2691E;/* ボックスの境界線を実線で指定する */
+	cursor: pointer;
 }
 
-#top_contents input[type="radio"]:checked + label {
+#option input[type="radio"]:checked + label {
 	background: #FF8C00;/* マウス選択時の背景色を指定する */
 	color: #ffffff; 	/* マウス選択時のフォント色を指定する */
+}
+
+#option div{
+	margin: 10px 10px;
 }
 
 /******************
@@ -123,10 +132,11 @@ top_contents
 
 .left_toolbar input[type="radio"] + label{
 	margin: 0px 0px 15px 0px;
-	padding: 5px 15px; 	/* ボックス内左側の余白を指定する */
+	padding: 10px 15px; 	/* ボックス内左側の余白を指定する */
   border: 2px solid #006DD9;/* ボックスの境界線を実線で指定する */
 	width: 130px;
-	 text-align: center;
+	text-align: center;
+	cursor: pointer;
 }
 
 .left_toolbar input[type="radio"]:checked + label {
@@ -164,7 +174,8 @@ top_contents
 }
 
 .left_toolbar input[type="checkbox"] + label{
-	margin: 0px 0px 20px 0px;
+	margin: 0px 0px 30px 0px;
+	cursor: pointer;
 }
 
 .checkboxes{
@@ -240,6 +251,7 @@ right toolbar
 #table_stroke_option label{
   padding: 0px 28px;	/* ボックス内左側の余白を指定する */
   border: 2px solid #006DD9;/* ボックスの境界線を実線で指定する */
+	cursor: pointer;
 }
 
 #table_stroke_option input[type="radio"]:checked + label {
@@ -247,8 +259,14 @@ right toolbar
 	color: #ffffff; 	/* マウス選択時のフォント色を指定する */
 }
 
+#table_stroke_option button,
+#table_text button{
+	cursor: pointer;
+}
+
 #custom_stroke_color{
 	width: 100px;
+	cursor: pointer;
 }
 
 #table_text tr,
@@ -306,6 +324,7 @@ right toolbar
   background-position:center center; /*背景画像の位置*/
 	margin : 2px;
 	padding : 5px;
+	cursor: pointer;
 }
 
 #table_draw_fill input[type="radio"]:hover + label{
@@ -343,6 +362,7 @@ right toolbar
 #draw_fill_color{
 	width:80px;
 	height:20px;
+	cursor: pointer;
 }
 
 /*
@@ -365,6 +385,7 @@ right toolbar
   padding: 5px 15px; 	/* ボックス内左側の余白を指定する */
 	width: 150px;
   border: 2px solid #003300;/* ボックスの境界線を実線で指定する */
+	cursor: pointer;
 }
 
 #table_stamp input[type="radio"]:checked + label {
@@ -403,6 +424,7 @@ right toolbar
   background-position:center center; /*背景画像の位置*/
   background-repeat:no-repeat; /*背景画像の繰り返し*/
   background-size: contain; /*背景画像のサイズ設定*/
+	cursor: pointer;
 }
 
 #table_layer button:hover{
@@ -439,6 +461,7 @@ right toolbar
   background-color: #ffffff;
   background-position:center center; /*背景画像の位置*/
   background-repeat:no-repeat; /*背景画像の繰り返し*/
+	cursor: pointer;
 }
 
 #table_select_fill td,
@@ -479,6 +502,7 @@ right toolbar
 #custom_fill_color{
 	width:80px;
 	height:30px;
+	cursor: pointer;
 }
 
 /***********************************
@@ -513,7 +537,18 @@ right toolbar
   float:left;
 }
 
-#start_message_background{
+#Button_option{
+  cursor : pointer;
+  background-color : oldlace;
+  border: 2px solid crimson;/* ボックスの境界線を実線で指定する */
+  padding : 7px;
+}
+
+#Button_option:hover{
+  background : tomato;
+}
+
+#background{
 	position:absolute;
 	background-color: rgba(255,255,255,0.8);
 	top: 0px;
@@ -524,11 +559,43 @@ right toolbar
 	z-index: 5px;
 }
 
+#option{
+	position:absolute;
+	width: 950px;
+	height: 750px;
+	background-color: rgba(220 , 220 , 220,0.6);
+	top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+  margin: auto;
+	z-index: 10px;
+	font-size: 150%;
+}
+
+#table_option{
+	margin : 50px 0px 0px 100px;
+}
+
+.op_title{
+	background-color: lightgreen;
+}
+
+#table_option td{
+	padding : 10px 3px;
+}
+
+#table_option td:not(.op_title){
+	background-color: white;
+}
+
+
+
 #start_message{
 	position:absolute;
 	width: 750px;
 	height: 450px;
-	background-color: rgba(106,255,255,0.8);
+	background-color: rgba(106,255,255,0.5);
 	top: 0px;
   right: 0px;
   bottom: 0px;
@@ -543,12 +610,12 @@ right toolbar
 	margin: 20px;
 }
 
-#button_wrapper{
+.button_wrapper{
 	text-align:center;
-	margin: 50px 0px;
 }
 
-#MessageHidden{
+#MessageHidden , #button_option_hide{
 	width: auto;
 	height: 50px;
+	cursor: pointer;
 }
