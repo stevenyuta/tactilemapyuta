@@ -265,10 +265,10 @@ $(window).on('load',function () {
   $('input[name="stroke"]:radio').off('change').on('change',function(){
     let drawing_path_selector = (now_drawing_path_ID === '' || now_drawing_path_ID === undefined) ? '' : ',#' + now_drawing_path_ID;
     if($(this).attr('id')==='radio_solid_path'){ //実線の場合
-      draw.select('.edit_select.connected , .edit_select.circle , .fragmented' + drawing_path_selector).attr({'stroke-dasharray': ''});
+      draw.select('.edit_select.path , .edit_select.circle , .fragmented' + drawing_path_selector).attr({'stroke-dasharray': ''});
       $('.dotted_option').hide();
     }else{ //点線の場合
-      draw.select('.edit_select.connected,.edit_select.circle,.fragmented' + drawing_path_selector).attr({'stroke-dasharray': PS_WIDTH * $('#textbox_strokewidth').val()});
+      draw.select('.edit_select.path,.edit_select.circle,.fragmented' + drawing_path_selector).attr({'stroke-dasharray': PS_WIDTH * $('#textbox_strokewidth').val()});
       $('.dotted_option').show();
     }
   })
