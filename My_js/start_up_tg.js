@@ -323,7 +323,10 @@ $(window).on('load',function () {
   **************************************************/
   $("#button_fillnone , #button_gray , #button_diagonal").click(change_fill);
   $("#button_polkadot , #button_polkadot_water").click(change_fill);
-  $("#custom_fill_color").on('change',change_fill);
+  $("#button_custom").click(change_fill);
+  $("#custom_fill_color").on('change',function(){
+    $("#button_custom").val($(this).val());
+  });
 
   function change_fill(){
     let fill = this.id==='custom_fill_color' ?  $('#custom_fill_color').val() :  $(this).val(); //カスタムの場合は、その色の値をfillに格納
