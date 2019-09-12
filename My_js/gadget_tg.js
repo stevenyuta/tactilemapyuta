@@ -648,6 +648,8 @@ function undo(){
     //defs（塗りつぶし機能に使う）の設定
     defs_set();
     checkBox_change();
+    toConnected();
+    edit_clear();
     RadioEvent_set(true);
     js_sleep(100); //100ms待機
   }
@@ -675,6 +677,8 @@ function redo(){
     draw_gridline(3000,3000,75,75);
     defs_set();
     checkBox_change();
+    toConnected();
+    edit_clear();
     RadioEvent_set(true);
     js_sleep(100); //100ms待機
   }
