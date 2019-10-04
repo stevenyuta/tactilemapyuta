@@ -358,7 +358,9 @@ function draw_circle(){
       draw.off('mousemove').on('mousemove', function(e){
         lx = getmousepoint('normal',e).x , ly = getmousepoint('normal',e).y //描画領域上でのマウスポイント計算
         let radius = Math.sqrt((sx-lx)*(sx-lx) + (sy-ly)*(sy-ly));
-        make_circle.attr({ 'r' : radius });
+        lx - sx > 0 ? make_circle.attr({'cx' : sx + radius/4}) : make_circle.attr({'cx' : sx - radius/4});
+        ly - sy > 0 ? make_circle.attr({'cy' : sy + radius/4}) : make_circle.attr({'cy' : sy - radius/4});
+        make_circle.attr({'r' : radius/2});
       })
 
       draw.off('mouseup').on('mouseup', function(e){
