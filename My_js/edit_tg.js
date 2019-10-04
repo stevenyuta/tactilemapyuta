@@ -40,28 +40,31 @@ function edit_mousedown_up(mode){
     //select_hoverを持つ要素が存在するということは要素に触れているということ。その要素を選択状態にして、この時は範囲選択はしない。
     if(draw.select('.select_hover').first()){
       let target = draw.select('.select_hover').first(); //触れている要素を入手
-      target.on('mousedown', function(e){
-        //shiftキーを押していなければ複数選択しないので、一度edit_clearする
-        if(!(input_key_buffer[16] || input_key_buffer[17])) edit_clear();
-        //edit_selectクラスを追加し、選択状態であることを示す
-        this.addClass('edit_select');
-        //選択状態の要素のパラメータ更新
-        set_SelectElement_Param();
-        //選択ハンドルの位置やイベントを再設定
-        upload_handle();
-        this.off('mousedown');
-        this.removeClass('select_hover');
-        edit_hover();
-        //↓選択と同時に移動できるようにした(先生からの要望)
-        let anchorX = getmousepoint('normal',e).x , anchorY = getmousepoint('normal',e).y;
-        let click_dTx = 0 , click_dTy = 0;
-        $(document).off('mousemove').mousemove(function(e){
-          let affin_info = get_affinmat('drag',e,gX,gY,gWidth,gHeight,anchorX,anchorY,click_dTx,click_dTy);
-          let affin_mat = affin_info.affine_mat;
-          click_dTx = affin_info.dTx;
-          click_dTy = affin_info.dTy;
-          update_editgroup(affin_mat , "drag");
-        });
+      target.on('mousedown', function(event){
+        console.log(event.button)
+        if(event.button===0){
+          //shiftキーを押していなければ複数選択しないので、一度edit_clearする
+          if(!(input_key_buffer[16] || input_key_buffer[17])) edit_clear();
+          //edit_selectクラスを追加し、選択状態であることを示す
+          this.addClass('edit_select');
+          //選択状態の要素のパラメータ更新
+          set_SelectElement_Param();
+          //選択ハンドルの位置やイベントを再設定
+          upload_handle();
+          this.off('mousedown');
+          this.removeClass('select_hover');
+          edit_hover();
+          //↓選択と同時に移動できるようにした(先生からの要望)
+          let anchorX = getmousepoint('normal',event).x , anchorY = getmousepoint('normal',event).y;
+          let click_dTx = 0 , click_dTy = 0;
+          $(document).off('mousemove').mousemove(function(event){
+            let affin_info = get_affinmat('drag',event,gX,gY,gWidth,gHeight,anchorX,anchorY,click_dTx,click_dTy);
+            let affin_mat = affin_info.affine_mat;
+            click_dTx = affin_info.dTx;
+            click_dTy = affin_info.dTy;
+            update_editgroup(affin_mat , "drag");
+          });
+        }
       });
     }else if(draw.select('.edit_select').first()===undefined){ //要素に触れてなく、選択状態の要素が何もない場合
       let select_rect = draw.rect().addClass('select_rect');
