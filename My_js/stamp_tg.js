@@ -365,7 +365,7 @@ function draw_circle(){
 
       draw.off('mouseup').on('mouseup', function(e){
         if(e.button===0){
-          if(make_circle.attr('r') > 0.5 * SVG_RATIO){
+          if(make_circle.attr('r') > 0.3 * SVG_RATIO){
             make_circle.removeClass('make_circle');
             cash_svg(); //svgデータのcash
           }else{
