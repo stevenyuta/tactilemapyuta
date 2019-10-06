@@ -86,8 +86,7 @@
 
           <!-- 線の自動補正＆距離間チェックボタン-->
           <div class="left_toolbar_button">
-            <div><input type="button" id="straight_connect_button" style="" value="線を自動補正する"></div>
-            <!--<div><input type="button" id="distance_check_button" value="距離間チェック"></div>-->
+            <div><input type="button" id="distance_check_button" value="距離間チェック"></div>
           </div>
 
           <!-- SVG・画像・グリッド線の表示非表示や点訳用のチェックボックス-->
@@ -184,7 +183,7 @@
               </td>
             </tr>
             <tr class="gadget_imageOpacity">
-              <td>画像透過度</td>
+              <td>画像<br>透過度</td>
               <td><input type="text" id="textbox_image_opacity" oncopy="return false" onpaste="return false" oncontextmenu="return false"></td>
               <td>%</td>
               <td><button id="button_reset_image_opacity">100%</button></td>
@@ -327,6 +326,8 @@
               </td>
             </tr>
           </table>
+
+          <div><input type="button" id="straight_connect_button" style="margin:10px 0px 10px 30px;" value="線を自動補正する"></div>
 
           <!--選択時の幅や高さを表示するテキストボックス-->
           <table>

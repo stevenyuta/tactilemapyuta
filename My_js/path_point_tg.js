@@ -420,7 +420,7 @@ function reset_dcheck_element(){
 function fig_straight(){
   var thre_angle_max = Math.tan( 85 * (Math.PI/180) ); //垂直線だと判定するための閾値
   var thre_angle_min = Math.tan( 5 * (Math.PI/180) ); //平行線だと判定するための閾値
-  draw.select('.connected , .fragmented').each(function(i , children){
+  draw.select('.edit_select.connected , .fragmented').each(function(i , children){
     var attr_d = '';
     var dpoint = this.clear().array().settle() //pathのdpoint配列を取得
     for(var j=0; j < dpoint.length - 1; j++){
@@ -472,7 +472,7 @@ function fig_straight(){
 function fig_connect(){
   var thre_xy = 5;
   var thre_distance = 5;
-  draw.select('.connected,.fragmented').each(function(i , children){
+  draw.select('.edit_select.connected,.fragmented').each(function(i , children){
     var dpoint = this.clear().array().settle(); //pathのdpoint配列を取得
     for(var j=0; j < dpoint.length - 1; j++){
       if(dpoint[j + 1][0] !== 'Z'){
@@ -490,7 +490,7 @@ function fig_connect(){
       var relativeXY = get_relativeXY(path_x1_base ,path_y1_base, path_x2_base , path_y2_base , thre_xy); //直線の領域のx,y座標
       var line_param = getLineParam(path_x1_base , path_y1_base , path_x2_base , path_y2_base);
 
-      draw.select('.connected,.fragmented').each(function(k , children){
+      draw.select('.edit_select.connected,.fragmented').each(function(k , children){
         var attr_d = '';
         var dpoint_select = this.clear().array().settle(); //pathのdpoint配列を取得
         for(var l=0; l < dpoint_select.length; l++){

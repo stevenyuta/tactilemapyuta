@@ -41,7 +41,6 @@ function edit_mousedown_up(mode){
     if(draw.select('.select_hover').first()){
       let target = draw.select('.select_hover').first(); //触れている要素を入手
       target.on('mousedown', function(event){
-        console.log(event.button)
         if(event.button===0){
           //shiftキーを押していなければ複数選択しないので、一度edit_clearする
           if(!(input_key_buffer[16] || input_key_buffer[17])) edit_clear();
@@ -183,14 +182,15 @@ function upload_handle(){
   $('.gadget_imageOpacity').hide();
   $('#table_layer , #table_select_fill').hide();
   $('.resizeBox_textbox').hide();
+  $('#straight_connect_button').hide();
   if(draw.select('.edit_select').first()!==undefined){ //選択状態の要素がない場合
-
     if(draw.select('.edit_select.ink').first()!==undefined) $('.gadget_resizeInk').show();
     if(draw.select('.edit_select.braille').first()!==undefined) $('.gadget_resize_braille').show();
     if(draw.select('.edit_select.path , .edit_select.circle').first()!==undefined){
       $('.stroke_option').show();
       if($('input[name="stroke"]:checked').attr('id')==='radio_dotted_path') $('.dotted_option').show();
     }
+    if(draw.select('.edit_select.path , .edit_select.circle').first()!==undefined) $('#straight_connect_button').show();
     if(draw.select('.edit_select.image').first()!==undefined) $('.gadget_imageOpacity').show();
     if(draw.select('.edit_select.connected , .edit_select.circle').first()!==undefined) $('#table_select_fill').show();
     /***************************************************************

@@ -144,7 +144,7 @@ top_contents
 	color: #ffffff; 	/* マウス選択時のフォント色を指定する */
 }
 
-.left_toolbar_button{
+.left_toolbar_button input[type="button"]{
 	margin: 20px 0px 0px 0px;
 }
 

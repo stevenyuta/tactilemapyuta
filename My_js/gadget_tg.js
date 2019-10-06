@@ -55,6 +55,8 @@ function RadioEvent_set(unredo_flag){
   $('#table_select_fill').hide();
   //スタンプの選択
   $('#table_stamp').hide();
+  //線の自動補正ボタン
+  $('#straight_connect_button').hide();
   //選択モード時の選択ボックス（選択している要素の大きさを示す）の設定
   $('.resizeBox_textbox').hide();
 

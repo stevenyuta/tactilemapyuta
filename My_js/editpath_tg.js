@@ -680,10 +680,12 @@ function checkEditPath_gadget(){
   $("#radio_solid_path").prop('checked', true);
   $('#table_layer').hide();
   $('#table_select_fill').hide();
+  $('#straight_connect_button').hide();
   if(draw.select('.fragmented_PathGroup').first()!==undefined){
     $('.stroke_option').show();
     $('#table_layer').show();
     $('#table_select_fill').show();
+    $('#straight_connect_button').show();
   }
 }
 
