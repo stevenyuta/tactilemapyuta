@@ -268,7 +268,7 @@ $(window).on('load',function () {
       draw.select('.edit_select.path , .edit_select.circle , .fragmented' + drawing_path_selector).attr({'stroke-dasharray': ''});
       $('.dotted_option').hide();
     }else{ //点線の場合
-      draw.select('.edit_select.path,.edit_select.circle,.fragmented' + drawing_path_selector).attr({'stroke-dasharray': PS_WIDTH * $('#textbox_strokewidth').val()});
+      draw.select('.edit_select.path,.edit_select.circle,.fragmented' + drawing_path_selector).attr({ 'stroke-dasharray': PS_WIDTH * $('#dottedLine_line').val() + ' ' +  PS_WIDTH * $('#dottedLine_space').val()});
       $('.dotted_option').show();
     }
   })
