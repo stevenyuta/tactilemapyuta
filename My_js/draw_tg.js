@@ -38,6 +38,7 @@ function draw_line(){
   //マウスクリック時のイベントを設定する関数
   **********************************************/
   function draw_mousedown(){
+    let clickCount = 0;
     draw.off('mousedown').mousedown(function(e){
       if(e.button===0){ //左クリック時
         //textbox_strokewidthの値が何もないまたは0の場合はリセットボタンを発火させる（透明な線を表示させないようにするため）
@@ -98,40 +99,55 @@ function draw_line(){
             }
           }
         }else{  //書き始めでない場合：drawing_pathクラスをもつ要素がある
-          drawing_path = SVG.get('#'+ now_drawing_path_ID);
-          drawing_path.attr({'d' : drawing_path_dpoint});
-          drawing_path_dpoint="";
-          if(draw.select('.hovering_node.init_node').first()){
-            let connectedPath = SVG.get(draw.select('.hovering_node.init_node').first().attr('connectedID'));
-            connectedPath_dpoint = connectedPath.clear().array().settle();
-            for(let i = 0; i < connectedPath_dpoint.length; i++){
-              drawing_path.L({x : connectedPath_dpoint[i][1] , y : connectedPath_dpoint[i][2]});
+          if(!clickCount){
+            drawing_path = SVG.get('#'+ now_drawing_path_ID);
+            drawing_path.attr({'d' : drawing_path_dpoint});
+            drawing_path_dpoint="";
+            if(draw.select('.hovering_node.init_node').first()){
+              let connectedPath = SVG.get(draw.select('.hovering_node.init_node').first().attr('connectedID'));
+              connectedPath_dpoint = connectedPath.clear().array().settle();
+              for(let i = 0; i < connectedPath_dpoint.length; i++){
+                drawing_path.L({x : connectedPath_dpoint[i][1] , y : connectedPath_dpoint[i][2]});
+              }
+              connectedPath.remove();
+              selector_delete('.close_node');
+              now_drawing_path_ID = "";
+            }else if(draw.select('.hovering_node.last_node').first()){
+              let connectedPath = SVG.get('#' + draw.select('.hovering_node.last_node').first().attr('connectedID'));
+              connectedPath_dpoint = connectedPath.clear().array().settle();
+              for(let i = connectedPath_dpoint.length -1; i >= 0; i--){
+                drawing_path.L({x : connectedPath_dpoint[i][1] , y : connectedPath_dpoint[i][2]});
+              }
+              connectedPath.remove();
+              selector_delete('.close_node');
+              now_drawing_path_ID = "";
+            }else if(draw.select('.hovering_node.close_node').first()){
+              drawing_path.Z(); //drawing_pathクラスを排除
+              selector_delete('.close_node');
+              now_drawing_path_ID = "";
+            }else{
+              drawing_path.L({x: mx, y: my}); //current_pathに線を描画
+              current_x = mx , current_y = my;
+              /*現在のdrawing_pathのd属性情報を記憶*/
+              let dp_dpoint = drawing_path.clear().array().settle();
+              for(let i=0; i < dp_dpoint.length; i++){
+                drawing_path_dpoint += dp_dpoint[i][0] +" "+ dp_dpoint[i][1] + " " + dp_dpoint[i][2];
+              }
+              set_closePathNode();
             }
-            connectedPath.remove();
-            selector_delete('.close_node');
-            now_drawing_path_ID = "";
-          }else if(draw.select('.hovering_node.last_node').first()){
-            let connectedPath = SVG.get('#' + draw.select('.hovering_node.last_node').first().attr('connectedID'));
-            connectedPath_dpoint = connectedPath.clear().array().settle();
-            for(let i = connectedPath_dpoint.length -1; i >= 0; i--){
-              drawing_path.L({x : connectedPath_dpoint[i][1] , y : connectedPath_dpoint[i][2]});
-            }
-            connectedPath.remove();
-            selector_delete('.close_node');
-            now_drawing_path_ID = "";
-          }else if(draw.select('.hovering_node.close_node').first()){
-            drawing_path.Z(); //drawing_pathクラスを排除
-            selector_delete('.close_node');
-            now_drawing_path_ID = "";
+            ++clickCount;
+            setTimeout( function() {
+              clickCount = 0;
+            }, 200 ) ;
+          // ダブルクリックの場合
           }else{
-            drawing_path.L({x: mx, y: my}); //current_pathに線を描画
-            current_x = mx , current_y = my;
-            /*現在のdrawing_pathのd属性情報を記憶*/
             let dp_dpoint = drawing_path.clear().array().settle();
-            for(let i=0; i < dp_dpoint.length; i++){
+            drawing_path_dpoint="";
+            for(let i=0; i < dp_dpoint.length-1; i++){
               drawing_path_dpoint += dp_dpoint[i][0] +" "+ dp_dpoint[i][1] + " " + dp_dpoint[i][2];
             }
-            set_closePathNode();
+            draw_end_function();
+            clickCount=0;
           }
         }
         set_InitLastNode();

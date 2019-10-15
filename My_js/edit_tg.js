@@ -747,10 +747,10 @@ function update_resizeBox(mode){
     let new_bwidth ,  new_bheight;
     if(mode==='width'){
       new_bwidth = Number(val) * SVG_RATIO;
-      new_bheight = new_bwidth * bheight/bwidth;
+      $('#check_aspect').prop('checked') ? new_bheight = new_bwidth * bheight/bwidth : new_bheight = bheight;
     }else{
       new_bheight = Number(val) * SVG_RATIO;
-      new_bwidth = new_bheight * bwidth/bheight;
+      $('#check_aspect').prop('checked') ? new_bwidth = new_bheight * bwidth/bheight : new_bwidth = bwidth;
     }
     point1[0]=[bx + bwidth, bx , bx + bwidth];
     point1[1]=[by,by + bheight,  by + bheight];
