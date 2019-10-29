@@ -73,12 +73,28 @@ function set_key_down_up(){
               }
             })
             SVG.get('handle_group').each(function(i,children){
-              
-              if(e.keyCode===37)this.dx(-CURSOR_KEY_MOVE);
-              if(e.keyCode===38)this.dy(-CURSOR_KEY_MOVE);
-              if(e.keyCode===39)this.dx(CURSOR_KEY_MOVE);
-              if(e.keyCode===40)this.dy(CURSOR_KEY_MOVE);
-
+              if(this.id()==='box_resize'){
+                let dpoint = this.clear().array().settle(); //pathのdpoint配列を取得
+                let d = "";
+                for(let j = 0; j < dpoint.length; j++){
+                  if(dpoint[j][0]!=="Z"){  //属性がZ以外の場合
+                    let d_x = Number(dpoint[j][1]) , d_y = Number(dpoint[j][2]);
+                    if(e.keyCode===37) d_x -= CURSOR_KEY_MOVE;
+                    if(e.keyCode===38) d_y -= CURSOR_KEY_MOVE;
+                    if(e.keyCode===39) d_x += CURSOR_KEY_MOVE;
+                    if(e.keyCode===40) d_y += CURSOR_KEY_MOVE;
+                    d += dpoint[j][0]+" "+ d_x +" "+ d_y; //新しい座標として格納
+                  }else{
+                    d += dpoint[j][0];
+                  }
+                }
+                this.attr({'d': d});
+              }else{
+                if(e.keyCode===37)this.dx(-CURSOR_KEY_MOVE);
+                if(e.keyCode===38)this.dy(-CURSOR_KEY_MOVE);
+                if(e.keyCode===39)this.dx(CURSOR_KEY_MOVE);
+                if(e.keyCode===40)this.dy(CURSOR_KEY_MOVE);
+              }
             })
           }else if(current_mode === 'EditPath'){
             draw.select('.editing_target').each(function(i, children){
