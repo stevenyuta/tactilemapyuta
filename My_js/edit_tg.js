@@ -853,33 +853,26 @@ function get_bbox(tg_element){
 
 function copy_select(){
   copy.length = 0;
+  copy_gX = gX + gWidth/2;
+  copy_gY = gY + gHeight/2;
   draw.select('.edit_select').each(function(i, children){
     copy.unshift(this);
   })
 }
 
 function paste_select(){
-  /**
-  let gmin_x = 1000000 ,  gmin_y = 1000000;
-  for(let i=0;i < copy.length; i++){
-    let bbox = get_bbox(copy[i]);
-    //ハンドル位置の4隅の座標を更新する
-    if(gmin_x > bbox.min_x) gmin_x = bbox.min_x;
-    if(gmin_y > bbox.min_y) gmin_y = bbox.min_y;
-  }
-  **/
-  if(copy.length > 0) edit_clear();
-  for(let i=0;i < copy.length; i++){
-    let clone = copy[i].clone().addClass('edit_select');
-    clone.dmove(100 , 100);
-    if($('input[name="tg_mode"]:checked').val()==='Edit') clone.off('mousedown');
-  }
   if(copy.length > 0){
-    copy_select();
+    edit_clear();
+    for(let i=0;i < copy.length; i++){
+      let clone = copy[i].clone().addClass('edit_select');
+      clone.dmove(mx - copy_gX , my - copy_gY);
+      if($('input[name="tg_mode"]:checked').val()==='Edit') clone.off('mousedown');
+    }
     let current_mode = $('input[name="tg_mode"]:checked').val();
     if(current_mode==='Edit' || current_mode ==='EditImage'){
       upload_handle();
       set_SelectElement_Param();
+      copy_select();
     }else{
       draw.select('.edit_select').removeClass('edit_select');
     }

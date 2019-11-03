@@ -60,6 +60,11 @@ function RadioEvent_set(unredo_flag){
   //選択モード時の選択ボックス（選択している要素の大きさを示す）の設定
   $('.resizeBox_textbox').hide();
 
+  draw.off('mousemove').mousemove(function(e){
+    mx = getmousepoint('normal',event).x; //描画領域上でのマウスポイント計算
+    my = getmousepoint('normal',event).y;
+  });
+
 
   /*************************************
   //各モードごとの処理

@@ -78,7 +78,7 @@ const F_SCALE = SVG_RATIO * 5; //5mm
 ************************/
 
 let nowchecked; //現在選択しているモードを格納
-let mx = 0 , my = 0;
+let mx = 0 , my = 0; //描画領域上でのマウスカーソルの位置(x,y)
 
 let cash_array = new Array()　, cash_pointer = 0; //undo、redo機能用
 let input_key_buffer = new Array(); //キー入力状態を保有  キーコードの数字に対応する配列が　⇒　押してる時：true ,  押していない時： false
@@ -90,6 +90,7 @@ let drawing_path_dpoint=""; //現在、描画している線のd属性を保持�
 
 let now_movingFlag = false; //現在、選択して、移動させたり、拡大縮小させたり、回転させたりしている時にtrue
 let copy =  new Array(); //コピー機能で現在コピーの対象になっている要素を格納する
+let copy_gX = 0 , copy_gY = 0;
 
 //以下は描画領域のスクロールバーに関する変数
 let widthScrollBar_ratio , widthScrollBar_center;
