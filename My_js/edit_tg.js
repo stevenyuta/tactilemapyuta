@@ -730,21 +730,27 @@ function update_editgroup(affin_mat,scale){
   })
 }
 
-/******************************************************
-//テキストボックスでサイズを変更する関数
-******************************************************/
+/***************************************************************
+//テキストボックスの値を変更して、選択した要素のサイズを変更する関数
+***************************************************************/
 function update_resizeBox(mode){
+  //modeがwidthの場合は幅のテキストボックスの値を変更した場合、heightの場合は高さのテキストボックスの値を変更した場合で分ける
   let val = (mode === 'width') ? $('#textbox_selectBox_width').val() : $('#textbox_selectBox_height').val();
+  //全角文字で入力した場合のために文字列を変換する
+  val = leaveOnlyNumber(val);
   if(!val.match(/[^0-9\.]/) && val!==0 && String(val)!=="\." && String(val)!==""){
-    let point1 = new Array() , point2 = new Array(); //affin変換行列作成に使う行列
+    //座標変換用の配列を２つ（変換前、変換後の座標）を作成する
+    let point1 = new Array() , point2 = new Array();
     for(let i=0;i<3;i++){
       point1[i] = new Array();
       point2[i] = new Array();
     }
+    //選択ボックスを取得し、左上隅の座標とボックスの幅と高さの値を取得する
     let box = SVG.get('box_resize');
     let bx = Number(box.x()) , by = Number(box.y());
     let bwidth = Number(box.width()) , bheight = Number(box.height());
     let new_bwidth ,  new_bheight;
+    //幅と高さのテキストボックスのどちらかによって、計算が分岐する。幅を変化させ、高さを縦横比が一致するように変更するか？またはその逆か？
     if(mode==='width'){
       new_bwidth = Number(val) * SVG_RATIO;
       $('#check_aspect').prop('checked') ? new_bheight = new_bwidth * bheight/bwidth : new_bheight = bheight;
@@ -752,15 +758,20 @@ function update_resizeBox(mode){
       new_bheight = Number(val) * SVG_RATIO;
       $('#check_aspect').prop('checked') ? new_bwidth = new_bheight * bwidth/bheight : new_bwidth = bwidth;
     }
+    //座標変換用の配列に値を格納
     point1[0]=[bx + bwidth, bx , bx + bwidth];
     point1[1]=[by,by + bheight,  by + bheight];
     point1[2]=[1,1,1];
-    //変換後の3座標の入力
+
     point2[0]=[bx + new_bwidth , bx ,bx + new_bwidth];
     point2[1]=[by , by + new_bheight , by + new_bheight];
     point2[2]=[1,1,1];
+    //アフィン変換行列を入手。詳しいことはアフィン変換の計算の仕組みをググろう！
+    //要は変換前と変換後の3座標を指定することでアフィン変換行列は入手されるんだ
     let affin_mat = math.multiply(point2 , math.inv(point1));
+    //入手したアフィン変換行列で選択中の要素を座標変換して平行移動、拡大縮小、回転をする
     update_editgroup(affin_mat);
+    //最後にハンドルの更新
     upload_handle();
   }
 }

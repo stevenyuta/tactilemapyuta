@@ -71,21 +71,18 @@ function RadioEvent_set(unredo_flag){
   *************************************/
   switch(nowchecked){
     case 'Draw':
-      //右のメニューの線種線色と塗りつぶしの表示
+      //右側に表示される線種線色などの設定欄の表示
       $('.stroke_option').show();
       if($('input[name="stroke"]:checked').attr('id')==='radio_dotted_path') $('.dotted_option').show();
       $('#table_draw_fill').show();
-      //draw_line関数を起動して線の描画を開始 draw_tg.jsファイルを参照
-      draw_line();
+      draw_line(); //draw_tg.jsファイルに詳しく色々かいてある
       break;
     case 'Edit':
-      $('.resizeBox_textbox').show();
-      //選択モードの開始 edit_tg.jsファイルを参照
+      $('.resizeBox_textbox').show(); //edit_tg.jsファイルを参照
       edit();
       break;
     case 'EditPath':
-      //線の詳細編集モードの開始 editpath_tg.jsファイルを参照
-      editpath();
+      editpath(); //editpath_tg.jsファイルを参照
       break;
     case 'DrawRect':
       $('.stroke_option').show();
