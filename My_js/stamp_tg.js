@@ -336,17 +336,17 @@ function draw_circle(){
     if(e.button===0){
       //textbox_strokewidthの値が何もないまたは0の場合はリセットボタンを発火させる
       if($('#textbox_strokewidth').val()==='') $('#button_reset_strokewidth').click();
-      if($('#textbox_strokewidth').val()==='0' && $('input[name="draw_line_fillRadio"]:checked').val()==='none') $('#button_reset_strokewidth').click();
+      if($('#textbox_strokewidth').val()==='0' && $('input[name="draw_path_fillRadio"]:checked').val()==='none') $('#button_reset_strokewidth').click();
       sx = getmousepoint('normal',e).x , sy = getmousepoint('normal',e).y; //描画領域上でのマウスポイント計算
       let back_num = getPathCirclePos();
       make_circle = draw.circle(0).attr({
         'cx' : sx,
         'cy' : sy,
-        'fill': $('input[name="draw_line_fillRadio"]:checked').val(),
+        'fill': $('input[name="draw_path_fillRadio"]:checked').val(),
         'stroke-width' : PS_WIDTH * $('#textbox_strokewidth').val(),
         'stroke' : $('#custom_stroke_color').val()
       })
-      if($('input[name="draw_line_fillRadio"]:checked').val()==='custom') make_circle.fill($('#draw_fill_color').val());
+      if($('input[name="draw_path_fillRadio"]:checked').val()==='custom') make_circle.fill($('#draw_fill_color').val());
       if($('input[name="stroke"]:checked').attr('id')==='radio_dotted_path'){
         make_circle.attr({ 'stroke-dasharray': PS_WIDTH * $('#dottedLine_line').val() + ' ' +  PS_WIDTH * $('#dottedLine_space').val()});
       }
@@ -390,16 +390,16 @@ function draw_rect(){
     if(e.button===0){
       //textbox_strokewidthの値が何もないまたは0の場合はリセットボタンを発火させる
       if($('#textbox_strokewidth').val()==='') $('#button_reset_strokewidth').click();
-      if($('#textbox_strokewidth').val()==='0' && $('input[name="draw_line_fillRadio"]:checked').val()==='none') $('#button_reset_strokewidth').click();
+      if($('#textbox_strokewidth').val()==='0' && $('input[name="draw_path_fillRadio"]:checked').val()==='none') $('#button_reset_strokewidth').click();
       sx = getmousepoint('normal',e).x , sy = getmousepoint('normal',e).y; //描画領域上でのマウスポイント計算
       let back_num = getPathCirclePos();
       make_path = draw.path().attr({
-        'fill': $('input[name="draw_line_fillRadio"]:checked').val(),
+        'fill': $('input[name="draw_path_fillRadio"]:checked').val(),
         'stroke-width' : PS_WIDTH * $('#textbox_strokewidth').val(),
         'stroke' : $('#custom_stroke_color').val(),
         'stroke-linejoin': 'round'
       })
-      if($('input[name="draw_line_fillRadio"]:checked').val()==='custom') make_path.fill($('#draw_fill_color').val());
+      if($('input[name="draw_path_fillRadio"]:checked').val()==='custom') make_path.fill($('#draw_fill_color').val());
       if($('input[name="stroke"]:checked').attr('id')==='radio_dotted_path'){
         make_path.attr({ 'stroke-dasharray': PS_WIDTH * $('#dottedLine_line').val() + ' ' +  PS_WIDTH * $('#dottedLine_space').val()});
       }

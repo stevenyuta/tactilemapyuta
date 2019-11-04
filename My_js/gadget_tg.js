@@ -75,7 +75,7 @@ function RadioEvent_set(unredo_flag){
       $('.stroke_option').show();
       if($('input[name="stroke"]:checked').attr('id')==='radio_dotted_path') $('.dotted_option').show();
       $('#table_draw_fill').show();
-      draw_line(); //draw_tg.jsファイルに詳しく色々かいてある
+      draw_path(); //draw_tg.jsファイルに詳しく色々かいてある
       break;
     case 'Edit':
       $('.resizeBox_textbox').show(); //edit_tg.jsファイルを参照

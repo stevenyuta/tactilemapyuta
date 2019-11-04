@@ -305,10 +305,10 @@ $(window).on('load',function () {
   /*************************************************
   塗りつぶしラジオボタンの設定（線の描画モードで使うほう）
   **************************************************/
-  $('input[name="draw_line_fillRadio"]:radio').off('change').on('change',function(){ //ラジオボタンを変えたときに行う処理
+  $('input[name="draw_path_fillRadio"]:radio').off('change').on('change',function(){ //ラジオボタンを変えたときに行う処理
     if(now_drawing_path_ID !== '' && now_drawing_path_ID !== undefined){
-      draw.select('#' + now_drawing_path_ID).fill($('input[name="draw_line_fillRadio"]:checked').val());
-      if($('input[name="draw_line_fillRadio"]:checked').val()==='custom') draw.select('#' + now_drawing_path_ID).fill($('#draw_fill_color').val());
+      draw.select('#' + now_drawing_path_ID).fill($('input[name="draw_path_fillRadio"]:checked').val());
+      if($('input[name="draw_path_fillRadio"]:checked').val()==='custom') draw.select('#' + now_drawing_path_ID).fill($('#draw_fill_color').val());
     }
   });
   $("#draw_fill_color").off('change').on("change", function(){ //カスタムの設定で色を変えたときに行う処理
