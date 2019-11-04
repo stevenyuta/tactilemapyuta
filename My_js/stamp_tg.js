@@ -62,19 +62,15 @@ function set_Stampmode(){
 function add_stair(){
   let back_num = getPathCirclePos();
   let dummy_stair = draw.path().addClass('dummy').back();
-  for(let i=0; i< back_num; i++){
-    dummy_stair.forward();
-  }
+  for(let i=0; i< back_num; i++) dummy_stair.forward();
   let symbol_id = dummy_stair.attr('id');
   draw.off('mousemove').mousemove(function(e){
-    //selector_delete('.dummy');
-    mx = getmousepoint('normal',e).x , my = getmousepoint('normal',e).y;//描画領域上でのマウスポイント計算
+    mx = getmousepoint('normal',e).x , my = getmousepoint('normal',e).y;
     let dummy_stair = draw.select('.dummy').first();
     dummy_stair.attr({'d' : ''});
     dummy_stair.M({x: mx-STAIRS_BX, y: my-STAIRS_BY})
                .L({x: mx+STAIRS_BX, y: my})
                .L({x: mx-STAIRS_BX, y: my+STAIRS_BY});
-
     dummy_stair.attr({
       'fill': 'none',
       'stroke': $('#custom_stroke_color').val(),
@@ -84,7 +80,6 @@ function add_stair(){
     if($('input[name="stroke"]:checked').attr('id')==='radio_dotted_path'){
       dummy_stair.attr({ 'stroke-dasharray': PS_WIDTH * $('#dottedLine_line').val() + ' ' +  PS_WIDTH * $('#dottedLine_space').val()});
     }
-
   })
 
   draw.off('mousedown').mousedown(function(e){
@@ -118,9 +113,7 @@ function add_escalator(){
     symbol_id = dummy_escalator.attr('id');
     dummy_escalator.addClass('dummy').back();
 
-    for(let i=0; i< back_num; i++){
-      dummy_escalator.forward();
-    }
+    for(let i=0; i< back_num; i++) dummy_escalator.forward();
     dummy_escalator.attr({
       'fill': 'none',
       'stroke': $('#custom_stroke_color').val(),
@@ -154,9 +147,7 @@ function add_arrow(){
     let dummy_arrow = draw.path().M({x: mx-18, y: my}).L({x: mx+24,y:my}).L({x: mx, y: my-12}).L({x: mx+24,y:my}).L({x: mx,y:my+12});
     symbol_id = dummy_arrow.attr('id');
     dummy_arrow.addClass('dummy').back();
-    for(let i=0; i< back_num; i++){
-      dummy_arrow.forward();
-    }
+    for(let i=0; i< back_num; i++) dummy_arrow.forward();
     dummy_arrow.attr({
       'fill': 'none',
       'stroke': $('#custom_stroke_color').val(),
@@ -324,111 +315,6 @@ function add_graduationFrame(){
   })
 }
 
-
-/******************************************************
-//円を生成する関数
-******************************************************/
-function draw_circle(){
-  let sx = 0 , sy = 0;
-  let lx = 0 , ly = 0;
-  let make_circle;
-  draw.off('mousedown').on('mousedown', function(e){
-    if(e.button===0){
-      //textbox_strokewidthの値が何もないまたは0の場合はリセットボタンを発火させる
-      if($('#textbox_strokewidth').val()==='') $('#button_reset_strokewidth').click();
-      if($('#textbox_strokewidth').val()==='0' && $('input[name="draw_path_fillRadio"]:checked').val()==='none') $('#button_reset_strokewidth').click();
-      sx = getmousepoint('normal',e).x , sy = getmousepoint('normal',e).y; //描画領域上でのマウスポイント計算
-      let back_num = getPathCirclePos();
-      make_circle = draw.circle(0).attr({
-        'cx' : sx,
-        'cy' : sy,
-        'fill': $('input[name="draw_path_fillRadio"]:checked').val(),
-        'stroke-width' : PS_WIDTH * $('#textbox_strokewidth').val(),
-        'stroke' : $('#custom_stroke_color').val()
-      })
-      if($('input[name="draw_path_fillRadio"]:checked').val()==='custom') make_circle.fill($('#draw_fill_color').val());
-      if($('input[name="stroke"]:checked').attr('id')==='radio_dotted_path'){
-        make_circle.attr({ 'stroke-dasharray': PS_WIDTH * $('#dottedLine_line').val() + ' ' +  PS_WIDTH * $('#dottedLine_space').val()});
-      }
-      make_circle.addClass('SVG_Element').addClass('circle').addClass('make_circle').back();
-      for(let i=0; i< back_num; i++){
-        make_circle.forward();
-      }
-
-      draw.off('mousemove').on('mousemove', function(e){
-        lx = getmousepoint('normal',e).x , ly = getmousepoint('normal',e).y //描画領域上でのマウスポイント計算
-        let radius = Math.sqrt((sx-lx)*(sx-lx) + (sy-ly)*(sy-ly));
-        lx - sx > 0 ? make_circle.attr({'cx' : sx + radius/4}) : make_circle.attr({'cx' : sx - radius/4});
-        ly - sy > 0 ? make_circle.attr({'cy' : sy + radius/4}) : make_circle.attr({'cy' : sy - radius/4});
-        make_circle.attr({'r' : radius/2});
-      })
-
-      draw.off('mouseup').on('mouseup', function(e){
-        if(e.button===0){
-          if(make_circle.attr('r') > 0.3 * SVG_RATIO){
-            make_circle.removeClass('make_circle');
-            cash_svg(); //svgデータのcash
-          }else{
-            make_circle.remove();
-          }
-          draw.off('mousemove');
-        }
-      })
-    }
-  })
-}
-
-
-/******************************************************
-//矩形を生成する関数
-******************************************************/
-function draw_rect(){
-  let sx = 0 , sy = 0;
-  let lx = 0 , ly = 0;
-  let make_path;
-  draw.off('mousedown').on('mousedown', function(e){
-    if(e.button===0){
-      //textbox_strokewidthの値が何もないまたは0の場合はリセットボタンを発火させる
-      if($('#textbox_strokewidth').val()==='') $('#button_reset_strokewidth').click();
-      if($('#textbox_strokewidth').val()==='0' && $('input[name="draw_path_fillRadio"]:checked').val()==='none') $('#button_reset_strokewidth').click();
-      sx = getmousepoint('normal',e).x , sy = getmousepoint('normal',e).y; //描画領域上でのマウスポイント計算
-      let back_num = getPathCirclePos();
-      make_path = draw.path().attr({
-        'fill': $('input[name="draw_path_fillRadio"]:checked').val(),
-        'stroke-width' : PS_WIDTH * $('#textbox_strokewidth').val(),
-        'stroke' : $('#custom_stroke_color').val(),
-        'stroke-linejoin': 'round'
-      })
-      if($('input[name="draw_path_fillRadio"]:checked').val()==='custom') make_path.fill($('#draw_fill_color').val());
-      if($('input[name="stroke"]:checked').attr('id')==='radio_dotted_path'){
-        make_path.attr({ 'stroke-dasharray': PS_WIDTH * $('#dottedLine_line').val() + ' ' +  PS_WIDTH * $('#dottedLine_space').val()});
-      }
-      make_path.addClass('connected').addClass('SVG_Element').addClass('path').back();
-      for(let i=0; i< back_num; i++){
-        make_path.forward();
-      }
-      draw.off('mousemove').on('mousemove', function(e){
-        lx = getmousepoint('normal',e).x , ly = getmousepoint('normal',e).y //描画領域上でのマウスポイント計算
-        if(input_key_buffer[16] || input_key_buffer[17]){
-          ((lx-sx) * (ly-sy) < 0) ? lx = sx - (ly - sy) : lx = sx + ly - sy;
-        }
-        make_path.attr({'d':''})
-        if(Math.abs(lx - sx) > 3 && Math.abs(ly - sy) > 3) make_path.M({x: sx, y: sy}).L({x: lx, y: sy}).L({x: lx, y: ly}).L({x: sx, y: ly}).Z();
-      })
-      draw.off('mouseup').on('mouseup', function(e){
-        if(e.button===0){
-          if(make_path.attr('d')===""){
-            make_path.remove();
-          }else{
-            cash_svg(); //svgデータのcash
-            draw.off('mousemove');
-          }
-        }
-      })
-    }
-  })
-}
-
 /******************************************************
 //墨字と点字をdraw_areaのマウス位置に入力する関数
 ******************************************************/
@@ -496,68 +382,4 @@ function add_text(){
       if(real_Ink_text || real_Bra_text) cash_svg();
     }
   })
-}
-
-
-/******************************************************
-/墨字の追加すべきレイヤー順番を示す番号を返す関数
-1、画像よりも上
-2、塗りつぶされたpathよりも上
-3、点字よりも下
-4、墨字よりも上
-5、path、円記号よりも下
-の優先順位で配置する
-******************************************************/
-function getInkPos(){
-  let position; //一番低い位置にある要素のpositon番号を格納
-  draw.select(".path , .circle").each(function(i , children){
-    if(position > this.position() || position === undefined) position = this.position();
-  })
-  draw.select(".ink").each(function(i , children){
-    if(position < this.position() || position === undefined) position = this.position() + 1;
-  })
-  draw.select(".braille").each(function(i , children){
-    if(position > this.position() || position === undefined) position = this.position();
-  })
-  draw.select('.path:not([fill="none"])').each(function(i , children){
-    if(position <= this.position() || position === undefined) position = this.position() + 1;
-  })
-  draw.select(".image").each(function(i , children){
-    if(position <= this.position() || position === undefined) position = this.position() + 1;
-  })
-  if(position === undefined){
-    return 0;
-  }else{
-    return position;
-  }
-}
-
-/******************************************************
-pathまたは円記号の追加すべきレイヤー順番を示す番号を返す関数
-path（線、触知記号）、または円はレイヤー順で
-1、画像よりも上
-2、path、円記号よりも上
-3、点字よりも下
-4、墨字よりも上
-の優先順位で配置する
-******************************************************/
-function getPathCirclePos(){
-  let position; //一番低い位置にある要素のpositon番号を格納
-  draw.select(".ink").each(function(i , children){
-    if(position < this.position() || position === undefined) position = Number(this.position()) + 1;
-  })
-  draw.select(".braille").each(function(i , children){ //点字で一番下のレイヤーにあるものの順番を取得
-    if(position > this.position() || position === undefined) position = this.position();
-  })
-  draw.select(".path , .circle").each(function(i , children){
-    if(position < this.position() || position === undefined) position = this.position() + 1;
-  })
-  draw.select(".image").each(function(i , children){
-    if(position < this.position() || position === undefined) position = Number(this.position()) + 1;
-  })
-  if(position === undefined){
-    return 0;
-  }else{
-    return position;
-  }
 }

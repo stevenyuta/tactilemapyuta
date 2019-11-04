@@ -689,6 +689,70 @@ function redo(){
   undredo_checker();
 }
 
+
+/******************************************************
+/墨字の追加すべきレイヤー順番を示す番号を返す関数
+1、画像よりも上
+2、塗りつぶされたpathよりも上
+3、点字よりも下
+4、墨字よりも上
+5、path、円記号よりも下
+の優先順位で配置する
+******************************************************/
+function getInkPos(){
+  let position; //一番低い位置にある要素のpositon番号を格納
+  draw.select(".path , .circle").each(function(i , children){
+    if(position > this.position() || position === undefined) position = this.position();
+  })
+  draw.select(".ink").each(function(i , children){
+    if(position < this.position() || position === undefined) position = this.position() + 1;
+  })
+  draw.select(".braille").each(function(i , children){
+    if(position > this.position() || position === undefined) position = this.position();
+  })
+  draw.select('.path:not([fill="none"])').each(function(i , children){
+    if(position <= this.position() || position === undefined) position = this.position() + 1;
+  })
+  draw.select(".image").each(function(i , children){
+    if(position <= this.position() || position === undefined) position = this.position() + 1;
+  })
+  if(position === undefined){
+    return 0;
+  }else{
+    return position;
+  }
+}
+
+/******************************************************
+pathまたは円記号の追加すべきレイヤー順番を示す番号を返す関数
+path（線、触知記号）、または円はレイヤー順で
+1、画像よりも上
+2、path、円記号よりも上
+3、点字よりも下
+4、墨字よりも上
+の優先順位で配置する
+******************************************************/
+function getPathCirclePos(){
+  let position; //一番低い位置にある要素のpositon番号を格納
+  draw.select(".ink").each(function(i , children){
+    if(position < this.position() || position === undefined) position = Number(this.position()) + 1;
+  })
+  draw.select(".braille").each(function(i , children){ //点字で一番下のレイヤーにあるものの順番を取得
+    if(position > this.position() || position === undefined) position = this.position();
+  })
+  draw.select(".path , .circle").each(function(i , children){
+    if(position < this.position() || position === undefined) position = this.position() + 1;
+  })
+  draw.select(".image").each(function(i , children){
+    if(position < this.position() || position === undefined) position = Number(this.position()) + 1;
+  })
+  if(position === undefined){
+    return 0;
+  }else{
+    return position;
+  }
+}
+
 /************************************
 //引数に入れたselectorを全て削除する関数
 ************************************/

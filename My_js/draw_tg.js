@@ -1,13 +1,12 @@
-/*********************************************
-直線の描画に関係する関数をまとめたファイル
-分かりにくいけどなんとか追ってみてください
-*********************************************/
+/**************************************************
+直線、四角形、円の描画に関係する関数をまとめたファイル
+***************************************************/
 
 //1番最初に起動する関数
 function draw_path(){
-  //描画中のpathの先端の座標
+  //描画中のpathの最先端の座標
   let current_x = 0, current_y = 0;
-  //描画中のpathを格納する変数
+  //描画中のpath要素を格納する変数
   let drawing_path;
 
   //直線描画専用のマウスムーブ関数（要はマウスを移動したときに起動する）
@@ -284,6 +283,120 @@ function set_InitLastNode(){
           this.attr({ 'fill': DRAW_NODE_COLOR , 'cursor' : 'default'}).removeClass('hovering_node');
         })
       }
+    }
+  })
+}
+
+
+/*********************
+//四角形を描画する関数
+**********************/
+function draw_rect(){
+  //四角形はマウスを押し込んだ後にドラッグし、離すことで描画される
+  //sx,syは初めに押し込んだ座標、lx,lyは離した座標となる
+  let sx = 0 , sy = 0;
+  let lx = 0 , ly = 0;
+  //rectという名の変数が四角形(path)となる
+  //svgではrect要素があり、そっちを使えばって思うかもしれないが、編集のしやすさを
+  //考慮して、path要素で四角形を描く
+  let rect;
+  draw.off('mousedown').on('mousedown', function(e){
+    if(e.button===0){
+      //textbox_strokewidthの値が何もないまたは0の場合はリセットボタンを発火させる
+      if($('#textbox_strokewidth').val()==='') $('#button_reset_strokewidth').click();
+      if($('#textbox_strokewidth').val()==='0' && $('input[name="draw_path_fillRadio"]:checked').val()==='none') $('#button_reset_strokewidth').click();
+      //sx,syを取得
+      sx = getmousepoint('normal',e).x , sy = getmousepoint('normal',e).y;
+      let back_num = getPathCirclePos();
+      //線の色や塗りつぶしなどの属性やクラスを指定
+      rect = draw.path().attr({
+        'fill': $('input[name="draw_path_fillRadio"]:checked').val(),
+        'stroke-width' : PS_WIDTH * $('#textbox_strokewidth').val(),
+        'stroke' : $('#custom_stroke_color').val(),
+        'stroke-linejoin': 'round'
+      })
+      if($('input[name="draw_path_fillRadio"]:checked').val()==='custom') rect.fill($('#draw_fill_color').val());
+      if($('input[name="stroke"]:checked').attr('id')==='radio_dotted_path'){
+        rect.attr({ 'stroke-dasharray': PS_WIDTH * $('#dottedLine_line').val() + ' ' +  PS_WIDTH * $('#dottedLine_space').val()});
+      }
+      rect.addClass('connected').addClass('SVG_Element').addClass('path').back();
+      for(let i=0; i< back_num; i++) rect.forward();
+
+      //マウスムーブ時の処理を設定する
+      draw.off('mousemove').on('mousemove', function(e){
+        //lx lyは常に更新される
+        lx = getmousepoint('normal',e).x , ly = getmousepoint('normal',e).y //描画領域上でのマウスポイント計算
+        //ctrlキー、shiftキーを押しているときは正方形になるようにする
+        if(input_key_buffer[16] || input_key_buffer[17]){
+          ((lx-sx) * (ly-sy) < 0) ? lx = sx - (ly - sy) : lx = sx + ly - sy;
+        }
+        rect.attr({'d':''});
+        //四角形の辺があまりにも小さい（マウスドラッグしたときの移動量が小さい）場合はd属性には何も書かない
+        if(Math.abs(lx - sx) > 3 && Math.abs(ly - sy) > 3) rect.M({x: sx, y: sy}).L({x: lx, y: sy}).L({x: lx, y: ly}).L({x: sx, y: ly}).Z();
+      })
+      draw.off('mouseup').on('mouseup', function(e){
+        if(e.button===0){
+          //d属性に何もない　⇒　つまり辺が小さすぎたときなので、その四角形は削除する
+          if(rect.attr('d')===""){
+            rect.remove();
+          }else{
+            cash_svg();
+            draw.off('mousemove');
+          }
+        }
+      })
+    }
+  })
+}
+
+
+/***********************************************************
+//円を描画する関数
+//上記のdraw_rectで説明したのと一致する点が多いので説明は省略することが多いよ
+************************************************************/
+function draw_circle(){
+  //変数の指定　draw_rect()で説明したのと役割は同じ
+  let sx = 0 , sy = 0;
+  let lx = 0 , ly = 0;
+  let circle;
+  draw.off('mousedown').on('mousedown', function(e){
+    if(e.button===0){
+      //textbox_strokewidthの値が何もないまたは0の場合はリセットボタンを発火させる
+      if($('#textbox_strokewidth').val()==='') $('#button_reset_strokewidth').click();
+      if($('#textbox_strokewidth').val()==='0' && $('input[name="draw_path_fillRadio"]:checked').val()==='none') $('#button_reset_strokewidth').click();
+      sx = getmousepoint('normal',e).x , sy = getmousepoint('normal',e).y; //描画領域上でのマウスポイント計算
+      let back_num = getPathCirclePos();
+      circle = draw.circle(0).attr({
+        'cx' : sx,
+        'cy' : sy,
+        'fill': $('input[name="draw_path_fillRadio"]:checked').val(),
+        'stroke-width' : PS_WIDTH * $('#textbox_strokewidth').val(),
+        'stroke' : $('#custom_stroke_color').val()
+      })
+      if($('input[name="draw_path_fillRadio"]:checked').val()==='custom') circle.fill($('#draw_fill_color').val());
+      if($('input[name="stroke"]:checked').attr('id')==='radio_dotted_path'){
+        circle.attr({ 'stroke-dasharray': PS_WIDTH * $('#dottedLine_line').val() + ' ' +  PS_WIDTH * $('#dottedLine_space').val()});
+      }
+      circle.addClass('SVG_Element').addClass('circle').back();
+      for(let i=0; i< back_num; i++) circle.forward();
+
+      draw.off('mousemove').on('mousemove', function(e){
+        lx = getmousepoint('normal',e).x , ly = getmousepoint('normal',e).y //描画領域上でのマウスポイント計算
+        let radius = Math.sqrt((sx-lx)*(sx-lx) + (sy-ly)*(sy-ly));
+        //↓はちょっと理解しにくいかも。
+        //やっていることはドラッグして円を描くときに中心に対してどの方向にドラッグしたかによって
+        //円の描かれ方が変わるようにしている。
+        lx - sx > 0 ? circle.attr({'cx' : sx + radius/4}) : circle.attr({'cx' : sx - radius/4});
+        ly - sy > 0 ? circle.attr({'cy' : sy + radius/4}) : circle.attr({'cy' : sy - radius/4});
+        circle.attr({'r' : radius/2});
+      })
+
+      draw.off('mouseup').on('mouseup', function(e){
+        if(e.button===0){
+          circle.attr('r') > 0.3 * SVG_RATIO ? cash_svg() : circle.remove()
+          draw.off('mousemove');
+        }
+      })
     }
   })
 }
