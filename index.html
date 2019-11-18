@@ -69,7 +69,7 @@
           </div>
           <div>
             <input  type="radio" name="tg_mode" value="Draw" id="Draw">
-            <label for="Draw">線</label>
+            <label for="Draw">直線</label>
           </div>
           <div>
             <input  type="radio" name="tg_mode" value="DrawRect" id="DrawRect">
@@ -147,15 +147,15 @@
                 <input type="radio" id="radio_solid_path" name="stroke"/>
                 <label for="radio_solid_path">実線</label>
                 <input type="radio" id="radio_dotted_path" name="stroke"/>
-                <label for="radio_dotted_path">点線</label>
+                <label for="radio_dotted_path">破線</label>
               </td>
             </tr>
-            <tr class="dotted_option" style="background-color:orange;"><td colspan="4">点線情報</td></tr>
+            <tr class="dotted_option" style="background-color:orange;"><td colspan="4">破線の設定</td></tr>
             <tr class="dotted_option">
               <td colspan="4">線部分の長さ　<input type="text" id="dottedLine_line" oncopy="return false" onpaste="return false" oncontextmenu="return false">mm</td>
             </tr>
             <tr class="dotted_option">
-              <td colspan="4">空白部分の長さ　<input type="text" id="dottedLine_space" oncopy="return false" onpaste="return false" oncontextmenu="return false">mm</td>
+              <td colspan="4">線間距離　<input type="text" id="dottedLine_space" oncopy="return false" onpaste="return false" oncontextmenu="return false">mm</td>
             </tr>
             <tr class="dotted_option"><td colspan="4"><button id="button_reset_dottedpath">線の幅に合わせる</button></td></tr>
           </table>
@@ -301,7 +301,7 @@
             </tr>
             <tr>
               <td colspan="4">
-                <input  type="radio" name="tactileSymbol" value="graduationFrame_stamp" id="graduationFrame_stamp">
+                <input  type="radio" name="tactileSymbol" value="graduationFrame_stamp" id="graduationFrame_stamp" style="display:none;">
                 <label for="graduationFrame_stamp">目盛り付き枠</label>
               </td>
             </tr>
