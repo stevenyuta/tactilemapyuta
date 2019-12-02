@@ -364,19 +364,27 @@ function edit_rect_EventSet(){
   })
 }
 
-/****************************************
-//fragmentedPath、edit_rectの移動関数
-*****************************************/
+/********************************
+//セグメントとノードを移動させる関数
+*********************************/
 function move_editing(){
-  let init_x = mx, init_y = my; //クリックを行った点
+  //クリックし始めの座標
+  let init_x = mx, init_y = my;
+  //ctrlキーを押していた場合は90度間隔で移動できるようにする
   if(input_key_buffer[17]) editpath_mousemove('90degree',init_x,init_y);
   movingFlag = true;
+  //インターバル関数の起動
+  //詳細はググってみてね
   arrIntervalCnt.push($interval_move = setInterval(function(e){
         draw.select('.editing_target').each(function(i,children){
+          //移動させるものがノードの場合
           if(this.hasClass('edit_rect')){
-            let original_cx = this.attr('x') + this.width()/2, original_cy = this.attr('y') + this.height()/2; //クリックを行った点
+            //描画領域上でのマウス位置などを計算して平行移動させる
+            //おそらくよくわからないだろうから、あまり考えない方がいい
+            let original_cx = this.attr('x') + this.width()/2, original_cy = this.attr('y') + this.height()/2;
             let cx = original_cx + mx - init_x , cy = original_cy + my - init_y;
-            this.attr({'x':cx - this.width()/2}) , this.attr({'y':cy - this.height()/2}); //円の位置を格納
+            this.attr({'x':cx - this.width()/2}) , this.attr({'y':cy - this.height()/2});
+            //nears
             let nears = getSimultaneouslyEdit_element(this);
             if(nears.beforePath){
               let dpoint = nears.beforePath.clear().array().settle(); //pathのdpoint配列を取得
@@ -386,8 +394,9 @@ function move_editing(){
               let dpoint = nears.afterPath.clear().array().settle(); //pathのdpoint配列を取得
               nears.afterPath.attr({'d':''}).M({x: cx, y: cy}).L({x: dpoint[1][1], y: dpoint[1][2]});
             }
+          //セグメントの場合
           }else{
-            let dpoint = this.clear().array().settle(); //pathのdpoint配列を取得
+            let dpoint = this.clear().array().settle();
             let original_x1 = dpoint[0][1] , original_y1 = dpoint[0][2];
             let original_x2 = dpoint[1][1] , original_y2 = dpoint[1][2];
             let x1 = original_x1 - init_x + mx , y1 = original_y1 - init_y + my;
@@ -413,6 +422,9 @@ function move_editing(){
   )
 }
 
+/******************************
+セグメントとノードの削除用制御関数
+*******************************/
 function delete_editpath(){
   let delete_flag = false;
   while(draw.select('.editing_target').first()){
@@ -433,8 +445,12 @@ function delete_editpath(){
   if(delete_flag) cash_svg();
 }
 
-function delete_editpath_rect(editing_target){
-  let nears = getSimultaneouslyEdit_element(editing_target); //rectの近傍要素を取得
+/*************************************
+ノードの削除用関数
+変数：nodeに対象のノードが格納されている
+*************************************/
+function delete_editpath_rect(node){
+  let nears = getSimultaneouslyEdit_element(node);
   let new_fragmentedPath;
   if(nears.afterPath)afterPath_dpoint =  nears.afterPath.clear().array().settle(); //afterPathのdpoint配列を取得
   if(nears.beforePath)beforePath_dpoint =  nears.beforePath.clear().array().settle(); //beforePathのdpoint配列を取得
@@ -451,32 +467,35 @@ function delete_editpath_rect(editing_target){
   }
   if(nears.beforePath!==null)nears.beforePath.remove(); //beforePathの削除
   if(nears.afterPath!==null)nears.afterPath.remove();  //afterPathの削除
-  let fragmented_PathGroup = SVG.get('fragmented_PathGroup_' + String(editing_target.parent().attr('fragmented_Group_Number')));
+  let fragmented_PathGroup = SVG.get('fragmented_PathGroup_' + String(node.parent().attr('fragmented_Group_Number')));
   if(fragmented_PathGroup.children().length < 2){ //線が閉じていて、グループ内に線が2本以下の場合
     if(fragmented_PathGroup.hasClass('closed_path')){
       fragmented_PathGroup.removeClass('closed_path');
-      editing_target.parent().removeClass('closed_path');
+      node.parent().removeClass('closed_path');
       new_fragmentedPath.remove();
     }
   }
-  editing_target.remove(); //editing_rectの削除
+  node.remove();
 }
 
-function delete_editpath_fragmentedPath(editing_target){
-  if(!editing_target.parent().hasClass('closed_path')){
-    var max_fragmented_Group_Number = getMax_fragmented_Group_Number();
+/*********************
+セグメントの削除用関数
+*********************/
+function delete_editpath_fragmentedPath(segment){
+  if(!segment.parent().hasClass('closed_path')){
+    let max_fragmented_Group_Number = getMax_fragmented_Group_Number();
     let new_fragmented_PathGroup = draw.group().addClass('fragmented_PathGroup');
     let new_fragmented_RectGroup = draw.group().addClass('fragmented_RectGroup');
-    let current_fragmented_Group_Number = editing_target.parent().attr('fragmented_Group_Number');
+    let current_fragmented_Group_Number = segment.parent().attr('fragmented_Group_Number');
     new_fragmented_PathGroup.attr({
       'id' : 'fragmented_PathGroup_' + String(max_fragmented_Group_Number + 1),
       'fragmented_Group_Number' : String(max_fragmented_Group_Number + 1),
-      'connected_id' : editing_target.parent().attr('connected_id'),
-      'fill_tmp': editing_target.parent().attr('fill_tmp') , 'stroke_tmp' : editing_target.parent().attr('stroke_tmp')
+      'connected_id' : segment.parent().attr('connected_id'),
+      'fill_tmp': segment.parent().attr('fill_tmp') , 'stroke_tmp' : segment.parent().attr('stroke_tmp')
     })
     let ghost_path = draw.path().attr({
       'id' : 'ghost_path_' + String(max_fragmented_Group_Number + 1),
-      'fill' : editing_target.parent().attr('fill_tmp'),
+      'fill' : segment.parent().attr('fill_tmp'),
       'fragmented_Group_Number' : String(max_fragmented_Group_Number + 1),
       'class' : 'ghost_path'
     });
@@ -485,36 +504,43 @@ function delete_editpath_fragmentedPath(editing_target){
       'id' : 'fragmented_RectGroup_' + String(max_fragmented_Group_Number + 1),
       'fragmented_Group_Number' : String(max_fragmented_Group_Number + 1),
     })
-    editing_target.parent().before(new_fragmented_PathGroup);
-    for(var j=0 ; j < Number(editing_target.attr('assignment_Number')) + 1; j++){
+    segment.parent().before(new_fragmented_PathGroup);
+    for(let j=0 ; j < Number(segment.attr('assignment_Number')) + 1; j++){
       new_fragmented_PathGroup.add(SVG.get('path_'+ String(current_fragmented_Group_Number) + '_'  + String(j)));
       new_fragmented_RectGroup.add(SVG.get('rect_'+ String(current_fragmented_Group_Number) + '_' + String(j)));
     }
   }else{
-    let current_fragmented_Group_Number = editing_target.parent().attr('fragmented_Group_Number');
-    for(var j=0 ; j < Number(editing_target.attr('assignment_Number')) + 1; j++){
+    let current_fragmented_Group_Number = segment.parent().attr('fragmented_Group_Number');
+    for(let j=0 ; j < Number(segment.attr('assignment_Number')) + 1; j++){
       SVG.get('path_'+ String(current_fragmented_Group_Number) + '_'  + String(j)).front();
       SVG.get('rect_'+ String(current_fragmented_Group_Number) + '_'  + String(j)).front();
     }
-    editing_target.parent().removeClass('closed_path');
+    segment.parent().removeClass('closed_path');
     let fragmented_RectGroup = SVG.get('fragmented_RectGroup_'+ String(current_fragmented_Group_Number));
     if(fragmented_RectGroup) fragmented_RectGroup.removeClass('closed_path');
   }
-  editing_target.remove(); //editing_pathの削除
+  segment.remove();
 }
 
-/****************************************
-//ノード結合関数
-*****************************************/
+/*******************************
+ ノードの結合関数
+ 選択状態の２つのノードを接続する
+*******************************/
 function node_connect_function(){
+  //選択状態のノードを２つ取得する
   let connectRect = get_node_connectRect();
   let rect1 = connectRect.rect1 , rect2 = connectRect.rect2;
+  //選択状態のノードが２つ取得できた場合
+  //選択状態のノードを２つ取得できなかった場合は何もしない
   if(rect1 && rect2){
+    //それぞれのノードに対応するセグメントグループを取得する
     let fragmented_PathGroup1 = SVG.get('#fragmented_PathGroup_' + rect1.parent().attr('fragmented_Group_Number'));
     let fragmented_PathGroup2 = SVG.get('#fragmented_PathGroup_' + rect2.parent().attr('fragmented_Group_Number'));
+    //それぞれのノードのグループを取得する
     let fragmented_RectGroup1 = rect1.parent();
     let fragmented_RectGroup2 = rect2.parent();
     let connect_flag1 , connect_flag2;
+    //取得したノードにあわせてconnect_flagに値を格納する
     if(rect1.hasClass('first_rect')){
       connect_flag1 = 'first';
     }else{
@@ -525,6 +551,7 @@ function node_connect_function(){
     }else{
       connect_flag2 = 'last';
     }
+    //新しく追加するセグメントを作成
     let new_path = draw.path().addClass('fragmented').addClass('SVG_Element').addClass('path');
     new_path.attr({
       'fill' : 'none','stroke' : fragmented_PathGroup1.attr('stroke_tmp'),
@@ -532,6 +559,7 @@ function node_connect_function(){
       'stroke-dasharray': fragmented_PathGroup1.first().attr('stroke-dasharray'),
       'stroke-linejoin': fragmented_PathGroup1.first().attr('stroke-linejoin')
     })
+    //セグメントにあわせて様々な場合分けで処理をする。
     if(fragmented_PathGroup1 === fragmented_PathGroup2){
       if(rect1.hasClass('first')){
         new_path.M({x: rect1.cx(), y: rect1.cy()}).L({x: rect2.cx(), y: rect2.cy()});
@@ -606,7 +634,9 @@ function node_connect_function(){
     cash_svg();
   }
 }
-
+/***************************
+選択状態のノードを２つ取得する
+****************************/
 function get_node_connectRect(){
   let edge_rect_num = 0;
   let ob = new Object();
@@ -651,27 +681,36 @@ function get_node_connectRect(){
   return ob;
 }
 
-/***********************************************
-//選択したpath,rectの前後要素を探索する関数
-***********************************************/
+/*****************************************************************
+//引数に指定したセグメントやノードの前後のセグメントやノードを返す関数
+*****************************************************************/
 function getSimultaneouslyEdit_element(element , dbclick){
-  var fragmented_Group_Number = Number(element.parent().attr('fragmented_Group_Number'));
-  var assignment_Number = Number(element.attr('assignment_Number'));
-  var ob = new Object();
+  let fragmented_Group_Number = Number(element.parent().attr('fragmented_Group_Number'));
+  let assignment_Number = Number(element.attr('assignment_Number'));
+  let ob = new Object();
+  //ノードの場合
   if(element.hasClass('edit_rect')){
-    ob.beforePath = SVG.get('path_' + String(fragmented_Group_Number) + '_' + String(assignment_Number - 1)); //進行方向でpathの前にある円
-    ob.afterPath = SVG.get('path_' + String(fragmented_Group_Number) + '_' + String(assignment_Number)); //進行方向でpathの後にある円
-
+    //セグメントの順番で言えば、次にある線
+    ob.beforePath = SVG.get('path_' + String(fragmented_Group_Number) + '_' + String(assignment_Number - 1));
+    //セグメントの順番で言えば、前にある線
+    ob.afterPath = SVG.get('path_' + String(fragmented_Group_Number) + '_' + String(assignment_Number));
+    //線が閉じている　かつ　ノードが先頭の場合の処理
     if(element.parent().hasClass('closed_path') && element.hasClass('first_rect')){
       SVG.get('#fragmented_PathGroup_' + String(fragmented_Group_Number)).each(function(i,children){
         if(this.hasClass('last_fragmentedPath') && !this.hasClass('first_fragmentedPath'))ob.beforePath = this;
       })
     }
+  //セグメントの場合
   }else{
-    ob.beforeRect = SVG.get('rect_' + String(fragmented_Group_Number) + '_' + String(assignment_Number)); //進行方向でpathの前にある円
-    ob.afterRect = SVG.get('rect_' + String(fragmented_Group_Number) + '_' + String(assignment_Number + 1)); //進行方向でpathの後にある円
-    ob.beforePath = SVG.get('path_' + String(fragmented_Group_Number) + '_' + String(assignment_Number - 1)); //進行方向でpathの前にある円
-    ob.afterPath = SVG.get('path_' + String(fragmented_Group_Number) + '_' + String(assignment_Number + 1)); //進行方向でpathの後にある円
+    //セグメントの順番で言えば、前にあるノード
+    ob.beforeRect = SVG.get('rect_' + String(fragmented_Group_Number) + '_' + String(assignment_Number));
+    //セグメントの順番で言えば、次にあるノード
+    ob.afterRect = SVG.get('rect_' + String(fragmented_Group_Number) + '_' + String(assignment_Number + 1));
+    //セグメントの順番で言えば、前にあるセグメント
+    ob.beforePath = SVG.get('path_' + String(fragmented_Group_Number) + '_' + String(assignment_Number - 1));
+    //セグメントの順番で言えば、次にあるセグメント
+    ob.afterPath = SVG.get('path_' + String(fragmented_Group_Number) + '_' + String(assignment_Number + 1));
+    //線が閉じている場合の処理
     if(element.parent().hasClass('closed_path')){
       if(element.hasClass('last_fragmentedPath')){
         ob.afterRect = SVG.get('rect_' + String(fragmented_Group_Number) + '_' + String(0)); //進行方向で円の後にある円
