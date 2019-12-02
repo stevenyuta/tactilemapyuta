@@ -299,7 +299,7 @@ $(window).on('load',function () {
   $("#custom_stroke_color").off('change').on("change", function(){
     let drawing_path_selector = (now_drawing_path_ID === '' || now_drawing_path_ID === undefined) ? '' : ',#' + now_drawing_path_ID;
      draw.select('.edit_select.path , .edit_select.circle , .fragmented' + drawing_path_selector).attr({'stroke' : $("#custom_stroke_color").val()});
-     draw.select('.fragmented_PathGroup').attr({'stroke_tmp' : $("#custom_stroke_color").val()});
+     draw.select('.Segments_Group').attr({'stroke_tmp' : $("#custom_stroke_color").val()});
   });
 
   /*************************************************
@@ -332,7 +332,7 @@ $(window).on('load',function () {
   function change_fill(){
     let fill = this.id==='custom_fill_color' ?  $('#custom_fill_color').val() :  $(this).val(); //カスタムの場合は、その色の値をfillに格納
     let fill_complete_flag = false; //fillの変更があった場合にtrue。 戻る、やり直し用の一時保存データを作成する
-    draw.select(".edit_select , .fragmented_PathGroup").each(function(i,children){
+    draw.select(".edit_select , .Segments_Group").each(function(i,children){
       let fill_flag = false;
       if(this.hasClass('connected') || this.hasClass('circle')){
         fill_flag = true;
@@ -341,7 +341,7 @@ $(window).on('load',function () {
       }
       if(fill_flag){
         fill_complete_flag = true;
-        if(this.hasClass('fragmented_PathGroup')){
+        if(this.hasClass('Segments_Group')){
           SVG.get('#ghost_path_' + this.attr('fragmented_Group_Number')).attr({'fill' : fill});
           this.attr({'fill_tmp': fill});
         }else{
@@ -359,14 +359,14 @@ $(window).on('load',function () {
     let base;
     switch(this.id){
        case 'button_front': // 最前面ボタン（選択中の要素をレイヤーで一番前に移動する）
-         draw.select('.edit_select, .fragmented_PathGroup').each(function(i , children){
+         draw.select('.edit_select, .Segments_Group').each(function(i , children){
            this.front();
            let ghost_path = SVG.get('#ghost_path_' + this.attr('fragmented_Group_Number'));
            if(ghost_path) this.before(ghost_path);
          })
          break;
        case 'button_forward': // 前面ボタン（選択中の要素をレイヤーで１つ前に移動する）
-         draw.select('.edit_select, .fragmented_PathGroup').each(function(i , children){
+         draw.select('.edit_select, .Segments_Group').each(function(i , children){
            if(i===0){
              base = this;
              this.forward();
@@ -381,7 +381,7 @@ $(window).on('load',function () {
          })
          break;
        case 'button_backward': // 背面ボタン（選択中の要素をレイヤーで一つ後ろに移動する）
-         draw.select('.edit_select, .fragmented_PathGroup').each(function(i , children){
+         draw.select('.edit_select, .Segments_Group').each(function(i , children){
            if(i===0){
              base = this;
              this.backward();
@@ -396,7 +396,7 @@ $(window).on('load',function () {
          })
          break;
        case 'button_back': // 最背面ボタン（選択中の要素をレイヤーで一番後に移動する）
-         draw.select('.edit_select, .fragmented_PathGroup').each(function(i , children){
+         draw.select('.edit_select, .Segments_Group').each(function(i , children){
            if(i===0){
              base = this;
              this.back();
@@ -409,7 +409,7 @@ $(window).on('load',function () {
          break;
        default:
     }
-    draw.select('.fragmented_RectGroup').front();
+    draw.select('.Nodes_Group').front();
     SVG.get('guiderect_group').front();
     SVG.get('gridline_group').front();
     SVG.get('handle_group').front();

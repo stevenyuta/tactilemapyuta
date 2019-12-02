@@ -73,7 +73,7 @@ function download_setSVG(original_draw) { //ダウンロード時に出力svgフ
   toConnected();
   selector_delete('.select_rect');
   selector_delete('.edit_rect , .init_node , .last_node , .close_node');
-  selector_delete('.fragmented_RectGroup');
+  selector_delete('.Nodes_Group');
   //不要なグループの削除
   SVG.get('gridline_group').remove();
   SVG.get('handle_group').remove();
@@ -140,7 +140,7 @@ function download_setPNG(original_draw) { //ダウンロード時に出力pngフ
   toConnected();
   selector_delete('.select_rect');
   selector_delete('.edit_rect , .init_node , .last_node , .close_node');
-  selector_delete('.fragmented_RectGroup');
+  selector_delete('.Nodes_Group');
   add_fontStyle();
   //不要なグループの削除
   SVG.get('gridline_group').remove();

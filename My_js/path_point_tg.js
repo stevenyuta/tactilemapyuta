@@ -4,9 +4,9 @@
 //配列を介して切り替える関数
 ******************************************************/
 function toConnected(){
-  draw.select('.fragmented_PathGroup').each(function(i,children){
-    if(SVG.get('fragmented_RectGroup_' + String(this.attr('fragmented_Group_Number')))){
-      SVG.get('fragmented_RectGroup_' + String(this.attr('fragmented_Group_Number'))).remove();
+  draw.select('.Segments_Group').each(function(i,children){
+    if(SVG.get('Nodes_Group_' + String(this.attr('fragmented_Group_Number')))){
+      SVG.get('Nodes_Group_' + String(this.attr('fragmented_Group_Number'))).remove();
     }
     let new_path = draw.path().addClass('connected').addClass('SVG_Element').addClass('path');
     this.after(new_path);
@@ -554,7 +554,7 @@ function fig_pathUpload(){
     set_closePathNode();
   }
   //線の詳細編集の更新
-  draw.select('.fragmented_PathGroup').each(function(i,children){
+  draw.select('.Segments_Group').each(function(i,children){
     let fragmented_Group_Number = this.attr('fragmented_Group_Number');
     let closed;
     this.hasClass('closed_path') ? closed = true : closed = false;

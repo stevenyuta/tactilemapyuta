@@ -21,7 +21,7 @@ function RadioEvent_set(unredo_flag){
   selector_delete('.dummy');
   selector_delete('.edit_rect , .init_node , .last_node , .close_node');
   selector_delete('.select_rect');
-  selector_delete('.fragmented_RectGroup');
+  selector_delete('.Nodes_Group');
 
   //キーボードを押したときの処理の設定
   set_key_down_up();
@@ -408,20 +408,19 @@ function set_zoom(){
     })
     draw.select('.svg_select_points').attr({'r':SELECT_HANDLE_RADIUS/(2*zoom_lvl)});
     draw.select('.svg_select_points_rot').attr({ 'r':SELECT_HANDLE_RADIUS/(2*zoom_lvl) });
-
+    //init_node , last_node:それぞれ線描画時に始点と終点ノードを表現する四角形
+    SVG.select('.init_node , .last_node').each(function(i , children){
+      let origi_cx = this.x() + this.width()/2 , origi_cy = this.y() + this.height()/2;
+      this.width(RECT_WIDTH/(2.5*zoom_lvl));
+      this.height(RECT_HEIGHT/(2.5*zoom_lvl));
+      this.attr({'x' : origi_cx - this.width()/2, 'y' : origi_cy - this.height()/2 });
+    })
     //edit_node:線編集時にノードを表現する四角形
     //close_node:線描画時の終点と始点を繋ぐときの四角形
     SVG.select('.edit_rect , .close_node').each(function(i , children){
       let origi_cx = this.x() + this.width()/2 , origi_cy = this.y() + this.height()/2;
       this.width(RECT_WIDTH/(1.5*zoom_lvl));
       this.height(RECT_HEIGHT/(1.5*zoom_lvl));
-      this.attr({'x' : origi_cx - this.width()/2, 'y' : origi_cy - this.height()/2 });
-    })
-    //init_node , last_node:それぞれ線描画時に始点と終点ノードを表現する四角形
-    SVG.select('.init_node , .last_node').each(function(i , children){
-      let origi_cx = this.x() + this.width()/2 , origi_cy = this.y() + this.height()/2;
-      this.width(RECT_WIDTH/(2.5*zoom_lvl));
-      this.height(RECT_HEIGHT/(2.5*zoom_lvl));
       this.attr({'x' : origi_cx - this.width()/2, 'y' : origi_cy - this.height()/2 });
     })
   });

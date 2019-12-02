@@ -164,7 +164,7 @@ function edit_clear(){
   if($('#textbox_text_info').is(':focus')) update_TextInfoBox();
   draw.select('.edit_select').each(function(i, children) {
     if(this.hasClass('connected') && nowchecked === 'EditPath'){
-      toFragmented(this);
+      toSegment(this);
       this.remove();
     }else{
       this.removeClass('edit_select');
