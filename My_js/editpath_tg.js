@@ -2,11 +2,12 @@ function editpath(){
   update_editElement();
   fragmentedPath_EventSet();
   edit_rect_EventSet();
-
+  //線の詳細編集用のマウス位置取得関数
   editpath_mousemove('connect');
+  //マウスでホバー（mouseover mouseout）したときの処理
   editpath_hover(true);
-  $('#node_connect').off('click').click(node_connect_function);
 
+  //マウスを離したときの処理
   $(document).off('mouseup').on('mouseup',function(){ //mouseup終了時の処理
     while(arrIntervalCnt.length !== 0) {  clearInterval(arrIntervalCnt.shift())  }
     if(movingFlag) cash_svg();
@@ -14,10 +15,13 @@ function editpath(){
     editpath_hover(true);
     editpath_mousemove('normal');
   })
+  //右クリックメニューの表示非表示
   set_contextMenu();
   let base_x = 0 , base_y = 0;
 }
-//マウスを動かしているときの関数
+/**********************************
+線の詳細編集専用のマウスの座標取得関数
+***********************************/
 function editpath_mousemove(mode,param1,param2){
   switch(mode){
     case 'connect':
@@ -38,18 +42,24 @@ function editpath_mousemove(mode,param1,param2){
   }
 }
 /******************************************************
-//hoverしたときの関数
+ マウスでhoverしたときのイベントを登録する関数
+ mouseover ＆　mouseout
 ******************************************************/
-function editpath_hover(mode){
+function editpath_hover(flag){
+  //mouseover & mouseoutイベントの全解除
   draw.select('.connected').off('mouseover').off('mouseout');
   draw.select('.fragmented').off('mouseover').off('mouseout');
   draw.select('.path_edit_frag').off('mouseover').off('mouseout');
   draw.select('.edit_rect').off('mouseover').off('mouseout');
-  if(mode){
+  //イベントの登録
+  if(flag){
+    //普通の線のイベント登録
+    //マウスでふれたときはマウスカーソルを変化させる
     draw.select('.connected').mouseover(function() {
       this.attr({
         'cursor' : 'pointer'
       });
+      //マウスで普通の線に触れているときにクリックした場合にはセグメントに変換する
       this.off('mousedown',editpath_mousedown).mousedown(editpath_mousedown);
     })
     draw.select('.connected').mouseout(function() {
@@ -58,6 +68,8 @@ function editpath_hover(mode){
       });
       this.off('mousedown',editpath_mousedown);
     })
+    //セグメントのイベント登録
+    //マウスでふれたときは色とマウスカーソルを変化させる
     draw.select('.fragmented:not(.editing_target)').mouseover(function() {
       this.attr({
         'stroke' : PATH_EDIT_COLOR,
@@ -70,7 +82,8 @@ function editpath_hover(mode){
         'cursor':'default'
       });
     })
-    //ノード（edit_rect）のイベントセット
+    //ノードのイベント登録
+    //注意：選択中（多分青色になってる）のノードはマウスでふれても色を変えないし、カーソルも変えない
     draw.select('.edit_rect:not(.editing_target)').mouseover(function() {
       this.attr({
         'fill': EDIT_HOVER_COLOR,
@@ -86,24 +99,36 @@ function editpath_hover(mode){
   }
 }
 
-
-//クリック時に起動する関数
+/************************
+クリック時に起動する関数
+*************************/
 function editpath_mousedown(){
-  if(!input_key_buffer[16]) toConnected(); //shiftキーを押していない場合：バラバラ状態のpathを全てくっつき状態にする
+  //shiftキーを押していない場合：全てのセグメントを普通の線に変換する（戻す）
+  if(!input_key_buffer[16]) toConnected();
   get_node_connectRect();
-  toFragmented(this); //clickしたpathをバラバラ状態にする
+  //クリックした普通の線をセグメント化する
+  toFragmented(this);
   update_editElement();
   fragmentedPath_EventSet();
   edit_rect_EventSet();
-  editpath_hover(true); //hoverイベントの再更新
-  this.remove(); //クリックしたpath要素は削除
+  //hoverイベントの再更新
+  editpath_hover(true);
+  //クリックした線は削除
+  this.remove();
 }
 
-//くっつき状態のpathをバラバラ状態にする関数
+/**
+普通の線をセグメント化する関数
+connectedPathはセグメント化の対象とする線のこと
+**/
 function toFragmented(connectedPath){
-  let max_frag_num = getMax_fragmented_Group_Number(); //connectedがもつfrag_numの最大数を取得する
+  //セグメント化されている線の数を取得する
+  let max_frag_num = getMax_fragmented_Group_Number();
   let dpoint = connectedPath.clear().array().settle();
+  //セグメント化した線を格納するグループ
+  //要はグループの１つ１つが元の線であるということ
   let fragmented_PathGroup = draw.group().addClass('fragmented_PathGroup');
+  //こっちは線ごとにノードをまとめたグループ
   let fragmented_RectGroup = draw.group().addClass('fragmented_RectGroup');
   fragmented_PathGroup.attr({
     'id' : 'fragmented_PathGroup_' + String(max_frag_num + 1),
@@ -115,40 +140,52 @@ function toFragmented(connectedPath){
     'id' : 'fragmented_RectGroup_' + String(max_frag_num + 1),
     'fragmented_Group_Number' : String(max_frag_num + 1)
   })
+  //対象の線がZでおわる。つまり閉じている線の場合はグループにclosed_pathを追加しておく
   if(dpoint[dpoint.length-1][0]==="Z"){
     fragmented_PathGroup.addClass('closed_path');
     fragmented_RectGroup.addClass('closed_path');
   }
+  //レイヤーでいう元の線の次にグループを置く
   connectedPath.after(fragmented_PathGroup);
+  //次のforループからセグメントとノードを作成していく
   for(let j = 0; j < dpoint.length - 1; j++){
+    //セグメントを作成する
     let fragmentedPath = fragmented_PathGroup.path().addClass('fragmented').addClass('SVG_Element').addClass('path');
-    let rect = fragmented_RectGroup.rect(RECT_WIDTH/(1.5*draw.zoom()) , RECT_HEIGHT/(1.5*draw.zoom())).addClass('edit_rect').front(); ////重ね順を一番前に
+    //ノードも作成する
+    let rect = fragmented_RectGroup.rect(RECT_WIDTH/(1.5*draw.zoom()) , RECT_HEIGHT/(1.5*draw.zoom())).addClass('edit_rect').front();
+    //セグメントの属性を指定
     fragmentedPath.attr({
       'fill' : 'none', 'stroke' : connectedPath.attr('stroke'),
       'stroke-width': connectedPath.attr('stroke-width'),
       'stroke-dasharray' : connectedPath.attr('stroke-dasharray'),
       'stroke-linejoin': connectedPath.attr('stroke-linejoin')
     })
-    if(fragmentedPath.attr('stroke-width') === 0){ //線幅が0の場合
+    //線の幅が0mmの場合（おそらく塗りつぶされてる場合とかは線の幅を0mmにしているかも）
+    if(fragmentedPath.attr('stroke-width') === 0){
       fragmentedPath.attr({
         'stroke-width': PS_WIDTH,
         'stroke-dasharray' : 4*PS_WIDTH + ' ' + PS_WIDTH,
         'Non_stroke' : 'true'
       })
     }
+    //ノードの追加
     rect.attr({
       'x' : dpoint[j][1] - rect.width()/2,
       'y' : dpoint[j][2] - rect.height()/2,
       'fill': EDIT_RECT_COLOR
     })
+    //先頭のセグメントとノードには特有のクラスを追加しておく
     if(j === 0){
       fragmentedPath.addClass('first_fragmentedPath');
       rect.addClass('first_rect');
     }
+    //最後尾のセグメントとノードにも特有のクラスを追加しておく
     if(j===dpoint.length - 2) fragmentedPath.addClass('last_fragmentedPath');
-    if(dpoint[j+1][0]==="Z"){  //次の要素がZ要素である場合
+    //次の要素がZ要素である場合
+    if(dpoint[j+1][0]==="Z"){
       fragmentedPath.M({x: dpoint[j][1], y: dpoint[j][2]}).L({x: dpoint[0][1], y: dpoint[0][2]});
-    }else{ //次の要素がZ要素でない場合
+    //次の要素がZ要素でない場合
+    }else{
       fragmentedPath.M({x: dpoint[j][1], y: dpoint[j][2]}).L({x: dpoint[j+1][1], y: dpoint[j+1][2]});
       if(j === dpoint.length -2){
         let rect = fragmented_RectGroup.rect(RECT_WIDTH/(1.5*draw.zoom()) , RECT_HEIGHT/(1.5*draw.zoom())).addClass('edit_rect').addClass('last_rect').front(); ////重ね順を一番前に
@@ -160,6 +197,11 @@ function toFragmented(connectedPath){
       }
     }
   }
+  /**
+  ゴーストパスの設定
+  命名理由は特になし。塗りつぶしをしている場合にセグメントやノードを動かした場合に
+  塗りつぶしの模様も一緒に動くようにするために作成
+  **/
   let ghost_path = draw.path().attr({
     'id' : 'ghost_path_' + String(max_frag_num + 1),
     'fill' : connectedPath.attr('fill'),
@@ -172,33 +214,41 @@ function toFragmented(connectedPath){
 }
 
 /********************************************
-//frag_pathのidの更新と選択用rectの追加
+//セグメントとノードのidやクラスなどの更新
 *********************************************/
 function update_editElement(){
+  //まずセグメントグループで中身が何もないものを削除する
   draw.select('.fragmented_PathGroup').each(function(i , children){
     if(this.children().length === 0){
       let fragmented_Group_Number = this.attr('fragmented_Group_Number');
+      //ノードやゴーストパスも対応するものは削除しておく
       SVG.get('#fragmented_RectGroup_' + String(fragmented_Group_Number)).remove();
       if(SVG.get('#ghost_path_' + String(fragmented_Group_Number))) SVG.get('#ghost_path_' + String(fragmented_Group_Number)).remove();
       this.remove();
     }
   })
+  //先頭や最後尾のセグメントは削除
   draw.select('.first_fragmentedPath').removeClass('first_fragmentedPath');
   draw.select('.last_fragmentedPath').removeClass('last_fragmentedPath');
+  //全てのセグメントグループを取得し、逐次的に１つずつ処理
   draw.select('.fragmented_PathGroup').each(function(i , children){
     let fragmented_Group_Number = this.attr('fragmented_Group_Number');
     let self = this;
+    //セグメントグループ内の属性を編集していく
     this.each(function(j , children){
       this.attr({
         'id' : 'path_' + String(fragmented_Group_Number) + '_' + String(j),
         'assignment_Number': String(j),
       })
+      //先頭と最後尾のセグメントには特有の属性を追加する
       if(j===0) this.addClass('first_fragmentedPath');
       if(j===self.children().length - 1) this.addClass('last_fragmentedPath');
     })
   })
+  //先頭と最後尾のノードのクラスを削除する
   draw.select('.first_rect').removeClass('first_rect');
   draw.select('.last_rect').removeClass('last_rect');
+  //全てのノードグループを取得し、逐次的に１つずつ処理
   draw.select('.fragmented_RectGroup').each(function(i , children){
     let fragmented_Group_Number = this.attr('fragmented_Group_Number');
     let self = this;
@@ -207,6 +257,7 @@ function update_editElement(){
         'id' : 'rect_' + String(fragmented_Group_Number) + '_' + String(j),
         'assignment_Number': String(j),
       })
+      //最初と最後のノードには特有のクラスを追加
       if(j===0) this.addClass('first_rect');
       if(j===self.children().length - 1) this.addClass('last_rect');
     })
@@ -214,15 +265,19 @@ function update_editElement(){
 }
 
 /*****************************************
-//パスのイベントの登録
+ セグメントのイベントの登録
 ****************************************/
 function fragmentedPath_EventSet(){
+  //ダブルクリック判定用の変数定義
   let clickCount = 0;
-  draw.select('.fragmented').off('mousedown').on('mousedown',function(e){ //mousedownイベントの登録
+  //マウスでクリックしたときにイベントを登録する
+  draw.select('.fragmented').off('mousedown').on('mousedown',function(e){
     editpath_hover(false);
+    //shiftキー（keycode:16）を押していない　かつ　現在クリックしたセグメントが選択状態でない　かつ　左クリック
     if(!input_key_buffer[16] && !this.hasClass('editing_target') && event.button===0) reset_editing_target();
     this.attr({ 'stroke' : PATH_EDIT_COLOR}).addClass('editing_target');
-    if(e.button===0){ //左クリック時
+    //左クリック時
+    if(e.button===0){
       // シングルクリックの場合
       if( !clickCount) {
         move_editing();
@@ -230,10 +285,15 @@ function fragmentedPath_EventSet(){
         setTimeout( function() {
           clickCount = 0;
         }, 350 ) ;
-      // ダブルクリックの場合
+      /**
+       ダブルクリックの場合
+       クリックしたセグメントにノードを追加する。
+       イメージとしてはセグメントを２本追加し、その中間にノードを配置し、最後に元の線を削除する感じ
+      **/
       }else{
-        let dpoint = this.clear().array().settle(); //pathのdpoint配列を取得
+        let dpoint = this.clear().array().settle();
         let assignment_Number = this.attr('assignment_Number');
+        //新しく追加する２本のセグメントとノード
         let fragmentedPath1 = draw.path().M({x: dpoint[0][1], y: dpoint[0][2]}).L({x: mx, y: my }).addClass('fragmented').addClass('SVG_Element').addClass('path');
         let fragmentedPath2 = draw.path().M({x: mx, y: my}).L({x: dpoint[1][1], y: dpoint[1][2] }).addClass('fragmented').addClass('SVG_Element').addClass('path');
         let rect = SVG.get('#fragmented_RectGroup_' + String(this.parent().attr('fragmented_Group_Number'))).rect(RECT_WIDTH/(1.5*draw.zoom()) , RECT_HEIGHT/(1.5*draw.zoom())).addClass('edit_rect').back();
@@ -256,6 +316,7 @@ function fragmentedPath_EventSet(){
         })
         this.after(fragmentedPath2).after(fragmentedPath1);
         for(let i=0; i < Number(assignment_Number) + 1; i++) rect.forward();
+        //元のセグメントを削除
         this.remove();
         update_editElement();
         fragmentedPath_EventSet();
@@ -269,11 +330,12 @@ function fragmentedPath_EventSet(){
 }
 
 /****************************************
-//rectのイベント登録
+//ノードのイベント登録
+セグメントのイベント登録と重複する箇所が多い
 *****************************************/
 function edit_rect_EventSet(){
   let clickCount = 0;
-  draw.select('.edit_rect').off('mousedown').on('mousedown',function(e){ //mousedownイベントの登録
+  draw.select('.edit_rect').off('mousedown').on('mousedown',function(e){
     editpath_hover(false);
     if(!input_key_buffer[16] && !this.hasClass('editing_target') && event.button===0)  reset_editing_target();
     if(e.button===0){
@@ -286,7 +348,8 @@ function edit_rect_EventSet(){
         setTimeout( function() {
           clickCount = 0;
         }, 350 ) ;
-      // ダブルクリックの場合
+      //ダブルクリックの場合
+      //ノードを削除する
       }else{
         delete_editpath_rect(this);
         update_editElement();
