@@ -9,8 +9,8 @@ function editpath(){
 
   $(document).off('mouseup').on('mouseup',function(){ //mouseup終了時の処理
     while(arrIntervalCnt.length !== 0) {  clearInterval(arrIntervalCnt.shift())  }
-    if(now_movingFlag) cash_svg();
-    now_movingFlag = false;
+    if(movingFlag) cash_svg();
+    movingFlag = false;
     editpath_hover(true);
     editpath_mousemove('normal');
   })
@@ -307,7 +307,7 @@ function edit_rect_EventSet(){
 function move_editing(){
   let init_x = mx, init_y = my; //クリックを行った点
   if(input_key_buffer[17]) editpath_mousemove('90degree',init_x,init_y);
-  now_movingFlag = true;
+  movingFlag = true;
   arrIntervalCnt.push($interval_move = setInterval(function(e){
         draw.select('.editing_target').each(function(i,children){
           if(this.hasClass('edit_rect')){

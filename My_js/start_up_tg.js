@@ -88,7 +88,7 @@ let viewbox_x = -DRAW_AREA_WIDTH , viewbox_y = -DRAW_AREA_HEIGHT; //現在のvie
 let now_drawing_path_ID; //現在、描画している線のIDを格納
 let drawing_path_dpoint=""; //現在、描画している線のd属性を保持する
 
-let now_movingFlag = false; //現在、選択して、移動させたり、拡大縮小させたり、回転させたりしている時にtrue
+let movingFlag = false; //現在、選択して、移動させたり、拡大縮小させたり、回転させたりしている時にtrue
 let copy =  new Array(); //コピー機能で現在コピーの対象になっている要素を格納する
 let copy_gX = 0 , copy_gY = 0;
 

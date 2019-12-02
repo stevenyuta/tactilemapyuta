@@ -22,8 +22,8 @@ function edit(){
 
   $(document).on('mouseup' , function() {
     if(event.button===0){
-      if(now_movingFlag) cash_svg();
-      now_movingFlag = false;
+      if(movingFlag) cash_svg();
+      movingFlag = false;
       $(document).off("mousemove");
       upload_handle();
     }
@@ -453,7 +453,7 @@ function upload_handle(){
 }
 
 function get_affinmat(type,event,gX,gY,gWidth,gHeight,anchorX,anchorY,dTx,dTy){
-  now_movingFlag = true;
+  movingFlag = true;
   let obj = new Object();
   let point1 = new Array() , point2 = new Array(); //affin変換行列作成に使う行列
   for(let i=0;i<3;i++){
