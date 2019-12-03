@@ -1,12 +1,14 @@
-/******************************************************
-//要素の移動を行う機能
-******************************************************/
+/********************************
+//選択モード、画像選択モードの機能
+********************************/
 function edit(){
-  let gX , gY , gWidth , gHeight; //選択ボックスの左隅の座標(gX,gY)と幅(gWidth)と高さ（gHeight）
+  //選択ボックスの左隅の座標(gX,gY)と幅(gWidth)と高さ（gHeight）
+  let gX , gY , gWidth , gHeight;
+  //選択ボックスのwidthやheightをテキストボックスに値を入力して変更する場合のイベント登録
   $('#textbox_selectBox_width').off('focusout').on('focusout' , function(){update_resizeBox('width')});
   $('#textbox_selectBox_height').off('focusout').on('focusout' , function(){update_resizeBox('height')});
+  //墨字や点字の文字内容を変更するテキストボックス
   $('#textbox_text_info').off('focusout').on('focusout' , update_TextInfoBox);
-
   //画像選択モードから選択モードに移動したときに選択状態の画像は選択を解除する
   draw.select('.edit_select').each(function(i,children){
     if(this.hasClass('image')){
@@ -15,11 +17,14 @@ function edit(){
       if(nowchecked!=='Edit') this.removeClass('edit_select');
     }
   })
-
+  //選択モードでのマウスのボタンを押したときのイベント設定
   edit_mousedown_up();
+  //選択モードでのmouseover mouseoutイベントの設定
   edit_hover();
+  //選択ボックスの更新
   upload_handle();
-
+  //選択終了時の処理
+  //ページ（document）のどこでもいいからマウスを離すと終了
   $(document).on('mouseup' , function() {
     if(event.button===0){
       if(movingFlag) cash_svg();
@@ -30,10 +35,10 @@ function edit(){
   })
 }
 
-/****************************************
-マウスをmousedown_upしたときに起動する関数
-mode = off : イベントの全削除
-*****************************************/
+/*********************************************
+マウスをクリックしたときに起動する関数
+mode = off : クリックしたときのイベントを全て削除
+***********************************************/
 function edit_mousedown_up(mode){
   draw.off('mousedown').off('mouseup');
   if(mode!=="off"){
@@ -42,7 +47,7 @@ function edit_mousedown_up(mode){
       let target = draw.select('.select_hover').first(); //触れている要素を入手
       target.on('mousedown', function(event){
         if(event.button===0){
-          //shiftキーを押していなければ複数選択しないので、一度edit_clearする
+          //shiftキーを押していなければ複数選択しないので、一度edit_clear()を起動して選択状態を解除
           if(!(input_key_buffer[16] || input_key_buffer[17])) edit_clear();
           //edit_selectクラスを追加し、選択状態であることを示す
           this.addClass('edit_select');
@@ -51,9 +56,9 @@ function edit_mousedown_up(mode){
           //選択ハンドルの位置やイベントを再設定
           upload_handle();
           this.off('mousedown');
-          this.removeClass('select_hover');
-          edit_hover();
-          //↓選択と同時に移動できるようにした(先生からの要望)
+          this.removeClass('select_hover'); //select_hoverクラスを取り除く
+          edit_hover(); //触れたときのイベントを再登録
+          //↓選択と同時に移動できるようにした
           let anchorX = getmousepoint('normal',event).x , anchorY = getmousepoint('normal',event).y;
           let click_dTx = 0 , click_dTy = 0;
           $(document).off('mousemove').mousemove(function(event){
@@ -67,22 +72,22 @@ function edit_mousedown_up(mode){
       });
     }else if(draw.select('.edit_select').first()===undefined){ //要素に触れてなく、選択状態の要素が何もない場合
       let select_rect = draw.rect().addClass('select_rect');
-      select_rect.attr({  //範囲指定用四角形
+      select_rect.attr({  //範囲選択用の四角形（赤い点線）
         'fill' : 'none',
         'stroke': SELECT_RECT_COLOR,
         'stroke-width': SELECT_RECT_STROKEWIDTH,
-        'stroke-dasharray': SELECT_RECT_STROKEDOTT //点線に
+        'stroke-dasharray': SELECT_RECT_STROKEDOTT
       })
-      //mousedown時はマウスを押し込んだ時の処理。範囲選択の四角形の始点を指定する。
+      //マウスを押し込んだ時の処理。範囲選択の四角形の始点を指定する。
       draw.on('mousedown', function(event){
         if(event.button===0){
-          //始点の指定。詳しくはsvg.jsの公式を探してくれ
+          //始点の指定。詳しくはsvg.jsの公式を参照
           select_rect.draw(event);
-          //ホバーしたときの処理は全てoffにしておく
+          //マウスで触れたときの処理は一旦全てoff
           edit_hover("off");
         }
       });
-      draw.on('mouseup', function(event){  //mouseup時：終点指定
+      draw.on('mouseup', function(event){  //マウスを離したときの処理：終点指定
         if(event.button===0){
           //終点の指定
           select_rect.draw(event);
@@ -96,7 +101,7 @@ function edit_mousedown_up(mode){
           draw.select(selector).each(function(i, children) {
             //要素が非表示だった場合は判定外にする
             if(this.visible()){
-              let InArea = true;  //範囲内に入っているかの判定：trueは範囲内、flaseは範囲外
+              let InArea = true;  //範囲内に入っているかの判定：InAreaという変数がtrueは範囲内、flaseは範囲外
               let bbox = get_bbox(this);
               let pmin_x = bbox.min_x , pmax_x = bbox.max_x;
               let pmin_y = bbox.min_y , pmax_y = bbox.max_y;
@@ -108,10 +113,11 @@ function edit_mousedown_up(mode){
               if(InArea) this.addClass('edit_select');
             }
           })
+          //線の幅などの右側に表示される設定欄の内容を選択状態の図形や文字に合わせて更新
           set_SelectElement_Param();
           edit_hover();
           edit_mousedown_up();
-          select_rect.remove();
+          select_rect.remove(); //範囲選択用の四角形を削除
         }
       });
     }else{ //選択状態の要素が１つ以上ある場合
@@ -126,25 +132,28 @@ function edit_mousedown_up(mode){
   }
 }
 
-/***************************************
-//hoverイベントを設定または再設定する関数
-***************************************/
+/*******************************************************
+//mouseover　＆　mouseoutイベントを設定または再設定する関数
+*******************************************************/
 function edit_hover(mode){
-  //選択モードまたは画像選択モードに関係する要素のhoverイベントをすべてoffにしておく
+  //選択モードまたは画像選択モードに関係する要素のイベントをすべてoffにしておく
   let selector = (nowchecked === "Edit" ) ? '.SVG_Element' : '.image';
   draw.select(selector).off('mouseover').off('mouseout');
   SVG.get('handle_group').off('mouseover').off('mouseout');
   if(mode!=="off"){
-    //現在、選択状態になっていない要素に関するマウスオーバー（マウスで上を乗せたとき）イベント
+    //選択状態になっていない要素に関するmouseover（マウスでふれたとき）イベントを設定
     draw.select(selector + ':not(.edit_select)').mouseover(function(){
       this.addClass('select_hover');
       this.attr({'cursor':'pointer'});
       edit_mousedown_up();
     })
+    //選択状態になっていない要素に関するmouseout（マウスで離れたとき）イベントを設定
     draw.select(selector + ':not(.edit_select)').mouseout(function(){
       this.removeClass('select_hover');
       edit_mousedown_up();
     })
+    //選択ボックスのイベントを登録
+    //mouseover mouseout時はedit_mousedown_up関数を起動してマウスをクリックしたときの処理を登録
     SVG.get('handle_group').mouseover(function() {
       edit_mousedown_up("off");
     })
@@ -154,16 +163,20 @@ function edit_hover(mode){
   }
 }
 
-/******************************************************
-//選択状態を全解除する関数
-******************************************************/
+/*********************************
+//選択されている要素を解除する関数
+**********************************/
 function edit_clear(){
-  SVG.get('handle_group').hide();
+  SVG.get('handle_group').hide(); //選択ハンドルは非表示
+  //選択ボックスの幅、高さ変更用のテキストボックスにフォーカスしていた場合はupdate_resizeBox()を起動
   if($('#textbox_selectBox_width').is(':focus')) update_resizeBox('width');
   if($('#textbox_selectBox_height').is(':focus')) update_resizeBox('height');
+  //文字内容変更用のテキストボックスにフォーカスしていた場合はupdate_textInfoBox()を起動
   if($('#textbox_text_info').is(':focus')) update_TextInfoBox();
-  draw.select('.edit_select').each(function(i, children) {
-    if(this.hasClass('connected') && nowchecked === 'EditPath'){
+  //選択中の要素を全て取得して、逐次的に処理
+  draw.select('.edit_select').each(function(i, children){
+    //モードが線の詳細編集　かつ　普通の線　の場合はセグメント化する．詳しくは線の詳細編集のソースコードをみてくれ
+    if(nowchecked === 'EditPath' && this.hasClass('connected')){
       toSegment(this);
       this.remove();
     }else{
@@ -174,7 +187,10 @@ function edit_clear(){
 }
 
 function upload_handle(){
-  //移動、サイズ変更、回転用のハンドルを非表示
+  /**
+  移動、サイズ変更、回転用のハンドルやアプリ右側に表示される
+  線の幅や色を変更する設定欄などなどを色々を非表示
+  **/
   SVG.get('handle_group').hide();　
   $('.gadget_resizeInk , .gadget_resize_braille').hide();
   $('.gadget_textInfo').hide();
