@@ -1,15 +1,19 @@
-/********************************
-//選択モード、画像選択モードの機能
-********************************/
+/******************************************************************************
+選択モード、画像選択モードに関する機能が
+このファイルには書かれています。
+選択ボックスとは選択した要素の周りに表示される
+四角形のこと。この四角形に拡大縮小や回転に使うハンドル（黒い丸と白い丸）が表示される
+******************************************************************************/
 function edit(){
   //選択ボックスの左隅の座標(gX,gY)と幅(gWidth)と高さ（gHeight）
   let gX , gY , gWidth , gHeight;
-  //選択ボックスのwidthやheightをテキストボックスに値を入力して変更する場合のイベント登録
+  //選択ボックスの幅、高さの変更用テキストボックスのイベント登録
+  //フォーカスアウトしたときに変更が適用される
   $('#textbox_selectBox_width').off('focusout').on('focusout' , function(){update_resizeBox('width')});
   $('#textbox_selectBox_height').off('focusout').on('focusout' , function(){update_resizeBox('height')});
-  //墨字や点字の文字内容を変更するテキストボックス
+  //墨字や点字の文字内容を変更するテキストボックスのイベント登録
   $('#textbox_text_info').off('focusout').on('focusout' , update_TextInfoBox);
-  //画像選択モードから選択モードに移動したときに選択状態の画像は選択を解除する
+  //画像選択モードから選択モードに移動したときに選択状態の画像は選択を解除
   draw.select('.edit_select').each(function(i,children){
     if(this.hasClass('image')){
       if(nowchecked!=='EditImage') this.removeClass('edit_select');
@@ -17,14 +21,13 @@ function edit(){
       if(nowchecked!=='Edit') this.removeClass('edit_select');
     }
   })
-  //選択モードでのマウスのボタンを押したときのイベント設定
+  //選択モードでのマウスのボタンを押したり離したときのイベント設定
   edit_mousedown_up();
   //選択モードでのmouseover mouseoutイベントの設定
   edit_hover();
-  //選択ボックスの更新
+  //選択ボックスやハンドルの位置や大きさ、イベントなどを更新
   upload_handle();
-  //選択終了時の処理
-  //ページ（document）のどこでもいいからマウスを離すと終了
+  //ページ（document）のどこでもいいからマウスを離すと終了(選択終了時の処理)
   $(document).on('mouseup' , function() {
     if(event.button===0){
       if(movingFlag) cash_svg();
@@ -37,28 +40,29 @@ function edit(){
 
 /*********************************************
 マウスをクリックしたときに起動する関数
-mode = off : クリックしたときのイベントを全て削除
+flagがoffのとき : クリックしたときのイベントを全て削除
 ***********************************************/
-function edit_mousedown_up(mode){
+function edit_mousedown_up(flag){
   draw.off('mousedown').off('mouseup');
-  if(mode!=="off"){
-    //select_hoverを持つ要素が存在するということは要素に触れているということ。その要素を選択状態にして、この時は範囲選択はしない。
+  if(flag!=="off"){
+    /**
+    select_hoverクラスを持つ要素が存在するということは要素に触れているということ。
+    その要素を選択状態にして、この時は範囲選択はしない。
+    **/
     if(draw.select('.select_hover').first()){
       let target = draw.select('.select_hover').first(); //触れている要素を入手
       target.on('mousedown', function(event){
         if(event.button===0){
-          //shiftキーを押していなければ複数選択しないので、一度edit_clear()を起動して選択状態を解除
+          //shiftキーを押していなければ複数選択しない⇒edit_clear()を起動して選択状態を解除
           if(!(input_key_buffer[16] || input_key_buffer[17])) edit_clear();
           //edit_selectクラスを追加し、選択状態であることを示す
           this.addClass('edit_select');
-          //選択状態の要素のパラメータ更新
-          set_SelectElement_Param();
-          //選択ハンドルの位置やイベントを再設定
-          upload_handle();
-          this.off('mousedown');
+          set_SelectElement_Param();//選択状態の要素のパラメータ更新
+          upload_handle();//選択ハンドルの位置やイベントを再設定
+          this.off('mousedown');//この要素のマウスクリックイベントを解除
           this.removeClass('select_hover'); //select_hoverクラスを取り除く
           edit_hover(); //触れたときのイベントを再登録
-          //↓選択と同時に移動できるようにした
+          //以下は選択と同時に移動できるように
           let anchorX = getmousepoint('normal',event).x , anchorY = getmousepoint('normal',event).y;
           let click_dTx = 0 , click_dTy = 0;
           $(document).off('mousemove').mousemove(function(event){
@@ -70,9 +74,11 @@ function edit_mousedown_up(mode){
           });
         }
       });
-    }else if(draw.select('.edit_select').first()===undefined){ //要素に触れてなく、選択状態の要素が何もない場合
-      let select_rect = draw.rect().addClass('select_rect');
-      select_rect.attr({  //範囲選択用の四角形（赤い点線）
+    /**以下の分岐は要素に触れてなく、選択状態の要素が何もない場合の処理
+    つまり範囲選択する**/
+    }else if(draw.select('.edit_select').first()===undefined){
+      let select_rect = draw.rect().addClass('select_rect'); //範囲選択用の四角形を作成
+      select_rect.attr({  //範囲選択用の四角形の属性を指定（赤い点線にするなど）
         'fill' : 'none',
         'stroke': SELECT_RECT_COLOR,
         'stroke-width': SELECT_RECT_STROKEWIDTH,
@@ -81,31 +87,26 @@ function edit_mousedown_up(mode){
       //マウスを押し込んだ時の処理。範囲選択の四角形の始点を指定する。
       draw.on('mousedown', function(event){
         if(event.button===0){
-          //始点の指定。詳しくはsvg.jsの公式を参照
-          select_rect.draw(event);
-          //マウスで触れたときの処理は一旦全てoff
-          edit_hover("off");
+          select_rect.draw(event);//始点の指定。詳しくはsvg.jsの公式を参照
+          edit_hover("off");//マウスで触れたときの処理は一旦全てoff
         }
       });
-      draw.on('mouseup', function(event){  //マウスを離したときの処理：終点指定
+      draw.on('mouseup', function(event){  //マウスを離したときの処理
         if(event.button===0){
-          //終点の指定
-          select_rect.draw(event);
-          //描画した四角形（範囲選択を示す）の各頂点座標を表現する４つのパラメータを指定する
+          select_rect.draw(event);//終点の指定
+          //描画した四角形（範囲選択を示す）の各頂点座標を表現する４パラメータを指定
           let sr_min_x =  Number(select_rect.attr('x')) , sr_min_y =  Number(select_rect.attr('y'));
           let sr_max_x =  sr_min_x + Number(select_rect.attr('width')) , sr_max_y =  sr_min_y + Number(select_rect.attr('height'));
-          //選択モード時は対象はSVG_element。画像選択モード時は画像が選択の対象になる
+          //選択モード時の対象はSVG_elementクラスを持つ要素。画像選択モード時はimageクラスを持つ要素が選択の対象
           let selector = ( $('input[name="tg_mode"]:checked').val() == "Edit" ) ? '.SVG_Element' : '.image';
-          //四角形の範囲に含まれる要素を範囲する
+          //四角形の範囲に含まれる要素を調べる
           //もし範囲に含まれていればedit_selectクラスを付与して選択状態にする
           draw.select(selector).each(function(i, children) {
-            //要素が非表示だった場合は判定外にする
-            if(this.visible()){
+            if(this.visible()){//要素が非表示だった場合は判定外にする
               let InArea = true;  //範囲内に入っているかの判定：InAreaという変数がtrueは範囲内、flaseは範囲外
               let bbox = get_bbox(this);
               let pmin_x = bbox.min_x , pmax_x = bbox.max_x;
               let pmin_y = bbox.min_y , pmax_y = bbox.max_y;
-
               if(pmin_x < sr_min_x || pmin_x > sr_max_x) InArea = false;
               if(pmin_y < sr_min_y || pmin_y > sr_max_y) InArea = false;
               if(pmax_x < sr_min_x || pmax_x > sr_max_x) InArea = false;
@@ -113,14 +114,15 @@ function edit_mousedown_up(mode){
               if(InArea) this.addClass('edit_select');
             }
           })
-          //線の幅などの右側に表示される設定欄の内容を選択状態の図形や文字に合わせて更新
-          set_SelectElement_Param();
+          set_SelectElement_Param();//右側に表示される設定欄(線の幅など)の内容を選択状態の要素に合わせて値などを更新
           edit_hover();
           edit_mousedown_up();
           select_rect.remove(); //範囲選択用の四角形を削除
         }
       });
-    }else{ //選択状態の要素が１つ以上ある場合
+    /**以下は触れている選択状態ではない要素がなく、選択状態の要素が１つ以上ある場合
+    つまり選択を全解除する**/
+    }else{
       draw.on('mousedown', function(event){
         if(event.button===0){
           edit_clear();
@@ -132,15 +134,16 @@ function edit_mousedown_up(mode){
   }
 }
 
-/*******************************************************
-//mouseover　＆　mouseoutイベントを設定または再設定する関数
-*******************************************************/
-function edit_hover(mode){
-  //選択モードまたは画像選択モードに関係する要素のイベントをすべてoffにしておく
+/*********************************************
+//mouseover　＆　mouseoutイベントを設定する関数
+flagがoffのときは　イベントを解除するだけ
+*********************************************/
+function edit_hover(flag){
+  //選択モードまたは画像選択モードに関係する要素のイベントを全てoff
   let selector = (nowchecked === "Edit" ) ? '.SVG_Element' : '.image';
   draw.select(selector).off('mouseover').off('mouseout');
   SVG.get('handle_group').off('mouseover').off('mouseout');
-  if(mode!=="off"){
+  if(flag!=="off"){
     //選択状態になっていない要素に関するmouseover（マウスでふれたとき）イベントを設定
     draw.select(selector + ':not(.edit_select)').mouseover(function(){
       this.addClass('select_hover');
@@ -152,8 +155,8 @@ function edit_hover(mode){
       this.removeClass('select_hover');
       edit_mousedown_up();
     })
-    //選択ボックスのイベントを登録
-    //mouseover mouseout時はedit_mousedown_up関数を起動してマウスをクリックしたときの処理を登録
+    //選択ボックスやハンドルのイベントを登録
+    //mouseover mouseout時はedit_mousedown_up関数を起動して、その要素をクリックしたときの処理を登録
     SVG.get('handle_group').mouseover(function() {
       edit_mousedown_up("off");
     })
@@ -163,11 +166,11 @@ function edit_hover(mode){
   }
 }
 
-/*********************************
-//選択されている要素を解除する関数
-**********************************/
+/***************************************
+//選択されている要素を全て選択解除する関数
+****************************************/
 function edit_clear(){
-  SVG.get('handle_group').hide(); //選択ハンドルは非表示
+  SVG.get('handle_group').hide(); //選択ボックス、ハンドルは非表示
   //選択ボックスの幅、高さ変更用のテキストボックスにフォーカスしていた場合はupdate_resizeBox()を起動
   if($('#textbox_selectBox_width').is(':focus')) update_resizeBox('width');
   if($('#textbox_selectBox_height').is(':focus')) update_resizeBox('height');
@@ -175,7 +178,7 @@ function edit_clear(){
   if($('#textbox_text_info').is(':focus')) update_TextInfoBox();
   //選択中の要素を全て取得して、逐次的に処理
   draw.select('.edit_select').each(function(i, children){
-    //モードが線の詳細編集　かつ　普通の線　の場合はセグメント化する．詳しくは線の詳細編集のソースコードをみてくれ
+    //モードが線の詳細編集　かつ　普通の線　の場合はセグメント化する．詳しくは線の詳細編集のソースコードを参照
     if(nowchecked === 'EditPath' && this.hasClass('connected')){
       toSegment(this);
       this.remove();
@@ -188,18 +191,20 @@ function edit_clear(){
 
 function upload_handle(){
   /**
-  移動、サイズ変更、回転用のハンドルやアプリ右側に表示される
+  移動、サイズ変更、回転用の選択ボックスやハンドル、アプリ右側に表示される
   線の幅や色を変更する設定欄などなどを色々を非表示
   **/
   SVG.get('handle_group').hide();　
-  $('.gadget_resizeInk , .gadget_resize_braille').hide();
-  $('.gadget_textInfo').hide();
-  $('.stroke_option , .dotted_option').hide();
-  $('.gadget_imageOpacity').hide();
-  $('#table_layer , #table_select_fill').hide();
-  $('.resizeBox_textbox').hide();
-  $('#straight_connect_button').hide();
-  if(draw.select('.edit_select').first()!==undefined){ //選択状態の要素がない場合
+  $('.gadget_resizeInk , .gadget_resize_braille , .gadget_textInfo').hide(); //点字と墨字関係
+  $('.stroke_option , .dotted_option').hide(); //線の属性設定欄関係
+  $('.gadget_imageOpacity').hide(); //画像の透過度
+  $('#table_layer , #table_select_fill').hide(); //レイヤーや塗りつぶし
+  $('.resizeBox_textbox').hide(); //選択ボックスの幅と高さテキストボックス
+  $('#straight_connect_button').hide(); //線の補正用
+  /**
+  以下から選択されている要素に合わせて、表示させる
+  **/
+  if(draw.select('.edit_select').first()!==undefined){
     if(draw.select('.edit_select.ink').first()!==undefined) $('.gadget_resizeInk').show();
     if(draw.select('.edit_select.braille').first()!==undefined) $('.gadget_resize_braille').show();
     if(draw.select('.edit_select.path , .edit_select.circle').first()!==undefined){
@@ -209,35 +214,39 @@ function upload_handle(){
     if(draw.select('.edit_select.path , .edit_select.circle').first()!==undefined) $('#straight_connect_button').show();
     if(draw.select('.edit_select.image').first()!==undefined) $('.gadget_imageOpacity').show();
     if(draw.select('.edit_select.connected , .edit_select.circle').first()!==undefined) $('#table_select_fill').show();
-    /***************************************************************
-      文字（墨字or点字）が選択状態の場合は編集用のテキストボックスを表示
+    /**********************************************************************
+      文字（墨字or点字）が選択状態の場合は文字内容変更用のテキストボックスを表示
       そうでない場合は非表示
-    ****************************************************************/
+      注意：文字が１つだけ選択されている時のみ表示する
+    **********************************************************************/
     if(draw.select('.edit_select.ink,.edit_select.braille').members.length===1){　
       let text = draw.select('.edit_select.ink,.edit_select.braille').first();
+      //点字の場合は文字が自動変換されているから、墨字と点字とでちょっとだけ取得方法が違う
       text.hasClass('ink') ? $('#textbox_text_info').val(text.text()) : $('#textbox_text_info').val(text.attr('brailleorigintext'));
       $('.gadget_textInfo').show();
     }
-    SVG.get('handle_group').show().front();　//移動、サイズ変更、回転用のハンドルを表示して最前へ
-    $('#table_layer').show();
-    $('.resizeBox_textbox').show();
-
+    SVG.get('handle_group').show().front();　//移動、サイズ変更、回転用のハンドルを表示
+    $('#table_layer').show(); //レイヤー設定欄の表示
+    $('.resizeBox_textbox').show(); //幅と高さ変更用のテキストボックスの表示
+    /**
+    選択ボックスの範囲を計算していく
+    get_bbox関数で図形や文字が描画領域上で占める範囲を計算していく
+    **/
     let gmin_x = 1000000 ,  gmin_y = 1000000;
     let gmax_x = -1000000 , gmax_y = -1000000;
     draw.select('.edit_select').each(function(i , children){
       let bbox = get_bbox(this);
-      //ハンドル位置の4隅の座標を更新する
       if(gmin_x > bbox.min_x) gmin_x = bbox.min_x;
       if(gmin_y > bbox.min_y) gmin_y = bbox.min_y;
       if(gmax_x < bbox.max_x) gmax_x = bbox.max_x;
       if(gmax_y < bbox.max_y) gmax_y = bbox.max_y;
     })
 
-    //各ハンドルとなる要素を取得
+    //各ハンドルとなる要素を取得し、表示
     // box: 移動 , t : 上部 , l:左部 , b:下部 , r:右部
     // lt : 上左部 , rt:上右部 , lb:下左部 , rb:下右部  , rot:回転
     let box_resize = SVG.get('box_resize').show();
-    let t_resize = SVG.get('t_resize').show(); //t:
+    let t_resize = SVG.get('t_resize').show();
     let l_resize = SVG.get('l_resize').show();
     let b_resize = SVG.get('b_resize').show();
     let r_resize = SVG.get('r_resize').show();
@@ -247,10 +256,10 @@ function upload_handle(){
     let rb_resize = SVG.get('rb_resize').show();
     let rot_resize = SVG.get('rot_resize').show();
 
-    //ハンドル位置の4隅の座標を決定
+    //選択した要素が極めて小さい場合には、かどの４隅のハンドルは非表示(押しにくいから)
     gX = gmin_x　, gY = gmin_y;
     gWidth = gmax_x-gmin_x , gHeight = gmax_y-gmin_y;
-    if(gWidth < 0.001 || gHeight < 0.001){ //極めて選択した要素が小さい場合には角４隅のハンドルは非表示にする
+    if(gWidth < 0.001 || gHeight < 0.001){
       lt_resize.hide();
       rt_resize.hide();
       lb_resize.hide();
@@ -264,17 +273,15 @@ function upload_handle(){
       gY = gY -2.5;
       gHeight = 5;
     }
-
+    //マウスドラッグで平行移動させたり、拡大縮小させたりする場合に使う変数
     let anchorX = 0 , anchorY = 0;
     let dTx = 0 , dTy = 0;
     let cx = 0 , cy = 0 , rad = 0;
 
-    //ハンドル位置の更新
+    //選択ボックスとハンドル位置や大きさの更新
     draw.select('.handle').attr({'transform' : ''});
-
     box_resize.attr({'d' : ''});
     box_resize.M({x : gX , y : gY}).L({x : gX + gWidth, y : gY}).L({x : gX + gWidth , y : gY + gHeight}).L({x : gX, y : gY + gHeight}).Z();
-
     t_resize.attr({
       'cx' : gX+gWidth/2,
       'cy' : gY,
@@ -321,12 +328,11 @@ function upload_handle(){
       'r' : SELECT_HANDLE_RADIUS/(2*draw.viewbox().zoom)
     })
 
-
-    //幅、高さのテキストボックスに[mm]に換算した値を入力
+    //幅、高さの変更用テキストボックスに[mm]に換算した値を入力
     $('#textbox_selectBox_width').val(Math.round( gWidth/SVG_RATIO * Math.pow( 10 , 2 ) ) / (Math.pow( 10 , 2 ) ) );
     $('#textbox_selectBox_height').val(Math.round( gHeight/SVG_RATIO * Math.pow( 10 , 2 ) ) / (Math.pow( 10 , 2 ) ) );
 
-    //box_resizeのマウスドラッグでの平行移動
+    //選択ボックスはマウスでドラッグすることによって選択状態の要素を平行移動できる。このイベント登録
     box_resize.off('mousedown').mousedown(function(e){
       if(e.button===0){
         anchorX = getmousepoint('normal',e).x , anchorY = getmousepoint('normal',e).y;
@@ -340,7 +346,7 @@ function upload_handle(){
       }
     });
 
-    //top handle
+    //上部のハンドル（拡大縮小用)
     t_resize.off('mousedown').mousedown(function(e){
       if(e.button===0){
         anchorX = getmousepoint('normal',e).x , anchorY = getmousepoint('normal',e).y;
@@ -354,7 +360,7 @@ function upload_handle(){
       }
     });
 
-    //left handle
+    //左部のハンドル（拡大縮小）
     l_resize.off('mousedown').mousedown(function(e){
       if(e.button===0){
         anchorX = getmousepoint('normal',e).x , anchorY = getmousepoint('normal',e).y;
@@ -368,7 +374,7 @@ function upload_handle(){
       }
     });
 
-    //bottom handle
+    //下部のハンドル（拡大縮小）
     b_resize.off('mousedown').mousedown(function(e){
       if(e.button===0){
         anchorX = getmousepoint('normal',e).x , anchorY = getmousepoint('normal',e).y;
@@ -382,7 +388,7 @@ function upload_handle(){
       }
     });
 
-    //right handle
+    //右部のハンドル（拡大縮小）
     r_resize.off('mousedown').mousedown(function(e){
       if(e.button===0){
         anchorX = getmousepoint('normal',e).x , anchorY = getmousepoint('normal',e).y;
@@ -396,7 +402,7 @@ function upload_handle(){
       }
     });
 
-    //left-top handle
+    //左上部のハンドル（拡大縮小）
     lt_resize.off('mousedown').mousedown(function(e){
       if(e.button===0){
         anchorX = getmousepoint('normal',e).x , anchorY = getmousepoint('normal',e).y;
@@ -410,7 +416,7 @@ function upload_handle(){
       }
     });
 
-    //right-top handle
+    //右上部のハンドル（拡大縮小）
     rt_resize.off('mousedown').mousedown(function(e){
       if(e.button===0){
         anchorX = getmousepoint('normal',e).x , anchorY = getmousepoint('normal',e).y;
@@ -424,7 +430,7 @@ function upload_handle(){
       }
     });
 
-    //left-bottom handle
+    //左下部のハンドル（拡大縮小）
     lb_resize.off('mousedown').mousedown(function(e){
       if(e.button===0){
         anchorX = getmousepoint('normal',e).x , anchorY = getmousepoint('normal',e).y;
@@ -438,7 +444,7 @@ function upload_handle(){
       }
     });
 
-    //right-bottom handle
+    //右下部のハンドル（拡大縮小）
     rb_resize.off('mousedown').mousedown(function(e){
       if(e.button===0){
         anchorX = getmousepoint('normal',e).x , anchorY = getmousepoint('normal',e).y;
@@ -452,7 +458,7 @@ function upload_handle(){
       }
     });
 
-    //rot handle
+    //回転用のハンドル
     rot_resize.off('mousedown').mousedown(function(e){
       if(e.button===0){
         cx = gX + gWidth/2;
@@ -468,6 +474,14 @@ function upload_handle(){
   }
 }
 
+/**
+アフィン行列を返す関数
+引数についての説明
+type : 平行移動？拡大縮小？回転？を指定
+gX ~ gHeight : 選択ボックスのこと
+anchorX　、 anchorY : マウスでクリックしたとこの座標
+dTx dTy x方向、y方向それぞれの移動量（マウスの移動量）
+**/
 function get_affinmat(type,event,gX,gY,gWidth,gHeight,anchorX,anchorY,dTx,dTy){
   movingFlag = true;
   let obj = new Object();
