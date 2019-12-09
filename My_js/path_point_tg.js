@@ -454,16 +454,16 @@ function fig_straight(){
       let dpoint = this.clear().array().settle();
       let x1 = Number(dpoint[0][1]) , y1 = Number(dpoint[0][2]);
       let x2 = Number(dpoint[1][1]) , y2 = Number(dpoint[1][2]);
-      let nears = getSimultaneouslyEdit_element(this);
-      if(nears.beforeRect) nears.beforeRect.attr({'x':x1 - nears.beforeRect.width()/2,'y':y1 - nears.beforeRect.height()/2});
-      if(nears.afterRect) nears.afterRect.attr({'x':x2 - nears.afterRect.width()/2,'y':y2 - nears.afterRect.height()/2});
-      if(nears.beforePath){
-        let dpoint = nears.beforePath.clear().array().settle();
-        nears.beforePath.attr({'d':''}).M({x: dpoint[0][1], y: dpoint[0][2]}).L({x: x1, y: y1});
+      let nears = get_nears(this);
+      if(nears.beforeNode) nears.beforeNode.attr({'x':x1 - nears.beforeNode.width()/2,'y':y1 - nears.beforeNode.height()/2});
+      if(nears.afterNode) nears.afterNode.attr({'x':x2 - nears.afterNode.width()/2,'y':y2 - nears.afterNode.height()/2});
+      if(nears.beforeSegment){
+        let dpoint = nears.beforeSegment.clear().array().settle();
+        nears.beforeSegment.attr({'d':''}).M({x: dpoint[0][1], y: dpoint[0][2]}).L({x: x1, y: y1});
       }
-      if(nears.afterPath){
-        let dpoint = nears.afterPath.clear().array().settle();
-        nears.afterPath.attr({'d':''}).M({x: x2, y: y2}).L({x: dpoint[1][1], y: dpoint[1][2]});
+      if(nears.afterSegment){
+        let dpoint = nears.afterSegment.clear().array().settle();
+        nears.afterSegment.attr({'d':''}).M({x: x2, y: y2}).L({x: dpoint[1][1], y: dpoint[1][2]});
       }
     }
   })
@@ -531,9 +531,9 @@ function fig_connect(){
           let dpoint = this.clear().array().settle();
           let x1 = Number(dpoint[0][1]) , y1 = Number(dpoint[0][2]);
           let x2 = Number(dpoint[1][1]) , y2 = Number(dpoint[1][2]);
-          let nears = getSimultaneouslyEdit_element(this);
-          if(nears.beforeRect) nears.beforeRect.attr({'x':x1 - nears.beforeRect.width()/2,'y':y1 - nears.beforeRect.height()/2});
-          if(nears.afterRect) nears.afterRect.attr({'x':x2 - nears.afterRect.width()/2,'y':y2 - nears.afterRect.height()/2});
+          let nears = get_nears(this);
+          if(nears.beforeNode) nears.beforeNode.attr({'x':x1 - nears.beforeNode.width()/2,'y':y1 - nears.beforeNode.height()/2});
+          if(nears.afterNode) nears.afterNode.attr({'x':x2 - nears.afterNode.width()/2,'y':y2 - nears.afterNode.height()/2});
         }
       })
     }

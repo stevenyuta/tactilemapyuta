@@ -11,7 +11,7 @@ function RadioEvent_set(unredo_flag){
   //描画領域のイベント削除
   draw.off();
   //path,circle,textとimageクラスのイベント解除と触れたときのマウスカーソルのデフォルト化
-  draw.select('.path,.circle,.text, .image').off().attr({'cursor':'default'});
+  draw.select('.path,.circle,.ink,.braille, .image').off().attr({'cursor':'default'});
   //幅と高さのテキストボックスのイベント解除
   $('#textbox_selectBox_width , #textbox_selectBox_height').off();
   //
@@ -316,7 +316,7 @@ function draw_guiderect(){
 //チェックボックスの設定に合わせて描画したものを表示非表示させたりする
 function checkBox_change(){
   //SVG要素の表示非表示チェックボックス
-  let svg_element = draw.select('.path,.circle,.text,.fill_path,.edit_rect,.init_node,.last_node,.close_node,.closePath_rect,.handle');
+  let svg_element = draw.select('.path,.circle,.ink,.braille,.fill_path,.edit_rect,.init_node,.last_node,.close_node,.closePath_rect,.handle');
   $('#display_DrawElement').prop('checked') ? svg_element.show() : svg_element.hide();
   //画像の表示非表示
   $('#display_image').prop('checked') ? SVG.select('.image').show() : SVG.select('.image').hide();

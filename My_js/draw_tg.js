@@ -8,7 +8,6 @@ function draw_path(){
   let current_x = 0, current_y = 0;
   //描画中のpath要素を格納する変数
   let drawing_path;
-
   //直線描画専用のマウスムーブ関数（要はマウスを移動したときに起動する）
   draw_mousemove();
   //直線描画専用のマウスクリック関数（要はマウスをクリックしたときに起動する）

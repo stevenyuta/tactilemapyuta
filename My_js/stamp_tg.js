@@ -1,8 +1,8 @@
 function set_Stampmode(){
   $(document).off(); //ページ上のイベントの削
   draw.off(); //drawのイベント解除
-  draw.select('.path,.circle,.text , .image').off(); //イベント解除
-  draw.select('.path,.circle,.text , .image').attr({'cursor':'default'});
+  draw.select('.path,.circle,.ink,.braille , .image').off(); //イベント解除
+  draw.select('.path,.circle,.ink,.braille , .image').attr({'cursor':'default'});
   set_key_down_up();
   set_contextMenu();
   reset_dcheck_element();

@@ -106,14 +106,14 @@ function set_key_down_up(){
                 if(e.keyCode===39) cx = original_cx + CURSOR_KEY_MOVE , cy = original_cy;
                 if(e.keyCode===40) cx = original_cx, cy = original_cy + CURSOR_KEY_MOVE;
                 this.attr({'x':cx - this.width()/2}) , this.attr({'y':cy - this.height()/2}); //円の位置を格納
-                let nears = getSimultaneouslyEdit_element(this);
-                if(nears.afterPath){
-                  let dpoint = nears.afterPath.clear().array().settle(); //pathのdpoint配列を取得
-                  nears.afterPath.attr({'d':''}).M({x: cx, y: cy}).L({x: dpoint[1][1], y: dpoint[1][2]});
+                let nears = get_nears(this);
+                if(nears.afterSegment){
+                  let dpoint = nears.afterSegment.clear().array().settle(); //pathのdpoint配列を取得
+                  nears.afterSegment.attr({'d':''}).M({x: cx, y: cy}).L({x: dpoint[1][1], y: dpoint[1][2]});
                 }
-                if(nears.beforePath){
-                  let dpoint = nears.beforePath.clear().array().settle() //pathのdpoint配列を取得
-                  nears.beforePath.attr({'d':''}).M({x: dpoint[0][1], y: dpoint[0][2]}).L({x: cx, y: cy});
+                if(nears.beforeSegment){
+                  let dpoint = nears.beforeSegment.clear().array().settle() //pathのdpoint配列を取得
+                  nears.beforeSegment.attr({'d':''}).M({x: dpoint[0][1], y: dpoint[0][2]}).L({x: cx, y: cy});
                 }
               }else{
                 let dpoint = this.clear().array().settle(); //pathのdpoint配列を取得
@@ -123,16 +123,16 @@ function set_key_down_up(){
                 if(e.keyCode===39) x1 = dpoint[0][1] + CURSOR_KEY_MOVE , y1 = dpoint[0][2] , x2 = dpoint[1][1] + CURSOR_KEY_MOVE , y2 = dpoint[1][2];
                 if(e.keyCode===40) x1 = dpoint[0][1] , y1 = dpoint[0][2] + CURSOR_KEY_MOVE , x2 = dpoint[1][1] , y2 = dpoint[1][2] + CURSOR_KEY_MOVE;
                 this.attr({'d':''}).M({x: x1, y: y1}).L({x: x2, y: y2});
-                let nears = getSimultaneouslyEdit_element(this);
-                if(nears.beforeRect) nears.beforeRect.attr({'x': x1 - nears.beforeRect.width()/2,'y':y1 - nears.beforeRect.height()/2});
-                if(nears.afterRect) nears.afterRect.attr({'x':x2 - nears.afterRect.width()/2,'y':y2 - nears.afterRect.height()/2});
-                if(nears.beforePath){
-                  let dpoint = nears.beforePath.clear().array().settle(); //pathのdpoint配列を取得
-                  nears.beforePath.attr({'d':''}).M({x: dpoint[0][1], y: dpoint[0][2]}).L({x: x1, y: y1});
+                let nears = get_nears(this);
+                if(nears.beforeNode) nears.beforeNode.attr({'x': x1 - nears.beforeNode.width()/2,'y':y1 - nears.beforeNode.height()/2});
+                if(nears.afterNode) nears.afterNode.attr({'x':x2 - nears.afterNode.width()/2,'y':y2 - nears.afterNode.height()/2});
+                if(nears.beforeSegment){
+                  let dpoint = nears.beforeSegment.clear().array().settle(); //pathのdpoint配列を取得
+                  nears.beforeSegment.attr({'d':''}).M({x: dpoint[0][1], y: dpoint[0][2]}).L({x: x1, y: y1});
                 }
-                if(nears.afterPath){
-                  let dpoint = nears.afterPath.clear().array().settle() //pathのdpoint配列を取得
-                  nears.afterPath.attr({'d':''}).M({x: x2, y: y2}).L({x: dpoint[1][1], y: dpoint[1][2]});
+                if(nears.afterSegment){
+                  let dpoint = nears.afterSegment.clear().array().settle() //pathのdpoint配列を取得
+                  nears.afterSegment.attr({'d':''}).M({x: x2, y: y2}).L({x: dpoint[1][1], y: dpoint[1][2]});
                 }
               }
             })

@@ -79,7 +79,7 @@ function download_setSVG(original_draw) { //ダウンロード時に出力svgフ
   SVG.get('handle_group').remove();
   SVG.get('guiderect_group').remove();
 
-  draw.select('.path,.circle,.text').attr('cursor', null);
+  draw.select('.path,.circle,.ink,.braille').attr('cursor', null);
 
   //グループ内に要素が何もないグループの削除
   let svg_str = original_draw.svg(); //serialとsvg_strはグローバル関数である

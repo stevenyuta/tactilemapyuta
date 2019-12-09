@@ -1,9 +1,9 @@
 function editpath(){
-  update_editElement();
+  update_Segment_Node();
   //セグメントのイベント登録
-  segments_EventSet();
+  segments_ClickEventSet();
   //ノードのイベント登録
-  nodes_EventSet();
+  nodes_ClickEventSet();
   //線の詳細編集用のマウス位置取得関数
   editpath_mousemove('connect');
   //マウスでホバー（mouseover mouseout）したときの処理
@@ -112,11 +112,11 @@ function editpath_mousedown(){
   //クリックした普通の線をセグメント化する
   toSegment(this);
   //idのふりなおし
-  update_editElement();
+  update_Segment_Node();
   //セグメントのイベント登録
-  segments_EventSet();
+  segments_ClickEventSet();
   //ノードのイベント登録
-  nodes_EventSet();
+  nodes_ClickEventSet();
   //hoverイベントの再更新
   editpath_hover(true);
   //クリックした線は削除
@@ -128,14 +128,9 @@ function editpath_mousedown(){
 引数のpathはセグメント化の対象とする線のこと
 **/
 function toSegment(path){
-  //現在セグメント化されている線の数を取得する⇒識別番号に使う
-  let Segment_num = getMax_Segments_Group_Number();
-  let d = path.clear().array().settle();
-  //セグメント化した線を格納するグループ
-  //グループの中の線で１つの線を形成
-  let Segments_Group = draw.group().addClass('Segments_Group');
-  //こっちは線ごとにノードをまとめたグループ
-  let Nodes_Group = draw.group().addClass('Nodes_Group');
+  let Segment_num = getMax_Segments_Group_Number();//セグメントグループの識別番号を取得し、＋１した数を識別番号として使う
+  let Segments_Group = draw.group().addClass('Segments_Group');//セグメント化した線を格納するグループ ⇒　グループの中の線で１つの線を形成
+  let Nodes_Group = draw.group().addClass('Nodes_Group');//ノードをまとめたグループを作成
   Segments_Group.attr({
     'id' : 'Segments_Group_' + String(Segment_num + 1),
     'Segments_Group_Number' : String(Segment_num + 1),
@@ -146,19 +141,17 @@ function toSegment(path){
     'id' : 'Nodes_Group_' + String(Segment_num + 1),
     'Segments_Group_Number' : String(Segment_num + 1)
   })
-  //pathのd属性がZでおわる⇒つまり閉じている線の場合はグループにclosed_pathクラスを追加しておく
+  let d = path.clear().array().settle();
+  //pathのd属性の最後がZ ⇒ つまり閉じている線の場合はグループにclosed_pathクラスを追加
   if(d[d.length-1][0]==="Z"){
     Segments_Group.addClass('closed_path');
     Nodes_Group.addClass('closed_path');
   }
-  //元の線の次の位置にグループを置く
-  path.after(Segments_Group);
-  //次のforループからセグメントとノードを作成していく
+  path.after(Segments_Group);//元の線の次の位置にセグメントグループを配置
+  //以下のforループからセグメントとノードを作成していく
   for(let j = 0; j < d.length - 1; j++){
-    //セグメントを作成
-    let segment = Segments_Group.path().addClass('segmented').addClass('path');
-    //ノードを作成
-    let node = Nodes_Group.rect(RECT_WIDTH/(1.5*draw.zoom()) , RECT_HEIGHT/(1.5*draw.zoom())).addClass('edit_rect').front();
+    let segment = Segments_Group.path().addClass('segmented').addClass('path');//セグメントを作成
+    let node = Nodes_Group.rect(RECT_WIDTH/(1.5*draw.zoom()) , RECT_HEIGHT/(1.5*draw.zoom())).addClass('edit_rect').front();//ノードを作成
     //セグメントの属性を指定
     segment.attr({
       'fill' : 'none', 'stroke' : path.attr('stroke'),
@@ -166,7 +159,7 @@ function toSegment(path){
       'stroke-dasharray' : path.attr('stroke-dasharray'),
       'stroke-linejoin': path.attr('stroke-linejoin')
     })
-    //線の幅が0mmの場合（おそらく塗りつぶされてる場合とかは線の幅を0mmにする可能性がある）
+    //線の幅が0mmの場合（塗りつぶされてる場合は線の幅が0mmになっている場合がある）
     if(segment.attr('stroke-width') === 0){
       segment.attr({
         'stroke-width': PS_WIDTH,
@@ -180,11 +173,10 @@ function toSegment(path){
       'y' : d[j][2] - node.height()/2,
       'fill': EDIT_RECT_COLOR
     })
-    //次の要素がZ要素である場合
+    //線が閉じている場合
     if(d[j+1][0]==="Z"){
       segment.M({x: d[j][1], y: d[j][2]}).L({x: d[0][1], y: d[0][2]});
-    //次の要素がZ要素でない場合
-    }else{
+    }else{ //線が閉じていない場合
       segment.M({x: d[j][1], y: d[j][2]}).L({x: d[j+1][1], y: d[j+1][2]});
       if(j === d.length -2){
         let node = Nodes_Group.rect(RECT_WIDTH/(1.5*draw.zoom()) , RECT_HEIGHT/(1.5*draw.zoom()));
@@ -199,7 +191,7 @@ function toSegment(path){
   }
   /**
   塗りつぶしをしている場合にセグメントやノードを動かした場合に
-  塗りつぶしの模様も一緒に動くようにするために作成
+  塗りつぶしの模様も一緒に動くようにするためにfill_pathを作成
   **/
   let fill_path = draw.path().attr({
     'id' : 'fill_path_' + String(Segment_num + 1),
@@ -208,17 +200,16 @@ function toSegment(path){
     'class' : 'fill_path'
   });
   Segments_Group.before(fill_path);
-  update_editElement();
-  update_fill_path();
+  update_Segment_Node(); //セグメントやノードにid、クラスなどの名前を振り分ける
+  update_fill_path(); //fill_pathの各種設定
   checkEditPath_gadget();
 }
 
 /********************************************
 //セグメントとノードのidやクラスなどの更新
 *********************************************/
-function update_editElement(){
-  //まずセグメントグループで中身が何もないものを削除する
-  draw.select('.Segments_Group').each(function(i , children){
+function update_Segment_Node(){
+  draw.select('.Segments_Group').each(function(i , children){ //セグメントグループで中身が何もないものを削除する
     if(this.children().length === 0){
       let Segments_Group_Number = this.attr('Segments_Group_Number');
       //ノードやfill_pathも対応するものは削除
@@ -227,76 +218,73 @@ function update_editElement(){
       this.remove();
     }
   })
-  //先頭や最後尾のセグメントのクラスを削除
+  //先頭や最後尾のセグメントであることを示すクラスを削除
   draw.select('.first_Segment').removeClass('first_Segment');
   draw.select('.last_Segment').removeClass('last_Segment');
   //全てのセグメントグループを取得し、逐次的に１つずつ処理
   draw.select('.Segments_Group').each(function(i , children){
-    let Segments_Group_Number = this.attr('Segments_Group_Number');
     let self = this;
-    //セグメントグループ内の属性を編集していく
-    this.each(function(j , children){
+    let Segments_Group_Number = this.attr('Segments_Group_Number');
+    this.each(function(j , children){//セグメントグループ内の属性を編集
       this.attr({
         'id' : 'segment_' + String(Segments_Group_Number) + '_' + String(j),
-        'assignment_Number': String(j),
+        'assignment_Number': String(j)
       })
-      //先頭と最後尾のセグメントには特有の属性を追加する
+      //先頭と最後尾のセグメントに特有のクラスを追加
       if(j===0) this.addClass('first_Segment');
       if(j===self.children().length - 1) this.addClass('last_Segment');
     })
   })
-  //先頭と最後尾のノードのクラスを削除する
+  //先頭と最後尾のノードであることを示すクラスを削除
   draw.select('.init_node').removeClass('init_node');
   draw.select('.last_node').removeClass('last_node');
-  //全てのノードグループを取得し、逐次的に１つずつ処理
-  draw.select('.Nodes_Group').each(function(i , children){
-    let Segments_Group_Number = this.attr('Segments_Group_Number');
+  draw.select('.Nodes_Group').each(function(i , children){//全てのノードグループを取得し、逐次的に１つずつ処理
     let self = this;
+    let Segments_Group_Number = this.attr('Segments_Group_Number');
     this.each(function(j , children){
       this.attr({
         'id' : 'node_' + String(Segments_Group_Number) + '_' + String(j),
         'assignment_Number': String(j),
       })
-      //最初と最後のノードには特有のクラスを追加
+      //最初と最後のノードに特有のクラスを追加
       if(j===0) this.addClass('init_node');
       if(j===self.children().length - 1) this.addClass('last_node');
     })
   })
 }
+
 /*****************************************
- セグメントのイベントの登録
+ セグメントのマウスクリック時のイベント登録
 ****************************************/
-function segments_EventSet(){
+function segments_ClickEventSet(){
   //ダブルクリック判定用の変数定義
   let clickCount = 0;
   //マウスでクリックしたときにイベントを登録する
   draw.select('.segmented').off('mousedown').on('mousedown',function(e){
-    editpath_hover(false);
-    //shiftキー（keycode:16）を押していない　かつ　現在クリックしたセグメントが選択状態でない　かつ　左クリック
-    if(!input_key_buffer[16] && !this.hasClass('editing_target') && event.button===0) reset_editing_target();
-    this.attr({ 'stroke' : PATH_EDIT_COLOR}).addClass('editing_target');
-    //左クリック時
-    if(e.button===0){
+    if(e.button===0){//左クリック時
+      editpath_hover(false);
+      //shiftキー（keycode:16）を押していない　かつ　クリックしたセグメントが選択状態でない場合はリセット
+      if(!input_key_buffer[16] && !this.hasClass('editing_target')) reset_editing_target();
+      this.attr({ 'stroke' : PATH_EDIT_COLOR}).addClass('editing_target');
       // シングルクリックの場合
       if( !clickCount) {
-        move_editing();
+        move_Segment_Node();
         ++clickCount;
         setTimeout( function() {
           clickCount = 0;
         }, 350 ) ;
-      /**
-       ダブルクリックの場合
-       クリックしたセグメントにノードを追加する。
-       イメージとしてはセグメントを２本追加し、その中間にノードを配置し、最後に元の線を削除する感じ
-      **/
       }else{
+        /**
+         ダブルクリックの場合
+         クリックしたセグメントにノードを追加する。
+         イメージとしてはセグメントを２本追加し、その中間にノードを配置し、最後に元の線を削除する感じ
+        **/
         let d = this.clear().array().settle();
         let assignment_Number = this.attr('assignment_Number');
-        //新しく追加する２本のセグメントとノード
+        //新しく追加する２本のセグメントとノードを作成
         let segmentedPath1 = draw.path().M({x: d[0][1], y: d[0][2]}).L({x: mx, y: my }).addClass('segmented').addClass('path');
         let segmentedPath2 = draw.path().M({x: mx, y: my}).L({x: d[1][1], y: d[1][2] }).addClass('segmented').addClass('path');
-        let rect = SVG.get('#Nodes_Group_' + String(this.parent().attr('Segments_Group_Number'))).rect(RECT_WIDTH/(1.5*draw.zoom()) , RECT_HEIGHT/(1.5*draw.zoom()))
-        rect.addClass('edit_rect').back();
+        let rect = SVG.get('#Nodes_Group_' + String(this.parent().attr('Segments_Group_Number'))).rect(RECT_WIDTH/(1.5*draw.zoom()) , RECT_HEIGHT/(1.5*draw.zoom())).addClass('edit_rect')
         segmentedPath1.attr({
           'fill' : 'none', 'stroke' : this.parent().attr('stroke_tmp'),
           'stroke-width': this.attr('stroke-width'),
@@ -315,12 +303,12 @@ function segments_EventSet(){
           'fill': EDIT_RECT_COLOR
         })
         this.after(segmentedPath2).after(segmentedPath1);
+        rect.back();
         for(let i=0; i < Number(assignment_Number) + 1; i++) rect.forward();
-        //元のセグメントを削除
-        this.remove();
-        update_editElement();
-        segments_EventSet();
-        nodes_EventSet();
+        this.remove();//元のセグメントを削除
+        update_Segment_Node();
+        segments_ClickEventSet();
+        nodes_ClickEventSet();
         editpath_hover(true);
         cash_svg();
         clickCount = 0;
@@ -333,7 +321,7 @@ function segments_EventSet(){
 //ノードのイベント登録
 セグメントのイベント登録と重複する箇所が多い
 *****************************************/
-function nodes_EventSet(){
+function nodes_ClickEventSet(){
   let clickCount = 0;
   draw.select('.edit_rect').off('mousedown').on('mousedown',function(e){
     editpath_hover(false);
@@ -342,19 +330,18 @@ function nodes_EventSet(){
       this.attr({ 'fill' : EDIT_HOVER_COLOR}).addClass('editing_target');
       // シングルクリックの場合
       if( !clickCount ) {
-        move_editing();
+        move_Segment_Node();
         get_node_connectRect();
         ++clickCount ;
         setTimeout( function() {
           clickCount = 0;
         }, 350 ) ;
-      //ダブルクリックの場合
-      //ノードを削除する
+      //ダブルクリックの場合はそのノードを削除
       }else{
         delete_editpath_rect(this);
-        update_editElement();
-        segments_EventSet();
-        nodes_EventSet();
+        update_Segment_Node();
+        segments_ClickEventSet();
+        nodes_ClickEventSet();
         update_fill_path();
         editpath_hover(true); //hoverイベントの再更新
         checkEditPath_gadget();
@@ -364,66 +351,61 @@ function nodes_EventSet(){
   })
 }
 
-/********************************
-//セグメントとノードを移動させる関数
-*********************************/
-function move_editing(){
-  //クリックし始めの座標
-  let init_x = mx, init_y = my;
+/****************************************
+//選択中のセグメントまたはノードを移動させる関数
+********************************************/
+function move_Segment_Node(){
+  let init_mx = mx, init_my = my; //クリックし始めの座標
   //ctrlキーを押していた場合は90度間隔で移動できるようにする
-  if(input_key_buffer[17]) editpath_mousemove('90degree',init_x,init_y);
+  if(input_key_buffer[17]) editpath_mousemove('90degree',init_mx,init_my);
   movingFlag = true;
-  //インターバル関数の起動
-  //詳細はググってみてね
-  arrIntervalCnt.push($interval_move = setInterval(function(e){
+  arrIntervalCnt.push($interval_move = setInterval(function(e){//インターバル関数を起動　インターバル関数の詳しいことはググってみて
         draw.select('.editing_target').each(function(i,children){
-          //移動させるものがノードの場合
-          if(this.hasClass('edit_rect')){
+          if(this.hasClass('edit_rect')){ //移動の対象がノードの場合
             //描画領域上でのマウス位置などを計算して平行移動させる
             //おそらくよくわからないだろうから、あまり考えない方がいい
             let original_cx = this.attr('x') + this.width()/2, original_cy = this.attr('y') + this.height()/2;
-            let cx = original_cx + mx - init_x , cy = original_cy + my - init_y;
+            let cx = original_cx + mx - init_mx , cy = original_cy + my - init_my;
             this.attr({'x':cx - this.width()/2}) , this.attr({'y':cy - this.height()/2});
             //nears
-            let nears = getSimultaneouslyEdit_element(this);
-            if(nears.beforePath){
-              let d = nears.beforePath.clear().array().settle(); //pathのd配列を取得
-              nears.beforePath.attr({'d':''}).M({x: d[0][1], y: d[0][2]}).L({x: cx, y: cy});
+            let nears = get_nears(this);
+            if(nears.beforeSegment){
+              let d = nears.beforeSegment.clear().array().settle(); //pathのd配列を取得
+              nears.beforeSegment.attr({'d':''}).M({x: d[0][1], y: d[0][2]}).L({x: cx, y: cy});
             }
-            if(nears.afterPath){
-              let d = nears.afterPath.clear().array().settle(); //pathのd配列を取得
-              nears.afterPath.attr({'d':''}).M({x: cx, y: cy}).L({x: d[1][1], y: d[1][2]});
+            if(nears.afterSegment){
+              let d = nears.afterSegment.clear().array().settle(); //pathのd配列を取得
+              nears.afterSegment.attr({'d':''}).M({x: cx, y: cy}).L({x: d[1][1], y: d[1][2]});
             }
-          //セグメントの場合
-          }else{
+          }else{//移動の対象がセグメントの場合
             let d = this.clear().array().settle();
             let original_x1 = d[0][1] , original_y1 = d[0][2];
             let original_x2 = d[1][1] , original_y2 = d[1][2];
-            let x1 = original_x1 - init_x + mx , y1 = original_y1 - init_y + my;
-            let x2 = original_x2 - init_x + mx , y2 = original_y2 - init_y + my;
+            let x1 = original_x1 - init_mx + mx , y1 = original_y1 - init_my + my;
+            let x2 = original_x2 - init_mx + mx , y2 = original_y2 - init_my + my;
             this.attr({'d':''}).M({x: x1, y: y1}).L({x: x2, y: y2});
-            let nears = getSimultaneouslyEdit_element(this);
-            if(nears.beforeRect) nears.beforeRect.attr({'x':x1 - nears.beforeRect.width()/2,'y':y1 - nears.beforeRect.height()/2});
-            if(nears.afterRect) nears.afterRect.attr({'x':x2 - nears.afterRect.width()/2,'y':y2 - nears.afterRect.height()/2});
-            if(nears.beforePath){
-              let d = nears.beforePath.clear().array().settle();
-              nears.beforePath.attr({'d':''}).M({x: d[0][1], y: d[0][2]}).L({x: x1, y: y1});
+            let nears = get_nears(this);
+            if(nears.beforeNode) nears.beforeNode.attr({'x':x1 - nears.beforeNode.width()/2,'y':y1 - nears.beforeNode.height()/2});
+            if(nears.afterNode) nears.afterNode.attr({'x':x2 - nears.afterNode.width()/2,'y':y2 - nears.afterNode.height()/2});
+            if(nears.beforeSegment){
+              let d = nears.beforeSegment.clear().array().settle();
+              nears.beforeSegment.attr({'d':''}).M({x: d[0][1], y: d[0][2]}).L({x: x1, y: y1});
             }
-            if(nears.afterPath){
-              let d = nears.afterPath.clear().array().settle();
-              nears.afterPath.attr({'d':''}).M({x: x2, y: y2}).L({x: d[1][1], y: d[1][2]});
+            if(nears.afterSegment){
+              let d = nears.afterSegment.clear().array().settle();
+              nears.afterSegment.attr({'d':''}).M({x: x2, y: y2}).L({x: d[1][1], y: d[1][2]});
             }
           }
         })
         update_fill_path();
-        init_x = mx , init_y = my;
+        init_mx = mx , init_my = my;
       }, //インターバルする関数の中身終了
     20) //時間周期
   )
 }
 
 /******************************
-セグメントとノードの削除用制御関数
+セグメントとノードを全削除する関数
 *******************************/
 function delete_editpath(){
   let delete_flag = false;
@@ -434,11 +416,11 @@ function delete_editpath(){
     }else{
       delete_editpath_segmentedPath(editing_target);
     }
-    update_editElement();
+    update_Segment_Node();
     delete_flag = true;
   }
-  segments_EventSet();
-  nodes_EventSet();
+  segments_ClickEventSet();
+  nodes_ClickEventSet();
   update_fill_path();
   editpath_hover(true); //hoverイベントの再更新
   checkEditPath_gadget();
@@ -447,26 +429,26 @@ function delete_editpath(){
 
 /*************************************
 ノードの削除用関数
-変数：nodeに対象のノードが格納されている
+変数：node に対象のノードが格納されている
 *************************************/
 function delete_editpath_rect(node){
-  let nears = getSimultaneouslyEdit_element(node);
+  let nears = get_nears(node);
   let new_segmentedPath;
-  if(nears.afterPath)afterPath_d =  nears.afterPath.clear().array().settle(); //afterPathのd配列を取得
-  if(nears.beforePath)beforePath_d =  nears.beforePath.clear().array().settle(); //beforePathのd配列を取得
-  if(nears.afterPath && nears.beforePath){
-    new_segmentedPath = draw.path().M({x: beforePath_d[0][1], y: beforePath_d[0][2]}).L({x: afterPath_d[1][1], y: afterPath_d[1][2]});
+  if(nears.afterSegment)afterSegment_d =  nears.afterSegment.clear().array().settle(); //afterSegmentのd配列を取得
+  if(nears.beforeSegment)beforeSegment_d =  nears.beforeSegment.clear().array().settle(); //beforeSegmentのd配列を取得
+  if(nears.afterSegment && nears.beforeSegment){
+    new_segmentedPath = draw.path().M({x: beforeSegment_d[0][1], y: beforeSegment_d[0][2]}).L({x: afterSegment_d[1][1], y: afterSegment_d[1][2]});
     new_segmentedPath.addClass('segmented').addClass('path');
     new_segmentedPath.attr({
-      'fill' : 'none','stroke' : nears.beforePath.parent().attr('stroke_tmp'),
-      'stroke-width': nears.beforePath.attr('stroke-width'),
-      'stroke-dasharray': nears.beforePath.attr('stroke-dasharray'),
-      'stroke-linejoin': nears.beforePath.attr('stroke-linejoin')
+      'fill' : 'none','stroke' : nears.beforeSegment.parent().attr('stroke_tmp'),
+      'stroke-width': nears.beforeSegment.attr('stroke-width'),
+      'stroke-dasharray': nears.beforeSegment.attr('stroke-dasharray'),
+      'stroke-linejoin': nears.beforeSegment.attr('stroke-linejoin')
     })
-    nears.beforePath.after(new_segmentedPath);
+    nears.beforeSegment.after(new_segmentedPath);
   }
-  if(nears.beforePath!==null)nears.beforePath.remove(); //beforePathの削除
-  if(nears.afterPath!==null)nears.afterPath.remove();  //afterPathの削除
+  if(nears.beforeSegment!==null)nears.beforeSegment.remove(); //beforeSegmentの削除
+  if(nears.afterSegment!==null)nears.afterSegment.remove();  //afterSegmentの削除
   let Segments_Group = SVG.get('Segments_Group_' + String(node.parent().attr('Segments_Group_Number')));
   if(Segments_Group.children().length < 2){ //線が閉じていて、グループ内に線が2本以下の場合
     if(Segments_Group.hasClass('closed_path')){
@@ -625,9 +607,9 @@ function node_connect_function(){
         })
       }
     }
-    update_editElement();
-    nodes_EventSet();
-    segments_EventSet();
+    update_Segment_Node();
+    nodes_ClickEventSet();
+    segments_ClickEventSet();
     get_node_connectRect();
     reset_editing_target();
     editpath_hover(true); //hoverイベントの再更新
@@ -666,56 +648,56 @@ function get_node_connectRect(){
 /*****************************************************************
 //引数に指定したセグメントやノードの前後のセグメントやノードを返す関数
 *****************************************************************/
-function getSimultaneouslyEdit_element(element , dbclick){
+function get_nears(element , dbclick){
   let Segments_Group_Number = Number(element.parent().attr('Segments_Group_Number'));
   let assignment_Number = Number(element.attr('assignment_Number'));
   let ob = new Object();
   //ノードの場合
   if(element.hasClass('edit_rect')){
     //セグメントの順番で言えば、次にある線
-    ob.beforePath = SVG.get('segment_' + String(Segments_Group_Number) + '_' + String(assignment_Number - 1));
+    ob.beforeSegment = SVG.get('segment_' + String(Segments_Group_Number) + '_' + String(assignment_Number - 1));
     //セグメントの順番で言えば、前にある線
-    ob.afterPath = SVG.get('segment_' + String(Segments_Group_Number) + '_' + String(assignment_Number));
+    ob.afterSegment = SVG.get('segment_' + String(Segments_Group_Number) + '_' + String(assignment_Number));
     //線が閉じている　かつ　ノードが先頭の場合の処理
     if(element.parent().hasClass('closed_path') && element.hasClass('init_node')){
       SVG.get('#Segments_Group_' + String(Segments_Group_Number)).each(function(i,children){
-        if(this.hasClass('last_Segment') && !this.hasClass('first_Segment'))ob.beforePath = this;
+        if(this.hasClass('last_Segment') && !this.hasClass('first_Segment'))ob.beforeSegment = this;
       })
     }
   //セグメントの場合
   }else{
     //セグメントの順番で言えば、前にあるノード
-    ob.beforeRect = SVG.get('node_' + String(Segments_Group_Number) + '_' + String(assignment_Number));
+    ob.beforeNode = SVG.get('node_' + String(Segments_Group_Number) + '_' + String(assignment_Number));
     //セグメントの順番で言えば、次にあるノード
-    ob.afterRect = SVG.get('node_' + String(Segments_Group_Number) + '_' + String(assignment_Number + 1));
+    ob.afterNode = SVG.get('node_' + String(Segments_Group_Number) + '_' + String(assignment_Number + 1));
     //セグメントの順番で言えば、前にあるセグメント
-    ob.beforePath = SVG.get('segment_' + String(Segments_Group_Number) + '_' + String(assignment_Number - 1));
+    ob.beforeSegment = SVG.get('segment_' + String(Segments_Group_Number) + '_' + String(assignment_Number - 1));
     //セグメントの順番で言えば、次にあるセグメント
-    ob.afterPath = SVG.get('segment_' + String(Segments_Group_Number) + '_' + String(assignment_Number + 1));
+    ob.afterSegment = SVG.get('segment_' + String(Segments_Group_Number) + '_' + String(assignment_Number + 1));
     //線が閉じている場合の処理
     if(element.parent().hasClass('closed_path')){
       if(element.hasClass('last_Segment')){
-        ob.afterRect = SVG.get('node_' + String(Segments_Group_Number) + '_' + String(0)); //進行方向で円の後にある円
-        ob.afterPath = SVG.get('segment_' + String(Segments_Group_Number) + '_' + String(0));
+        ob.afterNode = SVG.get('node_' + String(Segments_Group_Number) + '_' + String(0)); //進行方向で円の後にある円
+        ob.afterSegment = SVG.get('segment_' + String(Segments_Group_Number) + '_' + String(0));
       }else if(element.hasClass('first_Segment')){
         SVG.get('Segments_Group_' + String(Segments_Group_Number)).each(function(i,children){
-          if(this.hasClass('last_Segment'))ob.beforePath = this;
+          if(this.hasClass('last_Segment'))ob.beforeSegment = this;
         })
       }
     }
   }
   if(!dbclick){
-    if(ob.beforeRect){
-      if(ob.beforeRect.hasClass('editing_target')) ob.beforeRect = null;
+    if(ob.beforeNode){
+      if(ob.beforeNode.hasClass('editing_target')) ob.beforeNode = null;
     }
-    if(ob.afterRect){
-      if(ob.afterRect.hasClass('editing_target')) ob.afterRect = null;
+    if(ob.afterNode){
+      if(ob.afterNode.hasClass('editing_target')) ob.afterNode = null;
     }
-    if(ob.beforePath){
-      if(ob.beforePath.hasClass('editing_target')) ob.beforePath = null;
+    if(ob.beforeSegment){
+      if(ob.beforeSegment.hasClass('editing_target')) ob.beforeSegment = null;
     }
-    if(ob.afterPath){
-      if(ob.afterPath.hasClass('editing_target')) ob.afterPath = null;
+    if(ob.afterSegment){
+      if(ob.afterSegment.hasClass('editing_target')) ob.afterSegment = null;
     }
   }
   return ob;

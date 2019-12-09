@@ -194,7 +194,7 @@ $(window).on('load',function () {
 
   //SVG要素の表示非表示チェックボックス
   $('#display_DrawElement').off('change').change( function() {
-    let svg_element = draw.select('.path,.circle,.text,.fill_path,.edit_rect,.init_node,.last_node,.close_node,.closePath_rect,.handle'); //非表示にする要素
+    let svg_element = draw.select('.path,.circle,.ink,.braille,.fill_path,.edit_rect,.init_node,.last_node,.close_node,.closePath_rect,.handle'); //非表示にする要素
     $('#display_DrawElement').prop('checked') ? svg_element.show() : svg_element.hide() //目盛り線以外のSVG描画要素は表示
   })
   $("#display_DrawElement").prop('checked', true).change();//初期状態はチェックを入れておく
@@ -308,7 +308,9 @@ $(window).on('load',function () {
   $('input[name="draw_path_fillRadio"]:radio').off('change').on('change',function(){ //ラジオボタンを変えたときに行う処理
     if(now_drawing_path_ID !== '' && now_drawing_path_ID !== undefined){
       draw.select('#' + now_drawing_path_ID).fill($('input[name="draw_path_fillRadio"]:checked').val());
-      if($('input[name="draw_path_fillRadio"]:checked').val()==='custom') draw.select('#' + now_drawing_path_ID).fill($('#draw_fill_color').val());
+      if($('input[name="draw_path_fillRadio"]:checked').val()==='custom'){
+        draw.select('#' + now_drawing_path_ID).fill($('#draw_fill_color').val());
+      }
     }
   });
   $("#draw_fill_color").off('change').on("change", function(){ //カスタムの設定で色を変えたときに行う処理
