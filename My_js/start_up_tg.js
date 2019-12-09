@@ -153,7 +153,7 @@ $(window).on('load',function () {
   $('#button_reset_strokewidth').click(function(){  //線幅のリセットボタンを押したときの処理
     $("#textbox_strokewidth").val(1);
     let drawing_path_selector = (now_drawing_path_ID === '' || now_drawing_path_ID === undefined) ? '' : ',#' + now_drawing_path_ID;
-    draw.select('.edit_select.path , .edit_select.circle , .fragmented' + drawing_path_selector).each(function(i,children){
+    draw.select('.edit_select.path , .edit_select.circle , .segmented' + drawing_path_selector).each(function(i,children){
       this.attr({ 'stroke-width':PS_WIDTH });
       if(this.attr('stroke-dasharray')!== undefined && this.attr('stroke-dasharray')!=='') this.attr({'stroke-dasharray':PS_WIDTH}); //点線の場合
     })
@@ -194,7 +194,7 @@ $(window).on('load',function () {
 
   //SVG要素の表示非表示チェックボックス
   $('#display_DrawElement').off('change').change( function() {
-    let svg_element = draw.select('.SVG_Element,.ghost_path,.edit_rect,.init_node,.last_node,.close_node,.closePath_rect,.handle'); //非表示にする要素
+    let svg_element = draw.select('.path,.circle,.text,.fill_path,.edit_rect,.init_node,.last_node,.close_node,.closePath_rect,.handle'); //非表示にする要素
     $('#display_DrawElement').prop('checked') ? svg_element.show() : svg_element.hide() //目盛り線以外のSVG描画要素は表示
   })
   $("#display_DrawElement").prop('checked', true).change();//初期状態はチェックを入れておく
@@ -266,10 +266,10 @@ $(window).on('load',function () {
   $('input[name="stroke"]:radio').off('change').on('change',function(){
     let drawing_path_selector = (now_drawing_path_ID === '' || now_drawing_path_ID === undefined) ? '' : ',#' + now_drawing_path_ID;
     if($(this).attr('id')==='radio_solid_path'){ //実線の場合
-      draw.select('.edit_select.path , .edit_select.circle , .fragmented' + drawing_path_selector).attr({'stroke-dasharray': ''});
+      draw.select('.edit_select.path , .edit_select.circle , .segmented' + drawing_path_selector).attr({'stroke-dasharray': ''});
       $('.dotted_option').hide();
     }else{ //点線の場合
-      draw.select('.edit_select.path,.edit_select.circle,.fragmented' + drawing_path_selector).attr({ 'stroke-dasharray': PS_WIDTH * $('#dottedLine_line').val() + ' ' +  PS_WIDTH * $('#dottedLine_space').val()});
+      draw.select('.edit_select.path,.edit_select.circle,.segmented' + drawing_path_selector).attr({ 'stroke-dasharray': PS_WIDTH * $('#dottedLine_line').val() + ' ' +  PS_WIDTH * $('#dottedLine_space').val()});
       $('.dotted_option').show();
     }
   })
@@ -286,7 +286,7 @@ $(window).on('load',function () {
     $("#dottedLine_line").val($('#textbox_strokewidth').val());
     $("#dottedLine_space").val($('#textbox_strokewidth').val());
     let drawing_path_selector = (now_drawing_path_ID === '' || now_drawing_path_ID === undefined) ? '' : ',#' + now_drawing_path_ID;
-    draw.select('.edit_select.path , .edit_select.circle , .fragmented' + drawing_path_selector).each(function(i,children){
+    draw.select('.edit_select.path , .edit_select.circle , .segmented' + drawing_path_selector).each(function(i,children){
       if(this.attr('stroke-dasharray')!==undefined && this.attr('stroke-dasharray')!==''){
         this.attr({ 'stroke-dasharray': PS_WIDTH * $('#dottedLine_line').val() + ' ' +  PS_WIDTH * $('#dottedLine_space').val()});
       }
@@ -298,7 +298,7 @@ $(window).on('load',function () {
   **************************/
   $("#custom_stroke_color").off('change').on("change", function(){
     let drawing_path_selector = (now_drawing_path_ID === '' || now_drawing_path_ID === undefined) ? '' : ',#' + now_drawing_path_ID;
-     draw.select('.edit_select.path , .edit_select.circle , .fragmented' + drawing_path_selector).attr({'stroke' : $("#custom_stroke_color").val()});
+     draw.select('.edit_select.path , .edit_select.circle , .segmented' + drawing_path_selector).attr({'stroke' : $("#custom_stroke_color").val()});
      draw.select('.Segments_Group').attr({'stroke_tmp' : $("#custom_stroke_color").val()});
   });
 
@@ -336,13 +336,14 @@ $(window).on('load',function () {
       let fill_flag = false;
       if(this.hasClass('connected') || this.hasClass('circle')){
         fill_flag = true;
-      }else if(SVG.get('#ghost_path_' + this.attr('fragmented_Group_Number'))){
+      }else if(SVG.get('#fill_path_' + this.attr('Segments_Group_Number'))){
         fill_flag = true;
       }
+
       if(fill_flag){
         fill_complete_flag = true;
         if(this.hasClass('Segments_Group')){
-          SVG.get('#ghost_path_' + this.attr('fragmented_Group_Number')).attr({'fill' : fill});
+          SVG.get('#fill_path_' + this.attr('Segments_Group_Number')).attr({'fill' : fill});
           this.attr({'fill_tmp': fill});
         }else{
           this.fill(fill);
@@ -361,8 +362,8 @@ $(window).on('load',function () {
        case 'button_front': // 最前面ボタン（選択中の要素をレイヤーで一番前に移動する）
          draw.select('.edit_select, .Segments_Group').each(function(i , children){
            this.front();
-           let ghost_path = SVG.get('#ghost_path_' + this.attr('fragmented_Group_Number'));
-           if(ghost_path) this.before(ghost_path);
+           let fill_path = SVG.get('#fill_path_' + this.attr('segmented_Group_Number'));
+           if(fill_path) this.before(fill_path);
          })
          break;
        case 'button_forward': // 前面ボタン（選択中の要素をレイヤーで１つ前に移動する）
@@ -376,8 +377,8 @@ $(window).on('load',function () {
            }else{
              base.before(this);
            }
-           let ghost_path = SVG.get('#ghost_path_' + this.attr('fragmented_Group_Number'));
-           if(ghost_path) this.before(ghost_path);
+           let fill_path = SVG.get('#fill_path_' + this.attr('segmented_Group_Number'));
+           if(fill_path) this.before(fill_path);
          })
          break;
        case 'button_backward': // 背面ボタン（選択中の要素をレイヤーで一つ後ろに移動する）
@@ -391,8 +392,8 @@ $(window).on('load',function () {
            }else{
              base.after(this);
            }
-           let ghost_path = SVG.get('#ghost_path_' + this.attr('fragmented_Group_Number'));
-           if(ghost_path) this.before(ghost_path);
+           let fill_path = SVG.get('#fill_path_' + this.attr('segmented_Group_Number'));
+           if(fill_path) this.before(fill_path);
          })
          break;
        case 'button_back': // 最背面ボタン（選択中の要素をレイヤーで一番後に移動する）
@@ -403,8 +404,8 @@ $(window).on('load',function () {
            }else{
              base.after(this);
            }
-           let ghost_path = SVG.get('#ghost_path_' + this.attr('fragmented_Group_Number'));
-           if(ghost_path) this.before(ghost_path);
+           let fill_path = SVG.get('#fill_path_' + this.attr('segmented_Group_Number'));
+           if(fill_path) this.before(fill_path);
          })
          break;
        default:

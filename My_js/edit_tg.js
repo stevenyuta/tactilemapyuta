@@ -97,8 +97,8 @@ function edit_mousedown_up(flag){
           //描画した四角形（範囲選択を示す）の各頂点座標を表現する４パラメータを指定
           let sr_min_x =  Number(select_rect.attr('x')) , sr_min_y =  Number(select_rect.attr('y'));
           let sr_max_x =  sr_min_x + Number(select_rect.attr('width')) , sr_max_y =  sr_min_y + Number(select_rect.attr('height'));
-          //選択モード時の対象はSVG_elementクラスを持つ要素。画像選択モード時はimageクラスを持つ要素が選択の対象
-          let selector = ( $('input[name="tg_mode"]:checked').val() == "Edit" ) ? '.SVG_Element' : '.image';
+          //選択モード時の対象はpath,circle,textクラスを持つ要素。画像選択モード時はimageクラスを持つ要素が選択の対象
+          let selector = ( $('input[name="tg_mode"]:checked').val() == "Edit" ) ? '.path,.circle,.text' : '.image';
           //四角形の範囲に含まれる要素を調べる
           //もし範囲に含まれていればedit_selectクラスを付与して選択状態にする
           draw.select(selector).each(function(i, children) {
@@ -140,7 +140,7 @@ flagがoffのときは　イベントを解除するだけ
 *********************************************/
 function edit_hover(flag){
   //選択モードまたは画像選択モードに関係する要素のイベントを全てoff
-  let selector = (nowchecked === "Edit" ) ? '.SVG_Element' : '.image';
+  let selector = (nowchecked === "Edit" ) ? '.path,.circle,.text' : '.image';
   draw.select(selector).off('mouseover').off('mouseout');
   SVG.get('handle_group').off('mouseover').off('mouseout');
   if(flag!=="off"){

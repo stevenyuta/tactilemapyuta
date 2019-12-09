@@ -119,7 +119,7 @@ function draw_path(){
             if($('input[name="stroke"]:checked').attr('id')==='radio_dotted_path'){
               drawing_path.attr({ 'stroke-dasharray': PS_WIDTH * $('#dottedLine_line').val() + ' ' +  PS_WIDTH * $('#dottedLine_space').val()});
             }
-            drawing_path.addClass('connected').addClass('SVG_Element').addClass('path');
+            drawing_path.addClass('connected').addClass('path');
             drawing_path.back();
             for(let i=0; i< position_num; i++) drawing_path.forward();
 
@@ -319,7 +319,7 @@ function draw_rect(){
       if($('input[name="stroke"]:checked').attr('id')==='radio_dotted_path'){
         rect.attr({ 'stroke-dasharray': PS_WIDTH * $('#dottedLine_line').val() + ' ' +  PS_WIDTH * $('#dottedLine_space').val()});
       }
-      rect.addClass('connected').addClass('SVG_Element').addClass('path').back();
+      rect.addClass('connected').addClass('path').back();
       for(let i=0; i< back_num; i++) rect.forward();
 
       //マウスムーブ時の処理を設定する
@@ -377,7 +377,7 @@ function draw_circle(){
       if($('input[name="stroke"]:checked').attr('id')==='radio_dotted_path'){
         circle.attr({ 'stroke-dasharray': PS_WIDTH * $('#dottedLine_line').val() + ' ' +  PS_WIDTH * $('#dottedLine_space').val()});
       }
-      circle.addClass('SVG_Element').addClass('circle').back();
+      circle.addClass('circle').back();
       for(let i=0; i< back_num; i++) circle.forward();
 
       draw.off('mousemove').on('mousemove', function(e){

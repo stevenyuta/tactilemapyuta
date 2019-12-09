@@ -1,8 +1,8 @@
 function set_Stampmode(){
   $(document).off(); //ページ上のイベントの削
   draw.off(); //drawのイベント解除
-  draw.select('.SVG_Element , .image').off(); //SVG_Elementのイベント解除
-  draw.select('.SVG_Element , .image').attr({'cursor':'default'});
+  draw.select('.path,.circle,.text , .image').off(); //イベント解除
+  draw.select('.path,.circle,.text , .image').attr({'cursor':'default'});
   set_key_down_up();
   set_contextMenu();
   reset_dcheck_element();
@@ -85,7 +85,7 @@ function add_stair(){
   draw.off('mousedown').mousedown(function(e){
     if(e.button===0){
       let real_stair = SVG.get('#' + symbol_id).removeClass('dummy');
-      if(real_stair)real_stair.addClass('stair').addClass('symbol').addClass('SVG_Element').addClass('path');
+      if(real_stair)real_stair.addClass('stair').addClass('symbol').addClass('path');
       cash_svg(); //svgデータのcash
       let back_num = getPathCirclePos();
       dummy_stair = draw.path().addClass('dummy').back();
@@ -127,7 +127,7 @@ function add_escalator(){
   draw.off('mousedown').mousedown(function(e){
     if(e.button===0){
       let real_escalator = SVG.get('#' + symbol_id).removeClass('dummy');
-      if(real_escalator)real_escalator.addClass('escalator').addClass('symbol').addClass('SVG_Element').addClass('path');
+      if(real_escalator)real_escalator.addClass('escalator').addClass('symbol').addClass('path');
       cash_svg(); //svgデータのcash
     }
   })
@@ -162,7 +162,7 @@ function add_arrow(){
   draw.off('mousedown').mousedown(function(e){
     if(e.button===0){
       let real_arrow = SVG.get('#' + symbol_id).removeClass('dummy');
-      if(real_arrow)real_arrow.addClass('arrow').addClass('symbol').addClass('SVG_Element').addClass('path');
+      if(real_arrow)real_arrow.addClass('arrow').addClass('symbol').addClass('path');
       cash_svg(); //svgデータのcash
     }
   })
@@ -211,7 +211,7 @@ function add_Tiket_gate(){
     if(e.button===0){
       for(let i=0; i < symbol_id.length; i++){
         let real_tiket_gate = SVG.get('#' + symbol_id[i]).removeClass('dummy');
-        if(real_tiket_gate)real_tiket_gate.addClass('connected').addClass('SVG_Element').addClass('path');
+        if(real_tiket_gate)real_tiket_gate.addClass('connected').addClass('path');
       }
       cash_svg(); //svgデータのcash
     }
@@ -251,7 +251,7 @@ function add_reducescale(){
   draw.off('mousedown').mousedown(function(e){
     if(e.button===0){
       let real_scale = SVG.get('#' + symbol_id).removeClass('dummy');
-      if(real_scale)real_scale.addClass('scale').addClass('symbol').addClass('SVG_Element').addClass('path');
+      if(real_scale)real_scale.addClass('scale').addClass('symbol').addClass('path');
       cash_svg(); //svgデータのcash
     }
   })
@@ -309,7 +309,7 @@ function add_graduationFrame(){
   draw.off('mousedown').mousedown(function(e){
     if(e.button===0){
       let real_graduationFrame = SVG.get('#' + Frame_id).removeClass('dummy');
-      if(real_graduationFrame)real_graduationFrame.addClass('connected').addClass('SVG_Element').addClass('path');
+      if(real_graduationFrame)real_graduationFrame.addClass('connected').addClass('path');
       cash_svg(); //svgデータのcash
     }
   })
@@ -377,8 +377,8 @@ function add_text(){
           return;
         }
       }
-      if(real_Ink_text)real_Ink_text.removeClass('dummy').addClass('ink').addClass('SVG_Element');
-      if(real_Bra_text)real_Bra_text.removeClass('dummy').addClass('braille').addClass('SVG_Element');
+      if(real_Ink_text)real_Ink_text.removeClass('dummy').addClass('ink');
+      if(real_Bra_text)real_Bra_text.removeClass('dummy').addClass('braille');
       if(real_Ink_text || real_Bra_text) cash_svg();
     }
   })

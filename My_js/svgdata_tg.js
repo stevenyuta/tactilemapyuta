@@ -70,7 +70,7 @@ function undredo_checker(){
 function download_setSVG(original_draw) { //ダウンロード時に出力svgファイルをフォーマットする関数
   selector_delete('.dummy');
   edit_clear();
-  toConnected();
+  toConnect();
   selector_delete('.select_rect');
   selector_delete('.edit_rect , .init_node , .last_node , .close_node');
   selector_delete('.Nodes_Group');
@@ -79,7 +79,7 @@ function download_setSVG(original_draw) { //ダウンロード時に出力svgフ
   SVG.get('handle_group').remove();
   SVG.get('guiderect_group').remove();
 
-  draw.select('.SVG_Element').attr('cursor', null);
+  draw.select('.path,.circle,.text').attr('cursor', null);
 
   //グループ内に要素が何もないグループの削除
   let svg_str = original_draw.svg(); //serialとsvg_strはグローバル関数である
@@ -137,7 +137,7 @@ function download_setPNG(original_draw) { //ダウンロード時に出力pngフ
   draw.rect(1274, 1274).addClass('background_rect').back().move(-1274/2 , -1274/2).attr({'fill' : '#ffffff'});
   selector_delete('.dummy');
   edit_clear();
-  toConnected();
+  toConnect();
   selector_delete('.select_rect');
   selector_delete('.edit_rect , .init_node , .last_node , .close_node');
   selector_delete('.Nodes_Group');

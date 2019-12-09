@@ -3,19 +3,19 @@
 //pathを解析して、くっつきモードとバラバラモード
 //配列を介して切り替える関数
 ******************************************************/
-function toConnected(){
+function toConnect(){
   draw.select('.Segments_Group').each(function(i,children){
-    if(SVG.get('Nodes_Group_' + String(this.attr('fragmented_Group_Number')))){
-      SVG.get('Nodes_Group_' + String(this.attr('fragmented_Group_Number'))).remove();
+    if(SVG.get('Nodes_Group_' + String(this.attr('segmented_Group_Number')))){
+      SVG.get('Nodes_Group_' + String(this.attr('segmented_Group_Number'))).remove();
     }
-    let new_path = draw.path().addClass('connected').addClass('SVG_Element').addClass('path');
+    let new_path = draw.path().addClass('connected').addClass('path');
     this.after(new_path);
     if(nowchecked==='Edit') new_path.addClass('edit_select');
     let self = this;
     this.each(function(j,children){
-      let dpoint = this.clear().array().settle() //pathのdpoint配列を取得
+      let d = this.clear().array().settle() //pathのdpoint配列を取得
       if(j===0){
-        new_path.M({x: dpoint[0][1], y: dpoint[0][2]});
+        new_path.M({x: d[0][1], y: d[0][2]});
         new_path.attr({ //線属性の指定
           'stroke-width': this.attr('stroke-width'),
           'stroke-dasharray': this.attr('stroke-dasharray'),
@@ -23,16 +23,16 @@ function toConnected(){
         })
         if(this.attr('Non_stroke'))  new_path.attr({ 'stroke-width': 0 , 'stroke-dasharray': '' })
       }else{
-        new_path.L({x: dpoint[0][1], y: dpoint[0][2]})
+        new_path.L({x: d[0][1], y: d[0][2]})
       }
-      if(!self.hasClass('closed_path') && j===self.children().length - 1) new_path.L({x: dpoint[1][1], y: dpoint[1][2]});
+      if(!self.hasClass('closed_path') && j===self.children().length - 1) new_path.L({x: d[1][1], y: d[1][2]});
     })
     new_path.attr({'stroke' : this.attr('stroke_tmp')});
     new_path.attr({'fill' : this.attr('fill_tmp')});
     if(this.hasClass('closed_path'))  new_path.Z();
     this.remove();
   })
-  selector_delete('.ghost_path');
+  selector_delete('.fill_path');
 }
 
 /***************************************************************************
@@ -420,7 +420,7 @@ function reset_dcheck_element(){
 function fig_straight(){
   var thre_angle_max = Math.tan( 85 * (Math.PI/180) ); //垂直線だと判定するための閾値
   var thre_angle_min = Math.tan( 5 * (Math.PI/180) ); //平行線だと判定するための閾値
-  draw.select('.edit_select.connected , .fragmented').each(function(i , children){
+  draw.select('.edit_select.connected , .segmented').each(function(i , children){
     var attr_d = '';
     var dpoint = this.clear().array().settle() //pathのdpoint配列を取得
     for(var j=0; j < dpoint.length - 1; j++){
@@ -450,7 +450,7 @@ function fig_straight(){
       }
     }
     this.attr({'d' : attr_d});
-    if(this.hasClass('fragmented')){ //fragmented パスの場合
+    if(this.hasClass('segmented')){ //segmented パスの場合
       let dpoint = this.clear().array().settle();
       let x1 = Number(dpoint[0][1]) , y1 = Number(dpoint[0][2]);
       let x2 = Number(dpoint[1][1]) , y2 = Number(dpoint[1][2]);
@@ -472,7 +472,7 @@ function fig_straight(){
 function fig_connect(){
   var thre_xy = 5;
   var thre_distance = 5;
-  draw.select('.edit_select.connected,.fragmented').each(function(i , children){
+  draw.select('.edit_select.connected,.segmented').each(function(i , children){
     var dpoint = this.clear().array().settle(); //pathのdpoint配列を取得
     for(var j=0; j < dpoint.length - 1; j++){
       if(dpoint[j + 1][0] !== 'Z'){
@@ -490,7 +490,7 @@ function fig_connect(){
       var relativeXY = get_relativeXY(path_x1_base ,path_y1_base, path_x2_base , path_y2_base , thre_xy); //直線の領域のx,y座標
       var line_param = getLineParam(path_x1_base , path_y1_base , path_x2_base , path_y2_base);
 
-      draw.select('.edit_select.connected,.fragmented').each(function(k , children){
+      draw.select('.edit_select.connected,.segmented').each(function(k , children){
         var attr_d = '';
         var dpoint_select = this.clear().array().settle(); //pathのdpoint配列を取得
         for(var l=0; l < dpoint_select.length; l++){
@@ -527,7 +527,7 @@ function fig_connect(){
           }
         }
         this.attr({ 'd' : attr_d });
-        if(this.hasClass('fragmented')){ //fragmented パスの場合
+        if(this.hasClass('segmented')){ //segmented パスの場合
           let dpoint = this.clear().array().settle();
           let x1 = Number(dpoint[0][1]) , y1 = Number(dpoint[0][2]);
           let x2 = Number(dpoint[1][1]) , y2 = Number(dpoint[1][2]);
@@ -555,20 +555,20 @@ function fig_pathUpload(){
   }
   //線の詳細編集の更新
   draw.select('.Segments_Group').each(function(i,children){
-    let fragmented_Group_Number = this.attr('fragmented_Group_Number');
+    let segmented_Group_Number = this.attr('segmented_Group_Number');
     let closed;
     this.hasClass('closed_path') ? closed = true : closed = false;
     this.each(function(j,children){
       let assignment_Number = Number(this.attr('assignment_Number'));
       let dpoint = this.clear().array().settle();
-      let rect_id = 'rect_' + fragmented_Group_Number + '_' + assignment_Number;
+      let rect_id = 'rect_' + segmented_Group_Number + '_' + assignment_Number;
       let rect = SVG.get(rect_id);
       rect.attr({
         'x' : dpoint[0][1] - rect.width()/2,
         'y' : dpoint[0][2] - rect.height()/2
       })
       if(!closed){ //閉じていないpathの場合
-        let rect_id = 'rect_' + fragmented_Group_Number + '_' + (assignment_Number + 1);
+        let rect_id = 'rect_' + segmented_Group_Number + '_' + (assignment_Number + 1);
         let rect = SVG.get(rect_id);
         rect.attr({
           'x' : dpoint[1][1] - rect.width()/2,
@@ -577,5 +577,5 @@ function fig_pathUpload(){
       }
     })
   })
-  update_ghostPath();
+  update_fill_path();
 }

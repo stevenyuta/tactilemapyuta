@@ -10,8 +10,8 @@ function RadioEvent_set(unredo_flag){
   $(document).off();
   //描画領域のイベント削除
   draw.off();
-  //SVG_Element、画像のイベント解除と触れたときのマウスカーソルのデフォルト化
-  draw.select('.SVG_Element , .image').off().attr({'cursor':'default'});
+  //path,circle,textとimageクラスのイベント解除と触れたときのマウスカーソルのデフォルト化
+  draw.select('.path,.circle,.text, .image').off().attr({'cursor':'default'});
   //幅と高さのテキストボックスのイベント解除
   $('#textbox_selectBox_width , #textbox_selectBox_height').off();
   //
@@ -30,7 +30,7 @@ function RadioEvent_set(unredo_flag){
   //マウスホイールで拡大縮小などを行う処理の設定
   set_zoom();
   //線編集機能で編集状態にした線を元に戻す
-  toConnected();
+  toConnect();
   //選択状態の解除
   if(nowchecked!=='Edit') edit_clear(true);
   //いらない要素を全削除
@@ -154,9 +154,6 @@ function set_contextMenu(){
         case 'node_connect':
           node_connect_function();
           break;
-        case 'verhor':
-          verhor_fragmentedPath();
-          break;
         default:
       }
     },
@@ -224,15 +221,6 @@ function set_contextMenu(){
           let flag;
           (connectRect.rect1 && connectRect.rect2) ? flag = false : flag =  true;
           return flag;
-        }
-      },
-      "verhor":{
-        name: '線の垂直・水平化',
-        icon: 'fa-wrench',
-        disabled: function(){
-          let editing_target_flag;
-          (draw.select('.editing_target.fragmented').first()) ? editing_target_flag = false : editing_target_flag = true;
-          return editing_target_flag;
         }
       }
     }
@@ -328,7 +316,7 @@ function draw_guiderect(){
 //チェックボックスの設定に合わせて描画したものを表示非表示させたりする
 function checkBox_change(){
   //SVG要素の表示非表示チェックボックス
-  let svg_element = draw.select('.SVG_Element,.ghost_path,.edit_rect,.init_node,.last_node,.close_node,.closePath_rect,.handle');
+  let svg_element = draw.select('.path,.circle,.text,.fill_path,.edit_rect,.init_node,.last_node,.close_node,.closePath_rect,.handle');
   $('#display_DrawElement').prop('checked') ? svg_element.show() : svg_element.hide();
   //画像の表示非表示
   $('#display_image').prop('checked') ? SVG.select('.image').show() : SVG.select('.image').hide();
@@ -447,7 +435,7 @@ function update_dottedLine(){
     $('#dottedLine_line').val(transNumber);
     if(!transNumber.match(/[^0-9\.]/)){
       let drawing_path_selector = (now_drawing_path_ID === '' || now_drawing_path_ID === undefined) ? '' : ',#' + now_drawing_path_ID;
-      draw.select('.edit_select.path , .edit_select.circle , .fragmented' + drawing_path_selector).each(function(i,children){
+      draw.select('.edit_select.path , .edit_select.circle , .segmented' + drawing_path_selector).each(function(i,children){
         if(this.attr('stroke-dasharray')!==undefined && this.attr('stroke-dasharray')!==''){
           this.attr({ 'stroke-dasharray': PS_WIDTH * $('#dottedLine_line').val() + ' ' +  PS_WIDTH * $('#dottedLine_space').val()});
         }
@@ -466,7 +454,7 @@ function update_textbox_strokewidth(){
     $('#textbox_strokewidth').val(transNumber);
     if(!transNumber.match(/[^0-9\.]/)){
       let drawing_path_selector = (now_drawing_path_ID === '' || now_drawing_path_ID === undefined) ? '' : ',#' + now_drawing_path_ID;
-      draw.select('.edit_select.path , .edit_select.circle , .fragmented' + drawing_path_selector).each(function(i,children){
+      draw.select('.edit_select.path , .edit_select.circle , .segmented' + drawing_path_selector).each(function(i,children){
         this.attr({'stroke-width': Number(transNumber) * PS_WIDTH });
         if(this.attr('stroke-dasharray')!==undefined && this.attr('stroke-dasharray')!=='')this.attr({'stroke-dasharray': PS_WIDTH});
       })
@@ -651,7 +639,7 @@ function undo(){
     //defs（塗りつぶし機能に使う）の設定
     defs_set();
     checkBox_change();
-    toConnected();
+    toConnect();
     edit_clear();
     RadioEvent_set(true);
     js_sleep(100); //100ms待機
@@ -680,7 +668,7 @@ function redo(){
     draw_gridline(3000,3000,75,75);
     defs_set();
     checkBox_change();
-    toConnected();
+    toConnect();
     edit_clear();
     RadioEvent_set(true);
     js_sleep(100); //100ms待機
