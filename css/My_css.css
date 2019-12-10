@@ -373,13 +373,13 @@ right toolbar
   background-image: url('../images/horizontal.png');
 }
 #draw_fill_dasheddoubleLine + label{
-  background-image: url('../images/dasheddoubleLine.png');
+  background-image: url('../images/dasheddoubleline.png');
 }
 #draw_fill_gridLine + label{
-  background-image: url('../images/gridLine.png');
+  background-image: url('../images/gridline.png');
 }
 #draw_fill_stairLine + label{
-  background-image: url('../images/stairLine.png');
+  background-image: url('../images/stairline.png');
 }
 #draw_fill_diagonal_wide + label{
   background-image: url('../images/diagonal_wide.png');
@@ -530,15 +530,15 @@ right toolbar
 }
 
 #table_select_fill #button_dasheddoubleLine{
-  background-image: url('../images/dasheddoubleLine.png');
+  background-image: url('../images/dasheddoubleline.png');
 }
 
 #table_select_fill #button_gridLine{
-  background-image: url('../images/gridLine.png');
+  background-image: url('../images/gridline.png');
 }
 
 #table_select_fill #button_stairLine{
-  background-image: url('../images/stairLine.png');
+  background-image: url('../images/stairline.png');
 }
 
 #table_select_fill #button_diagonal_wide{
