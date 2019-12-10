@@ -196,34 +196,42 @@
               <th colspan="4" align="center">塗りつぶし</th>
             </tr>
             <tr>
-              <td colspan="2"><button id="button_fillnone" value='none'>なし</button></td>
+              <td colspan="4"><button id="button_fillnone" value='none'>なし</button></td>
+            </tr>
+            <tr>
+              <td colspan="4">
+                <button id="button_custom" value='#FF0000'>選んだ色</button><br>
+                <input type="color" id="custom_fill_color" name="fillcolor" value="#FF0000">
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2"><button id="button_diagonal_wide" value='url(#diagonal_wide-texture)'></button></td>
               <td colspan="2"><button id="button_diagonal" value='url(#diagonal-texture)'></button></td>
             </tr>
             <tr>
-              <td colspan="2"><button id="button_polkadot" value='url(#polkadot-texture)'></button></td>
               <td colspan="2"><button id="button_polkadot_water" value='url(#polkadot_water-texture)'></button></td>
+              <td colspan="2"><button id="button_polkadot" value='url(#polkadot-texture)'></button></td>
             </tr>
             <tr>
+              <td colspan="2"><button id="button_verticalLine" value='url(#verticalLine-texture)'></button></td>
+              <td colspan="2"><button id="button_horizontalLine" value='url(#horizontalLine-texture)'></button></td>
+            </tr>
+            <tr>
+              <td colspan="2"><button id="button_dasheddoubleLine" value='url(#dasheddoubleLine-texture)'></button></td>
+              <td colspan="2"><button id="button_gridLine" value='url(#gridLine-texture)'></button></td>
+            </tr>
+            <tr>
+              <td colspan="2"><button id="button_stairLine" value='url(#stairLine-texture)'></button></td>
               <td colspan="2"><button id="button_gray" value='#333'></button></td>
-              <td colspan="2">
-                <button id="button_custom" value='#FF0000'>選んだ色</button>
-                <input type="color" id="custom_fill_color" name="fillcolor" value="#FF0000">
-              </td>
             </tr>
           </table>
 
           <table id="table_layer">
-            <tr>
-              <th colspan="4">レイヤー</th>
-            </tr>
-            <tr>
-              <td colspan="2"><button id="button_front"></button></td>
-              <td colspan="2"><button id="button_forward"></button></td>
-            </tr>
-            <tr>
-              <td colspan="2"><button id="button_backward"></button></td>
-              <td colspan="2"><button id="button_back"></button></td>
-            </tr>
+            <tr><th>レイヤー</th></tr>
+            <tr><td><button id="button_front"></button></td></tr>
+            <tr><td><button id="button_forward"></button></td></tr>
+            <tr><td><button id="button_backward"></button></td></tr>
+            <tr><td><button id="button_back"></button></td></tr>
           </table>
 
           <!--線、四角形、円の描画で使う塗りつぶし変更ガジェット-->
@@ -232,9 +240,22 @@
               <th colspan="4" align="center" >塗りつぶし</th>
             </tr>
             <tr class="table_draw_fill">
-              <td colspan="2">
+              <td colspan="4">
                 <input type="radio" id="draw_fill_none" name="draw_path_fillRadio" value="none" checked="checked"/>
                 <label for="draw_fill_none" style="text-align: center;">なし</label>
+              </td>
+            </tr>
+            <tr class="table_draw_fill">
+              <td colspan="4">
+                <input type="radio" id="draw_fill_custom" name="draw_path_fillRadio" value="custom"/>
+                <label for="draw_fill_custom">選んだ色</label><br>
+                <input type="color" id="draw_fill_color" name="draw_fillcolor" value="#FF0000">
+              </td>
+            </tr>
+            <tr class="table_draw_fill">
+              <td colspan="2">
+                <input type="radio" id="draw_fill_diagonal_wide" name="draw_path_fillRadio" value="url(#diagonal_wide-texture)"/>
+                <label for="draw_fill_diagonal_wide"></label>
               </td>
               <td colspan="2">
                 <input type="radio" id="draw_fill_diagonal" name="draw_path_fillRadio" value="url(#diagonal-texture)"/>
@@ -253,13 +274,32 @@
             </tr>
             <tr class="table_draw_fill">
               <td colspan="2">
-                <input type="radio" id="draw_fill_gray" name="draw_path_fillRadio" value="#333"/>
-                <label for="draw_fill_gray"></label>
+                <input type="radio" id="draw_fill_verticalLine" name="draw_path_fillRadio" value="url(#verticalLine-texture)"/>
+                <label for="draw_fill_verticalLine"></label>
               </td>
               <td colspan="2">
-                <input type="radio" id="draw_fill_custom" name="draw_path_fillRadio" value="custom"/>
-                <label for="draw_fill_custom">選んだ色</label><br>
-                <input type="color" id="draw_fill_color" name="draw_fillcolor" value="#FF0000">
+                <input type="radio" id="draw_fill_horizontalLine" name="draw_path_fillRadio" value="url(#horizontalLine-texture)"/>
+                <label for="draw_fill_horizontalLine"></label>
+              </td>
+            </tr>
+            <tr class="table_draw_fill">
+              <td colspan="2">
+                <input type="radio" id="draw_fill_dasheddoubleLine" name="draw_path_fillRadio" value="url(#dasheddoubleLine-texture)"/>
+                <label for="draw_fill_dasheddoubleLine"></label>
+              </td>
+              <td colspan="2">
+                <input type="radio" id="draw_fill_gridLine" name="draw_path_fillRadio" value="url(#gridLine-texture)"/>
+                <label for="draw_fill_gridLine"></label>
+              </td>
+            </tr>
+            <tr class="table_draw_fill">
+              <td colspan="2">
+                <input type="radio" id="draw_fill_stairLine" name="draw_path_fillRadio" value="url(#stairLine-texture)"/>
+                <label for="draw_fill_stairLine"></label>
+              </td>
+              <td colspan="2">
+                <input type="radio" id="draw_fill_gray" name="draw_path_fillRadio" value="#333"/>
+                <label for="draw_fill_gray"></label>
               </td>
             </tr>
           </table>
@@ -330,7 +370,7 @@
           <div><input type="button" id="straight_connect_button" style="margin:10px 0px 10px 30px;" value="線を自動補正する"></div>
 
           <!--選択時の幅や高さを表示するテキストボックス-->
-          <table>
+          <table id="table_resizeBox">
             <tr class="resizeBox_textbox">
               <td colspan="2">幅：</td>
               <td colspan="2"><input type="text" id="textbox_selectBox_width" value="" oncopy="return false" onpaste="return false" oncontextmenu="return false" maxlength="6" style="width:80px;">mm</td>

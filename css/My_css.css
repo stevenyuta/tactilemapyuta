@@ -292,8 +292,13 @@ right toolbar
 }
 
 #table_stroke_option th,
-#table_text th{
+#table_text th,
+.table_draw_fill th,
+#table_stamp th,
+#table_layer th,
+#table_select_fill th{
 	background-color : #ccff00;
+	cursor: pointer;
 }
 
 #table_text input[type="text"],
@@ -312,19 +317,20 @@ right toolbar
 	border: 0.5px solid;
 }
 
-.table_draw_fill th{
-	background-color : #ccff00;
-}
-
 #table_draw_fill input[type="radio"] + label{
   border: 2.5px solid #003300;/* ボックスの境界線を実線で指定する */
 	width : 80px;
 	height : 40px;
 	background-color : #ffffff;
   background-position:center center; /*背景画像の位置*/
-	margin : 2px;
+	margin : 5px;
 	padding : 5px;
 	cursor: pointer;
+}
+
+#table_draw_fill input[type="radio"]#draw_fill_none + label,
+#table_draw_fill input[type="radio"]#draw_fill_custom + label{
+	width: 160px;
 }
 
 #table_draw_fill input[type="radio"]:hover + label{
@@ -359,17 +365,36 @@ right toolbar
   background-image: url('../images/polkadot_water.png');
 }
 
+#draw_fill_verticalLine + label{
+  background-image: url('../images/vertical.png');
+}
+
+#draw_fill_horizontalLine + label{
+  background-image: url('../images/horizontal.png');
+}
+#draw_fill_dasheddoubleLine + label{
+  background-image: url('../images/dasheddoubleLine.png');
+}
+#draw_fill_gridLine + label{
+  background-image: url('../images/gridLine.png');
+}
+#draw_fill_stairLine + label{
+  background-image: url('../images/stairLine.png');
+}
+#draw_fill_diagonal_wide + label{
+  background-image: url('../images/diagonal_wide.png');
+}
+
 #draw_fill_color{
-	width:80px;
-	height:20px;
+	width:160px;
+	height:40px;
 	cursor: pointer;
+	margin-bottom: 5px;
 }
 
 /*
 触知記号スタンプ
 */
-
-
 #table_stamp td,
 #table_stamp th{
 	border: 0.5px solid;
@@ -377,9 +402,7 @@ right toolbar
 	padding : 4px;
 }
 
-#table_stamp th{
-	background-color: #ccff00
-}
+
 
 #table_stamp input[type="radio"] + label{
   padding: 5px 15px; 	/* ボックス内左側の余白を指定する */
@@ -412,14 +435,9 @@ right toolbar
 	border: 0.5px solid;
 }
 
-#table_layer th{
-	background-color: #ccff00;
-}
-
-
 #table_layer button{
-	width:80px;
-  height:30px;
+	width:160px;
+  height:45px;
   background-color : #ffffff;
   background-position:center center; /*背景画像の位置*/
   background-repeat:no-repeat; /*背景画像の繰り返し*/
@@ -462,18 +480,22 @@ right toolbar
   background-position:center center; /*背景画像の位置*/
   background-repeat:no-repeat; /*背景画像の繰り返し*/
 	cursor: pointer;
+	border: 2px solid;
+}
+
+#table_select_fill button#button_fillnone,
+#table_select_fill button#button_custom{
+  width:160px;
 }
 
 #table_select_fill td,
 #table_select_fill th{
-  padding: 3px;
+  padding: 5px;
 	text-align: center;
 	border: 0.5px solid;
 }
 
-#table_select_fill th{
-	background-color: #ccff00;
-}
+
 
 #table_select_fill #button_diagonal{
   background-image: url('../images/diagonal.png');
@@ -499,8 +521,33 @@ right toolbar
   background-image: url('../images/polkadot_water.png');
 }
 
+#table_select_fill #button_horizontalLine{
+  background-image: url('../images/horizontal.png');
+}
+
+#table_select_fill #button_verticalLine{
+  background-image: url('../images/vertical.png');
+}
+
+#table_select_fill #button_dasheddoubleLine{
+  background-image: url('../images/dasheddoubleLine.png');
+}
+
+#table_select_fill #button_gridLine{
+  background-image: url('../images/gridLine.png');
+}
+
+#table_select_fill #button_stairLine{
+  background-image: url('../images/stairLine.png');
+}
+
+#table_select_fill #button_diagonal_wide{
+  background-image: url('../images/diagonal_wide.png');
+}
+
+
 #custom_fill_color{
-	width:80px;
+	width:160px;
 	height:20px;
 	cursor: pointer;
 }
@@ -508,6 +555,11 @@ right toolbar
 /***********************************
 選択状態ボックス変更テキストボックス
 ************************************/
+#table_resizeBox{
+	width: 200px;
+	border: 2px solid green;
+	text-align:center;
+}
 .resizeBox_textbox{
 	margin: 0px 0px 0px 10px;
 }

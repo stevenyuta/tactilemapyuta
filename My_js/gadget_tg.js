@@ -760,44 +760,56 @@ function defs_set(){
   let diameter = 1.5 * SVG_RATIO; //直径:1.5mm
   let defs_width = 3.5 * SVG_RATIO;
   let defs_height = 6 * SVG_RATIO;
-  //斜線
-  let diagonal_pattern = draw.pattern(8, 8, function(add) {
-    add.rect(8 , 8).attr({
+  //斜線　幅が大きめ
+  let diagonal_wide_pattern = draw.pattern(10.16*SVG_RATIO, 10.16*SVG_RATIO, function(add) {
+    add.rect(10.16*SVG_RATIO , 10.16*SVG_RATIO).attr({
       'fill' : '#fff'
     })
-    add.line(6.5 , 0 , 6.5 , 8).attr({
+    add.line(5.85*SVG_RATIO,-1.27*SVG_RATIO,18.55*SVG_RATIO,11.43*SVG_RATIO).attr({
       'stroke' : '#000000',
-      'stroke-width' : '1.5'
+      'stroke-width' : 0.8*SVG_RATIO
+    })
+    add.line(-1.77*SVG_RATIO,1.27*SVG_RATIO,8.39*SVG_RATIO,11.43*SVG_RATIO).attr({
+      'stroke' : '#000000',
+      'stroke-width' : 0.8*SVG_RATIO
+    })
+  })
+  diagonal_wide_pattern.attr({
+    'id' : 'diagonal_wide-texture'
+  }).addClass('pattern');
+
+  //斜線
+  let diagonal_pattern = draw.pattern(5.08*SVG_RATIO, 5.08*SVG_RATIO, function(add) {
+    add.rect(5.08*SVG_RATIO , 5.08*SVG_RATIO).attr({
+      'fill' : '#fff'
+    })
+    add.line(7.12*SVG_RATIO,-1.27*SVG_RATIO,-0.5*SVG_RATIO,6.35*SVG_RATIO).attr({
+      'stroke' : '#000000',
+      'stroke-width' : 0.8*SVG_RATIO
+    })
+    add.line(2.04*SVG_RATIO,-1.27*SVG_RATIO,-1.77*SVG_RATIO,2.54*SVG_RATIO).attr({
+      'stroke' : '#000000',
+      'stroke-width' : 0.8*SVG_RATIO
     })
   })
   diagonal_pattern.attr({
-    'id' : 'diagonal-texture',
-    'patternTransform' : 'rotate(45)'
+    'id' : 'diagonal-texture'
   }).addClass('pattern');
 
+
   //水玉模様（白色）
-  let polkadot_pattern = draw.pattern(defs_width, defs_height, function(add) {
-    add.rect(defs_width , defs_height).attr({
+  let polkadot_pattern = draw.pattern(10*SVG_RATIO,10*SVG_RATIO, function(add) {
+    add.rect(10*SVG_RATIO,10*SVG_RATIO).attr({
       'fill' : '#fff'
     })
-    add.circle(diameter).attr({
-      'cx' : defs_width/2,
-      'cy' : '0',
+    add.circle(2*SVG_RATIO).attr({
+      'cx' : 1.25*SVG_RATIO,
+      'cy' : 1.25*SVG_RATIO,
       'fill' : '#000'
     })
-    add.circle(diameter).attr({
-      'cx' : '0',
-      'cy' : defs_height/2,
-      'fill' : '#000'
-    })
-    add.circle(diameter).attr({
-      'cx' : defs_width,
-      'cy' : defs_height/2,
-      'fill' : '#000'
-    })
-    add.circle(1.5*SVG_RATIO).attr({
-      'cx' : defs_width/2,
-      'cy' : defs_height,
+    add.circle(2*SVG_RATIO).attr({
+      'cx' : 6.25*SVG_RATIO,
+      'cy' : 6.25*SVG_RATIO,
       'fill' : '#000'
     })
   })
@@ -806,33 +818,109 @@ function defs_set(){
   }).addClass('pattern')
 
   //水玉模様（背景青色）
-  let polkadot_water_pattern = draw.pattern(defs_width, defs_height, function(add) {
-    add.rect(defs_width , defs_height).attr({
+  let polkadot_water_pattern = draw.pattern(10*SVG_RATIO,10*SVG_RATIO, function(add) {
+    add.rect(10*SVG_RATIO,10*SVG_RATIO).attr({
       'fill' : '#1E90FF'
     })
-    add.circle(diameter).attr({
-      'cx' : defs_width/2,
-      'cy' : '0',
+    add.circle(2*SVG_RATIO).attr({
+      'cx' : 1.25*SVG_RATIO,
+      'cy' : 1.25*SVG_RATIO,
       'fill' : '#000'
     })
-    add.circle(diameter).attr({
-      'cx' : '0',
-      'cy' : defs_height/2,
-      'fill' : '#000'
-    })
-    add.circle(diameter).attr({
-      'cx' : defs_width,
-      'cy' : defs_height/2,
-      'fill' : '#000'
-    })
-    add.circle(diameter).attr({
-      'cx' : defs_width/2,
-      'cy' : defs_height,
+    add.circle(2*SVG_RATIO).attr({
+      'cx' : 6.25*SVG_RATIO,
+      'cy' : 6.25*SVG_RATIO,
       'fill' : '#000'
     })
   })
   polkadot_water_pattern.attr({
     'id' : 'polkadot_water-texture'
+  }).addClass('pattern')
+
+  //垂直線
+  let verticalLine_pattern = draw.pattern(5*SVG_RATIO,0.5*SVG_RATIO, function(add) {
+    add.rect(5*SVG_RATIO,0.5*SVG_RATIO).attr({
+      'fill' : '#fff'
+    })
+    add.line(1.25*SVG_RATIO,-1*SVG_RATIO,1.25*SVG_RATIO,1.5*SVG_RATIO).attr({
+      'stroke' : '#000000',
+      'stroke-width' : 1.3*SVG_RATIO
+    })
+  })
+  verticalLine_pattern.attr({
+    'id' : 'verticalLine-texture'
+  }).addClass('pattern')
+
+  //水平線
+  let horizontalLine_pattern = draw.pattern(0.5*SVG_RATIO,5*SVG_RATIO, function(add) {
+    add.rect(0.5*SVG_RATIO,5*SVG_RATIO).attr({
+      'fill' : '#fff'
+    })
+    add.line(-1*SVG_RATIO,1.25*SVG_RATIO,1.5*SVG_RATIO,1.25*SVG_RATIO).attr({
+      'stroke' : '#000000',
+      'stroke-width' : 1.3*SVG_RATIO
+    })
+  })
+  horizontalLine_pattern.attr({
+    'id' : 'horizontalLine-texture'
+  }).addClass('pattern')
+
+  //ダッシュダブルライン
+  let dasheddoubleLine_pattern = draw.pattern(7.5*SVG_RATIO,7.5*SVG_RATIO, function(add) {
+    add.rect(7.5*SVG_RATIO,7.5*SVG_RATIO).attr({
+      'fill' : '#fff'
+    })
+    add.line(1.25*SVG_RATIO,1.1*SVG_RATIO,1.25*SVG_RATIO,6*SVG_RATIO).attr({
+      'stroke' : '#000000',
+      'stroke-width' : SVG_RATIO
+    })
+    add.line(6.28*SVG_RATIO,1.1*SVG_RATIO,6.28*SVG_RATIO,6*SVG_RATIO).attr({
+      'stroke' : '#000000',
+      'stroke-width' : SVG_RATIO
+    })
+  })
+  dasheddoubleLine_pattern.attr({
+    'id' : 'dasheddoubleLine-texture'
+  }).addClass('pattern')
+
+  //グリッドライン
+  let gridLine_pattern = draw.pattern(7.5*SVG_RATIO,7.5*SVG_RATIO, function(add) {
+    add.rect(7.5*SVG_RATIO,7.5*SVG_RATIO).attr({
+      'fill' : '#fff'
+    })
+    add.line(3.75*SVG_RATIO,-SVG_RATIO,3.75*SVG_RATIO,8.5*SVG_RATIO).attr({
+      'stroke' : '#000000',
+      'stroke-width' : 1.3*SVG_RATIO
+    })
+    add.line(-SVG_RATIO,3.75*SVG_RATIO,8.5*SVG_RATIO,3.75*SVG_RATIO).attr({
+      'stroke' : '#000000',
+      'stroke-width' : 1.3*SVG_RATIO
+    })
+  })
+
+  gridLine_pattern.attr({
+    'id' : 'gridLine-texture'
+  }).addClass('pattern')
+
+  //階段ライン
+  let stairLine_pattern = draw.pattern(12.8*SVG_RATIO,12.8*SVG_RATIO, function(add) {
+    add.rect(12.8*SVG_RATIO,12.8*SVG_RATIO).attr({
+      'fill' : '#fff'
+    })
+    add.polyline([[-0.64*SVG_RATIO,2.4*SVG_RATIO],[4*SVG_RATIO,2.4*SVG_RATIO],[4*SVG_RATIO,-0.64*SVG_RATIO]]).attr({
+      'stroke' : '#000000',
+      'fill' : 'none',
+      'stroke-width' : SVG_RATIO
+    })
+    add.polyline([[4*SVG_RATIO,13.44*SVG_RATIO],[4*SVG_RATIO,8.8*SVG_RATIO],[10.4*SVG_RATIO,8.8*SVG_RATIO],[10.4*SVG_RATIO,2.4*SVG_RATIO],[13.44*SVG_RATIO,2.4*SVG_RATIO]]).attr({
+      'stroke' : '#000000',
+      'fill' : 'none',
+      'stroke-width' : SVG_RATIO
+    })
+  })
+
+  stairLine_pattern.attr({
+    'id' : 'stairLine-texture'
   }).addClass('pattern')
 
 }

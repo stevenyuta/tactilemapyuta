@@ -260,6 +260,16 @@ $(window).on('load',function () {
   })
   $('input[name="braillefont"]#IkarashiBraille_font').prop('checked', true).trigger('change');//初期状態はいからし点字にチェックを入れておく
 
+  /**********************
+  アコーディオン
+  **********************/
+  $('#table_stroke_option , #table_draw_fill , #table_select_fill , #table_layer , #table_text , #table_stamp').find('td').hide();
+  $('#table_stroke_option , #table_draw_fill , #table_select_fill , #table_layer , #table_text , #table_stamp').off('mouseenter').on('mouseenter',function(){
+    $(this).find('td').show();
+  }).off('mouseleave').on('mouseleave',function(){
+    $(this).find('td').hide();
+  })
+
   /*************************
   線種変更ラジオボタンの設定
   *************************/
@@ -326,6 +336,9 @@ $(window).on('load',function () {
   **************************************************/
   $("#button_fillnone , #button_gray , #button_diagonal").click(change_fill);
   $("#button_polkadot , #button_polkadot_water").click(change_fill);
+  $("#button_verticalLine , #button_horizontalLine").click(change_fill);
+  $("#button_dasheddoubleLine , #button_gridLine").click(change_fill);
+  $("#button_stairLine , #button_diagonal_wide").click(change_fill);
   $("#button_custom").click(change_fill);
   $("#custom_fill_color").on('change',function(){
     $("#button_custom").val($(this).val());
