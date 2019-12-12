@@ -386,9 +386,6 @@ $(window).on('load',function () {
            if(i===0){
              base = this;
              this.forward();
-             if(this.previous()){
-               if(this.previous().hasClass('frame_line')) this.forward();
-             }
            }else{
              base.before(this);
            }
@@ -401,9 +398,6 @@ $(window).on('load',function () {
            if(i===0){
              base = this;
              this.backward();
-             if(this.previous()){
-               if(this.previous().hasClass('frame_line')) this.backward();
-             }
            }else{
              base.after(this);
            }

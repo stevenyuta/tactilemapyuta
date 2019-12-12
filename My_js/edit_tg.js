@@ -5,14 +5,12 @@
 四角形のこと。この四角形に拡大縮小や回転に使うハンドル（黒い丸と白い丸）が表示される
 ******************************************************************************/
 function edit(){
-  //選択ボックスの左隅の座標(gX,gY)と幅(gWidth)と高さ（gHeight）
-  let gX , gY , gWidth , gHeight;
+  let gX , gY , gWidth , gHeight;//選択ボックスの左隅の座標(gX,gY)と幅(gWidth)と高さ（gHeight）
   //選択ボックスの幅、高さの変更用テキストボックスのイベント登録
   //フォーカスアウトしたときに変更が適用される
   $('#textbox_selectBox_width').off('focusout').on('focusout' , function(){update_resizeBox('width')});
   $('#textbox_selectBox_height').off('focusout').on('focusout' , function(){update_resizeBox('height')});
-  //墨字や点字の文字内容を変更するテキストボックスのイベント登録
-  $('#textbox_text_info').off('focusout').on('focusout' , update_TextInfoBox);
+  $('#textbox_text_info').off('focusout').on('focusout' , update_TextInfoBox);//墨字や点字の文字内容を変更するテキストボックスのイベント登録
   //画像選択モードから選択モードに移動したときに選択状態の画像は選択を解除
   draw.select('.edit_select').each(function(i,children){
     if(this.hasClass('image')){
@@ -21,48 +19,41 @@ function edit(){
       if(nowchecked!=='Edit') this.removeClass('edit_select');
     }
   })
-  //選択モードでのマウスのボタンを押したり離したときのイベント設定
-  edit_mousedown_up();
-  //選択モードでのmouseover mouseoutイベントの設定
-  edit_hover();
-  //選択ボックスやハンドルの位置や大きさ、イベントなどを更新
-  upload_handle();
+  edit_mousedown_up();//選択モードでのマウスのボタンを押したり離したときのイベント設定
+  edit_hover();//選択モードでのmouseover mouseoutイベントの設定
+  upload_handle();//選択ボックスやハンドルの位置や大きさ、イベントなどを更新
   //ページ（document）のどこでもいいからマウスを離すと終了(選択終了時の処理)
   $(document).on('mouseup' , function() {
     if(event.button===0){
-      if(movingFlag) cash_svg();
-      movingFlag = false;
+      if(movingFlag) cash_svg(); //movingFlagがtrueのときは何かしらの操作をしたとき。svg_cash()を起動しておく
+      movingFlag = false; //movingFlagはfalseにする
       $(document).off("mousemove");
-      upload_handle();
+      upload_handle(); //選択ボックスとハンドルの更新
     }
   })
 }
-
-/*********************************************
+/*********************************************************************
 マウスをクリックしたときに起動する関数
-flagがoffのとき : クリックしたときのイベントを全て削除
-***********************************************/
+flagがoffのとき : クリックしたときのイベントを全て削除するだけ。登録はしない
+**********************************************************************/
 function edit_mousedown_up(flag){
   draw.off('mousedown').off('mouseup');
   if(flag!=="off"){
     /**
-    select_hoverクラスを持つ要素が存在するということは要素に触れているということ。
-    その要素を選択状態にして、この時は範囲選択はしない。
+    select_hoverクラスを持つ要素が存在するということは選択状態ではない要素に触れているということ。
+    次の分岐はその要素を選択状態する（この時は範囲選択はしない）
     **/
     if(draw.select('.select_hover').first()){
       let target = draw.select('.select_hover').first(); //触れている要素を入手
       target.on('mousedown', function(event){
         if(event.button===0){
-          //shiftキーを押していなければ複数選択しない⇒edit_clear()を起動して選択状態を解除
-          if(!(input_key_buffer[16] || input_key_buffer[17])) edit_clear();
-          //edit_selectクラスを追加し、選択状態であることを示す
-          this.addClass('edit_select');
+          if(!(input_key_buffer[16] || input_key_buffer[17])) edit_clear();//shiftキーを押していなければ複数選択しない⇒edit_clear()を起動して選択状態を解除
+          this.addClass('edit_select').removeClass('select_hover');//edit_selectクラスを追加し、select_hoverクラスを取り除く
           set_SelectElement_Param();//選択状態の要素のパラメータ更新
           upload_handle();//選択ハンドルの位置やイベントを再設定
           this.off('mousedown');//この要素のマウスクリックイベントを解除
-          this.removeClass('select_hover'); //select_hoverクラスを取り除く
           edit_hover(); //触れたときのイベントを再登録
-          //以下は選択と同時に移動できるように
+          //以下は選択と同時に平行移動できるようにするための処理
           let anchorX = getmousepoint('normal',event).x , anchorY = getmousepoint('normal',event).y;
           let click_dTx = 0 , click_dTy = 0;
           $(document).off('mousemove').mousemove(function(event){
@@ -74,8 +65,7 @@ function edit_mousedown_up(flag){
           });
         }
       });
-    /**以下の分岐は要素に触れてなく、選択状態の要素が何もない場合の処理
-    つまり範囲選択する**/
+    //次の分岐では要素に触れてなく、選択状態の要素が何もない場合の処理⇒範囲選択する
     }else if(draw.select('.edit_select').first()===undefined){
       let select_rect = draw.rect().addClass('select_rect'); //範囲選択用の四角形を作成
       select_rect.attr({  //範囲選択用の四角形の属性を指定（赤い点線にするなど）
@@ -84,10 +74,10 @@ function edit_mousedown_up(flag){
         'stroke-width': SELECT_RECT_STROKEWIDTH,
         'stroke-dasharray': SELECT_RECT_STROKEDOTT
       })
-      //マウスを押し込んだ時の処理。範囲選択の四角形の始点を指定する。
-      draw.on('mousedown', function(event){
+      //マウスを押し込んだ時の処理。範囲選択の四角形の始点を指定(詳しくはsvg.jsの公式を参照)
+      draw.on('mousedown', function(event){ //マウスをクリックしたときの処理
         if(event.button===0){
-          select_rect.draw(event);//始点の指定。詳しくはsvg.jsの公式を参照
+          select_rect.draw(event);//始点の指定
           edit_hover("off");//マウスで触れたときの処理は一旦全てoff
         }
       });
@@ -95,22 +85,19 @@ function edit_mousedown_up(flag){
         if(event.button===0){
           select_rect.draw(event);//終点の指定
           //描画した四角形（範囲選択を示す）の各頂点座標を表現する４パラメータを指定
-          let sr_min_x =  Number(select_rect.attr('x')) , sr_min_y =  Number(select_rect.attr('y'));
-          let sr_max_x =  sr_min_x + Number(select_rect.attr('width')) , sr_max_y =  sr_min_y + Number(select_rect.attr('height'));
-          //選択モード時の対象はpath,circle,textクラスを持つ要素。画像選択モード時はimageクラスを持つ要素が選択の対象
+          let select_rect_min_x =  Number(select_rect.attr('x')) , select_rect_min_y =  Number(select_rect.attr('y'));
+          let select_rect_max_x =  select_rect_min_x + Number(select_rect.attr('width')) , select_rect_max_y =  select_rect_min_y + Number(select_rect.attr('height'));
+          //選択モード時の対象はpath,circle,ink,brailleクラスを持つ要素。画像選択モード時はimageクラスを持つ要素が選択の対象
           let selector = ( $('input[name="tg_mode"]:checked').val() == "Edit" ) ? '.path,.circle,.ink,.braille' : '.image';
-          //四角形の範囲に含まれる要素を調べる
-          //もし範囲に含まれていればedit_selectクラスを付与して選択状態にする
+          //四角形の範囲に含まれる要素を調べる ⇒ 範囲に含まれていればedit_selectクラスを付与
           draw.select(selector).each(function(i, children) {
             if(this.visible()){//要素が非表示だった場合は判定外にする
               let InArea = true;  //範囲内に入っているかの判定：InAreaという変数がtrueは範囲内、flaseは範囲外
-              let bbox = get_bbox(this);
-              let pmin_x = bbox.min_x , pmax_x = bbox.max_x;
-              let pmin_y = bbox.min_y , pmax_y = bbox.max_y;
-              if(pmin_x < sr_min_x || pmin_x > sr_max_x) InArea = false;
-              if(pmin_y < sr_min_y || pmin_y > sr_max_y) InArea = false;
-              if(pmax_x < sr_min_x || pmax_x > sr_max_x) InArea = false;
-              if(pmax_y < sr_min_y || pmax_y > sr_max_y) InArea = false;
+              let bbox = get_bbox(this); //その要素が占める領域を取得
+              if(bbox.min_x < select_rect_min_x || bbox.min_x > select_rect_max_x) InArea = false;
+              if(bbox.min_y < select_rect_min_y || bbox.min_y > select_rect_max_y) InArea = false;
+              if(bbox.max_x < select_rect_min_x || bbox.max_x > select_rect_max_x) InArea = false;
+              if(bbox.max_y < select_rect_min_y || bbox.max_y > select_rect_max_y) InArea = false;
               if(InArea) this.addClass('edit_select');
             }
           })
@@ -120,8 +107,7 @@ function edit_mousedown_up(flag){
           select_rect.remove(); //範囲選択用の四角形を削除
         }
       });
-    /**以下は触れている選択状態ではない要素がなく、選択状態の要素が１つ以上ある場合
-    つまり選択を全解除する**/
+    //以下の分岐は触れている選択状態ではない要素がなく、選択状態の要素が１つ以上ある場合⇒選択を全解除する
     }else{
       draw.on('mousedown', function(event){
         if(event.button===0){
@@ -189,11 +175,11 @@ function edit_clear(){
   upload_handle();
 }
 
+/******************************************************
+選択ボックスやハンドルなどの位置やイベントなどを更新する関数
+*******************************************************/
 function upload_handle(){
-  /**
-  移動、サイズ変更、回転用の選択ボックスやハンドル、アプリ右側に表示される
-  線の幅や色を変更する設定欄などなどを色々を非表示
-  **/
+  //移動、サイズ変更、回転用の選択ボックスやハンドル、アプリ右側に表示される線の幅や色を変更する設定欄などなどを色々を非表示
   SVG.get('handle_group').hide();　
   $('.gadget_resizeInk , .gadget_resize_braille , .gadget_textInfo').hide(); //点字と墨字関係
   $('.stroke_option , .dotted_option').hide(); //線の属性設定欄関係
@@ -201,9 +187,7 @@ function upload_handle(){
   $('#table_layer , #table_select_fill').hide(); //レイヤーや塗りつぶし
   $('.resizeBox_textbox').hide(); //選択ボックスの幅と高さテキストボックス
   $('#straight_connect_button').hide(); //線の補正用
-  /**
-  以下から選択されている要素に合わせて、表示させる
-  **/
+  // 以下から選択されている要素に合わせて、表示
   if(draw.select('.edit_select').first()!==undefined){
     if(draw.select('.edit_select.ink').first()!==undefined) $('.gadget_resizeInk').show();
     if(draw.select('.edit_select.braille').first()!==undefined) $('.gadget_resize_braille').show();

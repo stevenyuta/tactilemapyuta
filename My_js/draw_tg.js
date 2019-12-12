@@ -84,7 +84,7 @@ function draw_path(){
             //now_drawing_path_IDを更新
             now_drawing_path_ID = connectPath.id();
             //current_x,current_yの更新もしておく
-            current_x = d_array[0][1], current_y = d_array[0][2];
+            current_x = d[0][1], current_y = d[0][2];
             //close_nodeも更新しておく
             set_closePathNode();
 
