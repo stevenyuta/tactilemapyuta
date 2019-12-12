@@ -686,6 +686,7 @@ function get_nears(element , dbclick){
       }
     }
   }
+  /**
   if(!dbclick){
     if(ob.beforeNode){
       if(ob.beforeNode.hasClass('editing_target')) ob.beforeNode = null;
@@ -700,6 +701,7 @@ function get_nears(element , dbclick){
       if(ob.afterSegment.hasClass('editing_target')) ob.afterSegment = null;
     }
   }
+  **/
   return ob;
 }
 
