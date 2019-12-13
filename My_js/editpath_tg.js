@@ -686,6 +686,7 @@ function get_nears(element , dbclick){
       }
     }
   }
+  console.log('hoge')
   /**
   if(!dbclick){
     if(ob.beforeNode){
