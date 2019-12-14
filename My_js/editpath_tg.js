@@ -504,6 +504,42 @@ function delete_editpath_segmentedPath(segment){
   segment.remove();
 }
 
+/******************************************************
+//pathを解析して、くっつきモードとバラバラモード
+//配列を介して切り替える関数
+******************************************************/
+function toConnect(){
+  draw.select('.Segments_Group').each(function(i,children){
+    if(SVG.get('Nodes_Group_' + String(this.attr('segmented_Group_Number')))){
+      SVG.get('Nodes_Group_' + String(this.attr('segmented_Group_Number'))).remove();
+    }
+    let new_path = draw.path().addClass('connected').addClass('path');
+    this.after(new_path);
+    if(nowchecked==='Edit') new_path.addClass('edit_select');
+    let self = this;
+    this.each(function(j,children){
+      let d = this.clear().array().settle() //pathのdpoint配列を取得
+      if(j===0){
+        new_path.M({x: d[0][1], y: d[0][2]});
+        new_path.attr({ //線属性の指定
+          'stroke-width': this.attr('stroke-width'),
+          'stroke-dasharray': this.attr('stroke-dasharray'),
+          'stroke-linejoin': this.attr('stroke-linejoin')
+        })
+        if(this.attr('Non_stroke'))  new_path.attr({ 'stroke-width': 0 , 'stroke-dasharray': '' })
+      }else{
+        new_path.L({x: d[0][1], y: d[0][2]})
+      }
+      if(!self.hasClass('closed_path') && j===self.children().length - 1) new_path.L({x: d[1][1], y: d[1][2]});
+    })
+    new_path.attr({'stroke' : this.attr('stroke_tmp')});
+    new_path.attr({'fill' : this.attr('fill_tmp')});
+    if(this.hasClass('closed_path'))  new_path.Z();
+    this.remove();
+  })
+  selector_delete('.fill_path');
+}
+
 /*******************************
  ノードの結合関数
  選択状態の２つのノードを接続する
@@ -686,7 +722,6 @@ function get_nears(element , dbclick){
       }
     }
   }
-  
   return ob;
 }
 
