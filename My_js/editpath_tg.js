@@ -686,22 +686,7 @@ function get_nears(element , dbclick){
       }
     }
   }
-  /**
-  if(!dbclick){
-    if(ob.beforeNode){
-      if(ob.beforeNode.hasClass('editing_target')) ob.beforeNode = null;
-    }
-    if(ob.afterNode){
-      if(ob.afterNode.hasClass('editing_target')) ob.afterNode = null;
-    }
-    if(ob.beforeSegment){
-      if(ob.beforeSegment.hasClass('editing_target')) ob.beforeSegment = null;
-    }
-    if(ob.afterSegment){
-      if(ob.afterSegment.hasClass('editing_target')) ob.afterSegment = null;
-    }
-  }
-  **/
+  
   return ob;
 }
 
