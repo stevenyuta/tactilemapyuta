@@ -45,8 +45,24 @@
 
         <input type="button" id="Button_option" value="　　　設定とダウンロード　　　">
 
-        <span class="downloader" style="border: 2px solid #ff0000; padding:15px; margin-left:560px; display:none;">
-          <a href="index_en.html">English Edition</a>
+        <!--選択時の幅や高さを表示するテキストボックス-->
+        <span id="span_resizeBox">
+          <span class="resizeBox_textbox">
+            幅：<input type="text" id="textbox_selectBox_width" value="" oncopy="return false" onpaste="return false" oncontextmenu="return false" maxlength="6" style="width:80px;">mm
+          </span>
+          <span class="resizeBox_textbox">
+            高さ：<input type="text" id="textbox_selectBox_height" value="" oncopy="return false" onpaste="return false" oncontextmenu="return false" maxlength="6" style="width:80px;">mm
+          </span>
+          <span class="resizeBox_textbox">
+            <input type="checkbox" id="check_aspect" name="checkers" value="check_aspect" checked/>
+            <label for="check_aspect" class="custom_check_label">縦横比固定</label>
+          </span>
+        </span>
+
+        <!-- 元に戻す、やり直しボタン -->
+        <span id="table_undo_redo">
+          <button id="button_undo"><i class="fa fa-undo"></i></button> <!--元に戻すボタン-->
+          <button id="button_redo"><i class="fa fa-repeat"></i></button> <!--やり直しボタン-->
         </span>
       </div>
 
@@ -119,20 +135,10 @@
 
         <!-- アプリ右側に表示される様々なガジェット-->
         <div class="toolbar_right">
-          <!-- 元に戻す、やり直しボタン -->
-          <table id="table_undo_redo">
-            <tr>
-              <td colspan="2">元に戻す</td>
-              <td colspan="2">やり直し</td>
-            </tr>
-            <tr>
-              <td colspan="2"><button id="button_undo"><i class="fa fa-undo"></i></button></td> <!--元に戻すボタン-->
-              <td colspan="2"><button id="button_redo"><i class="fa fa-repeat"></i></button></td> <!--やり直しボタン-->
-            </tr>
-          </table>
+
 
           <table id="table_stroke_option">
-            <th class="stroke_option" colspan="4">線の基本属性</th>
+            <th class="stroke_option" colspan="4">線の属性</th>
             <tr class="stroke_option">
               <td colspan="4">色　<input type="color" id="custom_stroke_color" name="scolor" value="#000000"></td>
             </tr>
@@ -150,14 +156,12 @@
                 <label for="radio_dotted_path">破線</label>
               </td>
             </tr>
-            <tr class="dotted_option" style="background-color:orange;"><td colspan="4">破線の設定</td></tr>
             <tr class="dotted_option">
               <td colspan="4">線部分の長さ　<input type="text" id="dottedLine_line" oncopy="return false" onpaste="return false" oncontextmenu="return false">mm</td>
             </tr>
             <tr class="dotted_option">
               <td colspan="4">線間距離　<input type="text" id="dottedLine_space" oncopy="return false" onpaste="return false" oncontextmenu="return false">mm</td>
             </tr>
-            <tr class="dotted_option"><td colspan="4"><button id="button_reset_dottedpath">線の幅に合わせる</button></td></tr>
           </table>
 
           <table id = "table_text">
@@ -196,10 +200,8 @@
               <th colspan="4" align="center">塗りつぶし</th>
             </tr>
             <tr>
-              <td colspan="4"><button id="button_fillnone" value='none'>なし</button></td>
-            </tr>
-            <tr>
-              <td colspan="4">
+              <td colspan="2"><button id="button_fillnone" value='none'>なし</button></td>
+              <td colspan="2">
                 <button id="button_custom" value='#FF0000'>選んだ色</button><br>
                 <input type="color" id="custom_fill_color" name="fillcolor" value="#FF0000">
               </td>
@@ -227,11 +229,15 @@
           </table>
 
           <table id="table_layer">
-            <tr><th>レイヤー</th></tr>
-            <tr><td><button id="button_front"></button></td></tr>
-            <tr><td><button id="button_forward"></button></td></tr>
-            <tr><td><button id="button_backward"></button></td></tr>
-            <tr><td><button id="button_back"></button></td></tr>
+            <tr><th colspan="2">レイヤー</th></tr>
+            <tr>
+              <td><button id="button_front"></button></td>
+              <td><button id="button_forward"></button></td>
+            </tr>
+            <tr>
+              <td><button id="button_backward"></button></td>
+              <td><button id="button_back"></button></td>
+            </tr>
           </table>
 
           <!--線、四角形、円の描画で使う塗りつぶし変更ガジェット-->
@@ -240,13 +246,11 @@
               <th colspan="4" align="center" >塗りつぶし</th>
             </tr>
             <tr class="table_draw_fill">
-              <td colspan="4">
+              <td colspan="2">
                 <input type="radio" id="draw_fill_none" name="draw_path_fillRadio" value="none" checked="checked"/>
                 <label for="draw_fill_none" style="text-align: center;">なし</label>
               </td>
-            </tr>
-            <tr class="table_draw_fill">
-              <td colspan="4">
+              <td colspan="2">
                 <input type="radio" id="draw_fill_custom" name="draw_path_fillRadio" value="custom"/>
                 <label for="draw_fill_custom">選んだ色</label><br>
                 <input type="color" id="draw_fill_color" name="draw_fillcolor" value="#FF0000">
@@ -367,25 +371,7 @@
             </tr>
           </table>
 
-          <div><input type="button" id="straight_connect_button" style="margin:10px 0px 10px 30px;" value="線を自動補正する"></div>
-
-          <!--選択時の幅や高さを表示するテキストボックス-->
-          <table id="table_resizeBox">
-            <tr class="resizeBox_textbox">
-              <td colspan="2">幅：</td>
-              <td colspan="2"><input type="text" id="textbox_selectBox_width" value="" oncopy="return false" onpaste="return false" oncontextmenu="return false" maxlength="6" style="width:80px;">mm</td>
-            </tr>
-            <tr class="resizeBox_textbox">
-              <td colspan="2">高さ：</td>
-              <td colspan="2"><input type="text" id="textbox_selectBox_height" value="" oncopy="return false" onpaste="return false" oncontextmenu="return false" maxlength="6" style="width:80px;">mm</td>
-            </tr>
-            <tr class="resizeBox_textbox">
-              <td colspan="4">
-                <input type="checkbox" id="check_aspect" name="checkers" value="check_aspect" checked/>
-                <label for="check_aspect" class="custom_check_label">縦横比固定</label>
-              </td>
-            </tr>
-          </table>
+          <!--<div><input type="button" id="straight_connect_button" style="margin:10px 0px 10px 30px;" value="線を自動補正する"></div>-->
 
          </div>
          <div id="scrollbar_width"></div>
@@ -485,10 +471,9 @@
     <script type="text/javascript" src="./My_js/edit_tg.js"></script> <!--要素操作機能関係-->
     <script type="text/javascript" src="./My_js/editpath_tg.js"></script> <!--線の詳細編集機能関係-->
     <script type="text/javascript" src="./My_js/stamp_tg.js"></script> <!--スタンプ機能関係-->
-    <script type="text/javascript" src="./My_js/path_point_tg.js"></script> <!--path要素関係関数-->
+    <script type="text/javascript" src="./My_js/other_tg.js"></script> <!--path要素関係関数-->
     <script type="text/javascript" src="./My_js/gadget_tg.js"></script> <!--html上のスライダー、チェックボックス関係の関数-->
-    <script type="text/javascript" src="./My_js/svgdata_tg.js"></script> <!--svgのデータ関係関数-->
-    <script type="text/javascript" src="./My_js/keypush_tg.js"></script> <!--キー入力受付関係-->
+    <script type="text/javascript" src="./My_js/download_tg.js"></script> <!--svgのデータ関係関数-->
     <script type="text/javascript" src="./My_js/font_tg.js"></script> <!--フォント埋め込み-->
     <script type="text/javascript" src="./My_js/start_up_tg.js"></script> <!--アプリの初期設定をする-->
     <script type="text/javascript" src="./My_js/distance_check_tg.js"></script> <!--距離間チェック機能-->

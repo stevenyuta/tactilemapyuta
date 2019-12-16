@@ -14,7 +14,8 @@ function set_Stampmode(){
   $('.stroke_option , .dotted_option').hide(); //線種変更
   $('.gadget_resizeInk , .gadget_resize_braille').hide(); //墨字点字サイズ変更
   $('.gadget_imageOpacity').hide(); //画像透過度変更
-  $('.layer_select , .fill_change , .resizeBox_textbox').hide(); //レイヤ、塗りつぶし、リサイズ用テキストボックス変更
+  $('.layer_select , .fill_change').hide(); //レイヤ、塗りつぶし、リサイズ用テキストボックス変更
+  $('#span_resizeBox').css('visibility','hidden');
 
   switch(stamp_checked){
     case 'Text':

@@ -263,12 +263,14 @@ $(window).on('load',function () {
   /**********************
   アコーディオン
   **********************/
+  /**
   $('#table_stroke_option , #table_draw_fill , #table_select_fill , #table_layer , #table_text , #table_stamp').find('td').hide();
   $('#table_stroke_option , #table_draw_fill , #table_select_fill , #table_layer , #table_text , #table_stamp').off('mouseenter').on('mouseenter',function(){
     $(this).find('td').show();
   }).off('mouseleave').on('mouseleave',function(){
     $(this).find('td').hide();
   })
+  **/
 
   /*************************
   線種変更ラジオボタンの設定
@@ -291,17 +293,6 @@ $(window).on('load',function () {
 
   $('#dottedLine_space').off('focusout').on('focusout' , update_dottedLine); //点線の空白部分の長さを指定するテキストボックスをフォーカスアウトしたときのイベント設定
   $('#dottedLine_space').val(1);
-
-  $('#button_reset_dottedpath').click(function(){  //点線の詳細情報の線幅に合わせるボタンを押したときの処理
-    $("#dottedLine_line").val($('#textbox_strokewidth').val());
-    $("#dottedLine_space").val($('#textbox_strokewidth').val());
-    let drawing_path_selector = (now_drawing_path_ID === '' || now_drawing_path_ID === undefined) ? '' : ',#' + now_drawing_path_ID;
-    draw.select('.edit_select.path , .edit_select.circle , .segmented' + drawing_path_selector).each(function(i,children){
-      if(this.attr('stroke-dasharray')!==undefined && this.attr('stroke-dasharray')!==''){
-        this.attr({ 'stroke-dasharray': PS_WIDTH * $('#dottedLine_line').val() + ' ' +  PS_WIDTH * $('#dottedLine_space').val()});
-      }
-    })
-  })
 
   /*************************
   線色変更ガジェットの設定
@@ -498,15 +489,6 @@ $(window).on('load',function () {
   $('#button_redo').click(redo);
   //距離間チェック機能
   $('#distance_check_button').click(distance_check); //距離間チェックボタンクリック時に起動する関数を設定
-
-  //線の補正機能
-  $('#straight_connect_button').click(function(){
-    fig_connect();
-    fig_straight();
-    fig_connect();
-    fig_pathUpload();
-    if(draw.select('.connected').first()) cash_svg();
-  })
 
   //各モードを切り替えるラジオボタンの設定
   nowchecked = $('input[name="tg_mode"]:checked').val();

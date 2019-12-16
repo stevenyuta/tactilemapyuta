@@ -158,7 +158,7 @@ top_contents
   font-size: 14px;
 }
 
-#distance_check_button , #trans ,#straight_connect_button{
+#distance_check_button , #straight_connect_button{
   cursor : pointer;
   background-color : #E2EDF9;
   border: 2px solid orange;/* ボックスの境界線を実線で指定する */
@@ -169,7 +169,7 @@ top_contents
   font-size: 14px;
 }
 
-#distance_check_button:hover , #trans:hover ,#straight_connect_button:hover{
+#distance_check_button:hover , #straight_connect_button:hover{
   background : #31A9EE;
 }
 
@@ -276,13 +276,13 @@ right toolbar
 
 #table_stroke_option td,
 #table_stroke_option th{
-	padding : 5px 0px;
+	padding : 3px 0px;
 	text-align: center;
 }
 
 #table_text td,
 #table_text th{
-	padding : 5px;
+	padding : 3px;
 	text-align: center;
 }
 
@@ -299,6 +299,7 @@ right toolbar
 #table_select_fill th{
 	background-color : #ccff00;
 	cursor: pointer;
+	font-weight: normal;
 }
 
 #table_text input[type="text"],
@@ -323,14 +324,9 @@ right toolbar
 	height : 40px;
 	background-color : #ffffff;
   background-position:center center; /*背景画像の位置*/
-	margin : 5px;
-	padding : 5px;
+	margin : 2px;
+	padding : 3px;
 	cursor: pointer;
-}
-
-#table_draw_fill input[type="radio"]#draw_fill_none + label,
-#table_draw_fill input[type="radio"]#draw_fill_custom + label{
-	width: 160px;
 }
 
 #table_draw_fill input[type="radio"]:hover + label{
@@ -386,8 +382,8 @@ right toolbar
 }
 
 #draw_fill_color{
-	width:160px;
-	height:40px;
+	width:80px;
+	height:20px;
 	cursor: pointer;
 	margin-bottom: 5px;
 }
@@ -399,10 +395,8 @@ right toolbar
 #table_stamp th{
 	border: 0.5px solid;
 	text-align: center;
-	padding : 4px;
+	padding : 3px;
 }
-
-
 
 #table_stamp input[type="radio"] + label{
   padding: 5px 15px; 	/* ボックス内左側の余白を指定する */
@@ -430,14 +424,14 @@ right toolbar
 
 #table_layer td,
 #table_layer th{
-	padding: 3px;
+	padding: 1px;
 	text-align: center;
 	border: 0.5px solid;
 }
 
 #table_layer button{
-	width:160px;
-  height:45px;
+	width:80px;
+  height:30px;
   background-color : #ffffff;
   background-position:center center; /*背景画像の位置*/
   background-repeat:no-repeat; /*背景画像の繰り返し*/
@@ -483,14 +477,9 @@ right toolbar
 	border: 2px solid;
 }
 
-#table_select_fill button#button_fillnone,
-#table_select_fill button#button_custom{
-  width:160px;
-}
-
 #table_select_fill td,
 #table_select_fill th{
-  padding: 5px;
+  padding: 3px;
 	text-align: center;
 	border: 0.5px solid;
 }
@@ -547,7 +536,7 @@ right toolbar
 
 
 #custom_fill_color{
-	width:160px;
+	width:80px;
 	height:20px;
 	cursor: pointer;
 }
@@ -555,17 +544,12 @@ right toolbar
 /***********************************
 選択状態ボックス変更テキストボックス
 ************************************/
-#table_resizeBox{
-	width: 200px;
+#span_resizeBox{
 	border: 2px solid green;
-	text-align:center;
+	padding: 20px;
 }
 .resizeBox_textbox{
 	margin: 0px 0px 0px 10px;
-}
-
-.resizeBox_textbox td{
-	padding: 5px;
 }
 
 .resizeBox_textbox input[type="text"]{
@@ -594,6 +578,7 @@ right toolbar
   background-color : oldlace;
   border: 2px solid crimson;/* ボックスの境界線を実線で指定する */
   padding : 7px;
+	margin-right:50px;
 }
 
 #Button_option:hover{

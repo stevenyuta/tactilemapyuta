@@ -185,7 +185,7 @@ function upload_handle(){
   $('.stroke_option , .dotted_option').hide(); //線の属性設定欄関係
   $('.gadget_imageOpacity').hide(); //画像の透過度
   $('#table_layer , #table_select_fill').hide(); //レイヤーや塗りつぶし
-  $('.resizeBox_textbox').hide(); //選択ボックスの幅と高さテキストボックス
+  $('#span_resizeBox').css('visibility','hidden'); //選択ボックスの幅と高さテキストボックス
   $('#straight_connect_button').hide(); //線の補正用
   // 以下から選択されている要素に合わせて、表示
   if(draw.select('.edit_select').first()!==undefined){
@@ -211,7 +211,7 @@ function upload_handle(){
     }
     SVG.get('handle_group').show().front();　//移動、サイズ変更、回転用のハンドルを表示
     $('#table_layer').show(); //レイヤー設定欄の表示
-    $('.resizeBox_textbox').show(); //幅と高さ変更用のテキストボックスの表示
+    $('#span_resizeBox').css('visibility','visible');; //幅と高さ変更用のテキストボックスの表示
     /**
     選択ボックスの範囲を計算していく
     get_bbox関数で図形や文字が描画領域上で占める範囲を計算していく

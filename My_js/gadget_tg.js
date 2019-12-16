@@ -58,7 +58,7 @@ function RadioEvent_set(unredo_flag){
   //線の自動補正ボタン
   $('#straight_connect_button').hide();
   //選択モード時の選択ボックス（選択している要素の大きさを示す）の設定
-  $('.resizeBox_textbox').hide();
+  $('#span_resizeBox').css('visibility','hidden');
 
   draw.off('mousemove').mousemove(function(e){
     mx = getmousepoint('normal',event).x; //描画領域上でのマウスポイント計算
@@ -78,7 +78,7 @@ function RadioEvent_set(unredo_flag){
       draw_path(); //draw_tg.jsファイルに詳しく色々かいてある
       break;
     case 'Edit':
-      $('.resizeBox_textbox').show(); //edit_tg.jsファイルを参照
+      $('#span_resizeBox').css('visibility','visible'); //edit_tg.jsファイルを参照
       edit();
       break;
     case 'EditPath':
@@ -92,7 +92,7 @@ function RadioEvent_set(unredo_flag){
       draw_rect();
       break;
     case 'EditImage':
-      $('.resizeBox_textbox').show();
+      $('#span_resizeBox').css('visibility','visible');
       //画像のみの選択モード　使う関数も選択モードと同じ　edit_tg.jsファイルを参照
       edit();
       break;
@@ -151,6 +151,9 @@ function set_contextMenu(){
         case 'draw_end':
           draw_end_function();
           break;
+        case 'straight_connect':
+            straight_connect();
+            break;
         case 'node_connect':
           node_connect_function();
           break;
@@ -199,7 +202,7 @@ function set_contextMenu(){
         icon: 'fa-times',
         disabled: function(){
           let flag;
-          (draw.select('.edit_select , .editing_target').first()) ? flag = false : flag =  true;
+          draw.select('.edit_select , .editing_target').first() ? flag = false : flag =  true;
           return flag;
         }
       },
@@ -210,6 +213,15 @@ function set_contextMenu(){
         disabled: function(){
           let flag;
           SVG.get('#' + now_drawing_path_ID) ? flag = false : flag = true;
+          return flag;
+        }
+      },
+      "straight_connect":{
+        name: '線の自動補正',
+        icon: 'fa-wrench',
+        disabled: function(){
+          let flag;
+          draw.select('.edit_select , .segmented').first() ? flag = false : flag = true;
           return flag;
         }
       },
