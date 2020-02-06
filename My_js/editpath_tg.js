@@ -510,8 +510,8 @@ function delete_editpath_segmentedPath(segment){
 ******************************************************/
 function toConnect(){
   draw.select('.Segments_Group').each(function(i,children){
-    if(SVG.get('Nodes_Group_' + String(this.attr('segmented_Group_Number')))){
-      SVG.get('Nodes_Group_' + String(this.attr('segmented_Group_Number'))).remove();
+    if(SVG.get('Nodes_Group_' + String(this.attr('Segments_Group_Number')))){
+      SVG.get('Nodes_Group_' + String(this.attr('Segments_Group_Number'))).remove();
     }
     let new_path = draw.path().addClass('connected').addClass('path');
     this.after(new_path);
