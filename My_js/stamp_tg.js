@@ -358,7 +358,6 @@ function add_text(){
       }).translate(mx,my + 30)
       bra_id = dummy_Bra_text.attr('id');
       dummy_Bra_text.addClass('dummy');
-      console.log('hoge')
     }
   })
 
