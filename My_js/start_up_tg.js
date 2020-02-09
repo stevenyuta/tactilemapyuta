@@ -157,6 +157,7 @@ $(window).on('load',function () {
       this.attr({ 'stroke-width':PS_WIDTH });
       if(this.attr('stroke-dasharray')!== undefined && this.attr('stroke-dasharray')!=='') this.attr({'stroke-dasharray':PS_WIDTH}); //点線の場合
     })
+    cash_svg();
   });
 
 
@@ -167,6 +168,7 @@ $(window).on('load',function () {
   $('#button_reset_ink').click(function(){  //リセットボタンを押下時の処理
     $("#textbox_resize_ink").val(DEF_INK_SIZE);
     draw.select('.edit_select.ink').attr({'font-size': DEF_INK_SIZE * SVG_RATIO * 0.352778}); //0.352778をかけることでpt値になる
+    cash_svg();
   });
 
   //3.7 点字の大きさを設定するテキストボックス、リセットボタンの設定
@@ -176,6 +178,7 @@ $(window).on('load',function () {
   $('#button_reset_braille').click(function(){  //リセットボタンを押下時の処理
     $("#textbox_resize_braille").val(DEF_BRA_SIZE);
     draw.select('.edit_select.braille').attr({'font-size': DEF_BRA_SIZE * SVG_RATIO * 0.352778});
+    cash_svg();
   });
 
   //画像透過度を変更するテキストボックス、リセットボタンの設定
@@ -185,6 +188,7 @@ $(window).on('load',function () {
   $('#button_reset_image_opacity').click(function(){  //リセットボタンを押下時の処理
     $("#textbox_image_opacity").val(100);
     draw.select('.edit_select.image').attr({'opacity': 1});
+    cash_svg();
   });
 
 

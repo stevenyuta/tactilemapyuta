@@ -804,6 +804,7 @@ function update_TextInfoBox(){
       });
       text.plain(tactileGraphic().convertText(transed_BraText));//文字を点字表現に変換
       text.attr({'brailleorigintext' : transed_BraText});
+      cash_svg();
     }
   }
 }

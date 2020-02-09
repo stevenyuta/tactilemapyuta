@@ -452,6 +452,7 @@ function update_dottedLine(){
           this.attr({ 'stroke-dasharray': PS_WIDTH * $('#dottedLine_line').val() + ' ' +  PS_WIDTH * $('#dottedLine_space').val()});
         }
       })
+      cash_svg();
     }
   }
 }
@@ -470,6 +471,7 @@ function update_textbox_strokewidth(){
         this.attr({'stroke-width': Number(transNumber) * PS_WIDTH });
         if(this.attr('stroke-dasharray')!==undefined && this.attr('stroke-dasharray')!=='')this.attr({'stroke-dasharray': PS_WIDTH});
       })
+      cash_svg();
     }
   }
 }
@@ -484,6 +486,7 @@ function update_resizeInk_TextBox(){
     $('#textbox_resize_ink').val(transNumber);
     if(!transNumber.match(/[^0-9\.]/)){
       draw.select('.edit_select.ink').attr({ 'font-size': Number(transNumber) * SVG_RATIO * 0.352778 });
+      cash_svg();
     }
   }
 }
@@ -498,6 +501,7 @@ function update_resizeBraille_TextBox(){
     $('#textbox_resize_braille').val(transNumber);
     if(!transNumber.match(/[^0-9\.]/)){
       draw.select('.edit_select.braille').attr({ 'font-size': Number(transNumber) * SVG_RATIO * 0.352778 });
+      cash_svg();
     }
   }
 }
@@ -512,6 +516,7 @@ function update_textbox_image_opacity(){
     $('#textbox_image_opacity').val(transNumber)
     if(!transNumber.match(/[^0-9\.]/)){
       draw.select('.edit_select.image').attr({ 'opacity' : Number(transNumber)/100 });
+      cash_svg();
     }
   }
 }
